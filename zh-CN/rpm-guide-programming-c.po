@@ -1,0 +1,2356 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Programming RPM with C"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Using the RPM C library"
+msgstr ""
+
+msgid "Setting up a development environment"
+msgstr ""
+
+msgid "Programming with the RPM C library"
+msgstr ""
+
+msgid "The power of <command>popt</command> for command-line argument processing"
+msgstr ""
+
+msgid "Comparing package files to installed packages"
+msgstr ""
+
+msgid "The RPM C library allows you to perform all the operations of the rpm command from within your own C or C++ programs."
+msgstr ""
+
+msgid "The reason is simple: The rpm command was created using the RPM libraries. These same libraries are available for you to use in your own programs."
+msgstr ""
+
+msgid "The rpm command itself is quick and, for the most part, simple. So, why would you want to write RPM programs?"
+msgstr ""
+
+msgid "There are many reasons, some of which are listed here:"
+msgstr ""
+
+msgid "*Speed: If you need to perform a task on many RPM files such as verifying a large set of files, then performing the task from one program will be a lot faster than launching the rpm command for each file."
+msgstr ""
+
+msgid "*Custom options: If you need to do something the rpm command doesn't offer, or doesn't make easy, then you may want to write your own program."
+msgstr ""
+
+msgid "*Convenience: If you need to make many packages quickly, with custom options, your best bet may be to create a program suited for your tasks. Before doing this, though, be sure to look into whether writing a shell script will handle your task adequately. You'll find writing RPM shell scripts goes much faster than writing whole programs."
+msgstr ""
+
+msgid "*Installation programs: The Windows world has standardized on graphical installation programs such as InstallShield or InstallAnywhere. The RPM system, on the other hand, has focused on automated installation with the rpm command. You can combine the best of both worlds by writing a graphical installation program on top of the RPM system."
+msgstr ""
+
+msgid "*Integration with environments: You may want to better integrate RPM with a Linux desktop environment such as GNOME or KDE."
+msgstr ""
+
+msgid "*Working with other languages: This book covers programming RPM with C, the core language for the library, as well as the Python and Perl scripting languages. You can use the RPM library, though, to help bind with other languages such as Tcl, Ruby, or even C# (especially one of the C# implementations for Linux)."
+msgstr ""
+
+msgid "This chapter and the next cover RPM programming. This chapter covers the RPM C programming library, which provides low-level access to RPM functionality. The next chapter covers the RPM Python programming library, which provides a much higher-level of abstraction. If you are attempting to write a complex RPM program, your best bet is to try the Python API first. Even so, there is a lot you can do with the RPM C library."
+msgstr ""
+
+msgid "Programming with the C Library"
+msgstr ""
+
+msgid "RPM C programs are C programs that call on functions in the RPM library, often called rpmlib. To use the rpmlib, you need to set up a C programming environment and install the rpm-devel package."
+msgstr ""
+
+msgid "Setting Up a C Programming Environment"
+msgstr ""
+
+msgid "At the very least, you’ll need a C compiler, gcc, and a text editor. The easiest way to get the C compiler is to install the packages grouped under Software Development with the Red Hat package management tool."
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "See <xref linkend=\"ch-management-software\" /> for more on the Red Hat package management tool."
+msgstr ""
+
+msgid "The gcc package requires a number of capabilities. Make sure you install all the necessary packages. Just about every Linux distribution includes gcc and everything you need to develop C programs, so this should not be a problem."
+msgstr ""
+
+msgid "For text editors, you can use the vi or emacs text editors, or any of a number of graphical editors such as gedit."
+msgstr ""
+
+msgid "<xref linkend=\"ch-development-tools\" /> covers Linux text editors and development tools."
+msgstr ""
+
+msgid "Once you have a C programming environment set up, you next need to get the RPM library for an RPM development environment."
+msgstr ""
+
+msgid "Setting Up the RPM Programming Environment"
+msgstr ""
+
+msgid "To program with the RPM library, you need to install the rpm-devel package. You must have a version of rpm-devel that matches your version of the rpm package. If you have Red Hat Linux, your installation CDs will also have the version of the RPM development package that corresponds to your system."
+msgstr ""
+
+msgid "Your program should link against the same libraries that are used by the rpm command itself in order to insure compatibility, so make sure that the version of the rpm-devel package matches the rpm package itself. In most cases, the best bet is to use the RPM programs and libraries that come with your version of Linux."
+msgstr ""
+
+msgid "You can also download the rpm packages from ftp://ftp.rpm.org/pub/rpm/dist/. This site includes versions of the RPM libraries going back to 1996, ancient history in terms of Linux."
+msgstr ""
+
+msgid "The package you need is rpm-devel. If you installed Red Hat Linux 8.0, the package is rpm-devel-4.1-1.06. This package includes header files, documentation, and libraries."
+msgstr ""
+
+msgid "Using the RPM Library"
+msgstr ""
+
+msgid "All C programs using the RPM library need to include the file rpmlib.h, which defines the core data structures, constants, and functions. One thing you’ll quickly note is that the RPM C library accesses RPM data at a very low level. This is one reason why many developers are moving to Python for their RPM programs, since the Python RPM API presents a higher level of abstraction."
+msgstr ""
+
+msgid "<xref linkend=\"ch-rpm-programming-python\" /> covers programming RPM with Python."
+msgstr ""
+
+msgid "In addition to rpmlib.h, the header file rpmcli.h defines a high-level API based on the command-line options to the rpm command. (The cli in rpmcli stands for command-line interface.) Table 16-1 lists other important RPM header files that make up the major subsystems of the RPM system."
+msgstr ""
+
+msgid "Table 16-1 RPM sub-system header files"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "Defines"
+msgstr ""
+
+msgid "rpmdb.h"
+msgstr ""
+
+msgid "RPM database access"
+msgstr ""
+
+msgid "rpmio.h"
+msgstr ""
+
+msgid "RPM input/output routines"
+msgstr ""
+
+msgid "popt.h"
+msgstr ""
+
+msgid "Command-line option processing"
+msgstr ""
+
+msgid "In addition, a number of header files define the major data objects in the RPM system and the functions that operate on these data objects. Table 16-2 lists these header files."
+msgstr ""
+
+msgid "Table 16-2 RPM data object header files"
+msgstr ""
+
+msgid "rpmts.h"
+msgstr ""
+
+msgid "Transaction sets"
+msgstr ""
+
+msgid "rpmte.h"
+msgstr ""
+
+msgid "Transaction elements (packages)"
+msgstr ""
+
+msgid "rpmds.h"
+msgstr ""
+
+msgid "Dependency sets"
+msgstr ""
+
+msgid "rpmfi.h"
+msgstr ""
+
+msgid "File information"
+msgstr ""
+
+msgid "header.h"
+msgstr ""
+
+msgid "Package headers"
+msgstr ""
+
+msgid "All the RPM include files are located in /usr/include/rpm on most versions of Linux."
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "You can use the rpm command and the queries introduced in <xref linkend=\"ch-using-rpm-db\" /> to determine exactly where the header files are located. Simply execute the following command:"
+msgstr ""
+
+msgid "$ rpm –ql rpm-devel"
+msgstr ""
+
+msgid "Examine the output of this command for include files."
+msgstr ""
+
+msgid "Compiling and Linking RPM Programs"
+msgstr ""
+
+msgid "RPM programs using the rpmlib C API are the same as C programs everywhere. You need to include the proper header files that define the API calls you need, and link with the right set of libraries."
+msgstr ""
+
+msgid "Include Files"
+msgstr ""
+
+msgid "The rpm include files are located in /usr/include/rpm, so you should add this directory to the set of directories that the C compiler looks in for include files with the –I command-line option. For example:"
+msgstr ""
+
+msgid "$ gcc –I/usr/include/rpm –c rpm1.c"
+msgstr ""
+
+msgid "This also means that you can install the rpm header files in other directories as needed, and just change the –I command-line option."
+msgstr ""
+
+msgid "To help debug problems, you probably want to add the -Wall (output all warnings) and -g (compile with debugging information). For example:"
+msgstr ""
+
+msgid "$ gcc -Wall -g –I/usr/include/rpm –c rpm1.c"
+msgstr ""
+
+msgid "Libraries"
+msgstr ""
+
+msgid "The main rpm library is librpm.a, or a shared version of this same library. To do most anything with RPM programming, you need to link in the following libraries, as listed in Table 16-3."
+msgstr ""
+
+msgid "Table 16-3 Required rpm libraries"
+msgstr ""
+
+msgid "Library"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+msgid "rpm"
+msgstr ""
+
+msgid "Main RPM library"
+msgstr ""
+
+msgid "rpmdb"
+msgstr ""
+
+msgid "RPM database library"
+msgstr ""
+
+msgid "rpmio"
+msgstr ""
+
+msgid "RPM input/output"
+msgstr ""
+
+msgid "popt"
+msgstr ""
+
+msgid "Command-line option parsing library"
+msgstr ""
+
+msgid "If you are creating RPMs from your C programs, you also need to link in the rpmbuild library. To compile and link a simple RPM program, you need a command like the following:"
+msgstr ""
+
+msgid "gcc -I/usr/include/rpm -o program program.c –lrpmbuild \\"
+msgstr ""
+
+msgid "-lrpm -lrpmdb -lrpmio –lpopt"
+msgstr ""
+
+msgid "On some versions of Linux or on other operating systems, you’ll likely need to link a set of helper libraries, as shown following:"
+msgstr ""
+
+msgid "-lrpm -lrpmdb -lrpmio –lpopt -lelf -lbz2 -lz"
+msgstr ""
+
+msgid "If you have installed the rpm libraries in a non-standard directory, you need to use the –L option to specify where else to look for libraries. For example:"
+msgstr ""
+
+msgid "gcc -I/usr/include/rpm -o program program.c –L/opt/lib/rpm \\"
+msgstr ""
+
+msgid "-lrpmbuild -lrpm -lrpmdb -lrpmio –lpopt -lelf -lbz2 -lz"
+msgstr ""
+
+msgid "The -L option tells the cc compiler to look in the /opt/lib/rpm directory as well as in the standard locations such as /usr/lib."
+msgstr ""
+
+msgid "Starting with RPM 4.2, you should just need to link in the rpm library. The other libraries will get pulled in automatically if needed."
+msgstr ""
+
+msgid "Getting information on your RPM environment"
+msgstr ""
+
+msgid "A large part of the RPM system lies in system-specific configuration, including the platform you are running on, compatible platforms, and locations of various files. The RPM rc and macro systems support hundreds of options tuned to the specifics of your system, and any customizations you have configured."
+msgstr ""
+
+msgid "<xref linkend=\"ch-customizing-rpm\" /> covers customizing RPM."
+msgstr ""
+
+msgid "Your C programs need to access these RPM system settings to ensure that all data values are properly set up for your system architecture and installation. So, to start an RPM C program, you need to read in all the configuration files. To do this, call rpmReadConfigFiles."
+msgstr ""
+
+msgid "int rpmReadConfigFiles(const char *files, const char *target);"
+msgstr ""
+
+msgid "The files parameter holds a colon-delimited list of files that make up your system’s configuration. The target parameter holds the target platform. You can pass NULL for both these parameters to use the RPM defaults, which is generally what you want."
+msgstr ""
+
+msgid "The rpmReadConfigFiles function returns a 0 on success, or –1 on errors."
+msgstr ""
+
+msgid "Once you have read in the configuration files, you can access values in the configuration, or print it out."
+msgstr ""
+
+msgid "Printing the Configuration"
+msgstr ""
+
+msgid "To print out the configuration, call rpmShowRC."
+msgstr ""
+
+msgid "int rpmShowRC(FILE* output);"
+msgstr ""
+
+msgid "Pass in an output file to print the configuration to, such as stdout. For example:"
+msgstr ""
+
+msgid "rpmShowRC( stdout );"
+msgstr ""
+
+msgid "The rpmShowRC function always returns 0."
+msgstr ""
+
+msgid "To control some of the output from rpmShowRC, and other RPM library functions, you can set the logging verbosity level by calling rpmSetVerbosity:"
+msgstr ""
+
+msgid "void rpmSetVerbosity(int level);"
+msgstr ""
+
+msgid "For example:"
+msgstr ""
+
+msgid "rpmSetVerbosity(RPMMESS_NORMAL);"
+msgstr ""
+
+msgid "Table 16-4 lists the verbosity levels from rpmio/rpmmessages.h going from least output to more output."
+msgstr ""
+
+msgid "Table 16-4 Output verbosity levels"
+msgstr ""
+
+msgid "Level"
+msgstr ""
+
+msgid "RPMMESS_FATALERROR"
+msgstr ""
+
+msgid "Only critical error conditions and above"
+msgstr ""
+
+msgid "RPMMESS_ERROR"
+msgstr ""
+
+msgid "Only error conditions and above"
+msgstr ""
+
+msgid "RPMMESS_WARNING"
+msgstr ""
+
+msgid "Only warning conditions and above"
+msgstr ""
+
+msgid "RPMMESS_QUIET"
+msgstr ""
+
+msgid "Same as RPMMESS_WARNING"
+msgstr ""
+
+msgid "RPMMESS_NORMAL"
+msgstr ""
+
+msgid "Only significant messages"
+msgstr ""
+
+msgid "RPMMESS_VERBOSE"
+msgstr ""
+
+msgid "Verbose informational messages"
+msgstr ""
+
+msgid "RPMMESS_DEBUG"
+msgstr ""
+
+msgid "Debugging messages, and everything above"
+msgstr ""
+
+msgid "You can put together a simple RPM program such as the one shown in Listing 16-1."
+msgstr ""
+
+msgid "Listing 16-1: rpm1.c"
+msgstr ""
+
+msgid "/* Show the rpmrc settings. */"
+msgstr ""
+
+msgid "#include &lt;stdio.h&gt;"
+msgstr ""
+
+msgid "#include &lt;stdlib.h&gt;"
+msgstr ""
+
+msgid "#include &lt;rpmlib.h&gt;"
+msgstr ""
+
+msgid "int main(int argc, char * argv[]) {"
+msgstr ""
+
+msgid "int status = rpmReadConfigFiles( (const char*) NULL,"
+msgstr ""
+
+msgid "(const char*) NULL);"
+msgstr ""
+
+msgid "if (status != 0) {"
+msgstr ""
+
+msgid "printf(\"Error reading RC files.\\n\");"
+msgstr ""
+
+msgid "exit(-1);"
+msgstr ""
+
+msgid "} else {"
+msgstr ""
+
+msgid "printf(\"Read RC OK\\n\");"
+msgstr ""
+
+msgid "}"
+msgstr ""
+
+msgid "exit(0);"
+msgstr ""
+
+msgid "Compile this program with a command like the following:"
+msgstr ""
+
+msgid "$ cc -I/usr/include/rpm -o rpm1 rpm1.c -lrpm -lrpmdb -lrpmio –lpopt"
+msgstr ""
+
+msgid "When you run this program, you should see the contents of your configuration printed to the screen."
+msgstr ""
+
+msgid "Expanding the Value of Macros"
+msgstr ""
+
+msgid "With all the rc and macro configuration files, the RPM system has a lot of values, usually called macros, that you can use to refer to settings. The term macro is used because the values can be more than simple strings. You can have one macro refer to the value of other macros, for example. The basic macro syntax is:"
+msgstr ""
+
+msgid "%name_of_macro"
+msgstr ""
+
+msgid "%_target"
+msgstr ""
+
+msgid "Most of the internal RPM macros start with an underscore, _."
+msgstr ""
+
+msgid "You can expand a macro with the rpm --eval command:"
+msgstr ""
+
+msgid "$ rpm --eval %_target"
+msgstr ""
+
+msgid "i386-linux"
+msgstr ""
+
+msgid "You can also refer to a macro using the following syntax:"
+msgstr ""
+
+msgid "%{name_of_macro}"
+msgstr ""
+
+msgid "%{_target}"
+msgstr ""
+
+msgid "This syntax makes it easier to include a macro in combinations with other text and other macros, since it clearly delineates the macro name."
+msgstr ""
+
+msgid "<xref linkend=\"ch-customizing-rpm\" /> covers macros in depth. In your C programs, your code will likely need to expand the value of macros to place data in the proper directories, determine the platform architecture, and so on."
+msgstr ""
+
+msgid "Expanding Macros in Your Code"
+msgstr ""
+
+msgid "You can use rpmExpand to determine the value of system macros from within your C programs."
+msgstr ""
+
+msgid "The rpmExpand function can expand the values of one or more macros, returning the expanded value. You can pass a variable number of parameters to rpmExpand, and you must terminate the list with a NULL:"
+msgstr ""
+
+msgid "char* rpmExpand (const char *arg,...);"
+msgstr ""
+
+msgid "You need to free the data returned by rpmExpand by calling free."
+msgstr ""
+
+msgid "The program in Listing 16-2 takes the first command-line argument to your program (after the program name) and expands that argument as a macro."
+msgstr ""
+
+msgid "Listing 16-2: rpmexpand.c"
+msgstr ""
+
+msgid "/* Show some macro settings. */"
+msgstr ""
+
+msgid "#include &lt;rpmmacro.h&gt;"
+msgstr ""
+
+msgid "char* value = rpmExpand(argv[1], (const char*) NULL);"
+msgstr ""
+
+msgid "printf(\"Value of macro is [%s]\\n\", value);"
+msgstr ""
+
+msgid "Compile and link this program as shown previously."
+msgstr ""
+
+msgid "When you run this program, pass the name of a macro to expand. For example:"
+msgstr ""
+
+msgid "$ ./rpmexpand %_target"
+msgstr ""
+
+msgid "Value of macro is [i386-linux]"
+msgstr ""
+
+msgid "You can pass multiple macros together, as shown following:"
+msgstr ""
+
+msgid "$ ./rpmexpand %_builddir/%_target"
+msgstr ""
+
+msgid "Value of macro is [/usr/src/redhat/BUILD/i386-linux]"
+msgstr ""
+
+msgid "You can verify this program with the rpm --eval command, introduced previously:"
+msgstr ""
+
+msgid "$ rpm --eval %_builddir/%_target"
+msgstr ""
+
+msgid "/usr/src/redhat/BUILD/i386-linux"
+msgstr ""
+
+msgid "The Power of popt"
+msgstr ""
+
+msgid "Popt provides a powerful command-line processing library, allowing the rpm command to handle a variety of options in a very flexible way. You can use popt alone as a library in its own right, or use it combined with the rpm library to handle command-line options like those of the rpm command."
+msgstr ""
+
+msgid "At its most basic, popt processes the command-line arguments to a C program, traditionally called argc and argv, into an option table that describes and contains all the option values."
+msgstr ""
+
+msgid "The main advantage popt has over simpler libraries such as getopt lies in the ability to handle complex arguments and to define aliases. The rpm command supports three different behaviors for the –i option, depending on the context (install a package, get information on a package as part of a query, and perform the install stage of a source RPM, as part of rpmbuild)."
+msgstr ""
+
+msgid "The popt library supports both traditional UNIX short options such as –U and the longer options common for GNU programs, especially on Linux, such as --upgrade. For the popt library, you can define both short and long variants for each option. In addition, command-line options may be individual flags, such as –v for verbose, or options that expect one or more data values as arguments, such as –f, which requires a file name."
+msgstr ""
+
+msgid "Popt aliases"
+msgstr ""
+
+msgid "One of the most powerful features of popt is the ability to define aliases. A popt alias allows you to define one command-line option as an alias for a set of options. As its simplest, the rpm command-line options --upgrade and –U refer to the same action. You could define one as an alias for the other."
+msgstr ""
+
+msgid "With rpm, the file /usr/lib/rpm/rpmpopt-4.1 (for RPM version 4.1) defines over 400 lines of popt aliases to configure the rpm command-line options. For example:"
+msgstr ""
+
+msgid "Rpm alias –requires --qf \\"
+msgstr ""
+
+msgid "\"[%{REQUIRENAME} %{REQUIREFLAGS:depflags} %{REQUIREVERSION}\\n]\" \\"
+msgstr ""
+
+msgid "--POPTdesc=$\"list capabilities required by package(s)\""
+msgstr ""
+
+msgid "This example defines rpm --requires as really a query using the --qf or --queryformat options covered in <xref linkend=\"ch-using-rpm-db\" /> ."
+msgstr ""
+
+msgid "See <xref linkend=\"ch-customizing-rpm\" /> for more on defining popt aliases."
+msgstr ""
+
+msgid "Programming with popt"
+msgstr ""
+
+msgid "To use popt in your programs, you need to fill in a table of options and then call poptGetContext. The poptGetContext function parses the command-line options and returns a poptContext, an opaque data type that you need to pass as a parameter to a number of popt functions. The poptContext holds the state of your command-line processing. This allows you to call the popt library with multiple sets of arguments. Each set will have an associate poptContext to keep all the data separate."
+msgstr ""
+
+msgid "The basic poptGetContext function signature follows:"
+msgstr ""
+
+msgid "poptContext poptGetContext (const char * name,"
+msgstr ""
+
+msgid "int argc,"
+msgstr ""
+
+msgid "const char ** argv,"
+msgstr ""
+
+msgid "const struct poptOption * options,"
+msgstr ""
+
+msgid "int flags );"
+msgstr ""
+
+msgid "All the popt functions require the popt.h include file:"
+msgstr ""
+
+msgid "#include &lt;popt.h&gt;"
+msgstr ""
+
+msgid "The flags should be a bitmask of any options you require, including those listed in Table 16-5."
+msgstr ""
+
+msgid "Table 16-5 Flags for poptGetContext"
+msgstr ""
+
+msgid "Flag"
+msgstr ""
+
+msgid "Meaning"
+msgstr ""
+
+msgid "POPT_CONTEXT_NO_EXEC"
+msgstr ""
+
+msgid "Ignore executable expansions"
+msgstr ""
+
+msgid "POPT_CONTEXT_KEEP_FIRST"
+msgstr ""
+
+msgid "Treat argv[0], the command name, as an option"
+msgstr ""
+
+msgid "POPT_CONTEXT_POSIXMEHARDER"
+msgstr ""
+
+msgid "Do not allow options to follow arguments"
+msgstr ""
+
+msgid "When done with a poptContext, you should free it by calling poptFreeContext:"
+msgstr ""
+
+msgid "poptContext poptFreeContext(poptContext context);"
+msgstr ""
+
+msgid "The call to poptFreeContext frees up the memory allocated for the context."
+msgstr ""
+
+msgid "You can also fill in a poptContext from settings in a file with poptReadConfigFile:"
+msgstr ""
+
+msgid "int poptReadConfigFile(poptContext context,"
+msgstr ""
+
+msgid "const char * file_name);"
+msgstr ""
+
+msgid "Filling in the Options Table"
+msgstr ""
+
+msgid "You need to pass in a table that defines all the possible options. This table is an array of structures, where each structure defines one option. The format for a single option follows:"
+msgstr ""
+
+msgid "struct poptOption {"
+msgstr ""
+
+msgid "const char * longName;"
+msgstr ""
+
+msgid "char shortName;"
+msgstr ""
+
+msgid "int argInfo;"
+msgstr ""
+
+msgid "void * arg;"
+msgstr ""
+
+msgid "int val;"
+msgstr ""
+
+msgid "const char * descrip;"
+msgstr ""
+
+msgid "const char * argDescrip;"
+msgstr ""
+
+msgid "};"
+msgstr ""
+
+msgid "Going through this structure, the longName defines the long version of the option, such as \"upgrade\" for --upgrade. The shortName defines the short, one-character option, such as 'U' for an option of -U. You can place a null character, '\\0', to specify no short option. With the rpm command, the --rebuilddb option has only a long name and not a short name, for example."
+msgstr ""
+
+msgid "The longName is not preceded by the double minus sign. Similarly, the shortName is not preceded by the single minus sign."
+msgstr ""
+
+msgid "The descrip field holds a short description of the option and the argDescrip field holds a description of the types of values it expects, or NULL if this option expects no values."
+msgstr ""
+
+msgid "The argInfo field holds a flag that tells the popt library how to treat the option. At the very least, you need to define the type of the option. You can also define special processing flags. Table 16-6 lists the argument types in the options table."
+msgstr ""
+
+msgid "Table 16-6 Popt option table argInfo argument types"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "POPT_ARG_NONE"
+msgstr ""
+
+msgid "0"
+msgstr ""
+
+msgid "No argument data, just the option such as -v"
+msgstr ""
+
+msgid "POPT_ARG_STRING"
+msgstr ""
+
+msgid "1"
+msgstr ""
+
+msgid "arg treated as string"
+msgstr ""
+
+msgid "POPT_ARG_INT"
+msgstr ""
+
+msgid "2"
+msgstr ""
+
+msgid "arg treated as int"
+msgstr ""
+
+msgid "POPT_ARG_LONG"
+msgstr ""
+
+msgid "3"
+msgstr ""
+
+msgid "arg treated as long"
+msgstr ""
+
+msgid "POPT_ARG_INCLUDE_TABLE"
+msgstr ""
+
+msgid "4"
+msgstr ""
+
+msgid "arg points to a table"
+msgstr ""
+
+msgid "POPT_ARG_CALLBACK"
+msgstr ""
+
+msgid "5"
+msgstr ""
+
+msgid "arg points to a callback function"
+msgstr ""
+
+msgid "POPT_ARG_INTL_DOMAIN"
+msgstr ""
+
+msgid "6"
+msgstr ""
+
+msgid "sets translation domain"
+msgstr ""
+
+msgid "POPT_ARG_VAL"
+msgstr ""
+
+msgid "7"
+msgstr ""
+
+msgid "use value of val field for arg"
+msgstr ""
+
+msgid "POPT_ARG_FLOAT"
+msgstr ""
+
+msgid "8"
+msgstr ""
+
+msgid "arg treated as float"
+msgstr ""
+
+msgid "POPT_ARG_DOUBLE"
+msgstr ""
+
+msgid "9"
+msgstr ""
+
+msgid "arg treated as double"
+msgstr ""
+
+msgid "Use these constants, from the include file popt.h, in place of the actual numbers."
+msgstr ""
+
+msgid "Depending on the type you define in the argInfo field, popt will interpret the generic pointer field, arg, in different ways. Using a pointer allows the popt library to automatically update your program variables based on the command-line option settings."
+msgstr ""
+
+msgid "You can pass NULL for the arg field. In this case, the popt library will not set any values for you."
+msgstr ""
+
+msgid "The POPT_ARG_NONE type indicates that this option has no argument. For example, the -v verbose option has no data. On the other hand, the POPT_ARG_STRING type indicates that the user should provide a string. For example, the -f option to the rpm command is expected to include a string argument, the name of the file to look up."
+msgstr ""
+
+msgid "If the argInfo argument type is POPT_ARG_NONE, the popt library will set arg to 1 if the option is present on the command line. You should pass a pointer to an int if you want this set for you."
+msgstr ""
+
+msgid "Popt Callbacks"
+msgstr ""
+
+msgid "The POPT_ARG_CALLBACK type indicates that the arg field holds a function pointer to a callback function of the following type:"
+msgstr ""
+
+msgid "typedef void (*poptCallbackType) (poptContext con,"
+msgstr ""
+
+msgid "enum poptCallbackReason reason,"
+msgstr ""
+
+msgid "const struct poptOption * opt,"
+msgstr ""
+
+msgid "const char * arg,"
+msgstr ""
+
+msgid "const void * data);"
+msgstr ""
+
+msgid "The callback reason will be one of the following enum values:"
+msgstr ""
+
+msgid "enum poptCallbackReason {"
+msgstr ""
+
+msgid "POPT_CALLBACK_REASON_PRE = 0,"
+msgstr ""
+
+msgid "POPT_CALLBACK_REASON_POST = 1,"
+msgstr ""
+
+msgid "POPT_CALLBACK_REASON_OPTION = 2"
+msgstr ""
+
+msgid "The data field holds the value of the descrip field in the poptOption entry. You can cheat and stuff a pointer to arbitrary data into this field."
+msgstr ""
+
+msgid "The callback function is most useful if you are using nested option tables. You can place your processing code for the nested options into a callback."
+msgstr ""
+
+msgid "Special Option Table Flags"
+msgstr ""
+
+msgid "In addition to the types in Table 16-6, you can also define special bit flags that define extra processing information for each option. Combine these bit flags with the type values using a logical OR operation:"
+msgstr ""
+
+msgid "*The POPT_ARGFLAG_ONEDASH flag allows the longName to be used with one or two dashes, such as -upgrade or --upgrade."
+msgstr ""
+
+msgid "*For bitmask options, the POPT_ARGFLAG_OR, POPT_ARGFLAG_NOR, POPT_ARGFLAG_AND, POPT_ARGFLAG_NAND, and POPT_ARGFLAG_XOR type flags tell the popt library to apply the given operation, OR, NOR, AND, NAND, or XOR, to the value if set. The POPT_ARGFLAG_NOT flag tells the popt library to negate the value first."
+msgstr ""
+
+msgid "*You can also use the macros POPT_BIT_SET to set a bit and POPT_BIT_CLR to clear a bit."
+msgstr ""
+
+msgid "*The POPT_ARGFLAG_OPTIONAL flag indicates that the argument value is optional."
+msgstr ""
+
+msgid "*The POPT_ARGFLAG_DOC_HIDDEN flag tells popt to hide this option when displaying the help documentation. In other words, this is an internal option."
+msgstr ""
+
+msgid "*The rarely used POPT_ARGFLAG_STRIP flag tells popt to consume an option and ignore it. This option is rarely used."
+msgstr ""
+
+msgid "*The POPT_ARGFLAG_SHOW_DEFAULT flag tells popt to show the initial value of the argument for this option as a default when displaying a help message."
+msgstr ""
+
+msgid "Magic Options"
+msgstr ""
+
+msgid "With RPM programs, developers usually round out the option table with three special options: POPT_AUTOALIAS, POPT_AUTOHELP, and POPT_TABLEEND. The POPT_AUTOALIAS option sets up a table of aliases:"
+msgstr ""
+
+msgid "#define POPT_AUTOALIAS { NULL, '\\0', POPT_ARG_INCLUDE_TABLE, poptAliasOptions, \\"
+msgstr ""
+
+msgid "0, \"Options implemented via popt alias/exec:\", NULL },"
+msgstr ""
+
+msgid "This option refers to the table, poptAliasOptions. You can use the POPT_ARG_INCLUDE_TABLE argInfo type to include another table of options. These options get filled in from popt aliases. In addition, within RPM programs, another table, rpmcliAllPoptTable, holds a set of options common to all RPM programs."
+msgstr ""
+
+msgid "The POPT_AUTOHELP option supports standard help options. The POPT_AUTOHELP macro adds in automatic support for -?, --help, and --usage options."
+msgstr ""
+
+msgid "#define POPT_AUTOHELP { NULL, '\\0', POPT_ARG_INCLUDE_TABLE, poptHelpOptions, \\"
+msgstr ""
+
+msgid "0, \"Help options:\", NULL },"
+msgstr ""
+
+msgid "The POPT_TABLEEND option defines an empty option to mark the end of the table. You must include an empty option to end the table, and POPT_TABLEEND makes this easy."
+msgstr ""
+
+msgid "#define POPT_TABLEEND { NULL, '\\0', 0, 0, 0, NULL, NULL }"
+msgstr ""
+
+msgid "The code in Listing 16-3, in the \"Running a Popt Example\" section later in this chapter, shows a full option table."
+msgstr ""
+
+msgid "Parsing the Command-Line Options"
+msgstr ""
+
+msgid "Once you have set up a poptGetContext, you need to iterate over all the command-line parameters. To do this, call poptGetNextOpt:"
+msgstr ""
+
+msgid "int poptGetNextOpt(poptContext context);"
+msgstr ""
+
+msgid "If an error occurs, poptGetNextOpt returns a negative error code. If the context is at the end of the options, poptGetNextOpt returns –1. Table 16-7 lists the error codes:"
+msgstr ""
+
+msgid "Table 16-7 Error codes from poptGetNextOpt"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "POPT_ERROR_NOARG"
+msgstr ""
+
+msgid "Option requires an argument, but it is missing"
+msgstr ""
+
+msgid "POPT_ERROR_BADOPT"
+msgstr ""
+
+msgid "Argument could not be parsed"
+msgstr ""
+
+msgid "POPT_ERROR_OPTSTOODEEP"
+msgstr ""
+
+msgid "Aliases are nested too deeply"
+msgstr ""
+
+msgid "POPT_ERROR_BADQUOTE"
+msgstr ""
+
+msgid "Start and end quotation marks don't match"
+msgstr ""
+
+msgid "POPT_ERROR_BADNUMBER"
+msgstr ""
+
+msgid "Argument could not be converted to a number"
+msgstr ""
+
+msgid "POPT_ERROR_OVERFLOW"
+msgstr ""
+
+msgid "Argument number was too big or too small"
+msgstr ""
+
+msgid "POPT_ERROR_ERRNO"
+msgstr ""
+
+msgid "A system call returned an error in errno"
+msgstr ""
+
+msgid "Walking Through the Command-Line Options"
+msgstr ""
+
+msgid "In normal circumstances, poptGetNextOpt parses all the options and returns –1. If your needs are simple, you can use the pointers to the variables passed in the options table, described previously. If you need some special processing for options not handled by popt, that is, options of type POPT_ARG_NONE, then poptGetNextOpt returns the single-character option."
+msgstr ""
+
+msgid "In this case, you can call poptGetNextOpt in a while loop. For example:"
+msgstr ""
+
+msgid "while ((option = poptGetNextOpt(context) ) {"
+msgstr ""
+
+msgid "/* Do something... */"
+msgstr ""
+
+msgid "Inside your while loop, you can call poptGetOptArg to get the value of the argument:"
+msgstr ""
+
+msgid "char * poptGetOptArg(poptContext context);"
+msgstr ""
+
+msgid "You can restart the processing of the options by calling poptResetContext:"
+msgstr ""
+
+msgid "void poptResetContext(poptContext context);"
+msgstr ""
+
+msgid "The popt system is just looking for arguments that start with a dash, -. In most command-line applications, you may have a number of extra arguments at the end, such as a list of file names. The popt library doesn’t process these, but can provide them to you."
+msgstr ""
+
+msgid "Call poptGetArg to return the next extra argument:"
+msgstr ""
+
+msgid "char * poptGetArg(poptContext context);"
+msgstr ""
+
+msgid "Keep calling this function until it returns NULL."
+msgstr ""
+
+msgid "Call poptPeekArg to look at the next argument but not mark it as being processed:"
+msgstr ""
+
+msgid "char * poptPeekArg(poptContext context);"
+msgstr ""
+
+msgid "Or, you can get the whole list of extra arguments by calling poptGetArgs:"
+msgstr ""
+
+msgid "char ** poptGetArgs(poptContext context);"
+msgstr ""
+
+msgid "Handling Errors"
+msgstr ""
+
+msgid "Inside your while loop processing the command-line arguments, you can call poptBadOption to get the option that was bad, and poptStrerror to look up the error message associated with the error."
+msgstr ""
+
+msgid "For poptBadOption, you need to pass in the context, and a bitmask of flags. Normally, pass 0 for no flags or POPT_BADOPTION_NOALIAS, which tells popt to return the actual option, not a value defined in an alias. This makes poptBadOption return the option closest to, if not exactly the same as, what the user entered, which makes for better error reporting."
+msgstr ""
+
+msgid "The poptBadOption function signature follows:"
+msgstr ""
+
+msgid "char * poptBadOption(poptContext context, int flags);"
+msgstr ""
+
+msgid "Pass the error number returned by poptGetOptArg to poptStrerror to get the standard error message for that option:"
+msgstr ""
+
+msgid "const char * poptStrerror(const int error_code);"
+msgstr ""
+
+msgid "You can combine these and print out an error with code like the following:"
+msgstr ""
+
+msgid "fprintf( stderr, \"Error with option [%s]\\n %s\","
+msgstr ""
+
+msgid "poptBadOption(context, POPT_BADOPTION_NOALIAS),"
+msgstr ""
+
+msgid "poptStrerror(error_code);"
+msgstr ""
+
+msgid "To print out a usage message, call poptPrintUsage:"
+msgstr ""
+
+msgid "void poptPrintUsage(poptContext context,"
+msgstr ""
+
+msgid "FILE *output,"
+msgstr ""
+
+msgid "int flags);"
+msgstr ""
+
+msgid "This function prints out the usage help information, which is a useful function when the user has called a program with incomplete or wrong options."
+msgstr ""
+
+msgid "Running a popt example"
+msgstr ""
+
+msgid "Pulling this all together, you can use the popt1.c program, in Listing 16-3, as an example for using popt to process command-line options."
+msgstr ""
+
+msgid "Listing 16-3: popt1.c"
+msgstr ""
+
+msgid "/* Processes command-line options. */"
+msgstr ""
+
+msgid "/* Data values for the options. */"
+msgstr ""
+
+msgid "static int intVal = 55;"
+msgstr ""
+
+msgid "static int print = 0;"
+msgstr ""
+
+msgid "static char* stringVal;"
+msgstr ""
+
+msgid "void callback(poptContext context,"
+msgstr ""
+
+msgid "const struct poptOption * option,"
+msgstr ""
+
+msgid "const void * data)"
+msgstr ""
+
+msgid "{"
+msgstr ""
+
+msgid "switch(reason)"
+msgstr ""
+
+msgid "case POPT_CALLBACK_REASON_PRE:"
+msgstr ""
+
+msgid "printf(\"\t Callback in pre setting\\n\"); break;"
+msgstr ""
+
+msgid "case POPT_CALLBACK_REASON_POST:"
+msgstr ""
+
+msgid "printf(\"\t Callback in post setting\\n\"); break;"
+msgstr ""
+
+msgid "case POPT_CALLBACK_REASON_OPTION:"
+msgstr ""
+
+msgid "printf(\"\t Callback in option setting\\n\"); break;"
+msgstr ""
+
+msgid "/* Set up a table of options. */"
+msgstr ""
+
+msgid "static struct poptOption optionsTable[] = {"
+msgstr ""
+
+msgid "{ (const) \"int\", (char) 'i', POPT_ARG_INT, (void*) &amp;intVal, 0,"
+msgstr ""
+
+msgid "(const) \"follow with an integer value\", (const) \"2, 4, 8, or 16\" },"
+msgstr ""
+
+msgid "{ \"callback\", '\\0', POPT_ARG_CALLBACK|POPT_ARGFLAG_DOC_HIDDEN,"
+msgstr ""
+
+msgid "&amp;callback, 0, NULL, NULL },"
+msgstr ""
+
+msgid "{ (const) \"file\", (char) 'f', POPT_ARG_STRING, (void*) &amp;stringVal, 0,"
+msgstr ""
+
+msgid "(const) \"follow with a file name\", NULL },"
+msgstr ""
+
+msgid "{ (const) \"print\", (char) 'p', POPT_ARG_NONE, &amp;print, 0,"
+msgstr ""
+
+msgid "(const) \"send output to the printer\", NULL },"
+msgstr ""
+
+msgid "POPT_AUTOALIAS"
+msgstr ""
+
+msgid "POPT_AUTOHELP"
+msgstr ""
+
+msgid "POPT_TABLEEND"
+msgstr ""
+
+msgid "int main(int argc, char *argv[]) {"
+msgstr ""
+
+msgid "poptContext context = poptGetContext("
+msgstr ""
+
+msgid "(const char*) \"popt1\","
+msgstr ""
+
+msgid "argc,"
+msgstr ""
+
+msgid "argv,"
+msgstr ""
+
+msgid "(const struct poptOption* ) &amp;optionsTable,"
+msgstr ""
+
+msgid "0);"
+msgstr ""
+
+msgid "int option = poptGetNextOpt(context);"
+msgstr ""
+
+msgid "printf(\"option = %d\\n\", option);"
+msgstr ""
+
+msgid "/* Print out option values. */"
+msgstr ""
+
+msgid "printf(\"After processing, options have values:\\n\");"
+msgstr ""
+
+msgid "printf(\"\t intVal holds %d\\n\", intVal);"
+msgstr ""
+
+msgid "printf(\"\t print flag holds %d\\n\", print);"
+msgstr ""
+
+msgid "printf(\"\t stringVal holds [%s]\\n\", stringVal);"
+msgstr ""
+
+msgid "poptFreeContext(context);"
+msgstr ""
+
+msgid "This example defines a callback but otherwise uses the simplest case for processing the command-line options. This program lets the popt library simply set the values into the option table. In most cases, you should avoid more complex command-line processing."
+msgstr ""
+
+msgid "To compile popt programs, you just need the popt library. For example:"
+msgstr ""
+
+msgid "gcc -I/usr/include/rpm -o popt1 popt1.c -lpopt"
+msgstr ""
+
+msgid "When you run this program, try out the different options. For example, when you set all the options, you’ll see output like the following:"
+msgstr ""
+
+msgid "$ ./popt1 -i 42 --print -f filename1"
+msgstr ""
+
+msgid "Callback in option setting"
+msgstr ""
+
+msgid "Callback in post setting"
+msgstr ""
+
+msgid "option = -1"
+msgstr ""
+
+msgid "After processing, options have values:"
+msgstr ""
+
+msgid "intVal holds 42"
+msgstr ""
+
+msgid "print flag holds 1"
+msgstr ""
+
+msgid "stringVal holds [filename1]"
+msgstr ""
+
+msgid "This command used two short options and one long. You can mix and match short and long options, as shown following:"
+msgstr ""
+
+msgid "$ ./popt1 --int 42 -p --file filename1"
+msgstr ""
+
+msgid "This example used a short option for print, -p, and long options for the other two options. The popt library also provides handy help and usage messages, using the option table macro POPT_AUTOALIAS. To get a help message, use --help or -?:"
+msgstr ""
+
+msgid "$ ./popt1 --help"
+msgstr ""
+
+msgid "Usage: popt1 [OPTION...]"
+msgstr ""
+
+msgid "-i, --int=2, 4, 8, or 16 follow with an integer value"
+msgstr ""
+
+msgid "-f, --file=STRING follow with a file name"
+msgstr ""
+
+msgid "-p, --print send output to the printer"
+msgstr ""
+
+msgid "Options implemented via popt alias/exec:"
+msgstr ""
+
+msgid "Help options:"
+msgstr ""
+
+msgid "-?, --help Show this help message"
+msgstr ""
+
+msgid "--usage Display brief usage message"
+msgstr ""
+
+msgid "Notice how the help descriptions from the options table are used."
+msgstr ""
+
+msgid "With some shells, especially the tcsh shell, you need to wrap a -? In single quotes. For example:"
+msgstr ""
+
+msgid "$ ./popt1 '-?'"
+msgstr ""
+
+msgid "The usage message is shorter, and you also get it for free:"
+msgstr ""
+
+msgid "$ ./popt1 --usage"
+msgstr ""
+
+msgid "Usage: popt1 [-i|--int 2, 4, 8, or 16] [-f|--file STRING] [-p|--print]"
+msgstr ""
+
+msgid "[-?|--help] [--usage]"
+msgstr ""
+
+msgid "All in all, the popt library provides a handy library for processing command-line options and aliases, covered in <xref linkend=\"ch-customizing-rpm\" />."
+msgstr ""
+
+msgid "Handling rpm command-line options"
+msgstr ""
+
+msgid "The RPM C library makes extensive use of popt for processing command-line arguments. Functions that set up the RPM library, such as rpmcliInit, which sets up the RPM command-line environment, require a table of poptOption entries that define the command-line options for your program."
+msgstr ""
+
+msgid "To create a simple program that handles the standard rpm command-line options, set up the following options table:"
+msgstr ""
+
+msgid "{ NULL, '\\0', POPT_ARG_INCLUDE_TABLE, rpmcliAllPoptTable, 0,"
+msgstr ""
+
+msgid "\"Common options for all rpm modes and executables:\","
+msgstr ""
+
+msgid "NULL },"
+msgstr ""
+
+msgid "Then, initialize your program with a call to rpmcliInit:"
+msgstr ""
+
+msgid "poptContext rpmcliInit(int argc, char *const argv[],"
+msgstr ""
+
+msgid "struct poptOption * optionsTable);"
+msgstr ""
+
+msgid "When you call rpmcliInit, it will set up all the variables for the standard rpm command-line options."
+msgstr ""
+
+msgid "For example, to see if the verbose flag is turned on, call rpmIsVerbose:"
+msgstr ""
+
+msgid "int rpmIsVerbose();"
+msgstr ""
+
+msgid "When you are done with a program that called rpmcliInit, call rpmcliFini to clean up the global data:"
+msgstr ""
+
+msgid "poptContext rpmcliFini(poptContext context);"
+msgstr ""
+
+msgid "The call to rpmcliFini returns NULL."
+msgstr ""
+
+msgid "Working with RPM Files"
+msgstr ""
+
+msgid "The RPM C library provides functions to read RPM files as well as query the RPM database. Going beyond querying, you can perform all the tasks that the rpm and rpmbuild commands do, since both these commands are written in C using the RPM library. That said, some tasks are much easier than other tasks. If you are writing a complex package installation program, or a program that keeps various systems up to date with regards to package versions, you may want to look at the Python RPM API instead of the C RPM library."
+msgstr ""
+
+msgid "<xref linkend=\"ch-rpm-programming-python\" /> covers the Python RPM API."
+msgstr ""
+
+msgid "Opening RPM files"
+msgstr ""
+
+msgid "When working with an RPM file from within a program, the first thing you need to do is open the file. Use Fopen:"
+msgstr ""
+
+msgid "FD_t Fopen(const char * path,"
+msgstr ""
+
+msgid "const char * fmode);"
+msgstr ""
+
+msgid "Fopen works like the standard C function fopen(3)."
+msgstr ""
+
+msgid "The reason the RPM library wraps the input/output C library functions is to ensure portability to other operating systems. This is a fairly common technique."
+msgstr ""
+
+msgid "Reading the RPM lead and signature"
+msgstr ""
+
+msgid "Once you have opened an RPM file, you can start to read header information, which is the most interesting information to most RPM programs. (You may also want to read the files in the RPM payload, for example.) Before you can start reading the header, though, you must read forward in the RPM file past the lead and signature."
+msgstr ""
+
+msgid "<xref linkend=\"ch-rpm-overview\" /> introduces the lead and signature."
+msgstr ""
+
+msgid "Even if your programs don’t want to examine the lead or signature, you must read past to position the file offset properly for reading the header information. To read past the lead, call readLead:"
+msgstr ""
+
+msgid "int readLead(FD_t fd, struct rpmlead *lead);"
+msgstr ""
+
+msgid "The readLead function returns 0 on success or 1 on an error. It fills in an rpmlead struct:"
+msgstr ""
+
+msgid "struct rpmlead {"
+msgstr ""
+
+msgid "unsigned char magic[4];"
+msgstr ""
+
+msgid "unsigned char major;"
+msgstr ""
+
+msgid "unsigned char minor;"
+msgstr ""
+
+msgid "short type;"
+msgstr ""
+
+msgid "short archnum;"
+msgstr ""
+
+msgid "char name[66];"
+msgstr ""
+
+msgid "short osnum;"
+msgstr ""
+
+msgid "short signature_type;"
+msgstr ""
+
+msgid "char reserved[16];"
+msgstr ""
+
+msgid "To read past the signature, call rpmReadSignature:"
+msgstr ""
+
+msgid "rpmRC rpmReadSignature(FD_t fd,"
+msgstr ""
+
+msgid "Header * header,"
+msgstr ""
+
+msgid "sigType sig_type);"
+msgstr ""
+
+msgid "The return code is one of the values listed in Table 16-8."
+msgstr ""
+
+msgid "Table 16-8 Return codes from rpmReadSignature"
+msgstr ""
+
+msgid "RPMRC_OK"
+msgstr ""
+
+msgid "RPMRC_BADMAGIC"
+msgstr ""
+
+msgid "RPMRC_FAIL"
+msgstr ""
+
+msgid "RPMRC_BADSIZE"
+msgstr ""
+
+msgid "RPMRC_SHORTREAD"
+msgstr ""
+
+msgid "You can do more with the signature than merely reading past it, of course. Look in the online RPM documentation for more on verifying signatures."
+msgstr ""
+
+msgid "After reading the signature, you can start to read the general header entries."
+msgstr ""
+
+msgid "Reading header information"
+msgstr ""
+
+msgid "The header information includes the package name, version, pre- and post-installation scripts, and so on. To read in the RPM header, call headerRead. If successful, headerRead returns a Header object. You can then read data values from the Header."
+msgstr ""
+
+msgid "Header headerRead(FD_t fd,"
+msgstr ""
+
+msgid "enum hMagic magicp);"
+msgstr ""
+
+msgid "When working with the RPM database, you will also use Header objects."
+msgstr ""
+
+msgid "The trickiest thing about calling headerRead is that you must pass a special magic number flag. This value must be HEADER_MAGIC_YES if the header has a set of magic numbers, and HEADER_MAGIC_NO if not. If you guess incorrectly, headerRead will return an error. To get around, this, you can compare the major number in the lead. For example:"
+msgstr ""
+
+msgid "Header header = headerRead(fd, (lead.major &gt;= 3) ?"
+msgstr ""
+
+msgid "HEADER_MAGIC_YES : HEADER_MAGIC_NO);"
+msgstr ""
+
+msgid "This snippet is one of the gems you'll find when you browse the RPM source code. Use the source."
+msgstr ""
+
+msgid "To read values from the Header, call headerGetEntry. To call headerGetEntry, you pass in a Header and a tag ID. You get back the type of the tag, a pointer to the tag values, and a count of the number of values stored under this tag."
+msgstr ""
+
+msgid "int headerGetEntry(Header header,"
+msgstr ""
+
+msgid "int_32 tag,"
+msgstr ""
+
+msgid "hTYP_t type,"
+msgstr ""
+
+msgid "void **pointer,"
+msgstr ""
+
+msgid "hCNT_t data_size);"
+msgstr ""
+
+msgid "The call to headerGetEntry returns a 1 on success, or a 0 on failure. On success, the pointer will point at the retrieved data, with the type parameter set to one of the following enum values:"
+msgstr ""
+
+msgid "enum rpmTagType_e {"
+msgstr ""
+
+msgid "RPM_NULL_TYPE = 0,"
+msgstr ""
+
+msgid "RPM_CHAR_TYPE = 1,"
+msgstr ""
+
+msgid "RPM_INT8_TYPE = 2,"
+msgstr ""
+
+msgid "RPM_INT16_TYPE = 3,"
+msgstr ""
+
+msgid "RPM_INT32_TYPE = 4,"
+msgstr ""
+
+msgid "RPM_STRING_TYPE = 6,"
+msgstr ""
+
+msgid "RPM_BIN_TYPE = 7,"
+msgstr ""
+
+msgid "RPM_STRING_ARRAY_TYPE = 8,"
+msgstr ""
+
+msgid "RPM_I18NSTRING_TYPE"
+msgstr ""
+
+msgid "If the type is RPM_STRING_ARRAY_TYPE or RPM_BIN_TYPE, you must free the pointer. Call headerFreeData to free the data:"
+msgstr ""
+
+msgid "void* headerFreeData(const void *pointer,"
+msgstr ""
+
+msgid "rpmTagType type);"
+msgstr ""
+
+msgid "You need to pass in the data pointer and the type flag. You can safely call headerFreeData for all types. The function will do nothing if the type is not set up to require freeing."
+msgstr ""
+
+msgid "When you call headerGetEntry, you must identify the tag you want from the header. This tag is an identifier for the --queryformat tags introduced in <xref linkend=\"ch-using-rpm-db\" /> . The file rpmlib.h lists the various tags, such as RPMTAG_NAME, RPMTAG_VERSION, and RPMTAG_RELEASE."
+msgstr ""
+
+msgid "The following function shows how to read a string entry from a Header:"
+msgstr ""
+
+msgid "/* Function to read a string header entry. */"
+msgstr ""
+
+msgid "char* readHeaderString(Header header, int_32 tag_id) {"
+msgstr ""
+
+msgid "int_32 type;"
+msgstr ""
+
+msgid "void* pointer;"
+msgstr ""
+
+msgid "int_32 data_size;"
+msgstr ""
+
+msgid "int header_status = headerGetEntry(header,"
+msgstr ""
+
+msgid "tag_id,"
+msgstr ""
+
+msgid "&amp;type,"
+msgstr ""
+
+msgid "&amp;pointer,"
+msgstr ""
+
+msgid "&amp;data_size);"
+msgstr ""
+
+msgid "if (header_status) {"
+msgstr ""
+
+msgid "if (type == RPM_STRING_TYPE) {"
+msgstr ""
+
+msgid "return pointer;"
+msgstr ""
+
+msgid "return NULL;"
+msgstr ""
+
+msgid "Pass the Header object and the ID of the tag to read. For example:"
+msgstr ""
+
+msgid "char* name = readHeaderString(header, RPMTAG_NAME);"
+msgstr ""
+
+msgid "char* version = readHeaderString(header, RPMTAG_VERSION);"
+msgstr ""
+
+msgid "char* release = readHeaderString(header, RPMTAG_RELEASE);"
+msgstr ""
+
+msgid "To just get the name, version, and release number, you can call the utility function headerNVR, which has the following function signature:"
+msgstr ""
+
+msgid "int headerNVR(Header header,"
+msgstr ""
+
+msgid "const char **nameptr,"
+msgstr ""
+
+msgid "const char **versionptr,"
+msgstr ""
+
+msgid "const char **releaseptr);"
+msgstr ""
+
+msgid "When you are through with a header, free it by calling headerFree:"
+msgstr ""
+
+msgid "Header headerFree(Header header);"
+msgstr ""
+
+msgid "The call to headerFree returns NULL, so you can use the call to set the original pointer to to NULL to prevent accidental reuse. For example:"
+msgstr ""
+
+msgid "header = headerFree(header);"
+msgstr ""
+
+msgid "A shortcut to header information"
+msgstr ""
+
+msgid "You can read in a Header using the shortcut utility method rpmReadPackageFile:"
+msgstr ""
+
+msgid "int rpmReadPackageFile(rpmts ts,"
+msgstr ""
+
+msgid "FD_t fd,"
+msgstr ""
+
+msgid "const char *filename,"
+msgstr ""
+
+msgid "Header *header);"
+msgstr ""
+
+msgid "You need to pass a transaction set to rpmReadPackageFile and an open file. The filename is just used for reporting errors. On success, rpmReadPackageFile fills in a Header object from the package file. The return value is 0 for success."
+msgstr ""
+
+msgid "To get the necessary transaction set, you need to create one with rpmtsCreate, covered in the \"Programming with the RPM Database\" section, following."
+msgstr ""
+
+msgid "In most cases, you should call rpmReadPackageFile in place of readLead, rpmReadSignature, and headerRead, since rpmReadPackageFile also verifies the package integrity."
+msgstr ""
+
+msgid "Closing RPM files"
+msgstr ""
+
+msgid "When you’re done with an RPM file, close it with Fclose:"
+msgstr ""
+
+msgid "int Fclose(FD_t fd);"
+msgstr ""
+
+msgid "Fclose acts much like the standard C function fclose(3). The FD_t is an RPM data type that is very similar to a FILE pointer."
+msgstr ""
+
+msgid "The RPM I/O subsystem, defined with rpmio.h, includes functions that mimic (and in most cases wrap) the ANSI C stdio functions. These include: Fopen, Fclose, Fread, Fwrite, Ferror, Fflush, Fileno, and Fseek."
+msgstr ""
+
+msgid "These functions wrap the ANSI C stdio functions to add new features. The Fopen function, for example, supports HTTP or FTP URLs in the place of a file name, so long as you append \".ufdio\" to the mode."
+msgstr ""
+
+msgid "Programming with the RPM Database"
+msgstr ""
+
+msgid "Many functions in rpmlib require a transaction set. In particular, accessing the rpm database is quite easy using a transaction set."
+msgstr ""
+
+msgid "Create a transaction set by calling rpmtsCreate:"
+msgstr ""
+
+msgid "rpmts rpmtsCreate(void);"
+msgstr ""
+
+msgid "RPM uses transaction sets to bracket operations on the RPM database. As the RPM API evolves, transaction sets will become more and more important. Transaction sets also help in that the RPM library will automatically open the RPM database as needed."
+msgstr ""
+
+msgid "When you are done with a transaction set, call rpmtsFree:"
+msgstr ""
+
+msgid "rpmts rpmtsFree(rpmts ts);"
+msgstr ""
+
+msgid "The call to rpmtsFree returns NULL."
+msgstr ""
+
+msgid "Database iterators"
+msgstr ""
+
+msgid "Once you have a transaction set, you can iterate over the installed packages in the RPM database by creating an iterator. To do this, call rpmtsInitIterator:"
+msgstr ""
+
+msgid "rpmdbMatchIterator rpmtsInitIterator(const rpmts ts,"
+msgstr ""
+
+msgid "rpmTag rpmtag,"
+msgstr ""
+
+msgid "const void *keypointer,"
+msgstr ""
+
+msgid "size_t keylen);"
+msgstr ""
+
+msgid "You need to specify which tag to iterate by, which in most cases will be the package name, RPMTAG_NAME, introduced previously With the RPMTAG_NAME tag, you need to pass the name of a package to look for in the keypointer parameter. (The keypointer varies based on the tag you pass.)"
+msgstr ""
+
+msgid "For string data, you can pass 0 for the keylen parameter. For example, this call to rpmtsInitIterator looks for all packages named sendmail."
+msgstr ""
+
+msgid "rpmdbMatchIterator iter;"
+msgstr ""
+
+msgid "iter = rpmtsInitIterator(ts, RPMTAG_NAME, \"sendmail\", 0);"
+msgstr ""
+
+msgid "The rpmdbMatchIterator allows you to iterate through a number of packages, in this case, all the packages that match a given name. After calling rpmtsInitIterator, the next step is to call rpmdbNextIterator:"
+msgstr ""
+
+msgid "Header rpmdbNextIterator(rpmdbMatchIterator iter);"
+msgstr ""
+
+msgid "This function returns the next package Header object in the iterator. The Header will be NULL if there are no more packages in the iterator."
+msgstr ""
+
+msgid "If the Header is not NULL, you can get entries from it, as shown previously. You can use a while loop to go through all the matching packages. For example:"
+msgstr ""
+
+msgid "while ( (installed_header = rpmdbNextIterator(iter) ) != NULL) {"
+msgstr ""
+
+msgid "In future versions of the RPM library, rpmtsNextIterator, will replace rpmdbNextIterator."
+msgstr ""
+
+msgid "You do not need to free the Header returned by rpmdbNextIterator. Also, the next call to rpmdbNextIterator will reset the Header."
+msgstr ""
+
+msgid "You can customize how an iterator works by adding a pattern to the iterator with rpmdbSetIteratorRE:"
+msgstr ""
+
+msgid "int rpmdbSetIteratorRE(rpmdbMatchIterator iter,"
+msgstr ""
+
+msgid "rpmTag tag,"
+msgstr ""
+
+msgid "rpmMireMode mode,"
+msgstr ""
+
+msgid "const char * pattern);"
+msgstr ""
+
+msgid "Calling rpmdbSetIteratorRE modifies the passed-in iterator to use the given pattern as a further test on the given tag. The mode parameter names the type of pattern used, which can be one of those listed in Table 16-9."
+msgstr ""
+
+msgid "Table 16-9 Types of patterns for rpmdbSetIteratorRE"
+msgstr ""
+
+msgid "RPMMIRE_DEFAULT"
+msgstr ""
+
+msgid "Same as regular expressions but with \\., .*, and ^..$ added."
+msgstr ""
+
+msgid "RPMMIRE_GLOB"
+msgstr ""
+
+msgid "Glob-style patterns using fnmatch."
+msgstr ""
+
+msgid "RPMMIRE_REGEX"
+msgstr ""
+
+msgid "Regular expressions using regcomp."
+msgstr ""
+
+msgid "RPMMIRE_STRCMP"
+msgstr ""
+
+msgid "String comparisons using strcmp."
+msgstr ""
+
+msgid "For more on these patterns, see the online manual pages for fnmatch(3), glob(7), regcomp(3), regex(7), and strcmp(3)."
+msgstr ""
+
+msgid "Free the iterator when done with rpmdbFreeIterator:"
+msgstr ""
+
+msgid "rpmdbMatchIterator rpmdbFreeIterator(rpmdbMatchIterator iter);"
+msgstr ""
+
+msgid "The call to rpmdbFreeIterator returns NULL."
+msgstr ""
+
+msgid "Dependency Sets"
+msgstr ""
+
+msgid "To compare package versions, create a dependency set. The rpm command, for example, uses dependency sets to compare package versions."
+msgstr ""
+
+msgid "You could compare the version numbers directly, calling headerGetEntry to get the version and release tags, converting these strings to numbers and then comparing, but this would cause problems. The custom comparison is not as exact as the code in this section, especially since many packages have version numbers that are not true numbers, such as 1.12.4, with one too many decimal points. This makes the comparisons harder. In addition, there is more than just the version number to take into account. You need to deal with the Epoch value, as well as the release, too."
+msgstr ""
+
+msgid "To handle all the complicated logic of comparing versions, you can use the code in this section, or call rpmvercmp. Do not try to compare version numbers with custom code."
+msgstr ""
+
+msgid "To create a dependency set for a given package Header, call rpmdsThis. Calling rpmdsThis creates a dependency set that holds a triple of the package name, the Epoch/Version/Release information, and the flags."
+msgstr ""
+
+msgid "rpmds rpmdsThis(Header header,"
+msgstr ""
+
+msgid "rpmTag tagID,"
+msgstr ""
+
+msgid "int_32 Flags);"
+msgstr ""
+
+msgid "For comparing packages, you can pass RPMTAG_REQUIRENAME for the tagID. The actual tagID here is ignored for the version check. What you do need, though, are flags to check whether another package is less than or equal to the Epoch/Version/Release information in this dependency set. For this task, pass the following bit flags:"
+msgstr ""
+
+msgid "(RPMSENSE_EQUAL|RPMSENSE_LESS)"
+msgstr ""
+
+msgid "Once you have a dependency set, you can use the handy function rpmdsNVRMatchesDep to compare the NVR, or Name, Version, Release entries in the header of one package against the data in the dependency set."
+msgstr ""
+
+msgid "int rpmdsNVRMatchesDep(const Header header,"
+msgstr ""
+
+msgid "const rpmds dependency_set,"
+msgstr ""
+
+msgid "int nopromote);"
+msgstr ""
+
+msgid "After checking the dependencies, rpmdsNVRMatchesDep returns 1 if the dependency overlaps, or 0 otherwise. In terms of comparing packages, 1 means that the package file is as old or older than the installed package, and 0 means that the package already installed is newer. Pass 1 to prevent promoting the Epoch value in the packages during the comparison."
+msgstr ""
+
+msgid "The actual comparison is controlled by the call that creates the dependency set, especially the flags. Thus, passing flags of (RPMSENSE_EQUAL|RPMSENSE_LESS) to rpmdsThis set up the test as a less than or equal test."
+msgstr ""
+
+msgid "The RPM C API documentation marks rpmdsNVRMatchesDep as deprecated, to be replaced in the future."
+msgstr ""
+
+msgid "You can also call rpmVersionCompare to compare the versions of two packages:"
+msgstr ""
+
+msgid "int rpmVersionCompare(Header header1, Header header2);"
+msgstr ""
+
+msgid "The return value is -1 if the header1 represents an older version than header2, 0 if the two headers represent the same version, and 1 if header1 represents a newer version than header2."
+msgstr ""
+
+msgid "To get the name of the package from a dependency set, call rpmdsN:"
+msgstr ""
+
+msgid "const char* rpmdsN(const rpmds dependency_set);"
+msgstr ""
+
+msgid "You can use rpmdsN to get the name when calling rpmtsInitIterator if you are working with dependency sets when searching the RPM database."
+msgstr ""
+
+msgid "Free a dependency set when done by calling rpmdsFree:"
+msgstr ""
+
+msgid "rpmds rpmdsFree(rpmds dependency_set);"
+msgstr ""
+
+msgid "As with other free functions, rpmdsFree returns NULL."
+msgstr ""
+
+msgid "Comparing an RPM File to an Installed Package"
+msgstr ""
+
+msgid "You can pull together the RPM file and database discussions, shown previously, to create a number of RPM programs. A useful utility that shows the RPM C library compares a package file against installed packages, reporting whether the package in the RPM file represents a newer or older package than what was already installed."
+msgstr ""
+
+msgid "Listing 16-4 shows such a program."
+msgstr ""
+
+msgid "Listing 16-4: vercompare.c"
+msgstr ""
+
+msgid "/* Compares a package file with an installed package,"
+msgstr ""
+
+msgid "telling which one is newer."
+msgstr ""
+
+msgid "Usage:"
+msgstr ""
+
+msgid "vercompare pkg_files+"
+msgstr ""
+
+msgid "Compile as"
+msgstr ""
+
+msgid "cc -I/usr/include/rpm -o vercompare vercompare.c -lrpm -lrpmdb -lrpmio -lpopt"
+msgstr ""
+
+msgid "*/"
+msgstr ""
+
+msgid "#include &lt;rpmcli.h&gt;"
+msgstr ""
+
+msgid "#include &lt;rpmdb.h&gt;"
+msgstr ""
+
+msgid "#include &lt;rpmds.h&gt;"
+msgstr ""
+
+msgid "#include &lt;rpmts.h&gt;"
+msgstr ""
+
+msgid "/* Set up a table of options using standard RPM options. */"
+msgstr ""
+
+msgid "int main(int argc, char * argv[])"
+msgstr ""
+
+msgid "poptContext context;"
+msgstr ""
+
+msgid "const char ** fnp;"
+msgstr ""
+
+msgid "Header file_header, installed_header;"
+msgstr ""
+
+msgid "rpmts ts;"
+msgstr ""
+
+msgid "rpmds dependency_set;"
+msgstr ""
+
+msgid "FD_t fd;"
+msgstr ""
+
+msgid "rpmRC rpmrc;"
+msgstr ""
+
+msgid "int rc;"
+msgstr ""
+
+msgid "context = rpmcliInit(argc, argv, optionsTable);"
+msgstr ""
+
+msgid "if (context == NULL) {"
+msgstr ""
+
+msgid "exit(EXIT_FAILURE);"
+msgstr ""
+
+msgid "ts = rpmtsCreate();"
+msgstr ""
+
+msgid "for (fnp = poptGetArgs(context); fnp &amp;&amp; *fnp; fnp++) {"
+msgstr ""
+
+msgid "/* Read package header, continuing to next arg on failure. */"
+msgstr ""
+
+msgid "fd = Fopen(*fnp, \"r.ufdio\");"
+msgstr ""
+
+msgid "if (fd == NULL || Ferror(fd)) {"
+msgstr ""
+
+msgid "rpmError(RPMERR_OPEN, \"open of %s failed: %s\\n\", *fnp,"
+msgstr ""
+
+msgid "Fstrerror(fd));"
+msgstr ""
+
+msgid "if (fd) {"
+msgstr ""
+
+msgid "Fclose(fd);"
+msgstr ""
+
+msgid "continue;"
+msgstr ""
+
+msgid "rpmrc = rpmReadPackageFile(ts, fd, *fnp, &amp;file_header);"
+msgstr ""
+
+msgid "if (rpmrc != RPMRC_OK) {"
+msgstr ""
+
+msgid "rpmError(RPMERR_OPEN, \"%s cannot be read\\n\", *fnp);"
+msgstr ""
+
+msgid "/* Generate \"name &lt;= epoch:version-release\" depset for package */"
+msgstr ""
+
+msgid "dependency_set = rpmdsThis(file_header, RPMTAG_REQUIRENAME,"
+msgstr ""
+
+msgid "(RPMSENSE_EQUAL|RPMSENSE_LESS));"
+msgstr ""
+
+msgid "rc = -1; /* assume no package is installed. */"
+msgstr ""
+
+msgid "/* Search all installed packages with same name. */"
+msgstr ""
+
+msgid "iter = rpmtsInitIterator(ts, RPMTAG_NAME, rpmdsN(dependency_set), 0);"
+msgstr ""
+
+msgid "while ((installed_header = rpmdbNextIterator(iter)) != NULL) {"
+msgstr ""
+
+msgid "/* Is the installed package newer than the file? */"
+msgstr ""
+
+msgid "rc = rpmdsNVRMatchesDep(installed_header, dependency_set, 1);"
+msgstr ""
+
+msgid "switch (rc) {"
+msgstr ""
+
+msgid "case 1:"
+msgstr ""
+
+msgid "if ( rpmIsVerbose() )"
+msgstr ""
+
+msgid "fprintf(stderr, \"installed package is older (or same) as %s\\n\","
+msgstr ""
+
+msgid "*fnp);"
+msgstr ""
+
+msgid "break;"
+msgstr ""
+
+msgid "case 0:"
+msgstr ""
+
+msgid "fprintf(stderr, \"installed package is newer than %s\\n\","
+msgstr ""
+
+msgid "/* Clean up. */"
+msgstr ""
+
+msgid "iter = rpmdbFreeIterator(iter);"
+msgstr ""
+
+msgid "dependency_set = rpmdsFree(dependency_set);"
+msgstr ""
+
+msgid "if (rc &lt; 0 &amp;&amp; rpmIsVerbose() )"
+msgstr ""
+
+msgid "fprintf(stderr, \"no package is installed %s\\n\", *fnp);"
+msgstr ""
+
+msgid "ts = rpmtsFree(ts);"
+msgstr ""
+
+msgid "context = rpmcliFini(context);"
+msgstr ""
+
+msgid "return rc;"
+msgstr ""
+
+msgid "The vercompare.c program shows reading in RPM package files as well as querying the RPM database. It introduces transaction sets, used extensively in the RPM API, and also dependency sets. You can use this program as a guide for making your own RPM programs."
+msgstr ""
+
+msgid "When you run the vercompare.c program, pass the names of one or more RPM files. The vercompare.c program will extract the package name from the files, and then query the RPM database for matching packages. For each matching package, vercompare.c checks whether the installed package is newer than the RPM file, or at the same version or older. For example, if you have installed version 1.17-1 of the jikes package (a Java compiler), you can compare the installed version against RPM files. If you have a package that has a newer version, you should see output like the following:"
+msgstr ""
+
+msgid "$ ./vercompare -v jikes-1.18-1.i386.rpm"
+msgstr ""
+
+msgid "installed package is older (or same) as jikes-1.18-1.i386.rpm"
+msgstr ""
+
+msgid "Note that the output is relative to the installed package."
+msgstr ""
+
+msgid "If you compare against a file that has an older version of the package, you will see results like the following:"
+msgstr ""
+
+msgid "$ ./vercompare -v jikes-1.14-1-glibc-2.2.i386.rpm"
+msgstr ""
+
+msgid "installed package is newer than jikes-1.14-1-glibc-2.2.i386.rpm"
+msgstr ""
+
+msgid "And, if you compare to an RPM file that holds the same package, you will see output as follows:"
+msgstr ""
+
+msgid "$ ./vercompare -v jikes-1.17-glibc2.2-1.i386.rpm"
+msgstr ""
+
+msgid "installed package is older (or same) as jikes-1.17-glibc2.2-1.i386.rpm"
+msgstr ""
+
+msgid "You can change this aspect of the test by changing the flags passed to rpmdsThis."
+msgstr ""
+
+msgid "The vercompare.c program prints out nothing unless there is an error. Instead, it sets the program exit status based on the package version comparison. You can use this with automated tools, such as make, that check the exit status."
+msgstr ""
+
+msgid "If you want output from the program, pass the –v, verbose, option to the command, as shown in the previous examples."
+msgstr ""
+
+msgid "The RPM cli or command-line interface functions, such as rpmcliInit, are based on the command-line options expected by the rpm and rpmbuild commands. You can use these functions to provide a high level of abstraction onto the RPM system. For example, to run the query options just like the rpm command, call rpmcliQuery."
+msgstr ""
+
+msgid "int rpmcliQuery(rpmts transaction_set,"
+msgstr ""
+
+msgid "QVA_t qva,"
+msgstr ""
+
+msgid "const char **argv);"
+msgstr ""
+
+msgid "Set the QVA_t variable to point at the global variable rpmQVKArgs, which is set up from the global option table for the query mode, rpmQueryPoptTable. Pass rpmcliQuery a set of file names or package names. You can get these names in the given format by calling poptGetArgs, introduced previously."
+msgstr ""
+
+msgid "To support the query options, you need the rpm query entries in your poptOption table. To get these options, add the following entry:"
+msgstr ""
+
+msgid "{ NULL, '\\0', POPT_ARG_INCLUDE_TABLE, rpmQueryPoptTable, 0,"
+msgstr ""
+
+msgid "\"Query options (with -q or --query):\","
+msgstr ""
+
+msgid "With the rpmQueryPoptTable options, you can make a program that works like the rpm --query command using just the following code:"
+msgstr ""
+
+msgid "QVA_t qva = &amp;rpmQVKArgs&semi;"
+msgstr ""
+
+msgid "int ec;"
+msgstr ""
+
+msgid "/* Display error and exit... */"
+msgstr ""
+
+msgid "if (qva-&gt;qva_mode == 'q') {"
+msgstr ""
+
+msgid "/* Make sure there's something to do. */"
+msgstr ""
+
+msgid "if (qva-&gt;qva_source != RPMQV_ALL &amp;&amp; !poptPeekArg(context)) {"
+msgstr ""
+
+msgid "fprintf(stderr, \"no arguments given for --query\");"
+msgstr ""
+
+msgid "ec = rpmcliQuery(ts, qva, (const char **) poptGetArgs(context));"
+msgstr ""
+
+msgid "This code supports all the query options just like the rpm command. That's both good and bad. If you wanted everything exactly like the rpm command, chances are you could use the rpm command as is. But if you need to add RPM query support into your programs, this is probably the easiest way to do it."
+msgstr ""
+
+msgid "With a small additional set of code, you can add support for all the --verify options to your program. You need to include the --verify command-line option definitions, which come from the global rpmVerifyPoptTable table:"
+msgstr ""
+
+msgid "/* Add in --verify options. */"
+msgstr ""
+
+msgid "{ NULL, '\\0', POPT_ARG_INCLUDE_TABLE, rpmVerifyPoptTable, 0,"
+msgstr ""
+
+msgid "\"Verify options (with -V or --verify):\","
+msgstr ""
+
+msgid "You can then check for the verify mode, and support the options, with code like the following:"
+msgstr ""
+
+msgid "if (qva-&gt;qva_mode == 'V') {"
+msgstr ""
+
+msgid "rpmVerifyFlags verifyFlags = VERIFY_ALL;"
+msgstr ""
+
+msgid "/* Verify flags are negated from query flags. */"
+msgstr ""
+
+msgid "verifyFlags &amp;= ~qva-&gt;qva_flags;"
+msgstr ""
+
+msgid "qva-&gt;qva_flags = (rpmQueryFlags) verifyFlags;"
+msgstr ""
+
+msgid "fprintf(stderr, \"no arguments given for --verify\");"
+msgstr ""
+
+msgid "ec = rpmcliVerify(ts, qva, (const char **)"
+msgstr ""
+
+msgid "poptGetArgs(context));"
+msgstr ""
+
+msgid "The workhorse function in this code is rpmcliVerify, a high-level function that performs all the --verify work done by the rpm command."
+msgstr ""
+
+msgid "int rpmcliVerify(rpmts transaction_set,"
+msgstr ""
+
+msgid "Again, set the QVA_t variable to point at the global variable rpmQVKArgs, which is set up from the global option table for the query mode, rpmQueryPoptTable."
+msgstr ""
+
+msgid "Putting this all together, Listing 16-5 shows a program that performs the same as the rpm command for the --query and --verify options."
+msgstr ""
+
+msgid "Listing 16-5: rpmq.c"
+msgstr ""
+
+msgid "/*"
+msgstr ""
+
+msgid "rpm --query and --verify modes in standalone program."
+msgstr ""
+
+msgid "cc -I/usr/include/rpm -o rpmq rpmq.c -lrpm -lrpmdb -lrpmio -lpopt"
+msgstr ""
+
+msgid "See option usage by invoking"
+msgstr ""
+
+msgid "./rpmq --help"
+msgstr ""
+
+msgid "poptPrintUsage(context, stderr, 0);"
+msgstr ""
+
+msgid "/* Check for query mode. */"
+msgstr ""
+
+msgid "/* Check for verify mode. */"
+msgstr ""
+
+msgid "else if (qva-&gt;qva_mode == 'V') {"
+msgstr ""
+
+msgid "ec = rpmcliVerify(ts, qva, (const char **) poptGetArgs(context));"
+msgstr ""
+
+msgid "else {"
+msgstr ""
+
+msgid "return ec;"
+msgstr ""
+
+msgid "There is not a lot of code in rpmq.c, as this program is mostly calling the high-level functions for the rpm command-line interface."
+msgstr ""
+
+msgid "When you run the rpmq program, it performs the same tasks as the rpm command with the --query (or -q) and --verify (or -V) command-line options."
+msgstr ""
+
+msgid "For example, rpmq supports query formats:"
+msgstr ""
+
+msgid "$ ./rpmq -q --qf \"%{NAME} %{INSTALLTID:date}\\n\" jikes"
+msgstr ""
+
+msgid "jikes Fri 25 Oct 2002 06:49:38 PM CDT"
+msgstr ""
+
+msgid "Where to Go from Here"
+msgstr ""
+
+msgid "There is a lot more you can do with the RPM library; you're limited only by your imagination. The best way to get started is to follow the examples in this chapter and then try out some RPM programs on your own. After working with the RPM library for a while, you can delve into other RPM topics."
+msgstr ""
+
+msgid "The RPM Web site, at www.rpm.org, has most of the available documentation on the RPM system. This site also includes official RPM released software."
+msgstr ""
+
+msgid "One of the best ways to help find out about how to perform RPM tasks is to look at the source code for the rpm program itself. For this, download the rpm-src source RPM, too. To see the rpm command-line interface functions in action, look especially at tools/rpmcache.c and tools/rpmgraph.c, two relatively short RPM files that show how to take advantage of a number of short cuts. The source code for the Python and Perl bindings can also provide extra hints about the purposes of the RPM API calls."
+msgstr ""
+
+msgid "The RPM Web site also has a cross-referenced set of HTML pages on the RPM programming API. The pages for version 4.1 of RPM are available at www.rpm.org/rpmapi-4.1/. A good starting page is www.rpm.org/rpmapi-4.1/modules.html, which lists a number of modules within the overall RPM library. This extra level of organization can help you locate the functions you need."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Everything you can do with RPM you can program in C. That’s because the source code for the entire RPM system is available. In addition, the rpm and rpmbuild programs make use of a published API, called rpmlib, to access RPM functionality. You can use this library yourself."
+msgstr ""
+
+msgid "The popt library, short for parse options, provides a lot of handy utilities for parsing very complex command-line options. You can use popt inside your own programs, even if you don’t use the rest of the RPM functionality."
+msgstr ""
+
+msgid "Most RPM programs start up by calling rpmcliInit, which sets up RPM variables for the large set of command-line options supported by most RPM commands."
+msgstr ""
+
+msgid "Call rpmReadPackageFile to read in the Header object from a package file. You can also get Header objects for the packages installed in a system by initializing an iterator to iterate over a set of packages that meet a certain criteria."
+msgstr ""
+
+msgid "This chapter covers a fairly low level of access to RPM functionality. The next chapter, on Python programming, shows a higher level of abstraction for working with RPM."
+msgstr ""
+

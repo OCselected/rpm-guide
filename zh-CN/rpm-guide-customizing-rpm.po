@@ -1,0 +1,670 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Customizing RPM Behavior"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Defining RPM macros"
+msgstr ""
+
+msgid "Configuring RPM settings"
+msgstr ""
+
+msgid "Adding popt aliases"
+msgstr ""
+
+msgid "RPM provides a high degree of customization in the form of basic settings, such as where your RPM database is located and the path to common commands like setup or make, to the ability to define new macros and command-line aliases. This chapter covers the three main ways to customize RPM behavior: RPM macros, RPM rc settings, and popt aliases."
+msgstr ""
+
+msgid "Customizing with RPM Macros"
+msgstr ""
+
+msgid "Starting with RPM 3.0, RPM macros have replaced most RPM settings from the rpmrc files."
+msgstr ""
+
+msgid "An RPM macro defines a setting to the RPM system. A macro can be defined as a static value, such as the directory where the RPM database is installed. A macro can also be defined in terms of other macros. Furthermore, a macro can be defined with parameters."
+msgstr ""
+
+msgid "For example, the following defines two macros in a macro file:"
+msgstr ""
+
+msgid "%_usr /usr"
+msgstr ""
+
+msgid "%_usrsrc %{_usr}/src"
+msgstr ""
+
+msgid "In this case, the macro %_usr names the /usr directory. The macro %_usrsrc names the /usr/src directory, showing how to set a macro in terms of another macro."
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "The macro syntax is used in the query formats introduced in <xref linkend=\"ch-using-rpm-db\" /> ."
+msgstr ""
+
+msgid "Defining macros"
+msgstr ""
+
+msgid "RPM provides a number of places you can define macros, including inside spec files (probably the most common usage), in special macro initialization files, and on the command line."
+msgstr ""
+
+msgid "In each case, the syntax is slightly different."
+msgstr ""
+
+msgid "Defining Macros in Spec Files"
+msgstr ""
+
+msgid "You can define macros in most places in a spec file. With spec files, use the %define syntax to define a macro, which uses the following syntax:"
+msgstr ""
+
+msgid "%define name(options) body"
+msgstr ""
+
+msgid "The options are optional and can include the special values defined in Table 21-1."
+msgstr ""
+
+msgid "Table 21-1 Special options for macros"
+msgstr ""
+
+msgid "Option"
+msgstr ""
+
+msgid "Holds"
+msgstr ""
+
+msgid "%0"
+msgstr ""
+
+msgid "The name of the macro"
+msgstr ""
+
+msgid "%1"
+msgstr ""
+
+msgid "The first argument, after processing with getopt"
+msgstr ""
+
+msgid "%2-%9"
+msgstr ""
+
+msgid "Additional arguments"
+msgstr ""
+
+msgid "%*"
+msgstr ""
+
+msgid "All arguments, except for flags that have been processed"
+msgstr ""
+
+msgid "%#"
+msgstr ""
+
+msgid "Number of arguments"
+msgstr ""
+
+msgid "These options are similar to those for shell scripting."
+msgstr ""
+
+msgid "<xref linkend=\"ch-specfiles\" /> covers spec files."
+msgstr ""
+
+msgid "In addition to these options, you can use a syntax of %{-a} to hold –a if an option of –a was passed. The syntax of %{-a*} indicates the value passed after the –a option."
+msgstr ""
+
+msgid "You can assign a macro to the value returned by a shell command by using syntax like the following:"
+msgstr ""
+
+msgid "%(shell_command)"
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "This is similar to the $(shell_command) syntax supported by bash."
+msgstr ""
+
+msgid "Defining Macros in Macro Initialization Files"
+msgstr ""
+
+msgid "Inside a macro file, define macros with the following syntax:"
+msgstr ""
+
+msgid "%macro_name value"
+msgstr ""
+
+msgid "Macros defined for the RPM system start with an underscore. Some older macros are left without the leading underscore."
+msgstr ""
+
+msgid "The macros defined with an underscore are not exported into rpm headers."
+msgstr ""
+
+msgid "The %expand built-in macro will expand the value of something else, including executing a shell command. For example, the following sets the user’s home directory to the %home macro:"
+msgstr ""
+
+msgid "%home %{expand:%%(cd; pwd)}"
+msgstr ""
+
+msgid "Note that it is probably easier to simply set the %home macro in your per-user $HOME/.rpmmacros file to the name of your home directory rather than try to figure this out programmatically."
+msgstr ""
+
+msgid "Defining Macros on the Command Line"
+msgstr ""
+
+msgid "The rpm command also lets you define macros with the --define option. The basic syntax is:"
+msgstr ""
+
+msgid "$ rpm --define 'macro_name value'"
+msgstr ""
+
+msgid "Do not place the leading percent sign, %, on the macro you define with --define."
+msgstr ""
+
+msgid "You can evaluate a macro or a macro expression with --eval. For example:"
+msgstr ""
+
+msgid "$ rpm --eval %_usrsrc"
+msgstr ""
+
+msgid "/usr/src"
+msgstr ""
+
+msgid "Customizing Macros"
+msgstr ""
+
+msgid "You can add your own macro definitions, using the syntax shown in the “Defining Macros in Macro Initialization Files” section. These macros are read on each invocation of the rpm or rpmbuild commands."
+msgstr ""
+
+msgid "To add your custom macros, you must edit one of the macro definition files. Table 21-2 lists the macro definition files and their usage."
+msgstr ""
+
+msgid "Table 21-2 RPM macro files"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+msgid "/usr/lib/rpm/macros"
+msgstr ""
+
+msgid "Official RPM macros"
+msgstr ""
+
+msgid "/etc/rpm/macros"
+msgstr ""
+
+msgid "Per-system customizations"
+msgstr ""
+
+msgid "$HOME/.rpmmacros"
+msgstr ""
+
+msgid "Per-user customizations"
+msgstr ""
+
+msgid "Do not edit the /usr/lib/rpm/macros file, as this file gets overwritten when you upgrade to a new version of rpm."
+msgstr ""
+
+msgid "Configuring RPM Settings"
+msgstr ""
+
+msgid "RPM includes hundreds of settings based on your current system architecture, environment, and which version of the RPM system you have installed. The old settings, called rc or rpmrc settings, are gradually being phased out by the newer, more consistent and more powerful macros."
+msgstr ""
+
+msgid "You can still edit the rc settings, but in most cases you should edit macros instead."
+msgstr ""
+
+msgid "Viewing the current settings"
+msgstr ""
+
+msgid "To view the current settings, use the --showrc command-line option:"
+msgstr ""
+
+msgid "$ rpm –showrc"
+msgstr ""
+
+msgid "ARCHITECTURE AND OS:"
+msgstr ""
+
+msgid "build arch : i386"
+msgstr ""
+
+msgid "compatible build archs: i686 i586 i486 i386 noarch"
+msgstr ""
+
+msgid "build os : Linux"
+msgstr ""
+
+msgid "compatible build os's : Linux"
+msgstr ""
+
+msgid "install arch : i686"
+msgstr ""
+
+msgid "install os : Linux"
+msgstr ""
+
+msgid "compatible archs : i686 i586 i486 i386 noarch"
+msgstr ""
+
+msgid "compatible os's : Linux"
+msgstr ""
+
+msgid "RPMRC VALUES:"
+msgstr ""
+
+msgid "macrofiles : /usr/lib/rpm/macros:/usr/lib/rpm/i686-linux/macros:/etc/"
+msgstr ""
+
+msgid "rpm/macros.specspo:/etc/rpm/macros.db1:/etc/rpm/macros.cdb:/etc/rpm/macros:/etc/"
+msgstr ""
+
+msgid "rpm/i686-linux/macros:~/.rpmmacros"
+msgstr ""
+
+msgid "optflags : -O2 -march=i686"
+msgstr ""
+
+msgid "This command displays the architecture and operating system information first, and then lists all the rpmrc values, shown here truncated for space."
+msgstr ""
+
+msgid "Locating the rpmrc files"
+msgstr ""
+
+msgid "The --showrc option reads in all the rpmrc files from the various locations. By default, this is /usr/lib/rpm/rpmrc, /etc/rpm/rpmrc, and a file named .rpmrc (with a leading period) in your home directory."
+msgstr ""
+
+msgid "These files are read in the order given, so that the later files can override settings in the earlier files."
+msgstr ""
+
+msgid "The uses for these files are listed in Table 21-3."
+msgstr ""
+
+msgid "Table 21-3 Uses for the rpmrc files"
+msgstr ""
+
+msgid "/usr/lib/rpm/rpmrc"
+msgstr ""
+
+msgid "RPM standard settings"
+msgstr ""
+
+msgid "/etc/rpm/rpmrc"
+msgstr ""
+
+msgid "Per-system configuration"
+msgstr ""
+
+msgid "$HOME/.rpmrc"
+msgstr ""
+
+msgid "Per-user configuration"
+msgstr ""
+
+msgid "The file /usr/lib/rpm/rpmrc gets overwritten each time you upgrade RPM. Do not customize this file."
+msgstr ""
+
+msgid "You can override this list of files by calling the rpm or rpmbuild commands with the --rcfile option. This option expects a semicolon@nddelimited list of files to read in, in order. For example, if you are working on a 686-architecture Intel platform, you can create a file with the following setting:"
+msgstr ""
+
+msgid "optflags: i686 -g"
+msgstr ""
+
+msgid "Note that this disables optimization, so it is not a good setting. (The use of this value will make the result more visible.)"
+msgstr ""
+
+msgid "If you name this file .rpmnew and place it in your home directory, you can configure an alternate set of files with the --rcfile option and then evaluate the new optflags setting. For example:"
+msgstr ""
+
+msgid "$ rpm --eval \"%{optflags}\""
+msgstr ""
+
+msgid "-O2 -march=i386 -mcpu=i686"
+msgstr ""
+
+msgid "$ rpm --rcfile $HOME/.rpmnew --eval \"%{optflags}\""
+msgstr ""
+
+msgid "-g"
+msgstr ""
+
+msgid "This example shows the value before and after changing the configuration files."
+msgstr ""
+
+msgid "When you use the --rcfile option, only the first file listed must exist. The rest of the files are optional. When you use the --rcfile option, however, the file /usr/lib/rpm/rpmrc is read first, and then the list of files you provide with the --rcfile option. The file /usr/lib/rpm/rpmrc is always used."
+msgstr ""
+
+msgid "Changing settings"
+msgstr ""
+
+msgid "You can edit the per-user or per-system rc files to change the settings. The format of the rpmrc files is fairly simple but contains a few exceptions. The most basic format is:"
+msgstr ""
+
+msgid "setting: value"
+msgstr ""
+
+msgid "The settings get more complicated as the rpmrc syntax supports defining settings for multiple architectures at once. In that case, the typical format is:"
+msgstr ""
+
+msgid "setting: uname: value"
+msgstr ""
+
+msgid "The uname portion is replaced by a value that comes from the uname(2) system call, for example, i686 on a 686-class Intel architecture machine."
+msgstr ""
+
+msgid "In most cases, your best bet is to copy an existing setting and modify it, rather than remembering all the exceptions."
+msgstr ""
+
+msgid "Setting the optflags"
+msgstr ""
+
+msgid "One exception to the rule is the optflags setting, which controls C compiler options for optimization. The format for the optflags setting is:"
+msgstr ""
+
+msgid "setting: arch value"
+msgstr ""
+
+msgid "There is no colon after the architecture. For example:"
+msgstr ""
+
+msgid "optflags: i686 -O2 -march=i686"
+msgstr ""
+
+msgid "optflags: alphaev5 -O2 -mieee -mcpu=ev5"
+msgstr ""
+
+msgid "This example sets the optimization flags for an i686 system to -O2 -march=i686 and an alphaev5 system to -O2 -mieee -mcpu=ev5. If your system is running on a 686-class processor, you will get one set of optimization flags. If your system is running on a V5 Alpha processor, you will get a different set."
+msgstr ""
+
+msgid "Setting the Architecture Values"
+msgstr ""
+
+msgid "The arch_canon setting builds up a table of mappings between architecture names and the numbers used internally. The following example shows the Intel and SPARC architecture settings to 1 and 3 internally."
+msgstr ""
+
+msgid "arch_canon: athlon: athlon 1"
+msgstr ""
+
+msgid "arch_canon: i686: i686 1"
+msgstr ""
+
+msgid "arch_canon: i586: i586 1"
+msgstr ""
+
+msgid "arch_canon: i486: i486 1"
+msgstr ""
+
+msgid "arch_canon: i386: i386 1"
+msgstr ""
+
+msgid "arch_canon: sparc: sparc 3"
+msgstr ""
+
+msgid "arch_canon: sun4: sparc 3"
+msgstr ""
+
+msgid "arch_canon: sun4m: sparc 3"
+msgstr ""
+
+msgid "arch_canon: sun4c: sparc 3"
+msgstr ""
+
+msgid "arch_canon: sun4d: sparc 3"
+msgstr ""
+
+msgid "arch_canon: sparcv9: sparcv9 3"
+msgstr ""
+
+msgid "The arch_compat setting builds a table of compatible architectures. The format is:"
+msgstr ""
+
+msgid "arch_compat: arch: compatible_with"
+msgstr ""
+
+msgid "This sets the given architecture arch as being compatible with another architecture."
+msgstr ""
+
+msgid "For example:"
+msgstr ""
+
+msgid "arch_compat: athlon: i686"
+msgstr ""
+
+msgid "This setting indicates that an athlon architecture is compatible with an i686. The table gets built up further with the following Intel-architecture compatibilities:"
+msgstr ""
+
+msgid "arch_compat: i686: i586"
+msgstr ""
+
+msgid "arch_compat: i586: i486"
+msgstr ""
+
+msgid "arch_compat: i486: i386"
+msgstr ""
+
+msgid "arch_compat: i386: noarch"
+msgstr ""
+
+msgid "The os_canon setting defines a table of operating system labels and internal numeric values. The basic syntax is:"
+msgstr ""
+
+msgid "os_canon: arch: name value"
+msgstr ""
+
+msgid "The arch comes from the uname(2) call. The name provides an RPM name for that operating system, and the value defines an internal numeric ID for that OS, for example:"
+msgstr ""
+
+msgid "os_canon: Linux: Linux 1"
+msgstr ""
+
+msgid "os_canon: HP-UX: hpux10 6"
+msgstr ""
+
+msgid "The buildarchtranslate setting defines the operating system settings to use as the build architecture. This value translates information from the uname(2) call to a value used by the arch_canon setting. For example:"
+msgstr ""
+
+msgid "buildarchtranslate: athlon: i386"
+msgstr ""
+
+msgid "buildarchtranslate: i686: i386"
+msgstr ""
+
+msgid "buildarchtranslate: i586: i386"
+msgstr ""
+
+msgid "buildarchtranslate: i486: i386"
+msgstr ""
+
+msgid "buildarchtranslate: i386: i386"
+msgstr ""
+
+msgid "buildarchtranslate: sun4c: sparc"
+msgstr ""
+
+msgid "buildarchtranslate: sun4d: sparc"
+msgstr ""
+
+msgid "buildarchtranslate: sun4m: sparc"
+msgstr ""
+
+msgid "buildarchtranslate: sparcv9: sparc"
+msgstr ""
+
+msgid "buildarchtranslate: sun4u: sparc64"
+msgstr ""
+
+msgid "Adding Popt Aliases"
+msgstr ""
+
+msgid "Popt provides a powerful library and RPM subsystem for handling the very complex RPM command-line options. You can customize your RPM usage by defining popt aliases for complex command-line arguments to the rpm or rpmbuild commands. A popt alias is a command-line option that expands to other command-line options."
+msgstr ""
+
+msgid "This technique is used internally to define quite a few command-line options to the rpm and rpmbuild commands in terms of other, more complex options. Many of these aliases define simple command-line options in place of more complex query format options."
+msgstr ""
+
+msgid "<xref linkend=\"ch-using-rpm-db\" /> covers the query format."
+msgstr ""
+
+msgid "For example, the following entry defines the --requires and –R command-line options to the rpm command:"
+msgstr ""
+
+msgid "rpm alias --requires --qf \\"
+msgstr ""
+
+msgid "\"[%{REQUIRENAME} %{REQUIREFLAGS:depflags} %{REQUIREVERSION}\\n]\" \\"
+msgstr ""
+
+msgid "--POPTdesc=$\"list capabilities required by package(s)\""
+msgstr ""
+
+msgid "rpm alias -R --requires"
+msgstr ""
+
+msgid "These options are set in the file /usr/lib/rpm/rpmpopt-4.1."
+msgstr ""
+
+msgid "This is specific to RPM 4.1. Other releases of RPM use the same naming format but with the current RPM version number, such as 4.2 and so on."
+msgstr ""
+
+msgid "Defining aliases"
+msgstr ""
+
+msgid "Defining aliases is pretty easy. The basic syntax is:"
+msgstr ""
+
+msgid "command_name alias option expansion"
+msgstr ""
+
+msgid "To create an alias for the rpm command, you use rpm for the command_name."
+msgstr ""
+
+msgid "The command_name must be the name passed to the C poptGetContext function, covered in <xref linkend=\"ch-programming-c\" /> ."
+msgstr ""
+
+msgid "Follow this with alias and then the option. You will need separate aliases for the long and short options. The expansion defines the alias in terms of other already-defined command-line parameters."
+msgstr ""
+
+msgid "You can define some complex aliases, such as the following one to display information about a package:"
+msgstr ""
+
+msgid "rpm alias --info --qf 'Name : %-27{NAME} Relocations: %|PREFIXES?{[%{PREFIXES} ]}:{(not relocateable)}|\\n\\"
+msgstr ""
+
+msgid "Version : %-27{VERSION} Vendor: %{VENDOR}\\n\\"
+msgstr ""
+
+msgid "Release : %-27{RELEASE} Build Date: %{BUILDTIME:date}\\n\\"
+msgstr ""
+
+msgid "Install date: %|INSTALLTIME?{%-27{INSTALLTIME:date}}:{(not installed) }| Build Host: %{BUILDHOST}\\n\\"
+msgstr ""
+
+msgid "Group : %-27{GROUP} Source RPM: %{SOURCERPM}\\n\\"
+msgstr ""
+
+msgid "Size : %-27{SIZE}%|LICENSE?{ License: %{LICENSE}}|\\n\\"
+msgstr ""
+
+msgid "Signature : %|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|\\n\\"
+msgstr ""
+
+msgid "%|PACKAGER?{Packager : %{PACKAGER}\\n}|\\"
+msgstr ""
+
+msgid "%|URL?{URL : %{URL}\\n}|\\"
+msgstr ""
+
+msgid "Summary : %{SUMMARY}\\n\\"
+msgstr ""
+
+msgid "Description :\\n%{DESCRIPTION}\\n' \\"
+msgstr ""
+
+msgid "--POPTdesc=$\"list descriptive information from package(s)\""
+msgstr ""
+
+msgid "Popt aliases get evaluated into Linux commands, so you can use pipes and other aspects of Linux shells in your aliases."
+msgstr ""
+
+msgid "Look closely at the examples in the /usr/lib/rpm/rpmpopt-4.1 file. This is the most complete set of popt alias examples for RPM commands."
+msgstr ""
+
+msgid "You can also define aliases that can set RPM macros, such as the following alias for setting the path to the RPM database:"
+msgstr ""
+
+msgid "rpm alias --dbpath --define '_dbpath !#:+'"
+msgstr ""
+
+msgid "In this example, !#:+ was defined to behave like a shell history-editing command. With popt, this means to grab the next command-line parameter and place it into the command defined for the alias."
+msgstr ""
+
+msgid "To support the --help and --usage options, you can define the --POPTdesc and --POPTargs options to the alias as shown in the previous examples. These options also support internationalization."
+msgstr ""
+
+msgid "All together, the popt alias setting is very close to the popt option table entries used with the C programming API."
+msgstr ""
+
+msgid "<xref linkend=\"ch-programming-c\" /> shows how to program with the popt library."
+msgstr ""
+
+msgid "Customizing popt aliases"
+msgstr ""
+
+msgid "Like RPM macros and settings, popt aliases are defined in a cascading set of files. The official RPM aliases are defined in /usr/lib/rpm/rpmpopt-4.1 for rpm 4.1."
+msgstr ""
+
+msgid "Do not modify this file! The RPM system depends on this file for proper functioning. Incorrect changes might disable many options to the rpm command."
+msgstr ""
+
+msgid "Store per-system popt aliases in /etc/popt. Store per-user aliases in $HOME/.popt (with a leading period)."
+msgstr ""
+
+msgid "These files are shared by all applications that use popt."
+msgstr ""
+
+msgid "For example, you can define an alias for rpm -qa that executes faster than the normal query all packages command, by turning off the tests for digest signature verification. To do so, add the following line to a file named .popt in your home directory:"
+msgstr ""
+
+msgid "rpm alias --qall -qa --nodigest --nosignature"
+msgstr ""
+
+msgid "Once you set up this alias, you can run the following command in place of rpm -qa:"
+msgstr ""
+
+msgid "$ rpm --qall"
+msgstr ""
+
+msgid "This should execute about one-third to one-half faster than the normal rpm -qa command."
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "Turning off the signature and digest tests means you are ignoring important information that pertains to the integrity of your system. That is why the alias shown here does not override the normal -qa option, and instead defines a new --qall option"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "This chapter shows the many ways you can customize RPM usage for your system or your own personal environment. You can define RPM macros, which is the preferred way to make RPM settings. Or you can set RPM values in the older rpmrc files, which are now mostly replaced by RPM macros."
+msgstr ""
+
+msgid "Using popt, the powerful command-line option parser, you can define aliases to add simple options that popt expands into whatever you define. Many of the rpm command-line options are defined this way."
+msgstr ""
+

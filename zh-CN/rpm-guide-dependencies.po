@@ -1,0 +1,1043 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Package Dependencies"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Understanding dependencies"
+msgstr ""
+
+msgid "Package capabilities"
+msgstr ""
+
+msgid "Version dependencies"
+msgstr ""
+
+msgid "Checking dependencies"
+msgstr ""
+
+msgid "Triggers"
+msgstr ""
+
+msgid "Packages aren’t built in a vacuum. Web applications, for example, build on system networking libraries, system-encryption libraries, and system-file input and output libraries."
+msgstr ""
+
+msgid "This chapter covers dependencies between packages, along with ways to discover and manage those dependencies."
+msgstr ""
+
+msgid "Understanding the Dependency Concept"
+msgstr ""
+
+msgid "A dependency occurs when one package depends on another. You might think it would make for an easier-to-manage system if no package depended on any others, but you’d face a few problems, not the least of which would be dramatically increased disk usage."
+msgstr ""
+
+msgid "Packages on your Linux system depend on other packages. Just about every package with an application, for example, depends on the system C libraries, since these libraries provide common facilities that just about every program uses. Network applications typically depend on low-level networking libraries. These dependencies really work in your favor, since a security bug fix in the network libraries can update all applications that make use of the updated libraries."
+msgstr ""
+
+msgid "Furthermore, sharing software means that each package has less code to maintain and thus improved quality. Code sharing has been in the computer lexicon since the 1960s."
+msgstr ""
+
+msgid "Although quite a few packages depend on system-level libraries, some packages depend on applications defined in other packages. The Emacs text editor package, for example, depends on the Perl scripting language, specifically, the perl command. Database client programs usually depend on the database server applications."
+msgstr ""
+
+msgid "The RPM database tracks dependency information, so it can, for example, stop attempts to remove packages that other packages depend on or inform users of dependent packages upon installation."
+msgstr ""
+
+msgid "Capabilities"
+msgstr ""
+
+msgid "In RPM terminology, each package provides capabilities. A capability is simply a text string that the package claims it provides. In most cases, a capability names a file or a package. But the capability can be any arbitrary text string."
+msgstr ""
+
+msgid "Other packages can then depend on certain capabilities. (You can use this concept in building your own packages.) Each package lists the capabilities it requires as well as the capabilities it provides."
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "Package dependencies and capabilities are very important when creating spec files for building your own RPM packages, the subject of <xref linkend=\"ch-specfiles\" /> ."
+msgstr ""
+
+msgid "When you install a package, the capability information is stored in the RPM database. When you remove a package, the rpm command checks the RPM database. If the package you are trying to remove provides a capability that another package needs, the command will generate an error. If you try to remove a package that other packages depend on, you'll see an error like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"        # rpm -e setup\n"
+"   error: Failed dependencies:\n"
+"        setup is needed by (installed) basesystem-10.0-3.noarch\n"
+"        setup &gt;= 2.5.4-1 is needed by (installed) filesystem-2.4.31-1.fc13.x86_64\n"
+"        setup is needed by (installed) shadow-utils-2:4.1.4.2-8.fc13.x86_64\n"
+"        setup is needed by (installed) rpcbind-0.2.0-5.fc13.x86_64\n"
+"        setup &gt;= 2.5.31-1 is needed by (installed) sendmail-8.14.4-4.fc13.x86_64\n"
+"        setup is needed by (installed) xinetd-2:2.3.14-32.fc13.x86_64\n"
+"        setup &gt;= 2.5.48 is needed by (installed) ccache-2.4-18.fc13.x86_64\n"
+"        setup is needed by (installed) dump-1:0.4-0.6.b42.fc13.x86_64      \n"
+"      "
+msgstr ""
+
+msgid "To verify that the package has not been removed, you can query for the package after trying to remove it, as shown following:"
+msgstr ""
+
+msgid "# rpm -q setup"
+msgstr ""
+
+msgid "setup-2.8.20-1"
+msgstr ""
+
+msgid "This shows that the rpm command has not removed the setup package due to the errors."
+msgstr ""
+
+msgid "Forcing RPM actions"
+msgstr ""
+
+msgid "<xref linkend=\"ch-using-rpm\" /> covers ways to force the rpm command to do what you want, although this can cause problems if you try to force the issue and remove a crucial package. In virtually all cases, do not use any of the force options, as this can cause problems with the RPM system, since the force options are purposely ignoring safety checks performed by the rpm command."
+msgstr ""
+
+msgid "Many capabilities that packages require are system libraries, especially shared libraries. Shared libraries, which usually have a .so file extension (short for shared object), provide a memory-efficient means for applications to share program code. These libraries may also have a .so.number extension, such as libc.so.6."
+msgstr ""
+
+msgid "About shared libraries"
+msgstr ""
+
+msgid "Shared libraries on Windows are called DLLs, short for Dynamic Link Libraries. The implementations differ, but the Windows DLL concept is similar to Linux and Unix shared objects."
+msgstr ""
+
+msgid "Shared libraries have been part of Linux for a long time and have nothing to do with the RPM system. Shared libraries accessed by a program, however, represent natural dependencies. Because so many programs depend on shared libraries, the RPM system can automatically handle many shared-library dependencies."
+msgstr ""
+
+msgid "To list the shared libraries that a program accesses, use the ldd command, for example:"
+msgstr ""
+
+msgid ""
+"\n"
+"        $ ldd /bin/grep\n"
+"        linux-vdso.so.1 =&gt;  (0x00007fffcb90d000)\n"
+"        libpcre.so.0 =&gt; /lib64/libpcre.so.0 (0x000000378ca00000)\n"
+"        libc.so.6 =&gt; /lib64/libc.so.6 (0x0000003771000000)\n"
+"        /lib64/ld-linux-x86-64.so.2 (0x0000003770c00000)      \n"
+"      "
+msgstr ""
+
+msgid "An application may depend on a capability provided by another package. It may also depend on the capability that a specific version of another package provides. For example, some add-ons to the Apache Web server depend on the version of Apache. The Apache 2.0 version made a number of changes that affect add-on packages. Some Apache add-on packages depend on version 1.3; others depend on version 2.0."
+msgstr ""
+
+msgid "Most package dependencies assume some level of compatibility and require a version at or above a given version number (for example, version 2.0 or later). You’ll see more version dependencies when applications make major changes, such as the change from 1.3 to 2.0 for the Apache Web server."
+msgstr ""
+
+msgid "Conflicts"
+msgstr ""
+
+msgid "Some packages may provide capabilities that interfere with those in other packages. This is called a conflict. Installing conflicting packages is an error. For example, the httpd package (the Apache Web server) conflicts with the thttpd package. Both packages want to provide the primary Web server for a system."
+msgstr ""
+
+msgid "The RPM system will prevent you from installing packages that conflict with other packages. You can force the issue, using the techniques described in <xref linkend=\"ch-using-rpm\" /> , and override the RPM system. But in most cases, you should not install packages that conflict."
+msgstr ""
+
+msgid "Obsoletes"
+msgstr ""
+
+msgid "The RPM system supports one more type of dependency, called obsoletes. This refers to a capability that a package provides that makes another capability obsolete. For example, a new version of the perl interpreter may make an older version obsolete. In most cases, the obsoletes dependency should be used when the name of a package changes. For example, the apache Web server package became the httpd package. You would expect the new package, httpd, to obsolete the old package name, apache."
+msgstr ""
+
+msgid "This brings the total to four types of dependencies that the RPM system tracks:"
+msgstr ""
+
+msgid "Requires, which tracks the capabilities a package requires"
+msgstr ""
+
+msgid "Provides, which tracks the capabilities a package provides for other packages"
+msgstr ""
+
+msgid "Conflicts, which describes the capabilities that if installed, conflict with capabilities in a package"
+msgstr ""
+
+msgid "Obsoletes, which describes the capabilities that this package will make obsolete"
+msgstr ""
+
+msgid "Packages advertise this dependency information. Each dependency holds the type, such as requires, a capability, such as a shared library or a package name, and optionally a version number, such as requiring the python package at a version number greater than or equal to 2.2 (python &gt;= 2.2)."
+msgstr ""
+
+msgid "Checking for Dependencies"
+msgstr ""
+
+msgid "The rpm –q command queries the RPM database or RPM package files. With the right options to this command, you can check for the four types of package dependencies as well. These options are based on the concept of capabilities introduced previously."
+msgstr ""
+
+msgid "You can query what capabilities a package requires. You can also query what capabilities a package provides. You can query for the obsoleting and conflicting information as well. Furthermore, given a capability, you can query which packages require this capability as well as which packages provide this capability."
+msgstr ""
+
+msgid "There are quite a few more options you can use with the rpm –q command for querying packages. See <xref linkend=\"ch-using-rpm-db\" /> for more on querying packages and package files."
+msgstr ""
+
+msgid "Determining the capabilities a package requires"
+msgstr ""
+
+msgid "The first and most important step is to determine what capabilities a package requires. If all the required capabilities are met, you can safely install the package (barring other things that can go wrong, such as conflicts). The requires dependencies are by far the most important."
+msgstr ""
+
+msgid "The --requires option to the rpm –q command lists the capabilities a given package requires. The basic syntax is:"
+msgstr ""
+
+msgid "rpm –q query_options --requires packages"
+msgstr ""
+
+msgid "For example:"
+msgstr ""
+
+msgid "$ rpm -qp --requires sendmail-8.12.5-7.i386.rpm"
+msgstr ""
+
+msgid "/usr/sbin/alternatives"
+msgstr ""
+
+msgid "rpmlib(VersionedDependencies) &lt;= 3.0.3-1"
+msgstr ""
+
+msgid "chkconfig &gt;= 1.3"
+msgstr ""
+
+msgid "/usr/sbin/useradd"
+msgstr ""
+
+msgid "/bin/mktemp"
+msgstr ""
+
+msgid "fileutils"
+msgstr ""
+
+msgid "gawk"
+msgstr ""
+
+msgid "sed"
+msgstr ""
+
+msgid "sh-utils"
+msgstr ""
+
+msgid "procmail"
+msgstr ""
+
+msgid "bash &gt;= 2.0"
+msgstr ""
+
+msgid "/bin/sh"
+msgstr ""
+
+msgid "rpmlib(PayloadFilesHavePrefix) &lt;= 4.0-1"
+msgstr ""
+
+msgid "rpmlib(CompressedFileNames) &lt;= 3.0.4-1"
+msgstr ""
+
+msgid "/bin/bash"
+msgstr ""
+
+msgid "libcrypto.so.2"
+msgstr ""
+
+msgid "libcrypt.so.1"
+msgstr ""
+
+msgid "libc.so.6"
+msgstr ""
+
+msgid "libc.so.6(GLIBC_2.0)"
+msgstr ""
+
+msgid "libc.so.6(GLIBC_2.1)"
+msgstr ""
+
+msgid "libc.so.6(GLIBC_2.1.3)"
+msgstr ""
+
+msgid "libc.so.6(GLIBC_2.2)"
+msgstr ""
+
+msgid "libdb-4.0.so"
+msgstr ""
+
+msgid "libgdbm.so.2"
+msgstr ""
+
+msgid "libhesiod.so.0"
+msgstr ""
+
+msgid "liblber.so.2"
+msgstr ""
+
+msgid "libldap.so.2"
+msgstr ""
+
+msgid "libnsl.so.1"
+msgstr ""
+
+msgid "libnsl.so.1(GLIBC_2.0)"
+msgstr ""
+
+msgid "libresolv.so.2"
+msgstr ""
+
+msgid "libresolv.so.2(GLIBC_2.0)"
+msgstr ""
+
+msgid "libresolv.so.2(GLIBC_2.2)"
+msgstr ""
+
+msgid "libsasl.so.7"
+msgstr ""
+
+msgid "libssl.so.2"
+msgstr ""
+
+msgid "This example tests an RPM package file, sendmail-8.12.5-7.i386.rpm, for the requires dependency, in other words, what capabilities the package requires. The sendmail package depends on a lot of other parts of the system, as you can see in the response to the command shown previously. Most of the dependencies are for system libraries (all the dependencies ending in .so or .so.number). This package requires other capabilities (packages in this case). It also requires the chkconfig package at a specific version, version 1.3 or higher, and the bash package at version 2.0 or higher. The sendmail package also requires a particular version of the RPM system (the rpmlib dependency)."
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "Always check what a package requires before installing the package. You can also use the --test option when trying to install the package to first test whether the installation can proceed. See <xref linkend=\"ch-using-rpm\" /> for details on installing packages and the --test option. The rpm command will perform all these checks for you anyway. Checking in advance, though, with the --test option, helps avoid dependency hell with circular dependencies."
+msgstr ""
+
+msgid "You can also check for what an installed package requires with the --requires option. For example:"
+msgstr ""
+
+msgid "rpm -q --requires sendmail"
+msgstr ""
+
+msgid "You can use the -R short option in place of the --requires option."
+msgstr ""
+
+msgid "This command returns the same data as the previous command but queries an installed package rather than an RPM package file."
+msgstr ""
+
+msgid "You might assume that applications have the most dependencies, which is true. But even source packages may depend on other packages, often the packages needed to build the sources into an application. For example, the following command lists the capabilities required by a source RPM:"
+msgstr ""
+
+msgid "$ rpm -qp --requires telnet-0.17-23.src.rpm"
+msgstr ""
+
+msgid "ncurses-devel"
+msgstr ""
+
+msgid "Some packages require particular versions of other packages, for example:"
+msgstr ""
+
+msgid "rpm -qp --requires xcdroast-0.98a9-18.src.rpm"
+msgstr ""
+
+msgid "imlib-devel &gt;= 1.9.13-9"
+msgstr ""
+
+msgid "gtk+-devel &gt;= 1.2.10"
+msgstr ""
+
+msgid "desktop-file-utils &gt;= 0.2.92"
+msgstr ""
+
+msgid "This example shows that the xcdroast source package requires the imlib-devel capability (in this case, a package) at version 1.9.13-9 or higher, the gtk+-devel package at version 1.2.10 or higher, and the desktop-file-utils package at version 0.2.92 or higher. This is a more stringent requirement than just depending on the given packages being installed. This RPM is also an older RPM package, based on the requirement for the rpmlib to be prior or equal to 3.0.4-1."
+msgstr ""
+
+msgid "Some packages may require a particular version of the rpmlib, or RPM library. For example, the setup package contains special system configuration files, including the default password file, /etc/passwd."
+msgstr ""
+
+msgid "$ rpm -q --requires setup"
+msgstr ""
+
+msgid "As shown in this example, this package depends only on capabilities of the RPM system itself. The particular requirements shown here specify how the rpm command should treat the package payload, including how the files are listed in the package and what type of compression is used."
+msgstr ""
+
+msgid "Determining the capabilities a package provides"
+msgstr ""
+
+msgid "Packages require capabilities, and they can provide capabilities for other packages to require. To list the capabilities a package provides, use the --provides option. These capabilities can be arbitrary names, shared libraries (.so files), and the package name itself. The basic syntax is:"
+msgstr ""
+
+msgid "rpm –q query_options --provides packages"
+msgstr ""
+
+msgid "For example, the tcsh shell package provides two capabilities, at a particular version number, as shown following:"
+msgstr ""
+
+msgid "$ rpm -q --provides tcsh"
+msgstr ""
+
+msgid "csh = 6.12"
+msgstr ""
+
+msgid "tcsh = 6.12-2"
+msgstr ""
+
+msgid "Other packages provide a lot more, including shared libraries. The httpd package provides a long list of capabilities, as shown following:"
+msgstr ""
+
+msgid "$ rpm -q --provides httpd"
+msgstr ""
+
+msgid "webserver"
+msgstr ""
+
+msgid "httpd-mmn = 20020628"
+msgstr ""
+
+msgid "libapr.so.0"
+msgstr ""
+
+msgid "libaprutil.so.0"
+msgstr ""
+
+msgid "mod_access.so"
+msgstr ""
+
+msgid "mod_actions.so"
+msgstr ""
+
+msgid "mod_alias.so"
+msgstr ""
+
+msgid "mod_asis.so"
+msgstr ""
+
+msgid "mod_auth_anon.so"
+msgstr ""
+
+msgid "mod_auth_dbm.so"
+msgstr ""
+
+msgid "mod_auth_digest.so"
+msgstr ""
+
+msgid "mod_auth.so"
+msgstr ""
+
+msgid "mod_autoindex.so"
+msgstr ""
+
+msgid "mod_cern_meta.so"
+msgstr ""
+
+msgid "mod_cgi.so"
+msgstr ""
+
+msgid "mod_dav_fs.so"
+msgstr ""
+
+msgid "mod_dav.so"
+msgstr ""
+
+msgid "mod_deflate.so"
+msgstr ""
+
+msgid "mod_dir.so"
+msgstr ""
+
+msgid "mod_env.so"
+msgstr ""
+
+msgid "mod_expires.so"
+msgstr ""
+
+msgid "mod_headers.so"
+msgstr ""
+
+msgid "mod_imap.so"
+msgstr ""
+
+msgid "mod_include.so"
+msgstr ""
+
+msgid "mod_info.so"
+msgstr ""
+
+msgid "mod_log_config.so"
+msgstr ""
+
+msgid "mod_mime_magic.so"
+msgstr ""
+
+msgid "mod_mime.so"
+msgstr ""
+
+msgid "mod_negotiation.so"
+msgstr ""
+
+msgid "mod_proxy_connect.so"
+msgstr ""
+
+msgid "mod_proxy_ftp.so"
+msgstr ""
+
+msgid "mod_proxy_http.so"
+msgstr ""
+
+msgid "mod_proxy.so"
+msgstr ""
+
+msgid "mod_rewrite.so"
+msgstr ""
+
+msgid "mod_setenvif.so"
+msgstr ""
+
+msgid "mod_speling.so"
+msgstr ""
+
+msgid "mod_status.so"
+msgstr ""
+
+msgid "mod_suexec.so"
+msgstr ""
+
+msgid "mod_unique_id.so"
+msgstr ""
+
+msgid "mod_userdir.so"
+msgstr ""
+
+msgid "mod_usertrack.so"
+msgstr ""
+
+msgid "mod_vhost_alias.so"
+msgstr ""
+
+msgid "httpd = 2.0.40-8"
+msgstr ""
+
+msgid "Checking for conflicts"
+msgstr ""
+
+msgid "Use the --conflicts option to check what conflicts with a given package. The basic syntax is:"
+msgstr ""
+
+msgid "rpm –q query_options --conflicts packages"
+msgstr ""
+
+msgid "# rpm -q --conflicts httpd"
+msgstr ""
+
+msgid "thttpd"
+msgstr ""
+
+msgid "This command tells you that the httpd package (the Apache Web server) conflicts with the thttpd package. Both packages provide a similar capability. By marking the conflict, the httpd package tells you that you cannot normally install both the httpd and thttpd packages on a system. This information comes from the httpd package, which has an entry in the package that indicates the conflict. The conflict is not guaranteed. These packages may work together, but the creator of the httpd package felt that httpd would not work with the thttpd package and helpfully let us all know."
+msgstr ""
+
+msgid "The RPM system will report on the conflicts and indicate an error if you try to install conflicting packages. The idea of conflicts really gives package creators a way to alert users to potential problems and to tell us that one package likely won’t work with another."
+msgstr ""
+
+msgid "The force options discussed in <xref linkend=\"ch-using-rpm\" /> allow you to override conflicts, if absolutely necessary. In most cases, though, a conflict presents you with the choice to install one or the other of the packages, but not both."
+msgstr ""
+
+msgid "Determining which packages require a certain capability"
+msgstr ""
+
+msgid "In addition to querying capabilities and requirements of a particular package, you can query the capabilities themselves. This function allows you to check which packages require a given capability."
+msgstr ""
+
+msgid "The --whatrequires option tells the rpm command to report on which packages in the RPM database require a certain capability. The basic syntax is:"
+msgstr ""
+
+msgid "rpm –q query_options --whatrequires capability"
+msgstr ""
+
+msgid "Some packages are not required by anything:"
+msgstr ""
+
+msgid "$ rpm -q --whatrequires tcsh"
+msgstr ""
+
+msgid "no package requires tcsh"
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Don’t worry about the poor tcsh package being lonely. Because other packages do not require this package, you can easily remove the tcsh package without affecting the rest of your system."
+msgstr ""
+
+msgid "This example shows a package name as the capability. Shared libraries are also considered capabilities. You can query on these as well. For example:"
+msgstr ""
+
+msgid "$ rpm -q --whatrequires librpm-4.1.so"
+msgstr ""
+
+msgid "rpm-4.1-1.06"
+msgstr ""
+
+msgid "net-snmp-5.0.1-6"
+msgstr ""
+
+msgid "rpm-python-4.1-1.06"
+msgstr ""
+
+msgid "rpm-devel-4.1-1.06"
+msgstr ""
+
+msgid "rpm-build-4.1-1.06"
+msgstr ""
+
+msgid "This example shows that the core RPM library is used by a number of RPM-related packages, along with, oddly enough, the net-snmp system-management package."
+msgstr ""
+
+msgid "The capability you query for must be an explicit capability. For example, you will get different results if you query for the bash package or the command, /bin/bash. If you query for the bash package, you will see the packages that explicitly require the capability bash. For example:"
+msgstr ""
+
+msgid "$ rpm -q --whatrequires bash"
+msgstr ""
+
+msgid "gpm-1.19.3-20"
+msgstr ""
+
+msgid "info-4.0b-3"
+msgstr ""
+
+msgid "initscripts-6.40-1"
+msgstr ""
+
+msgid "sendmail-8.11.6-3"
+msgstr ""
+
+msgid "sysklogd-1.4.1-4"
+msgstr ""
+
+msgid "vixie-cron-3.0.1-63"
+msgstr ""
+
+msgid "ypbind-1.8-1"
+msgstr ""
+
+msgid "ypserv-1.3.12-2"
+msgstr ""
+
+msgid "If you instead query for the capability /bin/bash, that is, the file /bin/bash, you will see a different list of packages. For example:"
+msgstr ""
+
+msgid "$ rpm -q --whatrequires /bin/bash"
+msgstr ""
+
+msgid "apmd-3.0final-34"
+msgstr ""
+
+msgid "at-3.1.8-20"
+msgstr ""
+
+msgid "autofs-3.1.7-21"
+msgstr ""
+
+msgid "bash-2.05-8"
+msgstr ""
+
+msgid "bind-9.1.3-4"
+msgstr ""
+
+msgid "cipe-1.4.5-6"
+msgstr ""
+
+msgid "crontabs-1.10-1"
+msgstr ""
+
+msgid "dialog-0.9a-5"
+msgstr ""
+
+msgid "hotplug-2001_04_24-11"
+msgstr ""
+
+msgid "ipchains-1.3.10-10"
+msgstr ""
+
+msgid "iproute-2.2.4-14"
+msgstr ""
+
+msgid "kudzu-0.99.23-1"
+msgstr ""
+
+msgid "logwatch-2.1.1-3"
+msgstr ""
+
+msgid "man-1.5i2-6"
+msgstr ""
+
+msgid "mkbootdisk-1.4.2-3"
+msgstr ""
+
+msgid "mkinitrd-3.2.6-1"
+msgstr ""
+
+msgid "mutt-1.2.5i-17"
+msgstr ""
+
+msgid "openssh-server-3.1p1-2"
+msgstr ""
+
+msgid "pine-4.44-1.72.0"
+msgstr ""
+
+msgid "rpm-build-4.0.3-1.03"
+msgstr ""
+
+msgid "rusers-server-0.17-12"
+msgstr ""
+
+msgid "shapecfg-2.2.12-7"
+msgstr ""
+
+msgid "sharutils-4.2.1-8"
+msgstr ""
+
+msgid "tetex-1.0.7-30"
+msgstr ""
+
+msgid "ucd-snmp-4.2.1-7"
+msgstr ""
+
+msgid "xinetd-2.3.3-1"
+msgstr ""
+
+msgid "There is no short form for the --whatrequires option."
+msgstr ""
+
+msgid "Other capabilities, especially system-level shared libraries, are used by a large number of packages. For example:"
+msgstr ""
+
+msgid "# rpm -q --whatrequires libcrypt.so.1 | sort"
+msgstr ""
+
+msgid "cvs-1.11.1p1-3"
+msgstr ""
+
+msgid "cyrus-sasl-1.5.24-23"
+msgstr ""
+
+msgid "cyrus-sasl-devel-1.5.24-23"
+msgstr ""
+
+msgid "cyrus-sasl-plain-1.5.24-23"
+msgstr ""
+
+msgid "fetchmail-5.9.0-1"
+msgstr ""
+
+msgid "ircii-4.4Z-7"
+msgstr ""
+
+msgid "krbafs-1.0.9-2"
+msgstr ""
+
+msgid "nss_ldap-172-2"
+msgstr ""
+
+msgid "openldap12-1.2.12-4"
+msgstr ""
+
+msgid "openldap-2.0.11-13"
+msgstr ""
+
+msgid "openldap-clients-2.0.11-13"
+msgstr ""
+
+msgid "pam-0.75-19"
+msgstr ""
+
+msgid "pam_krb5-1.46-1"
+msgstr ""
+
+msgid "passwd-0.64.1-7"
+msgstr ""
+
+msgid "perl-5.6.0-17"
+msgstr ""
+
+msgid "pwdb-0.61.1-3"
+msgstr ""
+
+msgid "python-1.5.2-35"
+msgstr ""
+
+msgid "rsh-0.17-5"
+msgstr ""
+
+msgid "rsh-server-0.17-5"
+msgstr ""
+
+msgid "screen-3.9.9-3"
+msgstr ""
+
+msgid "shadow-utils-20000902-4"
+msgstr ""
+
+msgid "sh-utils-2.0.11-5"
+msgstr ""
+
+msgid "SysVinit-2.78-19"
+msgstr ""
+
+msgid "tcsh-6.10-6"
+msgstr ""
+
+msgid "util-linux-2.11f-17"
+msgstr ""
+
+msgid "vim-enhanced-5.8-7"
+msgstr ""
+
+msgid "wu-ftpd-2.6.1-20"
+msgstr ""
+
+msgid "yp-tools-2.5-1"
+msgstr ""
+
+msgid "Quite a few packages require encryption and decryption (the purpose of this library), making this library crucial to operating the system. Many of the packages listed here are in turn depended on by even more packages."
+msgstr ""
+
+msgid "To help trace back capabilities, you can combine the queries. For example:"
+msgstr ""
+
+msgid "$ rpm -q --provides sendmail"
+msgstr ""
+
+msgid "smtpdaemon"
+msgstr ""
+
+msgid "sendmail = 8.11.6-3"
+msgstr ""
+
+msgid "$ rpm -q --whatrequires smtpdaemon"
+msgstr ""
+
+msgid "The first command lists the capabilities that the sendmail package provides, including the generic capability of smtpdaemon. You can then list which packages require this particular capability, as shown in the second command. This is a big help for wading through a mess of packages depending on packages depending on yet more packages."
+msgstr ""
+
+msgid "Determining which package provides a certain capability"
+msgstr ""
+
+msgid "To complete the circle, you can query for which package provides a certain capability. This knowledge allows you to trace a requirement back to the package that provides it."
+msgstr ""
+
+msgid "The --whatprovides option tells the rpm command to list the capabilities a package provides. Use the --whatprovides option with the –q, or query, option to the rpm command. (There is no short form for the --whatrprovides option.)"
+msgstr ""
+
+msgid "The basic syntax follows:"
+msgstr ""
+
+msgid "rpm –q --whatprovides capability"
+msgstr ""
+
+msgid "For example, to query what package provides the capability webserver, use the following command:"
+msgstr ""
+
+msgid "$ rpm -q --whatprovides webserver"
+msgstr ""
+
+msgid "httpd-2.0.40-8"
+msgstr ""
+
+msgid "In this case, the capability is identified by an arbitrary string, webserver. This is a generic name for a given capability, serving Web pages."
+msgstr ""
+
+msgid "You can also trace individual files using the --whatprovides option. For example:"
+msgstr ""
+
+msgid "$ rpm -q --whatprovides /etc/skel/.bashrc"
+msgstr ""
+
+msgid "The rpm –qf command, covered in the last chapter, is an easier way to get to the same information when tracking which package provides a particular file. For example:"
+msgstr ""
+
+msgid "rpm -qf /etc/skel/.bashrc"
+msgstr ""
+
+msgid "If you are querying particular files, use rpm –qf. If you are querying capabilities, use --whatprovides."
+msgstr ""
+
+msgid "A trigger is a script that gets run when a package is installed or uninstalled. Triggers allow packages that depend on other packages to properly configure themselves when those other packages are installed or removed."
+msgstr ""
+
+msgid "The --triggers option to the rpm command lists any trigger scripts in a given package. For example:"
+msgstr ""
+
+msgid "$ rpm -q --triggers sendmail"
+msgstr ""
+
+msgid "triggerpostun script (through /bin/sh) -- sendmail &lt; 8.10.0"
+msgstr ""
+
+msgid "/sbin/chkconfig --add sendmail"
+msgstr ""
+
+msgid "This shows that the sendmail mail transfer agent (mail-sending program) provides a short trigger script."
+msgstr ""
+
+msgid "In contrast, the anonftp (anonymous file transfer) package has a fairly complex set of triggers, as shown following:"
+msgstr ""
+
+msgid "$ rpm -q --triggers anonftp"
+msgstr ""
+
+msgid "triggerin script (through /bin/sh) -- glibc"
+msgstr ""
+
+msgid "copy() { file=\"`ls --sort=time $1 |head -n 1`\"; ln -f \"$file\" \"$2\" 2&gt;/dev/null |"
+msgstr ""
+
+msgid "| cp -df \"$file\" \"$2\"; }"
+msgstr ""
+
+msgid "# Kill off old versions"
+msgstr ""
+
+msgid "rm -f /var/ftp/lib/ld-* /var/ftp/lib/libc* /var/ftp/lib/libnsl* /var/ftp/lib/lib"
+msgstr ""
+
+msgid "nss_files* &amp;&gt;/dev/null || :"
+msgstr ""
+
+msgid "# Copy parts of glibc, needed by various programs in bin."
+msgstr ""
+
+msgid "LIBCVER=`basename $(ls --sort=time /lib/libc-*.so |head -n 1) .so |cut -f2- -d-`"
+msgstr ""
+
+msgid "copy /lib/ld-${LIBCVER}.so /var/ftp/lib"
+msgstr ""
+
+msgid "copy /lib/libc-${LIBCVER}.so /var/ftp/lib"
+msgstr ""
+
+msgid "copy /lib/libnsl-${LIBCVER}.so /var/ftp/lib"
+msgstr ""
+
+msgid "copy /lib/libnss_files-${LIBCVER}.so /var/ftp/lib"
+msgstr ""
+
+msgid "md5sum /var/ftp/lib/lib*-*.so /var/ftp/lib/libtermcap.so.*.*.* 2&gt;/dev/null &gt;/var"
+msgstr ""
+
+msgid "/ftp/lib/libs.md5"
+msgstr ""
+
+msgid "chmod 0400 /var/ftp/lib/libs.md5"
+msgstr ""
+
+msgid "# Use ldconfig to build symlinks and whatnot."
+msgstr ""
+
+msgid "[ ! -e /var/ftp/etc/ld.so.conf ] &amp;&amp; touch /var/ftp/etc/ld.so.conf"
+msgstr ""
+
+msgid "/sbin/ldconfig -r /var/ftp"
+msgstr ""
+
+msgid "triggerin script (through /bin/sh) -- fileutils"
+msgstr ""
+
+msgid "copy /bin/ls /var/ftp/bin"
+msgstr ""
+
+msgid "md5sum `ls /var/ftp/bin/* |grep -v bin.md5` &gt;/var/ftp/bin/bin.md5"
+msgstr ""
+
+msgid "chmod 0400 /var/ftp/bin/bin.md5"
+msgstr ""
+
+msgid "triggerin script (through /bin/sh) -- cpio"
+msgstr ""
+
+msgid "copy /bin/cpio /var/ftp/bin"
+msgstr ""
+
+msgid "triggerin script (through /bin/sh) -- tar"
+msgstr ""
+
+msgid "copy /bin/tar /var/ftp/bin"
+msgstr ""
+
+msgid "triggerin script (through /bin/sh) -- gzip"
+msgstr ""
+
+msgid "copy /bin/gzip /var/ftp/bin"
+msgstr ""
+
+msgid "ln -sf gzip /var/ftp/bin/zcat"
+msgstr ""
+
+msgid "triggerin script (through /bin/sh) -- libtermcap"
+msgstr ""
+
+msgid "rm -f /var/ftp/lib/libtermcap.so.*.*.* &amp;&gt;/dev/null || :"
+msgstr ""
+
+msgid "copy '/lib/libtermcap.so.*.*.*' /var/ftp/lib"
+msgstr ""
+
+msgid "triggerin script (through /bin/sh) -- ncompress"
+msgstr ""
+
+msgid "copy /usr/bin/compress /var/ftp/bin"
+msgstr ""
+
+msgid "triggerpostun script (through /bin/sh) -- anonftp 4.0"
+msgstr ""
+
+msgid "if [ \"$2\" != 1 ] ; then"
+msgstr ""
+
+msgid "# The user has multiple glibc packages installed. We can't read the"
+msgstr ""
+
+msgid "# user's mind, so don't do anything."
+msgstr ""
+
+msgid "exit 0"
+msgstr ""
+
+msgid "fi"
+msgstr ""
+
+msgid "LIBCVER=`basename /lib/libc-*.so .so | cut -f2- -d-`"
+msgstr ""
+
+msgid "# Generate md5sums for verifyscript"
+msgstr ""
+
+msgid "Reading through the scripts indicates that this package seems to be triggered by the glibc standard C programming library package. You can confirm this by using the --triggeredby option to the rpm command, as shown following:"
+msgstr ""
+
+msgid "$ rpm -q --triggeredby glibc"
+msgstr ""
+
+msgid "anonftp-4.0-9"
+msgstr ""
+
+msgid "The anonftp package needs to be notified on changes to the glibc package, so that the anonftp package can properly set up its application. It actually uses part of glibc and is therefore highly susceptible to changes in the glibc package. Thus, the use of triggers provides essentially an extended form of dependencies. The anonftp package in this example depends so much on the glibc package that it needs to execute scripts whenever the glibc package changes."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Linux comes with many packages. Most of these packages depend on some other packages installed on your system. In RPM terms, packages provide capabilities and depend on capabilities that other packages provide. When the rpm command checks the RPM database for dependencies, it checks to ensure that all the capabilities that a given package requires are met by other installed packages."
+msgstr ""
+
+msgid "You can trace the capabilities a package requires with the --requires option to the rpm command. You can see what capabilities a package provides for others with the --provides option."
+msgstr ""
+
+msgid "Once you know a capability, you can query which package provides that capability with the --whatprovides option to the rpm command. And you can see which packages require that capability with the --whatrequires option."
+msgstr ""
+
+msgid "Triggers are an extended form of dependencies. A trigger is a script that gets executed when other packages are installed or removed. This allows a package with a high dependence on another package to track changes in that package and reconfigure itself as needed."
+msgstr ""
+
+msgid "The next chapter delves into transactions, which provide a safe means to install a set of packages. With transactions, either all the packages get installed, or none."
+msgstr ""
+

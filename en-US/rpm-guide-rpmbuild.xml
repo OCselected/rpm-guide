@@ -1,0 +1,1787 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- $Id: -->
+
+<chapter id="ch-rpmbuild">
+  <title>Controlling the Build with <command>rpmbuild</command></title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Building with the <command>rpmbuild</command> command
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Building RPMs without an external spec file
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Working with source RPMs
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Optimizing builds
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Signing built RPMs
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    The preceding chapters in this Part cover details on how to put
+    together RPMs. This chapter rounds out the discussion by delving
+    into more details on the rpmbuild command.
+  </para>
+  <para>
+    You can customize how rpmbuild creates RPMs, and you can use RPM
+    commands to test and debug your package.
+  </para>
+  <sect1>
+    <title>Building RPMs with the rpmbuild Command</title>
+    <para>
+      The rpmbuild command provides a workhorse command for building
+      RPMs in all sorts of ways. The basic syntax, as shown in <xref linkend="ch-creating-rpms"/>, is:
+    </para>
+    <para>
+      rpmbuild -bBuildStage spec_file
+    </para>
+    <para>
+      The BuildStage is a letter, such as c, to prepare and compile the
+      application, executing through the %build section, or i, to
+      execute through the %install section. This allows you a good deal
+      of flexibility for building the entire RPM or stopping at some
+      point prior to a full build.
+    </para>
+    <para>
+      There’s more to the rpmbuild command, though. Quite a few
+      additional options allow you to further customize the build.
+    </para>
+    <para>
+      Note
+    </para>
+    <para>
+      As mentioned in <xref linkend="ch-creating-rpms"/> , previous versions of the RPM system
+      used the rpm command with a -b, for build, option. This option is
+      no longer supported. Use the rpmbuild command to build RPMs.
+    </para>
+    <sect2>
+      <title>Customizing the build</title>
+      <para>
+        You can customize the rpmbuild command with the options listed
+        in Table 12-1.
+      </para>
+      <para>
+        Table 12-1 Extra build options for the rpmbuild command
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --buildroot directory
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Override the default root directory for building with
+                  directory, generally not very useful since most
+                  packages already name a buildroot
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --clean
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Remove the build tree after building
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nobuild
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Just test the spec file and do not run the build
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --rmsource
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Remove the sources after the build
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --rmspec
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Remove the spec file after the build
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --short-circuit
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  With the -bc or -bi options, jump directly to the
+                  given stage and resume the build from that stage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --sign
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Sign the package with a GPG signature
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --target platform
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build for the given platform. May not work if you
+                  don't have the other platform build commands, such as
+                  cross compilers, set up. Can work for Intel platforms
+                  with i386, i686, and so on.
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </sect2>
+    <sect2>
+      <title>Testing the build</title>
+      <para>
+        One of the most useful options is --nobuild, which tells the
+        rpmbuild command to not build anything. This may seem silly, but
+        the --nobuild option is very useful for testing whether your
+        RPMs can be built. With the --nobuild option, the rpmbuild
+        command parses the spec file and checks for errors, but does not
+        run any of the build stages.
+      </para>
+      <para>
+        The --buildroot allows you to specify a different top-level
+        directory for building, overriding the BuildRoot tag in the spec
+        file. This means you can build in a separate location, which is
+        helpful in case there are mistakes. Using a separate directory
+        means the build won’t get mixed with anything else in the
+        build root directory.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Debugging the build</title>
+      <para>
+        The --short-circuit option tells the rpmbuild command to restart
+        at a particular location in the build. Rather than working its
+        way through all the steps up to the build stage you ask for, the
+        --short-circuit option allows the rpmbuild command to restart
+        just at the step you ask for.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        This works with the -bc and -bi options only, as well as the -tc
+        and -ti options covered later in this chapter.
+      </para>
+      <para>
+        For example, if you run the rpmbuild -bc command to stop after
+        the %build section, you can use the --short-circuit option to
+        restart the build at the %build section. If you found a problem
+        in the %build section and corrected it, you can quickly get
+        going again by restarting the build at the %build section rather
+        than extracting all the sources yet again.
+      </para>
+      <para>
+        This option is most useful when you are compiling a package, hit
+        an error, and fix that error. Without the --short-circuit
+        option, you’ll likely end up spending a lot of time
+        recompiling the code you have already compiled.
+      </para>
+      <para>
+        During normal development of an RPM package, you will likely
+        execute each build section, one at a time, stop, fix any errors
+        and restart where you left off. You’ll go through this cycle a
+        number of times before the RPM finally builds right.
+      </para>
+      <para>
+        Warning
+      </para>
+      <para>
+        Never distribute an RPM made with the --short-circuit option.
+        Instead, once you have everything working, start from scratch
+        and rebuild the RPM. This is to avoid any problems with a
+        partially-created RPM.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Cleaning up</title>
+      <para>
+        The --clean option tells the rpmbuild command to remove the
+        build tree when complete. This helps ensure that the next time
+        you run the rpmbuild command, you are starting from a known
+        situation.
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        $ rpmbuild --clean /usr/src/redhat/SPECS/jikes.spec
+      </para>
+      <para>
+        Executing(--clean): /bin/sh -e /var/tmp/rpm-tmp.98247
+      </para>
+      <para>
+        + umask 022
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + rm -rf jikes-1.17
+      </para>
+      <para>
+        + exit 0
+      </para>
+      <para>
+        You can use the --clean option alone, as shown previously, or in
+        concert with another option such as -bi to build and install a
+        binary RPM. In the latter case, the rpmbuild command will clean
+        the built files after the rest of the command finishes.
+      </para>
+      <para>
+        Similarly, the --rmsource option tells the rpmbuild command to
+        remove the sources after completing the command. You can call
+        this option with another option, such as -bi for building and
+        installing a binary RPM (and then removing the sources), or
+        alone on the command line to remove the sources only.
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        rpmbuild --rmsource jikes.spec
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        The abbreviation rm is short for remove. It comes from the Linux
+        rm command, used for removing files.
+      </para>
+      <para>
+        The --rmspec option tells the rpmbuild command to remove the
+        spec file when done with the command. As with the --rmsource
+        option, you can use the --rmspec option in conjunction with
+        another rpmbuild option or on its own to just remove the spec
+        file.
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        rpmbuild --rmspec jikes.spec
+      </para>
+      <para>
+        Warning
+      </para>
+      <para>
+        The file you are removing with this command is the spec file you
+        are passing to the command. Be careful, because you cannot undo
+        this operation and you have now lost your spec file, except
+        inside your source package.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Building for other platforms</title>
+      <para>
+        The --target option tells the rpmbuild command to build a
+        package for another platform. You need to pass the name of the
+        platform. For example:
+      </para>
+      <para>
+        rpmbuild -bi --target i486-redhat-linux
+      </para>
+      <para>
+        The basic format is:
+      </para>
+      <para>
+        cpu-vendor-os
+      </para>
+      <para>
+        For example, i686-redhat-linux specifies a 686 CPU with Red Hat
+        Linux. Other CPUs include ppc for PowerPC and sparc for Sun
+        SPARC.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        The --target option sets the target architecture at build time.
+        <xref linkend="ch-using-rpm"/>  covers how you can use the --ignoreos and --ignorearch
+        options when installing RPMs to ignore the operating system and
+        architecture that is flagged within the RPM. Of course, this
+        works only if you are installing on a compatible architecture.
+      </para>
+      <para>
+        On the surface level, the --target option overrides some of the
+        macros in the spec file, %_target, %_target_arch, and
+        %_target_os. This flags the RPM for the new target platform.
+      </para>
+      <para>
+        Under the covers, setting the architecture macros is not enough.
+        You really cannot create a PowerPC executable, for example, on
+        an Intel-architecture machine, unless you have a PowerPC cross
+        compiler, a compiler that can make PowerPC executables.
+      </para>
+      <para>
+        Warning
+      </para>
+      <para>
+        Set the target with care. Make sure you can really build
+        executable programs for that architecture.
+      </para>
+      <para>
+        If you try to compile a system that uses the GNU configure
+        system to configure the build, your target will likely be
+        ignored. For example, if you try to build the aforementioned
+        jikes package with a target of ppc-ibm-aix, to specify IBM’s
+        UNIX, called AIX, on a PowerPC architecture, you will see the
+        target ignored as the configure system detects that it's running
+        on Linux on an i686 architecture.
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        $ rpmbuild -bc --target ppc-ibm-aix
+        /usr/src/redhat/SPECS/jikes.spec
+      </para>
+      <para>
+        Building target platforms: ppc-ibm-aix
+      </para>
+      <para>
+        Building for target ppc-ibm-aix
+      </para>
+      <para>
+        Executing(%prep): /bin/sh -e /var/tmp/rpm-tmp.94955
+      </para>
+      <para>
+        + umask 022
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + LANG=C
+      </para>
+      <para>
+        + export LANG
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + rm -rf jikes-1.17
+      </para>
+      <para>
+        + /usr/bin/gzip -dc /usr/src/redhat/SOURCES/jikes-1.17.tar.gz
+      </para>
+      <para>
+        + tar -xf -
+      </para>
+      <para>
+        + STATUS=0
+      </para>
+      <para>
+        + '[' 0 -ne 0 ']'
+      </para>
+      <para>
+        + cd jikes-1.17
+      </para>
+      <para>
+        ++ /usr/bin/id -u
+      </para>
+      <para>
+        + '[' 500 = 0 ']'
+      </para>
+      <para>
+        ++ /usr/bin/id -u
+      </para>
+      <para>
+        + '[' 500 = 0 ']'
+      </para>
+      <para>
+        + /bin/chmod -Rf a+rX,g-w,o-w .
+      </para>
+      <para>
+        + exit 0
+      </para>
+      <para>
+        Executing(%build): /bin/sh -e /var/tmp/rpm-tmp.15710
+      </para>
+      <para>
+        + umask 022
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + cd jikes-1.17
+      </para>
+      <para>
+        + LANG=C
+      </para>
+      <para>
+        + export LANG
+      </para>
+      <para>
+        + ./configure CXXFLAGS=-O3 --prefix=/tmp/jikesrpm/usr
+      </para>
+      <para>
+        checking for a BSD-compatible install... /usr/bin/install -c
+      </para>
+      <para>
+        checking whether build environment is sane... yes
+      </para>
+      <para>
+        checking for gawk... gawk
+      </para>
+      <para>
+        checking whether make sets ${MAKE}... yes
+      </para>
+      <para>
+        checking whether to enable maintainer-specific portions of
+        Makefiles... no
+      </para>
+      <para>
+        checking build system type... i686-pc-linux-gnu
+      </para>
+      <para>
+        checking host system type... i686-pc-linux-gnu
+      </para>
+      <para>
+        checking for g++... g++
+      </para>
+      <para>
+        As you can see, the command starts out with the target as the
+        platform, but the configure script soon overrides that, as shown
+        at the end of the truncated output.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Building RPMs Without an External Spec File</title>
+    <para>
+      Most of the options for the rpmbuild command require an RPM spec
+      file. This file defines all the necessary parameters for the RPM
+      to build. If you’ve downloaded an application, though, you may
+      not have all the information needed to build a spec file. In
+      addition, writing the spec file is the most time-consuming task
+      when building RPMs. If you are lucky, the provider of a given
+      application may have already created a spec file and included the
+      spec file within the source distribution.
+    </para>
+    <sect2>
+      <title>Options for working with tar archives</title>
+      <para>
+        A special set of options aims toward building RPMs with spec
+        files stored in tar archives, also called tarballs. Tarballs are
+        files combined with the tar (tape archiver) utility and then
+        optionally compressed, usually with the gzip command. Because
+        this format is used so often for UNIX and Linux software, you
+        can use a set of -t options to the rpmbuild command that mimic
+        the -b options.
+      </para>
+      <para>
+        The basic syntax follows:
+      </para>
+      <para>
+        rpmbuild -tBuildStage compressed_tar_archive
+      </para>
+      <para>
+        The -t option is a lot like the -b option covered in <xref linkend="ch-creating-rpms"/> ,
+        except -t tells rpmbuild to build an RPM from a compressed tar
+        archive instead of from an RPM spec file. You still need a spec
+        file. These commands just assume that the spec file is located
+        within the tar archive. The extra BuildStage option is a special
+        code that tells the rpmbuild command how far to go when
+        building. Table 12-2 lists these options:
+      </para>
+      <para>
+        Table 12-2 Options for building with rpmbuild with tar archives
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -ta
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build all, both a binary and source RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -tb
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build a binary RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -tc
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Stop after the %build section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -tp
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Stop after the %prep section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -ti
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Stop after the %install section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -tl
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Check the listing of files for the RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -ts
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build a source RPM only
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Note
+      </para>
+      <para>
+        These command-line options work with a tar archive or a
+        compressed tar archive.
+      </para>
+    </sect2>
+    <sect2>
+      <title>The expected archive structure</title>
+      <para>
+        To build a package this way, the tar archive must have enough of
+        an expected structure, such as a configure script and a Makefile
+        with the expected make targets. The most crucial element is that
+        the tar archive must have the package spec file.That’s because
+        the rpmbuild command doesn’t know how to build every program
+        in the universe. Instead, rpmbuild expects to find a spec file
+        to tell it what to do. If you see an error like the following,
+        then your tar archive likely is missing the spec file:
+      </para>
+      <para>
+        $ rpmbuild -tc vixie-cron*tar.gz
+      </para>
+      <para>
+        error: Name field must be present in package: (main package)
+      </para>
+      <para>
+        error: Version field must be present in package: (main package)
+      </para>
+      <para>
+        error: Release field must be present in package: (main package)
+      </para>
+      <para>
+        error: Summary field must be present in package: (main package)
+      </para>
+      <para>
+        error: Group field must be present in package: (main package)
+      </para>
+      <para>
+        error: License field must be present in package: (main package)
+      </para>
+      <para>
+        These errors show expected tags from the missing spec file.
+      </para>
+      <para/>
+      <para/>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Working with Source RPMs</title>
+    <para>
+      Most of your work with the rpmbuild command will likely be to
+      create binary RPMs after you have the sources for an application
+      and a spec file. You can also get a lot of mileage out of source
+      RPMs, whether you build them or download them.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      <xref linkend="ch-specfiles"/>  covers the spec file in depth.
+    </para>
+    <para>
+      Because they are RPMs themselves, source RPMs act like other RPMs.
+      For example, you can use the rpm -i command to install a source
+      RPM. This installs the sources provided by the source RPM, not the
+      actual application. Normally, when you install a source RPM on a
+      Red Hat Linux system, the package gets installed into
+      /usr/src/redhat.
+    </para>
+    <para>
+      Note
+    </para>
+    <para>
+      This directory is obviously specific to Red Hat Linux. On other
+      Linux distributions, you'll likely see directories such as
+      /usr/src/OpenLinux for SCO (formerly Caldera) OpenLinux.
+    </para>
+    <para>
+      Installing a source RPM is not exactly the same as installing a
+      binary RPM. For example, the rpm command does not update the RPM
+      database when you install a source RPM. In addition, listing the
+      files in a source RPM only shows the relative paths, not the full
+      paths.
+    </para>
+    <para>
+      Once installation is complete, you can use the rpmbuild command to
+      create a binary RPM from the sources in the source RPM, using the
+      -b command-line options introduced in <xref linkend="ch-creating-rpms"/> . The next sections
+      show more shortcuts with source RPMs.
+    </para>
+    <sect2>
+      <title>Rebuilding binary RPMS from source RPMs</title>
+      <para>
+        As a shortcut, you do not have to install a source RPM to create
+        a binary RPM. Instead, you can build the binary RPM directory
+        using the --rebuild option.
+      </para>
+      <para>
+        The --rebuild option tells the rpmbuild command to rebuild a
+        binary RPM from a source RPM file. The basic syntax is:
+      </para>
+      <para>
+        rpmbuild --rebuild package.src.rpm
+      </para>
+      <para>
+        This command builds a binary RPM out of a source RPM with a
+        minimum of fuss. For example:
+      </para>
+      <para>
+        $ rpmbuild --rebuild unix2dos-2.2-17.src.rpm
+      </para>
+      <para>
+        Installing unix2dos-2.2-17.src.rpm
+      </para>
+      <para>
+        Executing(%prep): /bin/sh -e /var/tmp/rpm-tmp.15828
+      </para>
+      <para>
+        + umask 022
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + LANG=C
+      </para>
+      <para>
+        + export LANG
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + rm -rf unix2dos-2.2
+      </para>
+      <para>
+        + /bin/mkdir -p unix2dos-2.2
+      </para>
+      <para>
+        + cd unix2dos-2.2
+      </para>
+      <para>
+        + /usr/bin/gzip -dc /usr/src/redhat/S
+        OURCES/unix2dos-2.2.src.tar.gz
+      </para>
+      <para>
+        + tar -xf -
+      </para>
+      <para>
+        + STATUS=0
+      </para>
+      <para>
+        + '[' 0 -ne 0 ']'
+      </para>
+      <para>
+        ++ /usr/bin/id -u
+      </para>
+      <para>
+        + '[' 500 = 0 ']'
+      </para>
+      <para>
+        ++ /usr/bin/id -u
+      </para>
+      <para>
+        + '[' 500 = 0 ']'
+      </para>
+      <para>
+        + /bin/chmod -Rf a+rX,g-w,o-w .
+      </para>
+      <para>
+        + echo 'Patch #0 (unix2dos-mkstemp.patch):'
+      </para>
+      <para>
+        Patch #0 (unix2dos-mkstemp.patch):
+      </para>
+      <para>
+        + patch -p1 -b --suffix .sec -s
+      </para>
+      <para>
+        + echo 'Patch #1 (unix2dos-2.2-segfault.patch):'
+      </para>
+      <para>
+        Patch #1 (unix2dos-2.2-segfault.patch):
+      </para>
+      <para>
+        + patch -p1 -b --suffix .segf -s
+      </para>
+      <para>
+        + echo 'Patch #2 (unix2dos-2.2-manpage.patch):'
+      </para>
+      <para>
+        Patch #2 (unix2dos-2.2-manpage.patch):
+      </para>
+      <para>
+        + patch -p1 -b --suffix .man -s
+      </para>
+      <para>
+        + perl -pi -e 's,^#endif.*,#endif,g;s,^#else.*,#else,g'
+        unix2dos.c unix2dos.h
+      </para>
+      <para>
+        + exit 0
+      </para>
+      <para>
+        Executing(%build): /bin/sh -e /var/tmp/rpm-tmp.60650
+      </para>
+      <para>
+        + umask 022
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + cd unix2dos-2.2
+      </para>
+      <para>
+        + LANG=C
+      </para>
+      <para>
+        + export LANG
+      </para>
+      <para>
+        + gcc -O2 -march=i386 -mcpu=i686 -ounix2dos unix2dos.c
+      </para>
+      <para>
+        + exit 0
+      </para>
+      <para>
+        Executing(%install): /bin/sh -e /var/tmp/rpm-tmp.35128
+      </para>
+      <para>
+        + umask 022
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + cd unix2dos-2.2
+      </para>
+      <para>
+        + LANG=C
+      </para>
+      <para>
+        + export LANG
+      </para>
+      <para>
+        + rm -rf /var/tmp/unix2dos-root
+      </para>
+      <para>
+        + mkdir -p /var/tmp/unix2dos-root/usr/bin /var/tmp/unix2dos-
+      </para>
+      <para>
+        root/usr/share/man/man1
+      </para>
+      <para>
+        + install -m755 unix2dos /var/tmp/unix2dos-root/usr/bin
+      </para>
+      <para>
+        + install -m444 unix2dos.1
+        /var/tmp/unix2dos-root/usr/share/man/man1
+      </para>
+      <para>
+        + /usr/lib/rpm/redhat/brp-compress
+      </para>
+      <para>
+        + /usr/lib/rpm/redhat/brp-strip
+      </para>
+      <para>
+        + /usr/lib/rpm/redhat/brp-strip-comment-note
+      </para>
+      <para>
+        Processing files: unix2dos-2.2-17
+      </para>
+      <para>
+        Executing(%doc): /bin/sh -e /var/tmp/rpm-tmp.12033
+      </para>
+      <para>
+        + umask 022
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + cd unix2dos-2.2
+      </para>
+      <para>
+        + DOCDIR=/var/tmp/unix2dos-root/usr/share/doc/unix2dos-2.2
+      </para>
+      <para>
+        + export DOCDIR
+      </para>
+      <para>
+        + rm -rf /var/tmp/unix2dos-root/usr/share/doc/unix2dos-2.2
+      </para>
+      <para>
+        + /bin/mkdir -p
+        /var/tmp/unix2dos-root/usr/share/doc/unix2dos-2.2
+      </para>
+      <para>
+        + cp -pr COPYRIGHT
+        /var/tmp/unix2dos-root/usr/share/doc/unix2dos-2.2
+      </para>
+      <para>
+        + exit 0
+      </para>
+      <para>
+        Finding Provides: /usr/lib/rpm/find-provides
+      </para>
+      <para>
+        Finding Requires: /usr/lib/rpm/find-requires
+      </para>
+      <para>
+        PreReq: rpmlib(PayloadFilesHavePrefix) &lt;= 4.0-1
+        rpmlib(CompressedFileNames)
+      </para>
+      <para>
+        &lt;= 3.0.4-1
+      </para>
+      <para>
+        Requires(rpmlib): rpmlib(PayloadFilesHavePrefix) &lt;= 4.0-1
+      </para>
+      <para>
+        rpmlib(CompressedFileNames) &lt;= 3.0.4-1
+      </para>
+      <para>
+        Requires: libc.so.6 libc.so.6(GLIBC_2.0) libc.so.6(GLIBC_2.1)
+      </para>
+      <para>
+        Checking for unpackaged file(s): /usr/lib/rpm/check-files
+        /var/tmp/unix2dos-root
+      </para>
+      <para>
+        Wrote: /usr/src/redhat/RPMS/i386/unix2dos-2.2-17.i386.rpm
+      </para>
+      <para>
+        Executing(%clean): /bin/sh -e /var/tmp/rpm-tmp.47653
+      </para>
+      <para>
+        + umask 022
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + cd unix2dos-2.2
+      </para>
+      <para>
+        + rm -rf /var/tmp/unix2dos-root
+      </para>
+      <para>
+        + exit 0
+      </para>
+      <para>
+        Executing(--clean): /bin/sh -e /var/tmp/rpm-tmp.47653
+      </para>
+      <para>
+        + umask 022
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + rm -rf unix2dos-2.2
+      </para>
+      <para>
+        + exit 0
+      </para>
+      <para>
+        With the --rebuild option, the rpmbuild command installs the
+        source RPM for you and then performs the preparation, compile,
+        and installation stages of building a binary RPM. Unless there
+        are errors, you should have a new binary RPM file.
+      </para>
+      <para>
+        When complete, the rpmbuild --rebuild command cleans out the
+        built files in the build directory, as if the --clean option
+        were used. The rpmbuild --rebuild command also removes the
+        installed sources and spec file upon completion.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Recompiling binaries from source RPMs</title>
+      <para>
+        If you just want to recompile the files in a source RPM, you can
+        use the --recompile option. The --recompile option tells the
+        rpmbuild command to recompile the binary application from a
+        source RPM.
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        rpmbuild --recompile package.src.rpm
+      </para>
+      <para>
+        This is the same as installing the source RPM and then running
+        rpmbuild -bc --clean with the package spec file.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        There is no difference between --recompile and --rebuild in RPM
+        4.1. RPM 4.2 fixes this problem.
+      </para>
+      <para/>
+      <para/>
+    </sect2>
+    <sect2>
+      <title>SRPMS? Finding source RPMs</title>
+      <para>
+        Often, source RPMs are abbreviated as SRPMs. In fact, if you see
+        a directory named SRPM or SRPMS, chances are the directory holds
+        source RPMs. (Red Hat uses this convention for its Linux
+        distributions.)
+      </para>
+      <para>
+        The SRPMS directories on Red Hat CD-ROMs or on the Red Hat FTP
+        Internet site, ftp.redhat.com, indicate directories that hold
+        source RPMs.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Signing Built RPMs</title>
+    <para>
+      Signing RPMs adds an extra level of trustworthiness to your RPMs.
+      A digital signature helps establish that the package comes from
+      you, really you, and not from someone masquerading as you.
+      Unfortunately, the RPM system requires a bit of set up work before
+      you can sign RPMs.
+    </para>
+    <sect2>
+      <title>Checking that the GPG software is installed</title>
+      <para>
+        To sign packages, you need to ensure that you have the gpg
+        command installed and configured. To check that this command is
+        installed, use a command like the following:
+      </para>
+      <para>
+        $ rpm -qf `which gpg`
+      </para>
+      <para>
+        gnupg-1.0.7-6
+      </para>
+      <para>
+        This shows that the command is available.
+      </para>
+      <para>
+        GPG and PGP? Acronyms Explained
+      </para>
+      <para>
+        The RPM documentation uses GPG and PGP pretty much
+        interchangeably, so much so, in fact, that you may think these
+        are typographical errors. Not so.
+      </para>
+      <para>
+        PGP stands for Pretty Good Privacy. Invented by Phil Zimmerman,
+        PGP was originally invented to encrypt e-mail to allow for
+        private communication. Based on a public-key cryptography
+        algorithm, PGP also supports encrypted digital signatures. These
+        signatures allow you to verify that a package you have
+        downloaded really comes from the vendor you think it does. You
+        do this by using the vendor’s public key.
+      </para>
+      <para>
+        GPG stands for GNU Privacy Guard, a free, open-source
+        implementation of PGP from the GNU project. GPG aims to be
+        compatible with the OpenPGP Internet standard as defined in RFC
+        2440. It started when a number of developers wanted a free
+        implementation. One such free implementation, GPG, allows Linux
+        vendors such as Red Hat to include PGP in their products. So, in
+        a sense, GPG provides PGP.
+      </para>
+      <para>
+        PGP has a long and somewhat troubled history as an open-source
+        product and as a commercial product. See www.philzimmermann.com
+        for background on PGP and its long history. See www.gnupg.org
+        for more details on GPG.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Configuring a signature</title>
+      <para>
+        To configure a signature, you first need to create a new key
+        with the gpg command, using the --gen-key option, as shown
+        following:
+      </para>
+      <para>
+        $ gpg --gen-key
+      </para>
+      <para>
+        gpg (GnuPG) 1.0.7; Copyright (C) 2002 Free Software Foundation,
+        Inc.
+      </para>
+      <para>
+        This program comes with ABSOLUTELY NO WARRANTY.
+      </para>
+      <para>
+        This is free software, and you are welcome to redistribute it
+      </para>
+      <para>
+        under certain conditions. See the file COPYING for details.
+      </para>
+      <para/>
+      <para>
+        gpg: Warning: using insecure memory!
+      </para>
+      <para>
+        gpg: please see http://www.gnupg.org/faq.html for more
+        information
+      </para>
+      <para>
+        gpg: keyring `/home2/ericfj/.gnupg/secring.gpg' created
+      </para>
+      <para>
+        gpg: keyring `/home2/ericfj/.gnupg/pubring.gpg' created
+      </para>
+      <para>
+        Please select what kind of key you want:
+      </para>
+      <para>
+        (1) DSA and ElGamal (default)
+      </para>
+      <para>
+        (2) DSA (sign only)
+      </para>
+      <para>
+        (4) ElGamal (sign and encrypt)
+      </para>
+      <para>
+        (5) RSA (sign only)
+      </para>
+      <para>
+        Your selection? 1
+      </para>
+      <para>
+        DSA keypair will have 1024 bits.
+      </para>
+      <para>
+        About to generate a new ELG-E keypair.
+      </para>
+      <para>
+        minimum keysize is 768 bits
+      </para>
+      <para>
+        default keysize is 1024 bits
+      </para>
+      <para>
+        highest suggested keysize is 2048 bits
+      </para>
+      <para>
+        What keysize do you want? (1024)
+      </para>
+      <para/>
+      <para>
+        Requested keysize is 1024 bits
+      </para>
+      <para>
+        Please specify how long the key should be valid.
+      </para>
+      <para>
+        0 = key does not expire
+      </para>
+      <para>
+        &lt;n&gt; = key expires in n days
+      </para>
+      <para>
+        &lt;n&gt;w = key expires in n weeks
+      </para>
+      <para>
+        &lt;n&gt;m = key expires in n months
+      </para>
+      <para>
+        &lt;n&gt;y = key expires in n years
+      </para>
+      <para>
+        Key is valid for? (0)
+      </para>
+      <para/>
+      <para>
+        You need a User-ID to identify your key; the software constructs
+        the user id
+      </para>
+      <para>
+        from Real Name, Comment and Email Address in this form:
+      </para>
+      <para>
+        "Heinrich Heine (Der Dichter) &lt;heinrichh@duesseldorf.de&gt;"
+      </para>
+      <para/>
+      <para>
+        Real name: Eric Foster-Johnson
+      </para>
+      <para>
+        Email address: please_no_spam@nospam.com
+      </para>
+      <para>
+        Comment: Example for Red Hat RPM Guide
+      </para>
+      <para>
+        You selected this USER-ID:
+      </para>
+      <para>
+        "Eric Foster-Johnson (Example for Red Hat RPM Guide)
+        &lt;erc@no_spam.com&gt;"
+      </para>
+      <para>
+        Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit?
+      </para>
+      <para>
+        O
+      </para>
+      <para>
+        You need a Passphrase to protect your secret key.
+      </para>
+      <para/>
+      <para>
+        Enter passphrase:
+      </para>
+      <para>
+        We need to generate a lot of random bytes. It is a good idea to
+        perform
+      </para>
+      <para>
+        some other action (type on the keyboard, move the mouse, utilize
+        the
+      </para>
+      <para>
+        disks) during the prime generation; this gives the random number
+      </para>
+      <para>
+        generator a better chance to gain enough entropy.
+      </para>
+      <para>
+        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      </para>
+      <para>
+        +++++++++++++++++++++++++++++++++++..+++++..++++++++++&gt;++++++++++........+++++
+      </para>
+      <para>
+        gpg: /home2/ericfj/.gnupg/trustdb.gpg: trustdb created
+      </para>
+      <para>
+        public and secret key created and signed.
+      </para>
+      <para>
+        key marked as ultimately trusted.
+      </para>
+      <para/>
+      <para>
+        pub 1024D/01681C24 2002-11-05 Eric Foster-Johnson (Example for
+        Red Hat RPM
+      </para>
+      <para>
+        Guide) &lt;please_no_spam@nospam.com&gt;
+      </para>
+      <para>
+        Key fingerprint = 8C14 A2E9 47D1 301B 2153 7CDF BEE5 9C10 0268
+        1D24
+      </para>
+      <para>
+        sub 1024g/1A15D6C8 2002-11-05
+      </para>
+      <para>
+        You can choose the default options for most choices. You need to
+        enter a real name, an e-mail address, and a pass phrase.
+        Remember the pass phrase. You will need to enter the pass phrase
+        every time you wish to sign a package.
+      </para>
+      <para>
+        Once you have a key, the next step is to set up some RPM macros.
+        There are a number of places you can do this, but using the
+        .rpmmacros file in your home directory is one of the easiest.
+        Edit this file as shown in the following example:
+      </para>
+      <para>
+        %_signature gpg
+      </para>
+      <para>
+        %_gpg_path /home2/ericfj/.gnupg
+      </para>
+      <para>
+        %_gpg_name EricFJ (Eric Key) &lt;erc@no_spam.com&gt;
+      </para>
+      <para>
+        %_gpgbin /usr/bin/gpg
+      </para>
+      <para>
+        Add lines like these to the $HOME/.rpmmacros file. (Create this
+        file if it does not exist.)
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-customizing-rpm"/>  covers RPM macros and the $HOME/.rpmmacros file.
+      </para>
+      <para>
+        Inside the file, change the %gpg_path macro to the .gnupg
+        directory under your home directory (or the root user’s home
+        directory). Change the %_gpg_name macro to the name you have
+        entered into the gpg program.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Signing with the rpmbuild command</title>
+      <para>
+        The --sign option tells the rpmbuild command to sign the created
+        package. You need to have configured the RPM system for your
+        signature as shown in the previous sections.
+      </para>
+      <para>
+        When you then build an RPM, you will be prompted for your pass
+        phrase prior to the package build. For example, the following
+        shows this prompt (and truncates the rest of the rpmbuild
+        messages that follow):
+      </para>
+      <para>
+        $ rpmbuild -bb --sign xtoolwait-1.2.spec
+      </para>
+      <para>
+        Enter pass phrase:
+      </para>
+      <para>
+        Pass phrase is good.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Signing with the rpm command</title>
+      <para>
+        In addition to the --sign option for the rpmbuild command, you
+        can sign packages that have already been created using the rpm
+        command. The --addsign and --resign options generate new
+        signatures and insert them into the passed-in package file. The
+        basic syntax is:
+      </para>
+      <para>
+        rpm --addsign package.rpm
+      </para>
+      <para>
+        rpm --resign package.rpm
+      </para>
+      <para>
+        The --addsign option adds another signature to the RPM. RPM
+        versions prior to 4.1 allowed you to sign a package with
+        multiple keys, which causes problems for automatic verification.
+        Because of that, use the --resign option, which removes the old
+        signature and inserts a new signature into the package.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Verifying signatures</title>
+      <para>
+        You can verify the RPM signature to ensure that the package has
+        not been modified since it has been signed. Verification also
+        checks that the package is signed by the key that matches the
+        claimed vendor.
+      </para>
+      <para>
+        To verify the signature in an RPM, use the -K option to the rpm
+        command. The basic syntax is:
+      </para>
+      <para>
+        rpm -K package.rpm
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        This is the rpm command, not the rpmbuild command.
+      </para>
+      <para>
+        This command accepts the options shown in Table 12-3 to turn off
+        checking for certain types of signatures.
+      </para>
+      <para>
+        Table 12-3 Options to turn off signature checking
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nogpg
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Don’t check for GPG signatures
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nomd5
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Don’t check for MD5 signatures
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nopgp
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Don’t check for PGP signatures
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        You can also use the --checksig option, which is the same as -K.
+        When you run this command on a package that has a verifiable
+        key, you will see output like the following:
+      </para>
+      <para>
+        # rpm -K xtoolwait-1.3-3.src.rpm
+      </para>
+      <para>
+        xtoolwait-1.3-3.src.rpm: (sha1) dsa sha1 md5 gpg OK
+      </para>
+      <para>
+        This verifies that the package has not been changed from when it
+        was first signed. It also verifies that the signature matches
+        the public key from the vendor of the package. This goes a long
+        ways toward verifying that the package is indeed legitimate.
+      </para>
+      <para>
+        To get more information, add a -v (verbose) option. For example:
+      </para>
+      <para>
+        $ rpm -Kv vixie-cron-3.0.1-69.src.rpm
+      </para>
+      <para>
+        vixie-cron-3.0.1-69.src.rpm:
+      </para>
+      <para>
+        Header V3 DSA signature: OK, key ID db42a60e
+      </para>
+      <para>
+        Header SHA1 digest: OK
+        (ecbb244ab022ecd23114bb1d6c9bdeb74f8d9520)
+      </para>
+      <para>
+        MD5 digest: OK (fb0a75eca1d526d391c36dc956c23bdd)
+      </para>
+      <para>
+        V3 DSA signature: OK, key ID db42a60e
+      </para>
+      <para>
+        If you run this command on a package that does not verify,
+        you’ll see an error like the following:
+      </para>
+      <para>
+        # rpm --checksig xtoolwait-1.3-3.src.rpm
+      </para>
+      <para>
+        xtoolwait-1.3-3.src.rpm: (SHA1) DSA sha1 md5 (GPG) NOT OK
+        (MISSING KEYS: GPG#db42a60e)
+      </para>
+      <para>
+        Items that fail are listed in uppercase, such as DSA, while
+        items that succeed appear in lowercase. In this example, the
+        sha1 and md5 tests succeeded, while the DSA test failed. This
+        failure does not necessarily mean that the package is not
+        legitimate. This failure can mean one of three things:
+      </para>
+      <para>
+        1.The package was not properly signed in the first place. That
+        is, it is a legitimate package but the package author did not
+        properly sign the RPM.
+      </para>
+      <para>
+        2.The package has been modified in some way. That is, the
+        package is not legitimate.
+      </para>
+      <para>
+        3.The RPM system has not been initialized with the public key
+        from the package vendor.
+      </para>
+      <para>
+        From this error, you don’t yet know whether the package is
+        legitimate or not. The first step, though, is to check that you
+        have imported the proper public key from the package vendor.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Importing public keys</title>
+      <para>
+        The --import option to the rpm command imports the public key
+        from a given vendor. The format for this key follows:
+      </para>
+      <para>
+        The following public key can be used to verify RPM packages
+        built and
+      </para>
+      <para>
+        signed by Red Hat, Inc. using `rpm -K' using the GNU GPG
+        package.
+      </para>
+      <para>
+        Questions about this key should be sent to security@redhat.com.
+      </para>
+      <para/>
+      <para>
+        -----BEGIN PGP PUBLIC KEY BLOCK-----
+      </para>
+      <para>
+        Version: GnuPG v1.0.0 (GNU/Linux)
+      </para>
+      <para>
+        Comment: For info see http://www.gnupg.org
+      </para>
+      <para/>
+      <para>
+        mQGiBDfqVEqRBADBKr3Bl6PO8BQ0H8sJoD6p9U7Yyl7pjtZqioviPwXP+DCWd4u8
+      </para>
+      <para>
+        HQzcxAZ57m8ssA1LK1Fx93coJhDzM130+p5BG9mYSPShLabR3N1KXdXAYYcowTOM
+      </para>
+      <para>
+        GxdwYRGr1Spw8QydLhjVfU1VSl4xt6bupPbFJbyjkg5Z3P7BlUOUJmrx3wCgobNV
+      </para>
+      <para>
+        EDGaWYJcch5z5B1of/41G8kEAKii6q7Gu/vhXXnLS6m15oNnPVybyngiw/23dKjS
+      </para>
+      <para>
+        ti/PYrrL2J11P2ed0x7zm8v3gLrY0cue1iSba+8glY+p31ZPOr5ogaJw7ZARgoS8
+      </para>
+      <para>
+        BwjyRymXQp+8Dete0TELKOL2/itDOPGHW07SsVWOR6cmX4VlRRcWB5KejaNvdrE5
+      </para>
+      <para>
+        4XFtOd04NMgWI63uqZc4zkRa+kwEZtmbz3tHSdWCCE+Y7YVP6IUf/w6YPQFQriWY
+      </para>
+      <para>
+        FiA6fD10eB+BlIUqIw80EqjsBKmCwvKkn4jg8kibUgj4/TzQSx77uYokw1EqQ2wk
+      </para>
+      <para>
+        OZoaEtcubsNMquuLCMWijYhGBBgRAgAGBQI36lRyAAoJECGRgM3bQqYOhyYAnj7h
+      </para>
+      <para>
+        VDY/FJAGqmtZpwVp9IlitW5tAJ4xQApr/jNFZCTksnI+4O1765F7tA==
+      </para>
+      <para>
+        =3AHZ
+      </para>
+      <para>
+        -----END PGP PUBLIC KEY BLOCK-----
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        For reasons of space, this is not a complete key.
+      </para>
+      <para>
+        You need to pass the name of the text file that holds the key to
+        the rpm --import command, as shown following:
+      </para>
+      <para>
+        rpm --import key_file
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        You must be logged in as the root user to import keys.
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        # rpm --checksig xtoolwait-1.3-3.src.rpm
+      </para>
+      <para>
+        xtoolwait-1.3-3.src.rpm: (SHA1) DSA sha1 md5 (GPG) NOT OK
+        (MISSING KEYS: GPG#db42a60e)
+      </para>
+      <para/>
+      <para>
+        # rpm --import RPM-GPG-KEY
+      </para>
+      <para/>
+      <para>
+        # rpm --checksig xtoolwait-1.3-3.src.rpm
+      </para>
+      <para>
+        xtoolwait-1.3-3.src.rpm: (sha1) dsa sha1 md5 gpg OK
+      </para>
+      <para>
+        This example shows an error message when trying to verify the
+        key. Then, after importing the Red Hat public key, the
+        verification works.
+      </para>
+      <para>
+        If, after importing this key, you still have problems, you can
+        assume there are problems with the package. Many administrators
+        will refuse to install such packages.
+      </para>
+      <para>
+        Warning
+      </para>
+      <para>
+        You should be careful with packages that have signatures that do
+        not verify.
+      </para>
+      <para>
+        To list the available keys, use a command like the following:
+      </para>
+      <para>
+        $ rpm -qa | grep -i gpg
+      </para>
+      <para>
+        gpg-pubkey-db42a60e-37ea5438
+      </para>
+      <para>
+        This example shows one key installed.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        You can erase this key as if it were a package, using the rpm -e
+        command.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Getting the Red Hat public key</title>
+      <para>
+        Strangely enough, the Red Hat public key is not installed when
+        you install Red Hat Linux 8.0. If you need the key, the Red Hat
+        public key is available on the root directory of all Red Hat
+        Linux CD-ROMs, as shown in the following listing:
+      </para>
+      <para>
+        $ ls /mnt/cdrom/
+      </para>
+      <para>
+        EULA GPL README RedHat/ RPM-GPG-KEY SRPMS/ TRANS.TBL
+      </para>
+      <para>
+        Simply copy the RPM-GPG-KEY file to get the public key. Then use
+        the rpm --import command with this key file.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        You can also download this key file from the Red Hat FTP site,
+        at ftp://ftp.redhat.com/pub/redhat/linux/8.0/en/os/i386/.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      This chapter covers options for the rpmbuild command that allow
+      you to achieve a finer grain of control over how the command
+      works. For example, the --short-circuit option tells the rpmbuild
+      command to build just the stages you ask for. This helps when you
+      have problems in one area of building an RPM and don’t want to
+      start over each time you try to see if the problem is solved.
+    </para>
+    <para>
+      The rpmbuild command also supports a set of -t options that work
+      like the -b options, except the -t options try to build an RPM
+      from a tar archive of sources (a tarball) instead of an RPM spec
+      file. In this case, the rpmbuild command tries to work without a
+      spec file.
+    </para>
+    <para>
+      The --rebuild option tells the rpmbuild command to install a
+      source RPM, build the binary RPM, and clean out the installed
+      source RPM. This provides quite a shortcut for installing binary
+      RPMs from source RPMs.
+    </para>
+    <para>
+      RPMs should be signed to provide an extra level of authentication.
+      This system isn’t perfect, but it helps you verify that a
+      package is from the person it says it is from and that the package
+      has not been modified. You can check the signature on RPM packages
+      you download. You can also, with some configuration, sign the
+      packages you create.
+    </para>
+    <para/>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

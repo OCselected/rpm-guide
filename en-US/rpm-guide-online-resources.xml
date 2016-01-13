@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-online-resources">
+  <title>RPM Resources</title>
+  <para>
+    This appendix covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Finding RPM sites on the Internet
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Accessing RPM newsgroups and mailing lists
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    This appendix covers the material available on the Internet for
+    working with RPM.
+  </para>
+  <sect1>
+    <title>Finding RPM Sites</title>
+    <para>
+      There is a wealth of RPM material online, although some of it is
+      hard to find. The following sections list a number of RPM-related
+      sites, divided by category. Note that as with any Internet sites,
+      the sites listed my change or disappear.
+    </para>
+    <sect2>
+      <title>The main rpm.org site</title>
+      <para>
+        The main RPM site is www.rpm.org. This site provides the
+        official distributions of the RPM software, as well as a lot of
+        documentation online.
+      </para>
+      <para>
+        Table F-1 lists a number of useful links on this site.
+      </para>
+      <para>
+        Table F-1 Links on the rpm.org site
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Link
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Holds
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  ftp://ftp.rpm.org/pub/rpm/dist/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  RPM software downloads
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  ftp://ftp.rpm.org/pub/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  rpm.org download site
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.rpm.org/cvs_help/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Instructions for accessing the RPM CVS repository
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.rpm.org/hintskinks/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Tips for working with RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.rpm.org/hintskinks/bootstrap/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Good tips on bootstrapping RPM to new platforms
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.rpm.org/howto/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  How-to documents for working with RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.rpm.org/max-rpm/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Maximum RPM by Edward C. Bailey
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.rpm.org/RPM-HOWTO/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Good introductory tutorial
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.rpm.org/rpmapi-4.1/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  API documentation
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        The main RPM FTP site, at ftp://ftp.rpm.org/pub/, includes the
+        RPM distributions, as well as the Berkeley DB version 3 library,
+        and the text of the book Maximum RPM. Download RPM software from
+        ftp://ftp.rpm.org/pub/rpm/dist/.
+      </para>
+    </sect2>
+    <sect2>
+      <title>RPM locator sites</title>
+      <para>
+        A number of sites help you find RPMs for various applications.
+        On the main sites, you can find specially built RPMs for a
+        variety of Linux distributions. You can then download the RPMs
+        made especially for your systems.
+      </para>
+      <para>
+        The main RPM-finding site is rpmfind.net, which offers a search
+        engine as well as software you can run on your site.
+      </para>
+      <para>
+        The RPM PBone Search, at http://rpm.pbone.net/, is also very
+        useful.
+      </para>
+      <para>
+        The www.rpm.org/packagers/ site lists a number of places that
+        package RPMs and provide them for downloading.
+      </para>
+      <para>
+        Many Java libraries and packages are available in RPM format
+        from www.jpackage.org/.
+      </para>
+      <para>
+        Table F-2 lists a number of other RPM download sites.
+      </para>
+      <para>
+        Table F-2 RPM download sites
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Site
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Holds
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpmfind.net
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Links to a huge number of RPMs, many specific to
+                  various Linux distributions
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  http://rpm.pbone.net/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  RPM PBone search, useful for finding RPMs
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.rpm.org/packagers/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Lists a number of sites that provide RPMs for download
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.javapackage.org
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Many Java packages in RPM format
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  http://plf.zarb.org/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The Penguin Liberation Front has RPMs that for legal
+                  reasons cannot be included in the Mandrake Linux
+                  distribution.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.math.unl.edu/~rdieter/Projects
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Rex Dieter’s RPM site
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.rpmhelp.net
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Mandrake Linux RPMs
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.aucs.org/rpmcenter/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Edwin Chan's Red Hat RPMs
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  www.owlriver.com/projects/links/
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Owl River Company RPMs
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </sect2>
+    <sect2>
+      <title>RPM tools sites</title>
+      <para>
+        A large number of tools exist to help you work with RPMs. The
+        following sites list some of the main tools:
+      </para> 
+      <para>
+        *For the vim text editor, you can download a spec.vim syntax
+        file from <ulink url="http://www.vim.org/scripts/script.php?script_id=98"/>
+      </para>
+      <para>
+        *For emacs, you can download an Emacs mode for spec files from
+        http://tihlde.org/~stigb/rpm-spec-mode.el.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-development-tools"/>  lists links for a number of text editors.
+      </para>
+      <para>
+        *The rpmlint tool mentioned in <xref linkend="ch-extra-packaging-tools"/>  is available at
+        http://people.mandrakesoft.com/~flepied/projects/rpmlint/.
+      </para>
+      <para>
+        Table F-3 lists a number of RPM-related tools and the sites you
+        can find more information on the tools.
+      </para>
+      <para>
+        Table F-3 RPM-related tools
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Tool
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Site
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  apt4rpm
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  <ulink url="http://apt4rpm.sourceforge.net/" />
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  kpackage
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  <ulink url="http://www.kde.org" />
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm2html
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  <ulink url="http://rpmfind.net/linux/rpm2html/" />
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpmfind
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  <ulink url="http://rpmfind.net" />
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </sect2>
+    <sect2>
+      <title>Programming sites</title>
+      <para>
+        Only a few sites exist to help developers with programming for
+        RPM. I maintain some quick links to RPM sites at
+        www.pconline.com/~erc/rpm.htm. Most of these links are focused
+        for programming with RPM.
+      </para>
+      <para>
+        The best sites for programming RPM are the online API
+        documentation at www.rpm.org/rpmapi-4.1/ for the RPM 4.1
+        release, and the ftp.rpm.org/pub/rpm/dist/ site for downloading
+        the RPM sources. There is a lot of documentation bundled with
+        the source code.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-development-tools"/>  lists links for a number of Integrated Development
+        Environments, or IDEs, aimed at programmers.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Sites related to RPM</title>
+      <para>
+        If you try to make cross-platform RPMs, especially RPMs that
+        should work for multiple versions of Linux, it is very important
+        to follow the Linux standards for things like file placement and
+        package formats.
+      </para>
+      <para>
+        The Filesystem Hierarchy Standard, or FHS, covers Linux
+        directory layout at www.pathname.com/fhs/.
+      </para>
+      <para>
+        The Linux Standards Base is working on standardizing on the RPM
+        package file format. See www.linuxbase.org for details.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Accessing RPM Mailing Lists and Newsgroups</title>
+    <para>
+      The RPM mailing list provides the best source of technical RPM
+      information. You can post questions and get quick, useful
+      responses. If you are working with RPM, you should subscribe to
+      this mailing list. For details on viewing the RPM mailing list
+      archives and signing up for the list, see
+      www.rpm.org/mailing_list/.
+    </para>
+    <para>
+      To help avoid unwanted commercial e-mail (in other words, spam),
+      you need to register with a user name and password to subscribe to
+      the mailing list or view the archives.
+    </para>
+    <para>
+      A Usenet newsgroup, named linux.redhat.rpm, also provides a forum
+      for asking RPM-related questions. You can read this newsgroup with
+      any newsreading program.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

@@ -1,0 +1,2286 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Using the RPM Database"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Querying the RPM database"
+msgstr ""
+
+msgid "Getting information on RPM files"
+msgstr ""
+
+msgid "Finding out which packages own files on your system"
+msgstr ""
+
+msgid "Verifying installed packages"
+msgstr ""
+
+msgid "Backing up the RPM database"
+msgstr ""
+
+msgid "Repairing damaged RPM databases"
+msgstr ""
+
+msgid "Every package you install with RPM is recorded in the RPM database. The RPM system includes commands to query this database to find out which packages are installed and to provide quite a few details about these packages."
+msgstr ""
+
+msgid "This chapter covers querying both the RPM database and RPM package files. Both types of query are important:"
+msgstr ""
+
+msgid "Query the RPM database to see what is installed, or not installed, on your system."
+msgstr ""
+
+msgid "Query package files to see what the files require, as well as what the files provide."
+msgstr ""
+
+msgid "In addition to querying the RPM database, you can use the database to verify packages. Since this database is so important to the management of your Linux system, this chapter covers how to back it up, as well as how to repair a damaged RPM database."
+msgstr ""
+
+msgid "Querying the RPM Database"
+msgstr ""
+
+msgid "In <xref linkend=\"ch-using-rpm\" /> , you saw that the rpm command usually takes one major command-line option to tell it the operation to perform and a myriad of command-line options to customize the operation. The rpm command may also take the name of one or more RPM package files or the name of one or more installed packages. For example, the <command>rpm –i</command> command performs an installation operation, and the <command>rpm –U</command> command performs an upgrade."
+msgstr ""
+
+msgid "For querying the RPM database, the major command-line option is <literal>–q</literal>, short for query. This option tells the rpm command to query the RPM database. You can also use the long option <literal>--query</literal>."
+msgstr ""
+
+msgid "In the last few chapters, you've used the <literal>–q</literal> option with the rpm command to query just for the presence or absence of installed packages. You can expand the <literal>-q</literal> option to perform a wide array of queries to find out information about the packages installed on a Linux system."
+msgstr ""
+
+msgid "Querying packages"
+msgstr ""
+
+msgid "The basic format of the <command>rpm –q</command> command follows:"
+msgstr ""
+
+msgid "<command>rpm –q <replaceable>package_name</replaceable></command>"
+msgstr ""
+
+msgid "You need to provide the name of a package to query. For example:"
+msgstr ""
+
+msgid "<command>rpm -q telnet-0.17</command>"
+msgstr ""
+
+msgid "This command returns the name of the package, if installed. For example:"
+msgstr ""
+
+msgid ""
+"\n"
+"        telnet-0.17-20\n"
+"      "
+msgstr ""
+
+msgid "If the package is not installed, you’ll see a message like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"        package telnet-0.17 is not installed\n"
+"      "
+msgstr ""
+
+msgid "You can provide the whole package name to the rpm command, which includes the name, the version, and the RPM package number, as discussed in <xref linkend=\"ch-rpm-overview\" /> . You can also just provide the name and version number, as shown previously, or just the base name of the package."
+msgstr ""
+
+msgid "For example, the following command uses just the base name of the package:"
+msgstr ""
+
+msgid "<command>rpm -q telnet</command>"
+msgstr ""
+
+msgid "The rpm –q command expects a package name. Although it supports some amount of customized queries, you really need to know which packages you want the rpm command to report on."
+msgstr ""
+
+msgid "You can provide more than one package name; the rpm command reports on each package, as shown following."
+msgstr ""
+
+msgid "<command>rpm -q telnet telnet-server</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"        telnet-0.17-20\n"
+"        telnet-server-0.17-20\n"
+"      "
+msgstr ""
+
+msgid "You need to change the way you query if you want to perform searches when you do not know the full package name in advance. The following sections cover options for creating various queries."
+msgstr ""
+
+msgid "Querying everything"
+msgstr ""
+
+msgid "Up to now, we have used the rpm command to query only for specific packages. The <literal>–a</literal> option tells the rpm command to query for all packages. You can also use the longer option, <literal>--all</literal>, in place of <literal>–a</literal>."
+msgstr ""
+
+msgid "For example:"
+msgstr ""
+
+msgid "<command>rpm -qa</command>"
+msgstr ""
+
+msgid "This command returns every package installed on your system, quite a few packages. The packages are returned one per line, as shown following."
+msgstr ""
+
+msgid ""
+"m17n-db-gujarati-1.5.5-4.fc13.noarch\n"
+"libvisual-0.4.0-9.fc12.x86_64\n"
+"hal-filesystem-0.5.14-3.fc13.x86_64\n"
+"fedora-logos-13.0.2-1.fc13.noarch\n"
+"kdepim-runtime-libs-4.4.5-1.fc13.x86_64\n"
+"lpsolve-5.5.0.15-3.fc13.x86_64\n"
+"kipi-plugins-1.2.0-1.fc13.x86_64\n"
+"kbd-1.15-9.fc12.x86_64\n"
+"perl-Glib-1.201-4.fc12.x86_64\n"
+"kdeplasma-addons-4.4.5-1.fc13.x86_64"
+msgstr ""
+
+msgid "This output has been modified to meet size constraints. Try the <command>rpm –qa</command> command to see the full output for your system."
+msgstr ""
+
+msgid "There may be over a thousand packages on your system. Even so, the <command>rpm –qa</command> command executes surprisingly fast."
+msgstr ""
+
+msgid "Refining the query"
+msgstr ""
+
+msgid "When you query all the installed packages, you get too much output for most purposes, other than to get a general idea of the magnitude of packages installed on your system. But if you cannot remember a package name, there's no real option, other than writing your own RPM query program."
+msgstr ""
+
+msgid "You can take advantage of the power of the Linux shells, though, and the wonderful ability to pipe the output of one command into another to work around this problem. With the large amount of output, you may want to pipe the output to the <command>more</command> or <command>less</command> programs, and display the output one page at a time."
+msgstr ""
+
+msgid "Even with <command>more</command> and <command>less</command>, the <command>rpm –qa</command> command outputs too much information to be really useful, unless you can somehow filter the information automatically."
+msgstr ""
+
+msgid "Piping the Output To grep"
+msgstr ""
+
+msgid "The Linux (and Unix) <command>grep</command> command provides a powerful tool for filtering through textual data. If you pipe the output of the <command>rpm –qa</command> command into the <command>grep</command> command, you have a powerful search engine at your fingertips."
+msgstr ""
+
+msgid "For example, if you know that most packages that provide tools for the SSH service have \"ssh\" in their names, you can find all these packages by using a command like the following:"
+msgstr ""
+
+msgid "<command>rpm -qa | grep ssh</command>"
+msgstr ""
+
+msgid "This command outputs packages such as the following:"
+msgstr ""
+
+msgid ""
+"ksshaskpass-0.5.3-1.fc13.x86_64\n"
+"openssh-server-5.4p1-3.fc13.x86_64\n"
+"libssh2-1.2.4-1.fc13.i686\n"
+"openssh-askpass-5.4p1-3.fc13.x86_64\n"
+"libssh2-1.2.4-1.fc13.x86_64\n"
+"openssh-5.4p1-3.fc13.x86_64\n"
+"openssh-clients-5.4p1-3.fc13.x86_64\n"
+"libssh-0.4.4-1.fc13.x86_64"
+msgstr ""
+
+msgid "You can also use the --pipe option to the rpm command, introduced in <xref linkend=\"ch-using-rpm\" /> . With this option, your command becomes:"
+msgstr ""
+
+msgid "<command>rpm -qa --pipe \"grep ssh\"</command>"
+msgstr ""
+
+msgid "<xref linkend=\"ch-rpm-programming-python\" /> covers programming with the RPM system with the Python scripting language."
+msgstr ""
+
+msgid "You can take advantage of some of the options that the grep command supports, including -i for ignoring the case of the string to match, --regexp to pass a regular expression to grep, and -v, to output only those entries that do not match the search string."
+msgstr ""
+
+msgid "If you are unfamiliar with grep, the online manual pages for the grep command provide a listing of the command-line options available for grep as well as a short tutorial on regular expressions supported by grep."
+msgstr ""
+
+msgid "Table 5-1 lists some of the common package-naming conventions. Remember that these are just conventions, not hard-and-fast rules. You can use these conventions in concert with rpm queries."
+msgstr ""
+
+msgid "Table 5-1 Common Naming Conventions on Linux"
+msgstr ""
+
+msgid "Convention"
+msgstr ""
+
+msgid "Usually indicates"
+msgstr ""
+
+msgid "Starts with g"
+msgstr ""
+
+msgid "GNOME desktop application or a GNU application, especially GNU C programming tools and libraries"
+msgstr ""
+
+msgid "Starts with j"
+msgstr ""
+
+msgid "Cross-platform Java application"
+msgstr ""
+
+msgid "Starts with k"
+msgstr ""
+
+msgid "KDE desktop application, Linux kernel package, or Kerberos security package"
+msgstr ""
+
+msgid "Starts with py"
+msgstr ""
+
+msgid "Python application"
+msgstr ""
+
+msgid "Starts with rh"
+msgstr ""
+
+msgid "Red Hat application, usually for configuring your system"
+msgstr ""
+
+msgid "Starts with tk"
+msgstr ""
+
+msgid "Graphical Tcl application"
+msgstr ""
+
+msgid "Starts with x"
+msgstr ""
+
+msgid "X Window System graphical desktop application"
+msgstr ""
+
+msgid "Ends with wm"
+msgstr ""
+
+msgid "Window manager for controlling the layout of windows on the screen"
+msgstr ""
+
+msgid "Querying with Wildcards"
+msgstr ""
+
+msgid "In addition to using other Linux commands, the rpm command supports some search options. You can pass a wildcard to <command>rpm –qa</command> (but not just <command>rpm –q</command>, you need the <literal>–a</literal> to look for all packages). For example:"
+msgstr ""
+
+msgid "<command>rpm -qa \"kernel*\"</command>"
+msgstr ""
+
+msgid ""
+"kernel-2.6.33.6-147.fc13.x86_64\n"
+"kernel-2.6.33.5-112.fc13.x86_64\n"
+"kernel-devel-2.6.33.5-112.fc13.x86_64\n"
+"kernel-headers-2.6.33.6-147.fc13.x86_64\n"
+"kernel-2.6.33.5-124.fc13.x86_64\n"
+"kernel-devel-2.6.33.5-124.fc13.x86_64\n"
+"kernel-devel-2.6.33.6-147.fc13.x86_64"
+msgstr ""
+
+msgid "The quotation marks around \"kernel*\" are to prevent the Linux shell from expanding the wildcard character, *, to try to match a list of file names in the local directory. By passing the command-line parameter as \"kernel*\", the rpm program gets to see the * character. Otherwise, the shell expands the parameter and the program, rpm in this case, never sees the *."
+msgstr ""
+
+msgid "This command searches for all package names starting with send. You can reverse this with an exclamation mark. For example:"
+msgstr ""
+
+msgid "$ rpm -qa '!send*'"
+msgstr ""
+
+msgid "This command works sort of like <command>grep –v</command> and searches for all packages that do not start with \"send\"."
+msgstr ""
+
+msgid "There are quite a few other Linux commands you can use in pipelines with the <command>rpm –qa</command> command to better filter and display the data, such as <command>wc –l</command> to count the number of packages that you query. You can also use a number of other query options to find out more specialized information from the RPM database."
+msgstr ""
+
+msgid "Finding which packages own files"
+msgstr ""
+
+msgid "One of the common problems with package management comes when you want to track a given file on your system back to the package that “owns” the file (that is, the package that, when installed, installed the particular file)."
+msgstr ""
+
+msgid "The <option>-qf</option> option tells the rpm command to query for all packages that own a particular file. You can also use the longer option, <option>--file</option>, in place of <option>–f</option>. The basic syntax follows:"
+msgstr ""
+
+msgid "<command>rpm -qf <replaceable>filename</replaceable></command>"
+msgstr ""
+
+msgid "For example, the grep command used in previous examples is really a file. (Just about all Linux commands are a file of some sort, be it a shell script or an executable application.) You can use a few Linux commands to determine which package provides this handy program."
+msgstr ""
+
+msgid "First, we need the exact path to the file. For Linux commands, you can use the <command>which</command> command, if the program is in your path. (The grep program must be in your path, or commands with grep will fail.)"
+msgstr ""
+
+msgid "Try the following command:"
+msgstr ""
+
+msgid "<command>which grep</command>"
+msgstr ""
+
+msgid "This command returns the path to grep:"
+msgstr ""
+
+msgid "/bin/grep"
+msgstr ""
+
+msgid "We can now check which package owns this file with the following command:"
+msgstr ""
+
+msgid "<command>rpm -qf /bin/grep</command>"
+msgstr ""
+
+msgid "grep-2.6.3-1"
+msgstr ""
+
+msgid "You can also use the Linux back-tick operator to perform this check with one command."
+msgstr ""
+
+msgid "<command>rpm -qf `which grep`</command>"
+msgstr ""
+
+msgid "If you use the bash shell, you can use the $(command parameters) syntax in place of the back tick, or `, characters. For example:"
+msgstr ""
+
+msgid "<command>rpm -qf $(which grep)</command>"
+msgstr ""
+
+msgid "If no package owns a given file, you’ll see output like the following:"
+msgstr ""
+
+msgid "<command>rpm -qf mail</command>"
+msgstr ""
+
+msgid "file mail is not owned by any package"
+msgstr ""
+
+msgid "Often, the package that owns a file does not have an intuitive name. The ssh command, for example, is owned by the openssh-clients package, as shown following:"
+msgstr ""
+
+msgid "<command>rpm -qf `which ssh`</command>"
+msgstr ""
+
+msgid "openssh-clients-5.4p1-3"
+msgstr ""
+
+msgid "As you can see, the name of a command does not always correspond directly to the name of the package that provides that command. This is where the <command>rpm –qf</command> command proves very useful. Otherwise, you would just have to know that OpenSSH is the project responsible for this command."
+msgstr ""
+
+msgid "Symbolic Links"
+msgstr ""
+
+msgid "The <command>rpm -qf</command> command follows symbolic links. This was not always true with older versions of RPM, but modern RPM versions can trace package ownership to files placed in linked directories."
+msgstr ""
+
+msgid "For example, the directory /usr/lib/X11 is a link to the real directory, /usr/X11R6/lib/X11. You can track the package ownership of a file in that directory, XKeysymDB, for example, by using the following command:"
+msgstr ""
+
+msgid "<command>rpm -qf /usr/lib/X11/XKeysymDB</command>"
+msgstr ""
+
+msgid "XFree86-4.2.0-72"
+msgstr ""
+
+msgid "This file, XKeysymDB, really resides in /usr/X11R6/lib/X11."
+msgstr ""
+
+msgid "Getting Information on Packages"
+msgstr ""
+
+msgid "The query options for the rpm command include a whole set of options that return information about the files that make up a package, the scripts, and other parts of the original package. The following sections cover these options."
+msgstr ""
+
+msgid "Describing packages"
+msgstr ""
+
+msgid "The <option>–i</option> option with an rpm query command tells the rpm command to output descriptive information about the package. You can also use the longer option, <option>--info</option>, in place of <option>–i</option>. The basic syntax is:"
+msgstr ""
+
+msgid "<command>rpm -qi <replaceable>package</replaceable></command>"
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "The order of the command-line options is very important. Remember that the rpm command has the following general syntax:"
+msgstr ""
+
+msgid "<command>rpm <replaceable>–MajorOperation</replaceable> <replaceable>–extra_options packages_or_files</replaceable></command>"
+msgstr ""
+
+msgid "<command>rpm –i</command> installs packages and <command>rpm –q</command> queries packages. The <command>rpm –qi</command> command outputs the descriptive information on packages. If you make a mistake and place the <literal>i</literal> in front of the <literal>q</literal>, you are telling the rpm command to perform a different operation."
+msgstr ""
+
+msgid "When you run this command, being very careful with the order of the options, you’ll see output like the following, which describes the tcsh shell package."
+msgstr ""
+
+msgid "<command>rpm -qi tcsh-6.17-6</command>"
+msgstr ""
+
+msgid ""
+"Name : tcsh Relocations: (not relocateable)\n"
+"Version : 6.17 Vendor: Fedora Project\n"
+"Release : 6 Build Date: Tue 15 Dec 2009 11:28:11 AM EST\n"
+"Install Date: Fri 27 Aug 2010 07:41:03 PM EDT      Build Host: localhost\n"
+"Group       : System Environment/Shells     Source RPM: tcsh-6.17-6.fc13.src.rpm\n"
+"Size        : 1191282                          License: BSD\n"
+"Signature   : RSA/SHA256, Fri 05 Feb 2010 09:30:43 AM EST, Key ID 7edc6ad6e8e40fde\n"
+"Packager    : Fedora Project\n"
+"URL         : http://www.tcsh.org/\n"
+"Summary     : An enhanced version of csh, the C shell\n"
+"Description :\n"
+"Tcsh is an enhanced but completely compatible version of csh, the C\n"
+"shell.  Tcsh is a command language interpreter which can be used both\n"
+"as an interactive login shell and as a shell script command processor.\n"
+"Tcsh includes a command line editor, programmable word completion,\n"
+"spelling correction, a history mechanism, job control and a C language\n"
+"like syntax."
+msgstr ""
+
+msgid "The sections on custom queries following in this chapter show how you can query for any information stored in a package header, including all of the information shown with <command>rpm –qi</command>, as well as any other header tag."
+msgstr ""
+
+msgid "Package groups"
+msgstr ""
+
+msgid "RPM packages can be placed into groups, merely arbitrary names for a set of packages. The <command>rpm –qi</command> command, shown previously, lists the group for a package, if there is one. For the tcsh package shown in the previous example, the package is <literal>System Environment/Shells</literal>."
+msgstr ""
+
+msgid "The <option>–g</option> option to <command>rpm –q</command> tells rpm to list all the packages in a given group. You can also use the longer option, <option>--group</option>, in place of <option>–g</option>. The basic syntax follows:"
+msgstr ""
+
+msgid "<command>rpm –qg <replaceable>group_name</replaceable></command>"
+msgstr ""
+
+msgid "<command>rpm -qg \"System Environment/Shells\"</command>"
+msgstr ""
+
+msgid ""
+"dash-0.5.5.1-3.x86_64\n"
+"bash-4.1.7-1.x86_64\n"
+"tcsh-6.17-6.x86_64"
+msgstr ""
+
+msgid "Spaces in group names"
+msgstr ""
+
+msgid "This group has a space in its name, so you need quotation marks to pass the group name as one parameter to the rpm command."
+msgstr ""
+
+msgid "Listing the files in a package"
+msgstr ""
+
+msgid "The <option>–l</option> (ell) option queries all the files in a package. You can also use the longer option, --list, in place of –l. The basic syntax is:"
+msgstr ""
+
+msgid "rpm –ql package"
+msgstr ""
+
+msgid "For example, to query the files in the tcsh package, you’ll see the following:"
+msgstr ""
+
+msgid "<command>rpm -ql tcsh</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"        /bin/csh\n"
+"        /bin/tcsh\n"
+"        /usr/share/doc/tcsh-6.10\n"
+"        /usr/share/doc/tcsh-6.10/FAQ\n"
+"        /usr/share/doc/tcsh-6.10/Fixes\n"
+"        /usr/share/doc/tcsh-6.10/NewThings\n"
+"        /usr/share/doc/tcsh-6.10/complete.tcsh\n"
+"        /usr/share/doc/tcsh-6.10/eight-bit.txt\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/header.html\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/index.html\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/lists.html\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/tcsh.man\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/tcsh.man2html\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/top.html\n"
+"        /usr/share/locale/de/LC_MESSAGES/tcsh\n"
+"        /usr/share/locale/el/LC_MESSAGES/tcsh\n"
+"        /usr/share/locale/es/LC_MESSAGES/tcsh\n"
+"        /usr/share/locale/fr/LC_MESSAGES/tcsh\n"
+"        /usr/share/locale/it/LC_MESSAGES/tcsh\n"
+"        /usr/share/locale/ja/LC_MESSAGES/tcsh\n"
+"        /usr/share/man/man1/tcsh.1.gz\n"
+"      "
+msgstr ""
+
+msgid "Listing multiple packages"
+msgstr ""
+
+msgid "You can pass more than one package name to this option, but it won’t tell you which package owns which file. Use the <option>--filesbypkg</option> option to list files by package."
+msgstr ""
+
+msgid "<command>rpm -q --filesbypkg file openssh-clients</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"        file /usr/bin/file\n"
+"        file /usr/share/magic\n"
+"        file /usr/share/magic.mgc\n"
+"        file /usr/share/magic.mime\n"
+"        file /usr/share/man/man1/file.1.gz\n"
+"        file /usr/share/man/man5/magic.5.gz\n"
+"        openssh-clients /etc/ssh/ssh_config\n"
+"        openssh-clients /usr/bin/sftp\n"
+"        openssh-clients /usr/bin/slogin\n"
+"        openssh-clients /usr/bin/ssh\n"
+"        openssh-clients /usr/bin/ssh-add\n"
+"        openssh-clients /usr/bin/ssh-agent\n"
+"        openssh-clients /usr/bin/ssh-keyscan\n"
+"        openssh-clients /usr/share/man/man1/sftp.1.gz\n"
+"        openssh-clients /usr/share/man/man1/slogin.1.gz\n"
+"        openssh-clients /usr/share/man/man1/ssh-add.1.gz\n"
+"        openssh-clients /usr/share/man/man1/ssh-agent.1.gz\n"
+"        openssh-clients /usr/share/man/man1/ssh-keyscan.1.gz\n"
+"        openssh-clients /usr/share/man/man1/ssh.1.gz\n"
+"      "
+msgstr ""
+
+msgid "Use this option without –l, because the –l option will also list the files alone, without any package name."
+msgstr ""
+
+msgid "The –v (verbose) option can give you more information on the files when used with the various query options. For example:"
+msgstr ""
+
+msgid "<command>rpm -qlv tcsh</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"lrwxrwxrwx    1 root    root                        4 Dec 15  2009 /bin/csh -&gt; tcsh\n"
+"-rwxr-xr-x    1 root    root                   386984 Dec 15  2009 /bin/tcsh\n"
+"drwxr-xr-x    2 root    root                        0 Dec 15  2009 /usr/share/doc/tcsh-6.17\n"
+"-rw-r--r--    1 root    root                    17782 Mar  2  2006 /usr/share/doc/tcsh-6.17/BUGS\n"
+"-rw-r--r--    1 root    root                    12773 May 19  2004 /usr/share/doc/tcsh-6.17/FAQ\n"
+"-rw-r--r--    1 root    root                    85246 Jul 10  2009 /usr/share/doc/tcsh-6.17/Fixes\n"
+"-rw-r--r--    1 root    root                     6518 Oct  2  1998 /usr/share/doc/tcsh-6.17/NewThings\n"
+"-rw-r--r--    1 root    root                    11809 May 19  2004 /usr/share/doc/tcsh-6.17/WishList\n"
+"-rw-r--r--    1 root    root                    56615 Oct  1  2007 /usr/share/doc/tcsh-6.17/complete.tcsh\n"
+"-rw-r--r--    1 root    root                    46682 Dec 15  2009 /usr/share/locale/de/LC_MESSAGES/tcsh\n"
+"-rw-r--r--    1 root    root                    48387 Dec 15  2009 /usr/share/locale/el/LC_MESSAGES/tcsh\n"
+"-rw-r--r--    1 root    root                    45670 Dec 15  2009 /usr/share/locale/en/LC_MESSAGES/tcsh\n"
+"-rw-r--r--    1 root    root                    48234 Dec 15  2009 /usr/share/locale/es/LC_MESSAGES/tcsh\n"
+"-rw-r--r--    1 root    root                    45130 Dec 15  2009 /usr/share/locale/et/LC_MESSAGES/tcsh\n"
+"-rw-r--r--    1 root    root                    47757 Dec 15  2009 /usr/share/locale/fi/LC_MESSAGES/tcsh\n"
+"-rw-r--r--    1 root    root                    47978 Dec 15  2009 /usr/share/locale/fr/LC_MESSAGES/tcsh\n"
+"-rw-r--r--    1 root    root                    49085 Dec 15  2009 /usr/share/locale/it/LC_MESSAGES/tcsh\n"
+"-rw-r--r--    1 root    root                    33848 Dec 15  2009 /usr/share/locale/ja/LC_MESSAGES/tcsh\n"
+"-rw-r--r--    1 root    root                    45160 Dec 15  2009 /usr/share/locale/pl/LC_MESSAGES/tcsh\n"
+"-rw-r--r--    1 root    root                    46148 Dec 15  2009 /usr/share/locale/ru/LC_MESSAGES/tcsh\n"
+"-rw-r--r--    1 root    root                    45492 Dec 15  2009 /usr/share/locale/uk/LC_MESSAGES/tcsh\n"
+"lrwxrwxrwx    1 root    root                        9 Dec 15  2009 /usr/share/man/man1/csh.1.gz -&gt; tcsh.1.gz\n"
+"-rw-r--r--    1 root    root                    63984 Dec 15  2009 /usr/share/man/man1/tcsh.1.gz\n"
+"      "
+msgstr ""
+
+msgid "This information is the same as a long listing on the files."
+msgstr ""
+
+msgid "As you can see, the <option>–l</option> option results in quite a lot of output. In some cases, though, you aren’t interested in documentation and other miscellaneous files in the package. It’s the commands and libraries that cause the most package-related problems. To help with this, you can use a series of rpm options to list only certain types of files."
+msgstr ""
+
+msgid "Listing the configuration files for a package"
+msgstr ""
+
+msgid "The <option>–c</option> option tells <command>rpm –q</command> to list the configuration files for a package. You can also use the longer option, <option>--configfiles</option>, in place of <option>–c</option>. The basic syntax is:"
+msgstr ""
+
+msgid "<command>rpm –qc <replaceable>package_name</replaceable></command>"
+msgstr ""
+
+msgid "<command>rpm -qc bash</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"        /etc/skel/.bash_logout\n"
+"        /etc/skel/.bash_profile\n"
+"        /etc/skel/.bashrc\n"
+"      "
+msgstr ""
+
+msgid "This command lists the configuration files for the bash package."
+msgstr ""
+
+msgid "Some packages don’t have configuration files, as shown following:"
+msgstr ""
+
+msgid "<command>rpm -qc python</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"        \n"
+"      "
+msgstr ""
+
+msgid "In this case, the rpm command provides no output. Other packages have a lot of configuration files, such as the sendmail mail transfer agent, as shown following:"
+msgstr ""
+
+msgid "<command>rpm -qc sendmail</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"        /etc/aliases\n"
+"        /etc/mail/Makefile\n"
+"        /etc/mail/access\n"
+"        /etc/mail/domaintable\n"
+"        /etc/mail/helpfile\n"
+"        /etc/mail/local-host-names\n"
+"        /etc/mail/mailertable\n"
+"        /etc/mail/sendmail.mc\n"
+"        /etc/mail/statistics\n"
+"        /etc/mail/trusted-users\n"
+"        /etc/mail/virtusertable\n"
+"        /etc/rc.d/init.d/sendmail\n"
+"        /etc/sendmail.cf\n"
+"        /etc/sysconfig/sendmail\n"
+"        /usr/lib/sasl/Sendmail.conf\n"
+"      "
+msgstr ""
+
+msgid "As with the <option>–l</option> option, the <option>–v</option> option provides more information on each file, as shown following:"
+msgstr ""
+
+msgid "<command>rpm -qcv bash</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"-rw-r--r--    1 root    root                       18 May 21 13:32 /etc/skel/.bash_logout\n"
+"-rw-r--r--    1 root    root                      176 May 21 13:32 /etc/skel/.bash_profile\n"
+"-rw-r--r--    1 root    root                      124 May 21 13:32 /etc/skel/.bashrc\n"
+"      "
+msgstr ""
+
+msgid "Listing the documentation files for a package"
+msgstr ""
+
+msgid "Similarly to the <option>–c</option> option, the <option>–d</option> option tells the <command>rpm –q</command> command to list just the documentation files for a package. The basic syntax is:"
+msgstr ""
+
+msgid "<command>rpm –qd <replaceable>package_name</replaceable></command>"
+msgstr ""
+
+msgid "<command>rpm -qd tcsh</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"        /usr/share/doc/tcsh-6.10/FAQ\n"
+"        /usr/share/doc/tcsh-6.10/Fixes\n"
+"        /usr/share/doc/tcsh-6.10/NewThings\n"
+"        /usr/share/doc/tcsh-6.10/complete.tcsh\n"
+"        /usr/share/doc/tcsh-6.10/eight-bit.txt\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/header.html\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/index.html\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/lists.html\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/tcsh.man\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/tcsh.man2html\n"
+"        /usr/share/doc/tcsh-6.10/tcsh.html/top.html\n"
+"        /usr/share/man/man1/tcsh.1.gz\n"
+"      "
+msgstr ""
+
+msgid "Getting more information"
+msgstr ""
+
+msgid "You can add the –v option to all of the file-listing options to get more information."
+msgstr ""
+
+msgid "You can also use the longer option, <option>--docfiles</option>, in place of <option>–d</option>."
+msgstr ""
+
+msgid "Listing the state of the files in a package"
+msgstr ""
+
+msgid "The <option>–s</option> option to the <command>rpm –q</command> command lists the state of each file in a package. The basic syntax is:"
+msgstr ""
+
+msgid "<command>rpm –qs <replaceable>package_name</replaceable></command>"
+msgstr ""
+
+msgid "<command>rpm -qs tcsh</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"        normal /bin/csh\n"
+"        normal /bin/tcsh\n"
+"        normal /usr/share/doc/tcsh-6.10\n"
+"        normal /usr/share/doc/tcsh-6.10/FAQ\n"
+"        normal /usr/share/doc/tcsh-6.10/Fixes\n"
+"        normal /usr/share/doc/tcsh-6.10/NewThings\n"
+"        normal /usr/share/doc/tcsh-6.10/complete.tcsh\n"
+"        normal /usr/share/doc/tcsh-6.10/eight-bit.txt\n"
+"        normal /usr/share/doc/tcsh-6.10/tcsh.html\n"
+"        normal /usr/share/doc/tcsh-6.10/tcsh.html/header.html\n"
+"        normal /usr/share/doc/tcsh-6.10/tcsh.html/index.html\n"
+"        normal /usr/share/doc/tcsh-6.10/tcsh.html/lists.html\n"
+"        normal /usr/share/doc/tcsh-6.10/tcsh.html/tcsh.man\n"
+"        normal /usr/share/doc/tcsh-6.10/tcsh.html/tcsh.man2html\n"
+"        normal /usr/share/doc/tcsh-6.10/tcsh.html/top.html\n"
+"        not installed /usr/share/locale/de/LC_MESSAGES/tcsh\n"
+"        not installed /usr/share/locale/el/LC_MESSAGES/tcsh\n"
+"        not installed /usr/share/locale/es/LC_MESSAGES/tcsh\n"
+"        not installed /usr/share/locale/fr/LC_MESSAGES/tcsh\n"
+"        not installed /usr/share/locale/it/LC_MESSAGES/tcsh\n"
+"        not installed /usr/share/locale/ja/LC_MESSAGES/tcsh\n"
+"        normal /usr/share/man/man1/tcsh.1.gz\n"
+"      "
+msgstr ""
+
+msgid "You can also use the long option, <option>--state</option>, in place of <option>–s</option>."
+msgstr ""
+
+msgid "You can combine the <option>–s</option> option with other file filters, such as <option>–d</option>, for listing only the documentation files for a package."
+msgstr ""
+
+msgid "Table 5-2 lists the states that RPM supports."
+msgstr ""
+
+msgid "Table 5-2 RPM File States"
+msgstr ""
+
+msgid "State"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+msgid "normal"
+msgstr ""
+
+msgid "The file has been installed."
+msgstr ""
+
+msgid "not installed"
+msgstr ""
+
+msgid "The file from the package is not installed."
+msgstr ""
+
+msgid "replaced"
+msgstr ""
+
+msgid "The file has been replaced."
+msgstr ""
+
+msgid "Sometimes files in a package may have been skipped during installation with options such as <option>--excludedocs</option>. This can lead to non-normal states. You may have also modified files installed from a given package."
+msgstr ""
+
+msgid "Listing the scripts in a package"
+msgstr ""
+
+msgid "RPM packages can have preinstallation, postinstallation, preuninstallation, and postuninstallation scripts. These are scripts that the rpm command will execute before and after installing a package, as well as before and after removing the package. The <option>--scripts</option> option to the <command>rpm –q</command> command lists the scripts associated with a package. The basic syntax follows:"
+msgstr ""
+
+msgid "<command>rpm -q --scripts <replaceable>package_name</replaceable></command>"
+msgstr ""
+
+msgid "<command>rpm -q --scripts tcsh</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"if [ ! -f /etc/shells ]; then\n"
+" echo \"/bin/tcsh\" &gt;&gt; /etc/shells\n"
+" echo \"/bin/csh\"        &gt;&gt; /etc/shells\n"
+"else\n"
+" grep -q '^/bin/tcsh$' /etc/shells || \\\n"
+" echo \"/bin/tcsh\" &gt;&gt; /etc/shells\n"
+" grep -q '^/bin/csh$'  /etc/shells || \\\n"
+" echo \"/bin/csh\"        &gt;&gt; /etc/shells\n"
+"fi\n"
+"postuninstall scriptlet (using /bin/sh):\n"
+"if [ ! -x /bin/tcsh ]; then\n"
+" grep -v '^/bin/tcsh$'  /etc/shells | \\\n"
+" grep -v '^/bin/csh$' &gt; /etc/shells.rpm &amp;&amp; \\\n"
+" mv /etc/shells.rpm /etc/shells\n"
+"fi\n"
+"      "
+msgstr ""
+
+msgid "The simple scripts shown here add an entry to the /etc/shells file and clean up the entry when uninstalled."
+msgstr ""
+
+msgid "Cleaning up"
+msgstr ""
+
+msgid "Cleaning up any changes your package makes on uninstallation is a very good idea. See the chapters in Part II, Creating RPMs, for details on making your own well-behaved packages."
+msgstr ""
+
+msgid "Other packages have more complex scripts, as shown following:"
+msgstr ""
+
+msgid "<command>rpm -q --scripts sendmail</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"preinstall scriptlet (using /bin/sh):\n"
+"/usr/sbin/useradd -u 47 -d /var/spool/mqueue -r -s /sbin/nologin mailnull &gt;/dev/null 2&gt;&amp;1\n"
+"/usr/sbin/useradd -u 51 -d /var/spool/mqueue -r -s /sbin/nologin smmsp &gt;/dev/null 2&gt;&amp;1\n"
+"exit 0\n"
+"postinstall scriptlet (using /bin/sh):\n"
+"/sbin/chkconfig --add sendmail\n"
+"# Set up the alternatives files for MTAs.\n"
+"/usr/sbin/alternatives --install /usr/sbin/sendmail mta /usr/sbin/sendmail.sendmail 90 \\\n"
+"        --slave /usr/bin/mailq mta-mailq /usr/bin/mailq.sendmail \\\n"
+"        --slave /usr/bin/newaliases mta-newaliases /usr/bin/newaliases.sendmail \\\n"
+"        --slave /usr/bin/rmail mta-rmail /usr/bin/rmail.sendmail \\\n"
+"        --slave /usr/lib/sendmail mta-sendmail /usr/lib/sendmail.sendmail \\\n"
+"        --slave /etc/pam.d/smtp mta-pam /etc/pam.d/smtp.sendmail \\\n"
+"        --slave /usr/share/man/man8/sendmail.8.gz mta-sendmailman /usr/share/man/man8/sendmail.sendmail.8.gz \\\n"
+"        --slave /usr/share/man/man1/mailq.1.gz mta-mailqman /usr/share/man/man1/mailq.sendmail.1.gz \\\n"
+"        --slave /usr/share/man/man1/newaliases.1.gz mta-newaliasesman /usr/share/man/man1/newaliases.sendmail.1.gz \\\n"
+"        --slave /usr/share/man/man5/aliases.5.gz mta-aliasesman /usr/share/man/man5/aliases.sendmail.5.gz \\\n"
+"        --initscript sendmail\n"
+"\n"
+"# Rebuild maps\n"
+"{\n"
+"        chown root /etc/aliases.db /etc/mail/access.db \\\n"
+"                /etc/mail/mailertable.db /etc/mail/domaintable.db \\\n"
+"                /etc/mail/virtusertable.db\n"
+"        SM_FORCE_DBREBUILD=1 /etc/mail/make\n"
+"        SM_FORCE_DBREBUILD=1 /etc/mail/make aliases\n"
+"} &gt; /dev/null 2&gt;&amp;1\n"
+"exit 0\n"
+"preuninstall scriptlet (using /bin/sh):\n"
+"if [ $1 = 0 ]; then\n"
+"        /etc/rc.d/init.d/sendmail stop &gt;/dev/null 2&gt;&amp;1\n"
+"        /sbin/chkconfig --del sendmail\n"
+"        /usr/sbin/alternatives --remove mta /usr/sbin/sendmail.sendmail\n"
+"fi\n"
+"exit 0\n"
+"postuninstall scriptlet (using /bin/sh):\n"
+"if [ \"$1\" -ge \"1\" ]; then\n"
+"        /etc/rc.d/init.d/sendmail condrestart &gt;/dev/null 2&gt;&amp;1\n"
+"        mta=`readlink /etc/alternatives/mta`\n"
+"        if [ \"$mta\" == \"/usr/sbin/sendmail.sendmail\" ]; then\n"
+"                /usr/sbin/alternatives --set mta /usr/sbin/sendmail.sendmail\n"
+"        fi\n"
+"fi\n"
+"exit 0\n"
+"      "
+msgstr ""
+
+msgid "In this case, the main script is the post-install script, which tries to convert old-format data into the new format, thereby helping users upgrade to the newer release."
+msgstr ""
+
+msgid "Listing what has changed"
+msgstr ""
+
+msgid "The <option>--changelog</option> option lists what has changed, as described in a file that logs changes, from previous versions of a given package. The change log is just a convention, so not all packages will sport this nifty feature. In addition, the change log for many packages documents the changes in the RPM packaging, not the changes in the underlying application. If a change log is available, however, this can prove a very good way to help determine whether you want to upgrade to a new version of a package."
+msgstr ""
+
+msgid "For example, a network server application may have been updated to fix some security problems. In that case, you likely want to upgrade. Other changes may not affect your site, leading you to decide not to upgrade."
+msgstr ""
+
+msgid "The basic format of the command is:"
+msgstr ""
+
+msgid "<command>rpm –q --changelog <replaceable>package_name</replaceable></command>"
+msgstr ""
+
+msgid "For example, the following shows the beginning of the changelog for the bash package:"
+msgstr ""
+
+msgid "<command>rpm -q --changelog bash</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"* Fri May 21 2010 Roman Rakus rrakus@redhat.com - 4.1.7-1\n"
+"- Patch level 7\n"
+"\n"
+"* Wed Mar 31 2010 Roman Rakus rrakus@redhat.com - 4.1.2-4\n"
+"- Corrected requires patch (#563301)\n"
+"\n"
+"* Fri Jan 22 2010 rrakus@redhat.com 4.1.2-3\n"
+"- Don't use cond-rmatch patch\n"
+"- Use manso patch\n"
+"- Include COPYING in base bash rpm\n"
+"\n"
+"* Fri Jan 22 2010 rrakus@redhat.com 4.1.2-2\n"
+"- Correct patchlevel 2\n"
+"\n"
+"* Fri Jan 22 2010 Roman Rakus rrakus@redhat.com 4.1.2-1\n"
+"- Patchlevel 4.2\n"
+"- Removed old patch\n"
+"- Returned back manso patch\n"
+"\n"
+"* Fri Jan 08 2010 Roman Rakus rrakus@redhat.com 4.1.0-2\n"
+"- Include COPYING in doc dir\n"
+"\n"
+"* Mon Jan 04 2010 Roman Rakus rrakus@redhat.com - 4.1.0-1\n"
+"- Upstream 4.1\n"
+"\n"
+"* Sun Dec 27 2009 Roman Rakus rrakus@redhat.com - 4.1-0.2.rc1\n"
+"- Fixed patch for fuzz=0\n"
+"\n"
+"* Sun Dec 27 2009 Roman Rakus rrakus@redhat.com - 4.1-0.1.rc1\n"
+"- Upstream 4.1.rc1\n"
+"\n"
+"* Fri Dec 11 2009 Roman Rakus rrakus@redhat.com - 4.0.35-2\n"
+"- Don't segfault when TERM=eterm* and EMACS is unset (#530911)\n"
+"\n"
+"* Thu Oct 29 2009 Roman Rakus rrakus@redhat.com - 4.0.35-1\n"
+"- Patch level 35\n"
+"      "
+msgstr ""
+
+msgid "Combining queries"
+msgstr ""
+
+msgid "The rpm command is very flexible in allowing you to combine queries. Just start the command with <command>rpm –q</command> and add the various options either on their own, such as <option>–q</option> with <option>–s</option> and <option>–f</option>, or together, such as <option>–qsf</option>."
+msgstr ""
+
+msgid "The following sections show a few handy combinations of the options you can use for real-world package-management tasks."
+msgstr ""
+
+msgid "Listing Package Description and Documentation Files"
+msgstr ""
+
+msgid "To find information on a package and where it is documented, use the <option>–qdi</option> option to rpm (a combination of the <option>–q</option>, <option>–d</option>, and <option>–i</option> options):"
+msgstr ""
+
+msgid "<command>rpm -qdi grep</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"Name        : grep                         Relocations: (not relocatable)\n"
+"Version     : 2.6.3                             Vendor: Fedora Project\n"
+"Release     : 1.fc13                        Build Date: Wed 07 Apr 2010 05:58:58 PM EDT\n"
+"Install Date: Fri 27 Aug 2010 07:03:07 PM EDT      Build Host: x86-06.phx2.fedoraproject.org\n"
+"Group       : Applications/Text             Source RPM: grep-2.6.3-1.fc13.src.rpm\n"
+"Size        : 800493                           License: GPLv3+\n"
+"Signature   : RSA/SHA256, Wed 07 Apr 2010 06:48:20 PM EDT, Key ID 7edc6ad6e8e40fde\n"
+"Packager    : Fedora Project\n"
+"URL         : http://www.gnu.org/software/grep/\n"
+"Summary     : Pattern matching utilities\n"
+"Description :\n"
+"The GNU versions of commonly used grep utilities. Grep searches through\n"
+"textual input for lines which contain a match to a specified pattern and then\n"
+"prints the matching lines. GNU's grep utilities include grep, egrep and fgrep.\n"
+"\n"
+"GNU grep is needed by many scripts, so it shall be installed on every system.\n"
+"/usr/share/doc/grep-2.6.3/ABOUT-NLS\n"
+"/usr/share/doc/grep-2.6.3/AUTHORS\n"
+"/usr/share/doc/grep-2.6.3/COPYING\n"
+"/usr/share/doc/grep-2.6.3/ChangeLog\n"
+"/usr/share/doc/grep-2.6.3/NEWS\n"
+"/usr/share/doc/grep-2.6.3/README\n"
+"/usr/share/doc/grep-2.6.3/THANKS\n"
+"/usr/share/doc/grep-2.6.3/TODO\n"
+"/usr/share/info/grep.info.gz\n"
+"/usr/share/man/man1/egrep.1.gz\n"
+"/usr/share/man/man1/fgrep.1.gz\n"
+"/usr/share/man/man1/grep.1.gz\n"
+"        "
+msgstr ""
+
+msgid "It can sometimes be difficult to track down the documentation for a given package. Some packages use Unix manual pages; others use info files, and still others provide HTML for other formatted manuals. Some have no real documentation at all."
+msgstr ""
+
+msgid "Listing the State of Configuration Files"
+msgstr ""
+
+msgid "To find the state of all the configuration files for a given Linux command, use a command with the <option>–qcsf</option> option with the name of the file, as shown here, or the <option>-qcs</option> option with the name of a package."
+msgstr ""
+
+msgid "<command>rpm -qcsf /bin/bash</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"normal /etc/skel/.bash_logout\n"
+"normal /etc/skel/.bash_profile\n"
+"normal /etc/skel/.bashrc\n"
+"        "
+msgstr ""
+
+msgid "Listing the Most Recently Installed Packages"
+msgstr ""
+
+msgid "To list the most recently installed packages, use the following command with the <option>--last</option> option. This is very useful if you recently installed or upgraded a number of packages and something unexpected happens. If you cannot remember the package names, you can use the <option>--last</option> option to list out packages in reverse order of installation."
+msgstr ""
+
+msgid "You can pipe the output of a query to the head command to show only the last ten packages that were installed or upgraded, as shown following:"
+msgstr ""
+
+msgid "<command>rpm -qa --last | head</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"kmod-nvidia-2.6.34.6-47.fc13.x86_64-256.53-1.fc13 Sat 18 Sep 2010 09:54:48 AM EDT\n"
+"xorg-x11-drv-nvidia-256.53-1.fc13             Sat 18 Sep 2010 09:51:00 AM EDT\n"
+"kmod-nvidia-2.6.34.6-54.fc13.x86_64-256.53-1.fc13.3 Sat 18 Sep 2010 09:50:59 AM EDT\n"
+"xorg-x11-drv-nvidia-libs-256.53-1.fc13        Sat 18 Sep 2010 09:50:57 AM EDT\n"
+"google-talkplugin-1.5.1.0-1                   Wed 15 Sep 2010 07:38:46 PM EDT\n"
+"mythplugins-0.23.1-2.fc13                     Sun 12 Sep 2010 09:35:42 PM EDT\n"
+"mythweather-0.23.1-2.fc13                     Sun 12 Sep 2010 09:35:40 PM EDT\n"
+"perl-DateTime-Format-ISO8601-0.07-1.fc13      Sun 12 Sep 2010 09:35:39 PM EDT\n"
+"perl-DateTime-Format-Builder-0.7901-5.fc13    Sun 12 Sep 2010 09:35:38 PM EDT\n"
+"perl-Class-Factory-Util-1.7-6.fc13            Sun 12 Sep 2010 09:35:37 PM EDT \n"
+"        "
+msgstr ""
+
+msgid "You can pass options to the head command to show more or fewer than ten lines. In general, starting with the last ten packages can help you track down something you installed the day before."
+msgstr ""
+
+msgid "Creating custom queries"
+msgstr ""
+
+msgid "The <option>--qf</option> or <option>--queryformat</option> option allows you to create custom queries with the rpm command, although in a rather difficult manner. You need to pass a query format string, the syntax of which originates with the C printf function and requires precision."
+msgstr ""
+
+msgid "The basic syntax of the query format is <option>%{tag_name}</option>. (The percent sign is about the only part that comes from the C printf function.) You can combine tag names to display more than one item per package. You can also add formatting options following C language conventions."
+msgstr ""
+
+msgid "For example, to list all package names, use a command like the following (the output is abbreviated):"
+msgstr ""
+
+msgid "<command>rpm -qa --qf \"%{NAME}\"</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"libxml2tcp_wrappers-libstracerouteperl-Config-Tinylibsampleratefedora-icon-themefftw2dvb-appsreport-plugin-localsaveglib2-develqwtintltoolperl-Locale-Maketext-Gettextliblastfmxorg-x11-fonts-ISO8859-1-100dpilibpng-devellibgeotifffontconfigPackageKit-glibshared-mime-infoxorg-x11-drv-sisusbxmlgraphics-commonsopenoffice.org-graphicfilterm17n-db-oriyadejavu-sans-fontslibselinux-pythonapr-utilxorg-x11-drv-cirruslibsilcmysql-serverpnm2ppanssmythmusicdbus-glibcyrus-sasl-libfedora-release-notesekigaperl-Net-SSLeayperl-HTML-Parsermingettyphp-clixorg-x11-drv-nvidia-libspatchgnome-games-extra\n"
+"      "
+msgstr ""
+
+msgid "This command used the simplest format, which is just the value of the tag in the package headers, in this case the package names. Because we used no other formatting, this command outputs all the package names smashed together. To deal with this problem in the output, you can place a \\n, the C language convention for a newline character, at the end of the format string. This fixes the output considerably."
+msgstr ""
+
+msgid "For example (showing just the first few entries):"
+msgstr ""
+
+msgid "<command>rpm -qa --qf \"%{NAME}\\n\"</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"libxml2\n"
+"tcp_wrappers-libs\n"
+"traceroute\n"
+"perl-Config-Tiny\n"
+"libsamplerate\n"
+"fedora-icon-theme\n"
+"fftw2\n"
+"dvb-apps\n"
+"report-plugin-localsave\n"
+"glib2-devel\n"
+"      "
+msgstr ""
+
+msgid "This command provides a custom query that is essentially the same as <command>rpm -qa</command>. You’ll likely not use this command in favor of the simpler rpm option, but you can use this example as a guide for creating your own custom queries."
+msgstr ""
+
+msgid "popt aliases"
+msgstr ""
+
+msgid "A great many of the command-line options to the rpm command are defined as popt aliases. These popt aliases define the rpm command-line options in terms of longer query format strings. See <xref linkend=\"ch-customizing-rpm\" /> for more information on popt."
+msgstr ""
+
+msgid "You can add items to the query string and use C language conventions for formatting and controlling the amount of space provided for each item output. For example, the following command prints the name and platform for all packages, showing the first few entries, formatted with 20 characters for each item:"
+msgstr ""
+
+msgid "<command>rpm -qa --qf \"%-20{NAME} %-20{PLATFORM}\\n\"</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"libxml2              x86_64-redhat-linux-gnu\n"
+"tcp_wrappers-libs    i686-redhat-linux-gnu\n"
+"traceroute           x86_64-redhat-linux-gnu\n"
+"perl-Config-Tiny     noarch-redhat-linux-gnu\n"
+"libsamplerate        x86_64-redhat-linux-gnu\n"
+"fedora-icon-theme    noarch-redhat-linux-gnu\n"
+"fftw2                x86_64-redhat-linux-gnu\n"
+"dvb-apps             x86_64-redhat-linux-gnu\n"
+"report-plugin-localsave x86_64-redhat-linux-gnu\n"
+"glib2-devel          x86_64-redhat-linux-gnu\n"
+"      "
+msgstr ""
+
+msgid "Working With Query Format Tags"
+msgstr ""
+
+msgid "To build queries with the <option>--queryformat</option> option, you need to know what tags you can use. To list the names of the available query format tags, use the <option>--querytags</option> option, which returns a large set of tags, truncated here for space:"
+msgstr ""
+
+msgid "<command>rpm --querytags</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"          NAME\n"
+"          VERSION\n"
+"          RELEASE\n"
+"          SUMMARY\n"
+"          DESCRIPTION\n"
+"          BUILDTIME\n"
+"        "
+msgstr ""
+
+msgid "Each of these tags also has a version with a <literal>RPMTAG_</literal> prefix, such as <literal>RPMTAG_NAME</literal>. You can use this tags with or without the <literal>RPMTAG_</literal> prefix. For example:"
+msgstr ""
+
+msgid "<command>rpm -q --qf \"%{RPMTAG_NAME}\\n\" sendmail</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"          sendmail\n"
+"        "
+msgstr ""
+
+msgid "Note how this command uses the <option>–q</option> option to query for one package, instead of <option>–qa</option> to query for all packages. You can use query formats with any of the rpm queries."
+msgstr ""
+
+msgid "The next sections cover the available tags based on the type of the information stored in the tag."
+msgstr ""
+
+msgid "Querying for Package Information"
+msgstr ""
+
+msgid "Many of the query format tags refer to package-information data stored in the RPM header, introduced in <xref linkend=\"ch-rpm-overview\" /> . Table 5-3 lists the package-information tags."
+msgstr ""
+
+msgid "Table 5-3 Package-information query tags"
+msgstr ""
+
+msgid "Tag"
+msgstr ""
+
+msgid "Holds"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid "Package name"
+msgstr ""
+
+msgid "VERSION"
+msgstr ""
+
+msgid "Version number"
+msgstr ""
+
+msgid "RELEASE"
+msgstr ""
+
+msgid "Release number"
+msgstr ""
+
+msgid "SUMMARY"
+msgstr ""
+
+msgid "One-line summary of the package contents"
+msgstr ""
+
+msgid "DESCRIPTION"
+msgstr ""
+
+msgid "Descriptive text about the package"
+msgstr ""
+
+msgid "BUILDTIME"
+msgstr ""
+
+msgid "Time package was built"
+msgstr ""
+
+msgid "BUILDHOST"
+msgstr ""
+
+msgid "Host package was built on"
+msgstr ""
+
+msgid "SIZE"
+msgstr ""
+
+msgid "Size of all the regular files in the payload"
+msgstr ""
+
+msgid "LICENSE"
+msgstr ""
+
+msgid "License package was released under"
+msgstr ""
+
+msgid "GROUP"
+msgstr ""
+
+msgid "Descriptive group or category name for the package"
+msgstr ""
+
+msgid "OS"
+msgstr ""
+
+msgid "Operating system package was built for"
+msgstr ""
+
+msgid "ARCH"
+msgstr ""
+
+msgid "Architecture, such as i386"
+msgstr ""
+
+msgid "SOURCERPM"
+msgstr ""
+
+msgid "The associated source RPM"
+msgstr ""
+
+msgid "CHANGELOGTIME"
+msgstr ""
+
+msgid "Array of changelog times"
+msgstr ""
+
+msgid "CHANGELOGNAME"
+msgstr ""
+
+msgid "Array of changelog names"
+msgstr ""
+
+msgid "CHANGELOGTEXT"
+msgstr ""
+
+msgid "Array of changelog text entries"
+msgstr ""
+
+msgid "PREIN"
+msgstr ""
+
+msgid "Pre-install script"
+msgstr ""
+
+msgid "POSTIN"
+msgstr ""
+
+msgid "Post-install script"
+msgstr ""
+
+msgid "PREUN"
+msgstr ""
+
+msgid "Pre-uninstall script"
+msgstr ""
+
+msgid "POSTUN"
+msgstr ""
+
+msgid "Post uninstall script"
+msgstr ""
+
+msgid "PLATFORM"
+msgstr ""
+
+msgid "Platform"
+msgstr ""
+
+msgid "All of these tags, except for the <literal>CHANGELOGTIME</literal>, <literal>CHANGELOGTEXT</literal> and <literal>CHANGELOGNAME</literal> tags, are single-value tags."
+msgstr ""
+
+msgid "Formatting Arrays"
+msgstr ""
+
+msgid "Many of the header entries are arrays, so the header tags can hold more than one item. For example, RPM packages can have more than one file in the payload."
+msgstr ""
+
+msgid "To specify a format for each item in an array, use square brackets. For example:"
+msgstr ""
+
+msgid "<command>rpm -q --queryformat \"[%-50{FILENAMES} %{FILESIZES}\\n]\" sendmail</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"/etc/NetworkManager/dispatcher.d/10-sendmail       96\n"
+"/etc/mail                                          4096\n"
+"/etc/mail/Makefile                                 92\n"
+"/etc/mail/access                                   469\n"
+"/etc/mail/access.db                                0\n"
+"/etc/mail/aliasesdb-stamp                          0\n"
+"/etc/mail/domaintable                              233\n"
+"/etc/mail/domaintable.db                           0\n"
+"/etc/mail/helpfile                                 5584\n"
+"/etc/mail/local-host-names                         64\n"
+"        "
+msgstr ""
+
+msgid "This example lists the files and file sizes within a package, with the listing of files truncated for size."
+msgstr ""
+
+msgid "If you want to mix array tags with non-array tags, you can use an equals sign, <literal>=</literal>, in front of the tag name to specify that the given tag should be repeated for each item in the array. For example:"
+msgstr ""
+
+msgid "<command>rpm -q --queryformat \"[%-15{=NAME} %-50{FILENAMES}\\n]\" sendmail bash</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"sendmail        /etc/NetworkManager/dispatcher.d/10-sendmail      \n"
+"sendmail        /etc/mail                                         \n"
+"sendmail        /etc/mail/Makefile                                \n"
+"sendmail        /etc/mail/access                                  \n"
+"sendmail        /etc/mail/access.db  \n"
+"bash            /bin/bash                                         \n"
+"bash            /bin/sh                                           \n"
+"bash            /etc/skel/.bash_logout                            \n"
+"bash            /etc/skel/.bash_profile                           \n"
+"bash            /etc/skel/.bashrc           \n"
+"        "
+msgstr ""
+
+msgid "This example, also truncated for size, lists the package name along with the file name for the files contained in these two packages."
+msgstr ""
+
+msgid "Special Formatting"
+msgstr ""
+
+msgid "Some of the tags within an RPM package header contain special binary information that usually makes no sense when printed out. To help with these header tags, you can use special RPM formatting options, using a syntax like the following:"
+msgstr ""
+
+msgid "<literal>%{tag:special_format}</literal>"
+msgstr ""
+
+msgid "For example, to print the <literal>INSTALLTIME</literal> tag, use <literal>%{INSTALLTIME:date}</literal>, which specifies to print the <literal>INSTALLTIME</literal> tag in date format. For example:"
+msgstr ""
+
+msgid "<command>rpm -q --qf \"%{NAME}-%{VERSION}-%{RELEASE} %{INSTALLTIME:date}\\n\" bash</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"bash-4.1.7-1.fc13 Fri 27 Aug 2010 07:02:33 PM EDT\n"
+"        "
+msgstr ""
+
+msgid "This example prints the <literal>NAME-VERSION-RELEASE</literal> of the package, along with the <literal>INSTALLTIME</literal> in date format."
+msgstr ""
+
+msgid "Most tags in a header are optional. You can print the value of these tags, but you may get nothing. To help deal with this, you can use a conditional operator based loosely on the C language ternary operator. The basic syntax is:"
+msgstr ""
+
+msgid "<literal>%|tag?{print_if_present}:{print_if_absent}|</literal>"
+msgstr ""
+
+msgid "With the normal %{tag} syntax, this conditional syntax gets complicated really fast. You need to break the elements down. For example:"
+msgstr ""
+
+msgid "<command>rpm -q --qf \"%{NAME} %|EPOCH?{%{EPOCH}}:{(no Epoch)}|\\n\" perl</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"          perl 4\n"
+"        "
+msgstr ""
+
+msgid "If the package has a value for the <literal>EPOCH</literal> tag, you will see output as shown in this example. Most packages do not have an <literal>EPOCH</literal> defined, in which case, you will \\ see output like the following:"
+msgstr ""
+
+msgid "RPM files likely hold packages that are not installed. If you query one of these packages, you will get the alternative text, as shown following:"
+msgstr ""
+
+msgid "<command>rpm -q --qf \"%{NAME} %|EPOCH?{%{EPOCH}}:{(no Epoch)}|\\n\" sendmail</command>"
+msgstr ""
+
+msgid ""
+"\n"
+"sendmail (no Epoch)\n"
+"        "
+msgstr ""
+
+msgid "See the \"Getting Information on Package Files\" section in this chapter for more on querying RPM package files. Other special-formatting options are described in the following sections on the dependency and file information tags."
+msgstr ""
+
+msgid "Querying for Package Dependencies"
+msgstr ""
+
+msgid "A number of tags provide package dependency information. Each of these tags comes in triples, which are formatted similarly. For example, for the capabilities a package requires, you have the REQUIRENAME, REQUIREVERSION, and REQUIREFLAGS tags."
+msgstr ""
+
+msgid "The REQUIRENAME tag holds an array of required capability names. The REQUIREVERSION tag holds an array of the versions of the required capabilities. The REQUIREFLAGS tag ties the two together with a set of bit flags that specify whether the requirement is for a version less than the given number, equal to the given number, greater than or equal to the given number, and so on."
+msgstr ""
+
+msgid "Table 5-4 lists the dependency tags."
+msgstr ""
+
+msgid "Table 5-4 Dependency query tags"
+msgstr ""
+
+msgid "CONFLICTFLAGS"
+msgstr ""
+
+msgid "Array of flags for the capabilities this package conflicts"
+msgstr ""
+
+msgid "CONFLICTNAME"
+msgstr ""
+
+msgid "Array of capabilities that this package conflicts"
+msgstr ""
+
+msgid "CONFLICTVERSION"
+msgstr ""
+
+msgid "Array of version numbers that this package conflicts"
+msgstr ""
+
+msgid "REQUIREFLAGS"
+msgstr ""
+
+msgid "Array of flags for the capabilities this package requires"
+msgstr ""
+
+msgid "REQUIRENAME"
+msgstr ""
+
+msgid "Array of capabilities that this package requires"
+msgstr ""
+
+msgid "REQUIREVERSION"
+msgstr ""
+
+msgid "Array of version numbers that this package requires"
+msgstr ""
+
+msgid "OBSOLETENAME"
+msgstr ""
+
+msgid "Array of capabilities that this package obsoletes"
+msgstr ""
+
+msgid "OBSOLETEFLAGS"
+msgstr ""
+
+msgid "Array of flags for the capabilities this package obsoletes"
+msgstr ""
+
+msgid "OBSOLETEVERSION"
+msgstr ""
+
+msgid "Array of version numbers that this package obsoletes"
+msgstr ""
+
+msgid "PROVIDENAME"
+msgstr ""
+
+msgid "Array of capabilities that this package provides"
+msgstr ""
+
+msgid "PROVIDEFLAGS"
+msgstr ""
+
+msgid "Array of flags for the capabilities this package provides"
+msgstr ""
+
+msgid "PROVIDEVERSION"
+msgstr ""
+
+msgid "Array of version numbers that this package provides"
+msgstr ""
+
+msgid "Each of these tags is an array. The PROVIDENAME, PROVIDEVERSION, and PROVIDEFLAGS tags work similarly for the capabilities this package provides. The CONFLICTNAME, CONFLICTVERSION, and CONFLICTFLAGS tags specify the conflicts, and, the OBSOLETENAME, OBSOLETEVERSION, and OBSOLETEFLAGS tags specify the obsolete dependencies."
+msgstr ""
+
+msgid "The depflags special-formatting option prints out the flag tags, such as REQUIREFLAGS, in human-readable format. For example, the following command lists the requirements for a package:"
+msgstr ""
+
+msgid "$ rpm -q --qf \\"
+msgstr ""
+
+msgid "\"[%{REQUIRENAME} %{REQUIREFLAGS:depflags} %{REQUIREVERSION}\\n]\" sendmail"
+msgstr ""
+
+msgid "rpmlib(VersionedDependencies) &lt;= 3.0.3-1"
+msgstr ""
+
+msgid "chkconfig &gt;= 1.3"
+msgstr ""
+
+msgid "/usr/sbin/useradd"
+msgstr ""
+
+msgid "/bin/mktemp"
+msgstr ""
+
+msgid "fileutils"
+msgstr ""
+
+msgid "gawk"
+msgstr ""
+
+msgid "sed"
+msgstr ""
+
+msgid "sh-utils"
+msgstr ""
+
+msgid "procmail"
+msgstr ""
+
+msgid "bash &gt;= 2.0"
+msgstr ""
+
+msgid "/bin/sh"
+msgstr ""
+
+msgid "rpmlib(PayloadFilesHavePrefix) &lt;= 4.0-1"
+msgstr ""
+
+msgid "rpmlib(CompressedFileNames) &lt;= 3.0.4-1"
+msgstr ""
+
+msgid "For those requirements that have specific version numbers, this command prints out the version number along with the operator, such as &gt;= for a version greater than or equal to the given number."
+msgstr ""
+
+msgid "Note that for many of the requirements, there is no specific version information."
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "In addition to normal capabilities, most packages will have some RPM-related requirements as well, which specify any required RPM versions, for example, rpmlib(CompressedFileNames)."
+msgstr ""
+
+msgid "Querying for File Information"
+msgstr ""
+
+msgid "The file-information tags hold data on the files within the package payload, that is, the files the rpm command installs when you install the package. These tags are arrays, with one value per file."
+msgstr ""
+
+msgid "Table 5-5 lists the file-information tags."
+msgstr ""
+
+msgid "Table 5-5 File-information query tags"
+msgstr ""
+
+msgid "OLDFILENAMES"
+msgstr ""
+
+msgid "Array of full file names, used in older packages"
+msgstr ""
+
+msgid "FILESIZES"
+msgstr ""
+
+msgid "Array of sizes for each file"
+msgstr ""
+
+msgid "FILEMODES"
+msgstr ""
+
+msgid "Array of permissions for each file"
+msgstr ""
+
+msgid "FILERDEVS"
+msgstr ""
+
+msgid "Array of rdev values for each file"
+msgstr ""
+
+msgid "FILEMTIMES"
+msgstr ""
+
+msgid "Array of modified times for each file"
+msgstr ""
+
+msgid "FILEMD5S"
+msgstr ""
+
+msgid "MD5 checksum for each file"
+msgstr ""
+
+msgid "FILELINKTOS"
+msgstr ""
+
+msgid "Array of link information for each file"
+msgstr ""
+
+msgid "FILEFLAGS"
+msgstr ""
+
+msgid "Array of flags for each file"
+msgstr ""
+
+msgid "FILEUSERNAME"
+msgstr ""
+
+msgid "Array of user names for the file owners"
+msgstr ""
+
+msgid "FILEGROUPNAME"
+msgstr ""
+
+msgid "Array of group names for the file owners"
+msgstr ""
+
+msgid "FILEDEVICES"
+msgstr ""
+
+msgid "Array of devices for each file"
+msgstr ""
+
+msgid "FILEINODES"
+msgstr ""
+
+msgid "Array of inodes for each file"
+msgstr ""
+
+msgid "FILELANGS"
+msgstr ""
+
+msgid "Array of language flags for each file"
+msgstr ""
+
+msgid "DIRINDEXES"
+msgstr ""
+
+msgid "Array of values that matches the DIRNAMES with the BASENBAMES"
+msgstr ""
+
+msgid "BASENAMES"
+msgstr ""
+
+msgid "Array of file base names"
+msgstr ""
+
+msgid "DIRNAMES"
+msgstr ""
+
+msgid "Array of directories that matches up with BASENAMES"
+msgstr ""
+
+msgid "The <literal>OLDFILENAMES</literal> tag is used when the files are not compressed, when the <literal>REQUIRENAME</literal> tag does not indicate rpmlib(CompressedFileNames)."
+msgstr ""
+
+msgid "The <literal>FILESIZES</literal> tag specifies the size of each file in the payload, while the <literal>FILEMODES</literal> tag specifies the file modes (permissions) and the <literal>FILEMTIMES</literal> tag holds the last modification time for each file."
+msgstr ""
+
+msgid "The <literal>BASENAMES</literal> tag holds an array of the base file names for the files in the payload. The <literal>DIRNAMES</literal> tag holds an array of the directories for the files. The <literal>DIRINDEXES</literal> tag contains an index into the <literal>DIRNAMES</literal> for the directory. Each RPM must have either <literal>OLDFILENAMES</literal> or the triple of <literal>BASENAMES</literal>, <literal>DIRNAMES</literal>, and <literal>DIRINDEXES</literal>, but not both."
+msgstr ""
+
+msgid "When listing file information, use the square bracket array syntax with your query formats. You can use the perms special formatting option for the file modes. For example:"
+msgstr ""
+
+msgid ""
+"\n"
+"$ rpm -q --qf \"[%-15{=NAME} %-36{FILENAMES} %{FILEMODES:perms}\\n]\" sudo\n"
+"sudo            /etc/pam.d/sudo                      -rw-r--r--\n"
+"sudo            /etc/pam.d/sudo-i                    -rw-r--r--\n"
+"sudo            /etc/sudoers                         -r--r-----\n"
+"sudo            /etc/sudoers.d                       drwxr-x---\n"
+"sudo            /usr/bin/sudo                        ---s--x--x\n"
+"sudo            /usr/bin/sudoedit                    ---s--x--x\n"
+"sudo            /usr/bin/sudoreplay                  ---x--x--x\n"
+"sudo            /usr/libexec/sesh                    -rwxr-xr-x\n"
+"sudo            /usr/libexec/sudo_noexec.so          -rwxr-xr-x\n"
+"sudo            /usr/sbin/visudo                     -rwxr-xr-x\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4          drwxr-xr-x\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/ChangeLog -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/HISTORY  -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/LICENSE  -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/NEWS     -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/README   -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/README.LDAP -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/TROUBLESHOOTING -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/UPGRADE  -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/sample.pam -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/sample.sudoers -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/sample.syslog.conf -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/schema.ActiveDirectory -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/schema.OpenLDAP -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/schema.iPlanet -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/sudoers.ldap.pod -rw-r--r--\n"
+"sudo            /usr/share/doc/sudo-1.7.4p4/sudoers2ldif -rw-r--r--\n"
+"sudo            /usr/share/man/man5/sudoers.5.gz     -rw-r--r--\n"
+"sudo            /usr/share/man/man5/sudoers.ldap.5.gz -rw-r--r--\n"
+"sudo            /usr/share/man/man8/sudo.8.gz        -rw-r--r--\n"
+"sudo            /usr/share/man/man8/sudoedit.8.gz    -rw-r--r--\n"
+"sudo            /usr/share/man/man8/sudoreplay.8.gz  -rw-r--r--\n"
+"sudo            /usr/share/man/man8/visudo.8.gz      -rw-r--r--\n"
+"sudo            /var/db/sudo                         drwx------\n"
+"        "
+msgstr ""
+
+msgid "Other Query Format Tags"
+msgstr ""
+
+msgid "In addition to all these tags, there are a number of other miscellaneous tags, many of which are listed in Table 5-6."
+msgstr ""
+
+msgid "Table 5-6 Other query tags"
+msgstr ""
+
+msgid "ARCHIVESIZE"
+msgstr ""
+
+msgid "Uncompressed size of the payload section"
+msgstr ""
+
+msgid "COOKIE"
+msgstr ""
+
+msgid "Holds an opaque string"
+msgstr ""
+
+msgid "RPMVERSION"
+msgstr ""
+
+msgid "Holds the version of the RPM tool used to create the package"
+msgstr ""
+
+msgid "OPTFLAGS"
+msgstr ""
+
+msgid "Compiler optimization flags used to build the package"
+msgstr ""
+
+msgid "PAYLOADFORMAT"
+msgstr ""
+
+msgid "Must be cpio for LSB-compliant packages"
+msgstr ""
+
+msgid "PAYLOADCOMPRESSOR"
+msgstr ""
+
+msgid "Must be gzip for LSB-compliant packages"
+msgstr ""
+
+msgid "PAYLOADFLAGS"
+msgstr ""
+
+msgid "Must be 9 for LSB-compliant packages"
+msgstr ""
+
+msgid "RHNPLATFORM"
+msgstr ""
+
+msgid "FILEVERIFYFLAGS"
+msgstr ""
+
+msgid "Bitmask that specifies which tests to perform to verify the files after an install"
+msgstr ""
+
+msgid "For example, you can list the version of RPM that created a package with a command like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"$ rpm -qp --qf \"%{name} - rpm %{rpmversion}\\n\" *.rpm\n"
+"qt - rpm 4.7.2\n"
+"qt - rpm 4.7.2\n"
+"qt-devel - rpm 4.7.2\n"
+"qt-mysql - rpm 4.7.2\n"
+"qt-sqlite - rpm 4.7.2\n"
+"qt-sqlite - rpm 4.7.2\n"
+"qt-x11 - rpm 4.7.2\n"
+"qt-x11 - rpm 4.7.2        \n"
+"	"
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "See <xref linkend=\"ch-package-structure\" /> for a listing of all the tags in an RPM file."
+msgstr ""
+
+msgid "Other queries"
+msgstr ""
+
+msgid "If what you’ve seen so far isn’t enough, the rpm command supports a number of extra queries, mostly of use to developers."
+msgstr ""
+
+msgid "Table 5-7 summarizes these extra queries."
+msgstr ""
+
+msgid "Table 5-7 Extra Queries"
+msgstr ""
+
+msgid "Option"
+msgstr ""
+
+msgid "Meaning"
+msgstr ""
+
+msgid "--dump"
+msgstr ""
+
+msgid "Dumps out extra information on files"
+msgstr ""
+
+msgid "--fileid md5_id"
+msgstr ""
+
+msgid "Queries for the package with the given MD5 digest"
+msgstr ""
+
+msgid "--hdrid sha1_header_id"
+msgstr ""
+
+msgid "Queries for the package with the given header identifier number, in SHA1 format"
+msgstr ""
+
+msgid "--last"
+msgstr ""
+
+msgid "Reorders the output of the rpm command to show the most recently-installed packages first"
+msgstr ""
+
+msgid "--pkgid md5_id"
+msgstr ""
+
+msgid "Queries for the package with the given MD5 package ID"
+msgstr ""
+
+msgid "--querybynumber number"
+msgstr ""
+
+msgid "Queries for the given entry, by number, in the RPM database"
+msgstr ""
+
+msgid "--tid transaction_id"
+msgstr ""
+
+msgid "Queries for the package or packages with the given transaction ID"
+msgstr ""
+
+msgid "Getting Information on Package Files"
+msgstr ""
+
+msgid "In addition to querying the RPM database about installed packages, the rpm command provides the handy ability to extract information from RPM files. This is very useful for determining whether you want to install a given package or not. It also helps with the simple task of figuring out what a package’s purpose, especially if names like kudzu, anaconda, or dia don’t immediately tell you what the corresponding packages provide."
+msgstr ""
+
+msgid "The <literal>–p</literal> option tells the rpm command to provide information on the given package file. The basic syntax is:"
+msgstr ""
+
+msgid "<command>rpm –qp <replaceable>query_options</replaceable> <replaceable>filename</replaceable></command>"
+msgstr ""
+
+msgid "You can use the longer option, <literal>--package</literal>, in place of <literal>–p</literal>. You can also pass more than one RPM file to the command."
+msgstr ""
+
+msgid "The query information options shown previously for installed packages also work for RPM files. For example, to list the configuration files for a package, combine the <literal>-q</literal>, <literal>-p</literal>, and <literal>-c</literal> options with the name of a package file, as shown following:"
+msgstr ""
+
+msgid ""
+"\n"
+"$ rpm -qpc qt-4.6.2-17.fc12.x86_64.rpm \n"
+"/etc/Trolltech.conf\n"
+"    "
+msgstr ""
+
+msgid "To list all the files in an RPM package, combine the <literal>-q</literal>, <literal>-p</literal>, and <literal>-l</literal> options (example output truncated):"
+msgstr ""
+
+msgid ""
+"\n"
+"$ rpm -qpl qt-4.6.2-17.fc12.x86_64.rpm\n"
+"/etc/Trolltech.conf\n"
+"/usr/bin/qdbus\n"
+"/usr/lib64/libQtCore.so.4\n"
+"/usr/lib64/libQtCore.so.4.6\n"
+"/usr/lib64/libQtCore.so.4.6.2\n"
+"/usr/lib64/libQtDBus.so.4\n"
+"/usr/lib64/libQtDBus.so.4.6\n"
+"/usr/lib64/libQtDBus.so.4.6.2\n"
+"/usr/lib64/libQtNetwork.so.4\n"
+"/usr/lib64/libQtNetwork.so.4.6\n"
+"   "
+msgstr ""
+
+msgid "Querying Package Files Remotely"
+msgstr ""
+
+msgid "As shown in <xref linkend=\"ch-using-rpm\" /> , you can access RPM package files over a network using FTP or HTTP connections. To query remote files, use the same rules as shown in <xref linkend=\"ch-using-rpm\" /> , with the following syntax:"
+msgstr ""
+
+msgid "<command>rpm -qp ftp://<replaceable>username</replaceable>:<replaceable>password</replaceable>@<replaceable>hostname</replaceable>:<replaceable>port</replaceable>/<replaceable>path/to/rpm/file</replaceable></command>"
+msgstr ""
+
+msgid "<command>rpm -qp http://<replaceable>hostname</replaceable>:<replaceable>port</replaceable>/<replaceable>path/to/rpm/file</replaceable></command>"
+msgstr ""
+
+msgid "If your system resides behind a firewall with a proxy server, use the options in the following table to name the proxy. Note that these proxy options only work with the TIS Firewall toolkit."
+msgstr ""
+
+msgid "Network Proxy Option"
+msgstr ""
+
+msgid "--ftpproxy proxy_hostname"
+msgstr ""
+
+msgid "Names the proxy system"
+msgstr ""
+
+msgid "--ftpport proxy_port_number"
+msgstr ""
+
+msgid "Network port number on the proxy system"
+msgstr ""
+
+msgid "--httpproxy proxy_hostname"
+msgstr ""
+
+msgid "--httpport proxy_port_number"
+msgstr ""
+
+msgid "Verifying Installed RPM Packages"
+msgstr ""
+
+msgid "You can do a lot more than just query packages in the RPM database. You can ask the rpm command to verify packages with the <option>-V</option> (or <option>--verify</option>) option. The rpm -V command will also report missing dependencies."
+msgstr ""
+
+msgid "The basic syntax is:"
+msgstr ""
+
+msgid "<command>rpm -V <replaceable>verify_options</replaceable> <replaceable>package_name</replaceable></command>"
+msgstr ""
+
+msgid ""
+"\n"
+"      rpm -V telnet\n"
+"      #\n"
+"    "
+msgstr ""
+
+msgid "If everything checks out, you'll get no response. The rpm command reports problems only. For example, if you have an installation of the telnet-server package that is missing some files, the rpm -V command will let you know, as shown following:"
+msgstr ""
+
+msgid ""
+"\n"
+"      $ rpm -V telnet-server\n"
+"      missing c /etc/xinetd.d/telnet\n"
+"      missing /usr/sbin/in.telnetd\n"
+"      missing d /usr/share/man/man5/issue.net.5.gz\n"
+"    "
+msgstr ""
+
+msgid "In this example, the c and d stand for configuration and documentation files, respectively."
+msgstr ""
+
+msgid "Verifying your entire system"
+msgstr ""
+
+msgid "To verify your entire system, use the <option>-a</option> option."
+msgstr ""
+
+msgid ""
+"\n"
+"        # rpm -Va\n"
+"        SM5....T c /usr/share/info/dir\n"
+"        .......T c /etc/krb5.conf\n"
+"        .......T /usr/share/pixmaps/gnome-default-dlg.png\n"
+"        .......T /usr/share/pixmaps/gnome-error.png\n"
+"        .......T /usr/share/pixmaps/gnome-info.png\n"
+"        .......T /usr/share/pixmaps/gnome-question.png\n"
+"        .......T /usr/share/pixmaps/gnome-warning.png\n"
+"        S.5....T c /etc/sysconfig/pcmcia\n"
+"        .....U.. /dev/winradio0\n"
+"      "
+msgstr ""
+
+msgid "Each line that the rpm command outputs indicates a problem with the given file. The rpm command uses letter codes to show the type of the problem. Table 5-8 lists the letter codes with their meanings."
+msgstr ""
+
+msgid "Table 5-8 RPM verify output codes"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "S"
+msgstr ""
+
+msgid "File size differs."
+msgstr ""
+
+msgid "M"
+msgstr ""
+
+msgid "File mode differs."
+msgstr ""
+
+msgid "5"
+msgstr ""
+
+msgid "The MD5 checksum differs."
+msgstr ""
+
+msgid "D"
+msgstr ""
+
+msgid "The major and minor version numbers differ on a device file."
+msgstr ""
+
+msgid "L"
+msgstr ""
+
+msgid "A mismatch occurs in a link."
+msgstr ""
+
+msgid "U"
+msgstr ""
+
+msgid "The file ownership differs."
+msgstr ""
+
+msgid "G"
+msgstr ""
+
+msgid "The file group owner differs."
+msgstr ""
+
+msgid "T"
+msgstr ""
+
+msgid "The file time (mtime) differs."
+msgstr ""
+
+msgid "Controlling the verification"
+msgstr ""
+
+msgid "You can use a number of options to tell the verification command specifically what to check for or not check for. Table 5-9 lists these options."
+msgstr ""
+
+msgid "Table 5-9 Controlling the verification"
+msgstr ""
+
+msgid "--nodeps"
+msgstr ""
+
+msgid "Don't verify dependencies."
+msgstr ""
+
+msgid "--nodigest"
+msgstr ""
+
+msgid "Don't verify the package or header digests."
+msgstr ""
+
+msgid "--nofiles"
+msgstr ""
+
+msgid "Don't verify the file attributes."
+msgstr ""
+
+msgid "--noscripts"
+msgstr ""
+
+msgid "Don't try to verify the scripts."
+msgstr ""
+
+msgid "--nosignature"
+msgstr ""
+
+msgid "Don't verify the package or header signatures."
+msgstr ""
+
+msgid "--nolinkto"
+msgstr ""
+
+msgid "Don't verify the link file attribute."
+msgstr ""
+
+msgid "--nomd5"
+msgstr ""
+
+msgid "Don't verify the MD5 digest file attribute."
+msgstr ""
+
+msgid "--nosize"
+msgstr ""
+
+msgid "Don't verify the file size attribute."
+msgstr ""
+
+msgid "--nouser"
+msgstr ""
+
+msgid "Don't verify the file owner attribute."
+msgstr ""
+
+msgid "--nogroup"
+msgstr ""
+
+msgid "Don't verify the file group owner attribute."
+msgstr ""
+
+msgid "--nomtime"
+msgstr ""
+
+msgid "Don't verify the file mtime attribute."
+msgstr ""
+
+msgid "--nomode"
+msgstr ""
+
+msgid "Don't verify the file mode attribute."
+msgstr ""
+
+msgid "--nordev"
+msgstr ""
+
+msgid "Don't verify the file rdev attribute."
+msgstr ""
+
+msgid "-a"
+msgstr ""
+
+msgid "Verify all packages in a given group."
+msgstr ""
+
+msgid "-g group"
+msgstr ""
+
+msgid "-p file"
+msgstr ""
+
+msgid "Verify the given RPM file."
+msgstr ""
+
+msgid "The <option>--nofiles</option> option is often used with <option> –Va</option> to verify the whole system but skip tests of file attributes. This command is used so often it has become an idiom for RPM usage, especially for debugging RPM problems. Run a command like the following:"
+msgstr ""
+
+msgid "<command>rpm -Va --nofiles</command>"
+msgstr ""
+
+msgid "Working With the RPM Database"
+msgstr ""
+
+msgid "As mentioned in <xref linkend=\"ch-rpm-overview\" /> , the RPM database is stored in /var/lib/rpm. The files in that directory are Berkeley DB files, as shown by the file command:"
+msgstr ""
+
+msgid ""
+"\n"
+"      # file /var/lib/rpm/*\n"
+"      /var/lib/rpm/Basenames: Berkeley DB (Hash, version 7, native byte-order)\n"
+"      /var/lib/rpm/Conflictname: Berkeley DB (Hash, version 7, native byte-order)\n"
+"      /var/lib/rpm/__db.001: data\n"
+"      /var/lib/rpm/__db.002: X11 SNF font data, LSB first\n"
+"      /var/lib/rpm/__db.003: X11 SNF font data, LSB first\n"
+"      /var/lib/rpm/Dirnames: Berkeley DB (Btree, version 8, native byte-order)\n"
+"      /var/lib/rpm/Filemd5s: Berkeley DB (Btree, version 8, native byte-order)\n"
+"      /var/lib/rpm/Group: Berkeley DB (Hash, version 7, native byte-order)\n"
+"      /var/lib/rpm/Installtid: Berkeley DB (Btree, version 8, native byte-order)\n"
+"      /var/lib/rpm/Name: Berkeley DB (Hash, version 7, native byte-order)\n"
+"      /var/lib/rpm/Packages: Berkeley DB (Hash, version 7, native byte-order)\n"
+"      /var/lib/rpm/Providename: Berkeley DB (Hash, version 7, native byte-order)\n"
+"      /var/lib/rpm/Provideversion: Berkeley DB (Btree, version 8, native byte-order)\n"
+"      /var/lib/rpm/Requirename: Berkeley DB (Hash, version 7, native byte-order)\n"
+"      /var/lib/rpm/Requireversion: Berkeley DB (Btree, version 8, native byte-order)\n"
+"      /var/lib/rpm/Sha1header: Berkeley DB (Btree, version 8, native byte-order)\n"
+"      /var/lib/rpm/Sigmd5: Berkeley DB (Btree, version 8, native byte-order)\n"
+"      /var/lib/rpm/Triggername: Berkeley DB (Hash, version 7, native byte-order)\n"
+"    "
+msgstr ""
+
+msgid "Each file is a separate database in Berkeley DB format, except for a few __db data files. (These are not really X11 font files, just plain data files. The file command is confused by the data in the files.)"
+msgstr ""
+
+msgid "The Berkeley DB Library"
+msgstr ""
+
+msgid "Available from Oracle at http://www.oracle.com/technetwork/database/berkeleydb/overview/, the Berkeley DB library provides a simple database API. This is not a traditional relational database. Instead, data values are stored in what amounts to a persistent hash table of name/value pairs. This type of database is very quick to look up a named entry (such as a package name) but is not so quick for iterating over all the entries."
+msgstr ""
+
+msgid "The RPM database is really a number of Berkeley DB databases, each designed for a different type of query."
+msgstr ""
+
+msgid "If something goes wrong with your RPM database, you can first try to rebuild it. If that fails, you may need to initialize a new database, although that is generally not needed. First and foremost, however, you should back up this database."
+msgstr ""
+
+msgid "As mentioned before, the RPM database resides in the /var/lib/rpm. You can back up the RPM database by using a command such as the following:"
+msgstr ""
+
+msgid "<command>tar cf <replaceable>rpmdb.tar</replaceable> /var/lib/rpm</command>"
+msgstr ""
+
+msgid "Rebuilding the RPM database"
+msgstr ""
+
+msgid "If the RPM database has been corrupted in some way, you can use the <option>--rebuilddb</option> option to tell the rpm command to rebuild your database. For example:"
+msgstr ""
+
+msgid "<command>rpm --rebuilddb</command>"
+msgstr ""
+
+msgid "This command rebuilds the RPM database from the installed packages, the file named <filename>Packages</filename> in the /var/lib/rpm directory. Only the <filename>Packages</filename> file is required. All the other files can be recreated from the <filename>Packages</filename> file. If your database is OK, this command won't do much, other than shrink the size of your RPM database by removing unused entries. This command will take some time to execute, though."
+msgstr ""
+
+msgid "Before running this command, back up your RPM database."
+msgstr ""
+
+msgid "To check that the <command>rpm --rebuilddb</command> command has not damaged the RPM database, you can check with a file listing, query all packages, and then check the results of the <command>rpm –rebuilddb</command> command with another file listing when done."
+msgstr ""
+
+msgid "Creating a new RPM database"
+msgstr ""
+
+msgid "If all else fails, use the <option>--initdb</option> option to tell the rpm command to create a new empty RPM database. In almost all cases, you do not want to create a new RPM database, since this database will be empty. It will not have any knowledge about the packages you have already installed on your system. That could lead to a lot of problems, since you have the files installed, but the RPM system just doesn’t know about them."
+msgstr ""
+
+msgid "The basic syntax follows."
+msgstr ""
+
+msgid "<command>rpm --initdb</command>"
+msgstr ""
+
+msgid "If the RPM system cannot be rebuilt, you may have to reinstall the operating system to recreate a clean system. In general, if things are this far gone, reinstalling may be your best answer instead of wiping the RPM database and creating an empty database."
+msgstr ""
+
+msgid "You can also use the <option>--dbpath</option> option to tell the rpm command to create an RPM database in a different directory."
+msgstr ""
+
+msgid ""
+"\n"
+"	mkdir /tmp/rpm\n"
+"        rpm --initdb --dbpath /tmp/rpm\n"
+"      "
+msgstr ""
+
+msgid "These commands create a temporary directory and an RPM database in the /tmp/rpm directory."
+msgstr ""
+
+msgid "After running this command, you can examine the files created."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "This chapter covers the rpm command options to query the RPM database and RPM package files. You can determine the packages installed on your system, as well as which packages are responsible for the files on your system."
+msgstr ""
+
+msgid "The RPM database maintains a lot of information about the files and packages on your system. Thus, it is crucial for managing your Linux systems. You should back up the RPM database before and after any installation, upgrade, or removal of packages."
+msgstr ""
+
+msgid "You can also use the <option>--rebuilddb</option> option to the rpm command to rebuild a damaged RPM database."
+msgstr ""
+

@@ -1,0 +1,1801 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Working with Spec Files"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Writing spec files"
+msgstr ""
+
+msgid "Defining package information"
+msgstr ""
+
+msgid "Controlling the build"
+msgstr ""
+
+msgid "Listing the files in the package"
+msgstr ""
+
+msgid "Defining spec file macros"
+msgstr ""
+
+msgid "The previous chapter introduces the concepts of how to build RPMs, and briefly covered the spec file, which controls how RPM packages are built and installed. This chapter delves into how to create spec files and the next chapter covers advanced spec file topics such as using conditional commands and making relocatable packages."
+msgstr ""
+
+msgid "A spec file defines all the commands and values that are required for creating a package, everything from the name and version number to the actual commands used to build the program you are packaging."
+msgstr ""
+
+msgid "This chapter covers the spec file syntax and how to write spec files. In goes in depth into defining information about your package, controlling how the software will be built, defining what exactly should go into the package, and customizing your build with RPM macros."
+msgstr ""
+
+msgid "Reading Spec Files"
+msgstr ""
+
+msgid "The first step to learning more about spec files is to read through some of the huge number of spec files for the source RPMs that come with your Linux distribution. Looking at these files will show two things right away:"
+msgstr ""
+
+msgid "*You will see that the spec file syntax is not really as complicated as it appears."
+msgstr ""
+
+msgid "*You will see how many others have solved problems similar to those you need to solve."
+msgstr ""
+
+msgid "I’ve used real-world examples throughout this book, to show how the RPMs you need to deal with actually work. Some of the more interesting packages include anything that has a client and a server component, anything with networking or e-mail, and anything that installs a system service. All these types of packages solve problems that you will commonly face. Some useful spec files to look at are those for anonftp, telnet, vnc, and sendmail. To get these spec files, you need to install the corresponding source RPMs for each of these packages."
+msgstr ""
+
+msgid "As you read through spec files, you’ll start to see common patterns in how packages are defined, named, the macros used, and common elements in the build sections of the spec files. You’ll also see how network services are installed on Linux, as well as example install and uninstall scripts. The next sections provide more information on the things to look for within spec files."
+msgstr ""
+
+msgid "Furthermore, even with the plethora of options RPM provides, if you know shell scripting basics and something about how C programs are normally built, with configure scripts and make commands, you will find most spec files relatively easy to understand."
+msgstr ""
+
+msgid "The following sections go into the details of writing your own spec files. Keep your example spec files handy as you read through these sections."
+msgstr ""
+
+msgid "Writing Spec Files"
+msgstr ""
+
+msgid "Spec files are text files containing RPM directives. These directives use a simple syntax of a tag name, a colon, and a value:"
+msgstr ""
+
+msgid "TagName: value"
+msgstr ""
+
+msgid "For example:"
+msgstr ""
+
+msgid "Version: 1.15"
+msgstr ""
+
+msgid "This example sets the package version to 1.15. The name of the item is not case sensitive, so tag names of version, Version, or VERSION all set the same value. This syntax works for most settings, including Name, Release, and so on."
+msgstr ""
+
+msgid "In addition to this directive syntax, you can define macros using the RPM %define syntax. For example:"
+msgstr ""
+
+msgid "%define major 2"
+msgstr ""
+
+msgid "This example defines a macro named major with a value of 2. Once defined, you can access macros using the %{macro_name} or just %macro_name syntaxes. For example:"
+msgstr ""
+
+msgid "source: %{name}-%{version}.tar.gz"
+msgstr ""
+
+msgid "See the section \"Defining Spec File Macros\" later in this chapter for more options for macros."
+msgstr ""
+
+msgid "Major sections in the spec file are also delimited with % markers. For example, the build section starts with %build on a line by itself."
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "The multiple uses of the % sign aren’t really that confusing in practice. Read through some spec files and you should find most of the commands are easily understood."
+msgstr ""
+
+msgid "Blank lines separate sections in the spec file, which makes sense for readability as well."
+msgstr ""
+
+msgid "Comments"
+msgstr ""
+
+msgid "To help document your work, you can include comments (to yourself and others reading the spec file). Any line starting with a hash character, #, holds a comment. RPM will ignore comments."
+msgstr ""
+
+msgid "# This is a comment."
+msgstr ""
+
+msgid "In spec files, comments are mostly to help explain your syntax choices to yourself should you view the spec file later. Comments are a good thing. You should comment heavily, especially for any choice that deviates from the norm. For example, if you provide special C compiler options for building the package, add comments to describe why you picked the options and how necessary they are. Such comments help immensely should you need to port the RPM to another architecture or modify how it was built."
+msgstr ""
+
+msgid "Tip"
+msgstr ""
+
+msgid "Avoid single percent signs, %, in comments. For example:"
+msgstr ""
+
+msgid "# Added new commands to %prep"
+msgstr ""
+
+msgid "The rpmbuild command may report an error of a second %prep section. To get around this problem, use two percent signs, such as %%prep, in spec file comments."
+msgstr ""
+
+msgid "Storing spec files on disk"
+msgstr ""
+
+msgid "As discussed in <xref linkend=\"ch-creating-rpms\" /> , the rpmbuild command expands source RPMs to the /usr/src/redhat directory. Under this directory, the RPM system assumes five subdirectories, listed in Table 10-1."
+msgstr ""
+
+msgid "Table 10-1 Default RPM directories"
+msgstr ""
+
+msgid "Directory"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+msgid "BUILD"
+msgstr ""
+
+msgid "Where the rpmbuild command builds software"
+msgstr ""
+
+msgid "RPMS"
+msgstr ""
+
+msgid "Where the rpmbuild command stores binary RPMs it creates"
+msgstr ""
+
+msgid "SOURCES"
+msgstr ""
+
+msgid "Where you should put the sources for the application"
+msgstr ""
+
+msgid "SPECS"
+msgstr ""
+
+msgid "Where you should place the spec file"
+msgstr ""
+
+msgid "SRPMS"
+msgstr ""
+
+msgid "Where the rpmbuild command places source RPMs"
+msgstr ""
+
+msgid "The spec files you create should be stored in the SPECS directory while building RPMs. (You can store your spec files permanently in any location you desire.)"
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "These directories are the default directories. See <xref linkend=\"ch-specfile-syntax\" /> for changing RPM default values. In addition, these are the defaults for Red Hat Linux. See <xref linkend=\"ch-other-linuxes\" /> and <xref linkend=\"ch-other-linuxes\" /> for discussions on other versions of Linux and other non-Linux operating systems, respectively."
+msgstr ""
+
+msgid "With the knowledge of the spec file syntax covered in the preceding sections, you can start to write spec files. The first step is to define the basic package information."
+msgstr ""
+
+msgid "Defining Package Information"
+msgstr ""
+
+msgid "Most of the package information you need to enter into a spec file fleshes out the information you can query for a given package, such as the name, version, and release information, along with a longer description and a one-line summary."
+msgstr ""
+
+msgid "This gets a little more complicated when you set build locations, name source files, and name patches. The following sections cover how to specify the package information."
+msgstr ""
+
+msgid "Describing the package"
+msgstr ""
+
+msgid "The first part of the spec file defines macros (covered in the section \"Defining Spec File Macros\"), and describes the package. Starting with the basics, you need a name, version, and release. You also should provide a longer description. For legal reasons, you may need to include ownership and copyright information."
+msgstr ""
+
+msgid "Naming the Package"
+msgstr ""
+
+msgid "The most important part of the package description is the NVR, or Name-Version-Release information, because this information is so crucial for the RPM system to compare versions and track dependencies."
+msgstr ""
+
+msgid "Set the name with the Name: directive. For example:"
+msgstr ""
+
+msgid "Name: myapp"
+msgstr ""
+
+msgid "The name should not contain any spaces or other whitespace characters such as tabs or newlines. Remember, RPM files are named, by default, name-version-release.rpm, or name-version-release-architecture.rpm, so use valid characters for file names."
+msgstr ""
+
+msgid "The version number is used in version comparisons. The RPM comparison algorithm is fairly complex, but can get fooled by strange version numbers. So, your best bet is to stick to dotted numerics, such as 1.5 or 2.3.1.1.4 or 1.0. Version numbers such as these will compare best from within the RPM system. For example:"
+msgstr ""
+
+msgid "Version: 1.1.2"
+msgstr ""
+
+msgid "You cannot use a dash in the version number, as RPM uses the dash to separate the Name-Version-Release elements. You can use a dash in the package name, though."
+msgstr ""
+
+msgid "The release number should start at 1 for the first RPM you build for a given version of the package, and count up from there. For example:"
+msgstr ""
+
+msgid "Release: 1"
+msgstr ""
+
+msgid "The release differentiates newer updates of the RPM itself, even if the underlying application hasn’t changed. (The application may be compiled with different compiler options, though.) For most usage, simply start at 1 and each time you modify the spec file and recreate the package, increment the release number."
+msgstr ""
+
+msgid "If the version number is not enough to allow for comparisons, for example, if the version numbering scheme has changed radically between releases, you can define an Epoch: directive. For example:"
+msgstr ""
+
+msgid "Epoch: 3"
+msgstr ""
+
+msgid "If you renumber your versions, use an Epoch setting to clarify the version history. For example, Sun Microsystems went from SunOS 4.1 to Solaris 2. The Epoch: helps RPM properly handle strange version number changes. Define the Epoch: as a whole number such as 1, 2, or 3."
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "Avoid using the Epoch: directive if at all possible. It is far better to use a sane version-numbering scheme than to try to resolve the mess with epoch values. The main problems with using an epoch value are that epochs are hidden from users in most cases, and using epochs can lead to very strange-looking tasks such as a newer package with a version number that looks older than the older package."
+msgstr ""
+
+msgid "The older Serial: directive also works similarly to the Epoch: directive. For example:"
+msgstr ""
+
+msgid "Serial: 6"
+msgstr ""
+
+msgid "Like the Epoch:, the Serial: directive should be a number that counts upward. Modern packages should use the Epoch: directive instead of Serial:, since Serial: has been deprecated for many, many rpm versions."
+msgstr ""
+
+msgid "The Group: directive provides a classification for your packages. If at all possible, use a category name that already exists for other packages, such as System Environment/Shells for a Linux shell. For example:"
+msgstr ""
+
+msgid "Group: System Environment/Shells"
+msgstr ""
+
+msgid "Many graphical installation tools divide packages by these categories, so you want to fit into the existing group names if possible. (See <xref linkend=\"ch-using-rpm-db\" /> for more on querying group information from RPMs.) The official list of groups are located in the file /usr/share/doc/rpm-4.1/GROUPS for RPM 4.1, and in a similar location for other RPM versions."
+msgstr ""
+
+msgid "The Distribution: directive is used by Linux distribution vendors such as Red Hat to identify that the package is part of a given distribution, or was built for a particular distribution. Most packages created outside of the Linux vendors don’t provide this directive."
+msgstr ""
+
+msgid "Distribution: Red Hat Linux"
+msgstr ""
+
+msgid "The Icon: directive names an icon file stored in the RPM. The file format should be XPM or GIF, with an extension of .xpm or .gif, respectively. Some packaging tools will use this icon in a package display."
+msgstr ""
+
+msgid "Specifying Company Information"
+msgstr ""
+
+msgid "For legal reasons, you probably want to specify the organization behind the RPM, any copyright or licensing information, as well as a URL to find out more information. Even if you are not concerned about corporate legal issues, you may want to identify where the package came from. Use the following directives to provide this information."
+msgstr ""
+
+msgid "The Vendor: directive names the company or organization behind an RPM. For example:"
+msgstr ""
+
+msgid "Vendor: The Really Cool Company"
+msgstr ""
+
+msgid "The URL: directive provides a URL to your company or organization home page, or perhaps to a URL for a particular application. For example:"
+msgstr ""
+
+msgid "URL: http://mycompany.yow/products/coolstuff"
+msgstr ""
+
+msgid "Similarly, the Packager: directive provides an optional name and e-mail address for the person who created the RPM:"
+msgstr ""
+
+msgid "Packager: Bob Marley &lt;marley@reggae.com&gt;"
+msgstr ""
+
+msgid "The License: and Copyright: directives provide legal information about your package. Older packages tended to use Copyright: as a statement of the package’s license, not copyright. For example:"
+msgstr ""
+
+msgid "Copyright: BSD"
+msgstr ""
+
+msgid "License: LGPL"
+msgstr ""
+
+msgid "The Copyright: directive is deprecated in favor of License:."
+msgstr ""
+
+msgid "Filling in the Description"
+msgstr ""
+
+msgid "The Summary: directive provides a one-line short description of the package. You should not exceed much more than 50 characters when writing your summary. For example:"
+msgstr ""
+
+msgid "Summary: A program that does exactly what you want"
+msgstr ""
+
+msgid "The Summary: directive of the spec file replaces the older Description: directive."
+msgstr ""
+
+msgid "The %description section allows for longer text describing your package. Fill in as many lines as you need after the %description section. For example:"
+msgstr ""
+
+msgid "%description"
+msgstr ""
+
+msgid "This is a really cool package. It contains the really cool"
+msgstr ""
+
+msgid "program that provides a maximum return on investment,"
+msgstr ""
+
+msgid "or ROI, for achieving your crucial business objectives"
+msgstr ""
+
+msgid "utilizing world-class high-caliber componentized software"
+msgstr ""
+
+msgid "implemented with world-class quality and performance"
+msgstr ""
+
+msgid "metrics."
+msgstr ""
+
+msgid "The %description section supports a limited amount of formatting. Blank lines are assumed to separate paragraphs. Some graphical user interface installation programs will reformat paragraphs into a nicer-looking font and change the display width."
+msgstr ""
+
+msgid "Lines in the %description section that start with whitespace, such as a space or tab, will be treated as preformatted text and displayed as is, normally with a fixed-width font. The rpm command supports text formatting this way. Other rpm programs may not."
+msgstr ""
+
+msgid "Specifying the Platform Architecture"
+msgstr ""
+
+msgid "Spec files can announce that a package can run on more than one operating system or is tied to a particular version of a particular operating system."
+msgstr ""
+
+msgid "For example, the Excludearch: directive states that a package should not be built on the given architecture or architectures. For example:"
+msgstr ""
+
+msgid "ExcludeArch: sparc s390 s390x"
+msgstr ""
+
+msgid "This example excludes the SPARC and S/390 mainframe architectures. You can provide more than one architecture in the directive, separated by spaces or commas."
+msgstr ""
+
+msgid "Similarly, the Exclusivearch: directive states that a package can only be built on the given architecture or architectures. For example:"
+msgstr ""
+
+msgid "ExclusiveArch: i386 ia64 alpha"
+msgstr ""
+
+msgid "This example identifies the package as only working on the Intel i386, IA-64, and Alpha architectures."
+msgstr ""
+
+msgid "The Excludeos: and Exclusiveos: directives restrict the operating system. For example:"
+msgstr ""
+
+msgid "Excludeos: windows"
+msgstr ""
+
+msgid "This example states that the package should not be built on Windows. In contrast, the Exclusiveos: directive names only the operating system or systems that the package can be built on. For example:"
+msgstr ""
+
+msgid "Exclusiveos: linux"
+msgstr ""
+
+msgid "<xref linkend=\"ch-other-linuxes\" /> and <xref linkend=\"ch-other-os\" /> cover RPMs on other versions of Linux and other operating systems, respectively."
+msgstr ""
+
+msgid "Setting build locations"
+msgstr ""
+
+msgid "RPM supports two build-related directories with very similar names, the build directory and the buildroot."
+msgstr ""
+
+msgid "The build directory is the location where RPM actually builds the software, compiling source code, running the configure script, and so on. Normally, you do not need to worry about the build directory as the rpmbuild command properly changes to this directory as needed."
+msgstr ""
+
+msgid "The buildroot, on the other hand, acts as a staging area that looks like the final installation directory. The name buildroot refers to the fact that the final installation directory is usually the root directory, /. The install section of the spec file (covered in the section \"Installing the Software\") installs files into the buildroot directory in the proper subdirectories, as if the files were really under the system root directory, /. This allows the buildroot directory to hold all the final installed files for a package, so you can see what will really be installed by the package."
+msgstr ""
+
+msgid "You should always set the buildroot by defining a Buildroot: entry in your spec file. For example:"
+msgstr ""
+
+msgid "Buildroot: %{_tmppath}/%{name}-%{version}-root"
+msgstr ""
+
+msgid "This example sets the buildroot under the temporary directory named in the %_tmppath macro. The subdirectory is named based on the name and version of the package. For example, for a package named ypbind and a version 1.12, with a %_tmppath value of /tmp, the final buildroot directory would be:"
+msgstr ""
+
+msgid "/tmp/ypbind-1.12-root"
+msgstr ""
+
+msgid "Once you set a buildroot, your scripts run from the spec file and commands within the spec file can access the buildroot using the RPM_BUILD_ROOT environment variable. You normally need to access the RPM_BUILD_ROOT environment variable in the install section of the spec file (covered in the section \"Installing the Software\")."
+msgstr ""
+
+msgid "You can override the buildroot with the --buildroot command-line parameter to the rpmbuild command."
+msgstr ""
+
+msgid "The buildroot replaces the older, and now obsolete directive, Root:."
+msgstr ""
+
+msgid "Naming source files"
+msgstr ""
+
+msgid "Most packages have one or more bundles of source code, which you need to name in the spec file. In most cases, you will have a compressed tar archive of source files. These may be files developed by your organization or downloaded from an Internet site. You can define one or more source tags, counting from 0. For example:"
+msgstr ""
+
+msgid "Source0: telnet-client.tar.gz"
+msgstr ""
+
+msgid "Source1: telnet-xinetd"
+msgstr ""
+
+msgid "Source2: telnet.wmconfig"
+msgstr ""
+
+msgid "In this example, Source0: refers to a compressed tar archive. The rpmbuild program will extract the files into the buildroot directory. The Source1: and Source2: directives name individual source files. You can name compressed tar archives or individual files as needed."
+msgstr ""
+
+msgid "If you just have one Source directive, you can skip the 0. For example:"
+msgstr ""
+
+msgid "Source: telnet-client.tar.gz"
+msgstr ""
+
+msgid "You can also use FTP or HTTP URLs to name sources. For example:"
+msgstr ""
+
+msgid "Source0: ftp://ftp.somesite.yow/pub/linux/%{telnet_version}.tar.gz"
+msgstr ""
+
+msgid "The URLs listed in source directives are for convenience and future reference only. RPM will not download these files."
+msgstr ""
+
+msgid "The files named by the Source directives will get included into the source RPM. Sometimes you need to keep some sources out of the source RPM. This could be for proprietary sources you cannot ship, or simply due to size. The Nosource: directive tells RPM to skip a source file from the source RPM. For example:"
+msgstr ""
+
+msgid "NoSource: 0"
+msgstr ""
+
+msgid "This example means that the first source item should not be included in the package."
+msgstr ""
+
+msgid "NoSource: 3"
+msgstr ""
+
+msgid "This example means that the third source item should not be included in the package. The NoPatch directive works similarly. In addition, do not place more than one number on any given NoSource or NoPatch directive."
+msgstr ""
+
+msgid "Using the Nosource: or NoPatch: directives, covered following, mean you are creating a source RPM that cannot be rebuilt unless you also have the sources or patches, respectively, that were used to create the original RPM."
+msgstr ""
+
+msgid "If the package contains a Nosource: or Nopatch: directive, rpmbuild will use a file-name extension of .nosrc.rpm instead of .src.rpm."
+msgstr ""
+
+msgid "Naming patches"
+msgstr ""
+
+msgid "Patches are named similar to sources, using a similar syntax. For example:"
+msgstr ""
+
+msgid "Patch1: telnet-client-cvs.patch"
+msgstr ""
+
+msgid "Patch2: telnetd-0.17.diff"
+msgstr ""
+
+msgid "Patch3: telnet-0.17-env.patch"
+msgstr ""
+
+msgid "Patch4: telnet-0.17-issue.patch"
+msgstr ""
+
+msgid "Patch5: telnet-0.17-sa-01-49.patch"
+msgstr ""
+
+msgid "Patch6: telnet-0.17-env-5x.patch"
+msgstr ""
+
+msgid "Patch10: telnet-0.17-pek.patch"
+msgstr ""
+
+msgid "Note that you can have Patch directives are not numbered sequentially, such as the Patch10: directive in this example. In addition, you must apply each patch manually using %patch directives."
+msgstr ""
+
+msgid "The patch files may be individual files or compressed (with gzip) patch files."
+msgstr ""
+
+msgid "See the patch and diff online manual pages for more on patches."
+msgstr ""
+
+msgid "Patches are important because they allow you to start with pristine sources, the source code for the original application. You can then apply patches as needed to get a working application, more clearly separating the work needed to create an RPM from the original application source code."
+msgstr ""
+
+msgid "<xref linkend=\"ch-packaging-guidelines\" /> discusses packaging guidelines and best practices. Starting from pristine sources is one of the best practices."
+msgstr ""
+
+msgid "Similar to the sources directives, you can define a Nopatch: directive, which defines a patch that is applied to the sources, but is not included in the source RPM."
+msgstr ""
+
+msgid "Controlling the Build"
+msgstr ""
+
+msgid "After describing information about the package, the crucial step comes when you need to build the package. The spec file should contain all the commands needed to build the application or library you want to package. But, and this is the important part, most of the build process should be run from a Makefile or other conventional way to build applications. Using a build tool such as make means that you can test the application outside of the RPM system. You don’t need an RPM to build the application. Instead, you use the RPM to package the application."
+msgstr ""
+
+msgid "<xref linkend=\"ch-creating-rpms\" /> covers make and other Linux build tools."
+msgstr ""
+
+msgid "In RPM terms, building the package is split into four steps:"
+msgstr ""
+
+msgid "1.Preparing for building, including unpacking the sources"
+msgstr ""
+
+msgid "2.Building"
+msgstr ""
+
+msgid "3.Installing the application or library"
+msgstr ""
+
+msgid "4.Cleaning up"
+msgstr ""
+
+msgid "The next sections cover how to control the build run by rpmbuild by defining commands within your spec files."
+msgstr ""
+
+msgid "Preparing for the build"
+msgstr ""
+
+msgid "The %prep section defines the commands to prepare for the build. In most cases, you can run the simple %setup macro. For example:"
+msgstr ""
+
+msgid "%prep"
+msgstr ""
+
+msgid "%setup -q"
+msgstr ""
+
+msgid "This command changes to the build directory, typically /usr/src/redhat/BUILD, and then extracts the source files. This macro expects that at least one of the source files will create the necessary subdirectory under /usr/src/redhat/BUILD. This subdirectory should be named with the package name and version, such as telnet-1.0.1. If you are not using a compressed tar archive that will automatically create the right subdirectory, add the –c option to the %setup macro. The –c option creates the subdirectory for extracting the sources."
+msgstr ""
+
+msgid "The –q command-line option runs in quiet mode with minimal output. The –T option disables the automatic extraction of compressed tar files. You can set the name of the build subdirectory with the –n option."
+msgstr ""
+
+msgid "Normally, the %setup macro deletes the subdirectory prior to extracting the sources. You can disable the directory deletion with the –D option."
+msgstr ""
+
+msgid "Table 10-2 summarizes the %setup command-line parameters. Many of these options apply mostly for subpackages, a topic covered in <xref linkend=\"ch-advanced-packaging\" /> ."
+msgstr ""
+
+msgid "Table 10-2 Command-line parameters for %setup"
+msgstr ""
+
+msgid "Parameter"
+msgstr ""
+
+msgid "-a number"
+msgstr ""
+
+msgid "Only unpack the source directive of the given number, such as –a 0 for source0:, after changing to the directory."
+msgstr ""
+
+msgid "-b number"
+msgstr ""
+
+msgid "Only unpack the source directive of the given number, such as –b 0 for source0:, before changing to the directory."
+msgstr ""
+
+msgid "-c"
+msgstr ""
+
+msgid "Create directory before unpacking, used if your sources will not create the directory as part of unpacking."
+msgstr ""
+
+msgid "-D"
+msgstr ""
+
+msgid "Do not delete the directory before unpacking."
+msgstr ""
+
+msgid "-n name"
+msgstr ""
+
+msgid "Name the directory as name."
+msgstr ""
+
+msgid "-q"
+msgstr ""
+
+msgid "Run quietly with minimal output."
+msgstr ""
+
+msgid "-T"
+msgstr ""
+
+msgid "Disable the automatic unpacking of the archives."
+msgstr ""
+
+msgid "The %setup directive can automatically extract tar, zip, gzip, bzip2, pack, compress, and lzh compressed files. The tar-gzip format is most widely used, though."
+msgstr ""
+
+msgid "Like the %setup macro, the %patch directive applies a patch to the sources. Use this macro in your %prep section if you have patches. You need a %patch directive for each patch."
+msgstr ""
+
+msgid "The %patch directive accepts –p and other command-line parameters for the underlying patch command. The –p option, with a number, such as –p0, tells the patch command to remove that many slashes from the file names within the patch. A –p0 option tells the patch command to remove no slashes, a –p1 option tells patch to remove one slash, and correspondingly, one directory level from the files in the patch. You can also pass other options for the patch command."
+msgstr ""
+
+msgid "Use these options if you need them for the patch command when manually patching the sources. Otherwise, you can set up your %prep section as follows, for a spec file with two patches:"
+msgstr ""
+
+msgid "%setup –q"
+msgstr ""
+
+msgid "%patch1"
+msgstr ""
+
+msgid "%patch2"
+msgstr ""
+
+msgid "Use numbers to identify which patch to apply. For example, %patch0 corresponds to the patch file named with the Patch0: directive."
+msgstr ""
+
+msgid "You must define a separate %patch directive for each patch. In most packages, this format, %patch1, %patch2, and so on, is used."
+msgstr ""
+
+msgid "The %patch directive without a number corresponds to %patch0."
+msgstr ""
+
+msgid "In addition to the options supported by the patch command, you can use special options to the %patch directive to control how the directive works. The –P option tells the %patch directive to apply a given patch. For example, to only apply the patch named with the Patch2: directive, use the following %patch directive:"
+msgstr ""
+
+msgid "%patch –P 2"
+msgstr ""
+
+msgid "This is an uppercase P. The lowercase p performs a different function, described earlier in this section. The -P option is rarely used. Instead, patches are normally applied with %patch0, %patch1, and so on directives."
+msgstr ""
+
+msgid "Building the software"
+msgstr ""
+
+msgid "The %prep section prepares for the build, which the %build section performs. You need to fill in the %build section with all the commands necessary to build the software. In most cases, this consists simply of the following commands:"
+msgstr ""
+
+msgid "%build"
+msgstr ""
+
+msgid "./configure"
+msgstr ""
+
+msgid "make"
+msgstr ""
+
+msgid "In this case, the %build section runs two commands, ./configure to run the configure script, and make to build the software. For most applications, this may be all you need. You can use the %configure macro in place of the call to the ./configure script. For example:"
+msgstr ""
+
+msgid "%configure"
+msgstr ""
+
+msgid "Most spec files should use the %configure macro, since it automatically sets many environment variables that are often used within the configure script, especially path-related values such as the online manual path, the temporary directory, and so on. You can use the rpm --eval to see how the %configure macro expands. For example:"
+msgstr ""
+
+msgid "$ rpm --eval '%configure'"
+msgstr ""
+
+msgid "CFLAGS=\"${CFLAGS:--O2 -march=i386 -mcpu=i686}\" ; export CFLAGS ;"
+msgstr ""
+
+msgid "CXXFLAGS=\"${CXXFLAGS:--O2 -march=i386 -mcpu=i686}\" ; export CXXFLAGS ;"
+msgstr ""
+
+msgid "FFLAGS=\"${FFLAGS:--O2 -march=i386 -mcpu=i686}\" ; export FFLAGS ;"
+msgstr ""
+
+msgid "[ -f configure.in ] &amp;&amp; libtoolize --copy --force ;"
+msgstr ""
+
+msgid "./configure i386-redhat-linux \\"
+msgstr ""
+
+msgid "--prefix=/usr \\"
+msgstr ""
+
+msgid "--exec-prefix=/usr \\"
+msgstr ""
+
+msgid "--bindir=/usr/bin \\"
+msgstr ""
+
+msgid "--sbindir=/usr/sbin \\"
+msgstr ""
+
+msgid "--sysconfdir=/etc \\"
+msgstr ""
+
+msgid "--datadir=/usr/share \\"
+msgstr ""
+
+msgid "--includedir=/usr/include \\"
+msgstr ""
+
+msgid "--libdir=/usr/lib \\"
+msgstr ""
+
+msgid "--libexecdir=/usr/libexec \\"
+msgstr ""
+
+msgid "--localstatedir=/var \\"
+msgstr ""
+
+msgid "--sharedstatedir=/usr/com \\"
+msgstr ""
+
+msgid "--mandir=/usr/share/man \\"
+msgstr ""
+
+msgid "--infodir=/usr/share/info"
+msgstr ""
+
+msgid "The vast majority of the work of building the software should remain in the Makefile where it belongs. The commands in the spec file should invoke the targets defined in the Makefile. Don’t place too much logic in your RPM spec file as this makes it harder to test the application or library you plan to package."
+msgstr ""
+
+msgid "If you intend to support relocatable packages, covered in <xref linkend=\"ch-advanced-packaging\" /> , you will likely need to pass a --prefix option to the configure script. For example:"
+msgstr ""
+
+msgid "./configure --prefix=$RPM_BUILD_ROOT/usr"
+msgstr ""
+
+msgid "You can also pass other options to the configure script, as needed, for compiling the application."
+msgstr ""
+
+msgid "Installing the software"
+msgstr ""
+
+msgid "The %install section should install the software built in the %build section. If your Makefile contains all the instructions to install, you can define an %install section as follows:"
+msgstr ""
+
+msgid "%install"
+msgstr ""
+
+msgid "make install PREFIX=$RPM_BUILD_ROOT/usr"
+msgstr ""
+
+msgid "In most cases, you need to pass some parameter to make or install or another command to install all files into the buildroot directory, as shown in this example with the $RPM_BUILD_ROOT environment variable. You need to look within the Makefile to determine if the make variable should be PREFIX, prefix, or something else."
+msgstr ""
+
+msgid "Sometimes, you want to call the install command instead of make to perform the installation. For example:"
+msgstr ""
+
+msgid "install -m755 myapp $RPM_BUILD_ROOT/usr/bin/myapp"
+msgstr ""
+
+msgid "This example uses a hypothetical application name of myapp."
+msgstr ""
+
+msgid "Many packages use the %makeinstall macro, which runs the make install command. For example:"
+msgstr ""
+
+msgid "rm -rf $RPM_BUILD_ROOT"
+msgstr ""
+
+msgid "%makeinstall"
+msgstr ""
+
+msgid "This example also cleans the files from the buildroot. Use the rpm --eval command to see how the %makeinstall macro expands. For example:"
+msgstr ""
+
+msgid "$ rpm --eval '%makeinstall'"
+msgstr ""
+
+msgid "make \\"
+msgstr ""
+
+msgid "prefix=/usr \\"
+msgstr ""
+
+msgid "exec_prefix=/usr \\"
+msgstr ""
+
+msgid "bindir=/usr/bin \\"
+msgstr ""
+
+msgid "sbindir=/usr/sbin \\"
+msgstr ""
+
+msgid "sysconfdir=/etc \\"
+msgstr ""
+
+msgid "datadir=/usr/share \\"
+msgstr ""
+
+msgid "includedir=/usr/include \\"
+msgstr ""
+
+msgid "libdir=/usr/lib \\"
+msgstr ""
+
+msgid "libexecdir=/usr/libexec \\"
+msgstr ""
+
+msgid "localstatedir=/var \\"
+msgstr ""
+
+msgid "sharedstatedir=/usr/com \\"
+msgstr ""
+
+msgid "mandir=/usr/share/man \\"
+msgstr ""
+
+msgid "infodir=/usr/share/info \\"
+msgstr ""
+
+msgid "install"
+msgstr ""
+
+msgid "RPM 4.2 adds a %check section after the %install."
+msgstr ""
+
+msgid "Cleaning up after the build"
+msgstr ""
+
+msgid "The %clean section should clean up after the build and installation, removing compiled files and other files created as part of the build. If you use a buildroot, discussed previously, then you can provide a %clean section like the following:"
+msgstr ""
+
+msgid "%clean"
+msgstr ""
+
+msgid "Defining installation scripts"
+msgstr ""
+
+msgid "In addition to the sections described previously for controlling the build of the package software, you can define more scripts in your RPM spec files. RPM supports a script run prior to installation, %pre, and a script run after installation, %post. The same concepts apply when a package is erased, or uninstalled. The %preun script is run just before the uninstall and the %postun script just after the uninstall."
+msgstr ""
+
+msgid "The basic syntax is similar to the <literal>%build</literal>, <literal>%install</literal>, and other sections of the rpm spec file."
+msgstr ""
+
+msgid "The scripts support a special flag, -p which specifies the interpreter that should be used to run the script (the default is /bin/sh). Sometimes the -p option is used with no body in order to run a single command directly rather than having to spawn a shell to invoke the programs (i.e. %post -p /sbin/ldconfig). Note that this form requires that there be nothing but white space (not even comments) until the next section begins."
+msgstr ""
+
+msgid "<xref linkend=\"ch-advanced-packaging\" /> covers triggers, another form of script that gets run when packages are installed or removed."
+msgstr ""
+
+msgid "Start your scripts with the RPM section marker for the given script, such as %pre for the pre-install script. Then, place the shell commands you want to run. For example, the following define %post, %preun and %postun scripts from the ypbind networking package:"
+msgstr ""
+
+msgid "%post"
+msgstr ""
+
+msgid "/sbin/chkconfig --add ypbind"
+msgstr ""
+
+msgid "%preun"
+msgstr ""
+
+msgid "if [ \"$1\" = 0 ] ; then"
+msgstr ""
+
+msgid "/sbin/service ypbind stop &gt; /dev/null 2&gt;&amp;1"
+msgstr ""
+
+msgid "/sbin/chkconfig --del ypbind"
+msgstr ""
+
+msgid "fi"
+msgstr ""
+
+msgid "exit 0"
+msgstr ""
+
+msgid "%postun"
+msgstr ""
+
+msgid "if [ \"$1\" -ge 1 ]; then"
+msgstr ""
+
+msgid "/sbin/service ypbind condrestart &gt; /dev/null 2&gt;&amp;1"
+msgstr ""
+
+msgid "Few packages need to perform any work prior to installation, so the %pre script is rarely used."
+msgstr ""
+
+msgid "In this example, the chkconfig command is called to update the runlevel information for system services after installation and prior to removal. This is an example where just installing the application, ypbind in this case, is not enough. Since this application acts as a system service, more work needs to be done to finish the installation with the %pre script or clean up the service on removal with the %preun script."
+msgstr ""
+
+msgid "Do not try to write interactive scripts. Many users install RPMs automatically. In such cases, or if the user runs a graphical RPM tool, any information your scripts output will be lost. User input will not be available."
+msgstr ""
+
+msgid "The rpm command will pass one argument to your scripts, shown as $1 in the previous example, which holds a count of the number of versions of the package that are installed. Table 10-3 lists the counts for specific cases."
+msgstr ""
+
+msgid "Table 10-3 Install and uninstall script count values"
+msgstr ""
+
+msgid "Action"
+msgstr ""
+
+msgid "Count"
+msgstr ""
+
+msgid "Install the first time"
+msgstr ""
+
+msgid "1"
+msgstr ""
+
+msgid "Upgrade"
+msgstr ""
+
+msgid "2 or higher (depending on the number of versions installed)"
+msgstr ""
+
+msgid "Remove last version of package"
+msgstr ""
+
+msgid "0"
+msgstr ""
+
+msgid "The previous script example accesses the count using the shell variable $1."
+msgstr ""
+
+msgid "Filling the List of Files"
+msgstr ""
+
+msgid "The %files section holds a list of all the files that RPM should install from the package. This list should be exhaustive, so that the RPM system knows exactly what your package installs. There are some options, though, to name all the files within a directory to help with packages containing hundreds of files."
+msgstr ""
+
+msgid "In the default case, each line under the %files section names a separate file with its full path. For example:"
+msgstr ""
+
+msgid "%files"
+msgstr ""
+
+msgid "/usr/X11R6/bin/xtoolwait"
+msgstr ""
+
+msgid "/usr/X11R6/man/man1/xtoolwait.1"
+msgstr ""
+
+msgid "This example lists two files, /usr/X11R6/bin/xtoolwait and /usr/X11R6/man/man1/xtoolwait.1, presumably an online manual files."
+msgstr ""
+
+msgid "Using wildcards"
+msgstr ""
+
+msgid "In addition to naming each file on a line, you can use glob-style wildcards. For example:"
+msgstr ""
+
+msgid "/usr/X11R6/man/man1/xtoolwait.*"
+msgstr ""
+
+msgid "This example states that all files in /usr/X11R6/man/man1 that start with xtoolwait. should be included in the package."
+msgstr ""
+
+msgid "Naming directories of files"
+msgstr ""
+
+msgid "In addition to using wildcard globs, you can specify whole directories as part of your package. For example:"
+msgstr ""
+
+msgid "/etc/xtoolwait"
+msgstr ""
+
+msgid "This example names all the files in the directory /etc/xtoolwait as part of the package. Be very careful when listing this directory. Do not include a system directory such as /usr/bin, as RPM will assume your package owns all of /usr/bin, which contains hundreds of commands. This can be a problem when you try to remove a package."
+msgstr ""
+
+msgid "It is OK to name a subdirectory that your package owns. For example, while /etc is a system directory, /etc/xtoolwait is a reasonable directory for the xtoolwait package to control."
+msgstr ""
+
+msgid "If you just want to include an empty directory in the package, and not the files within the directory, use the %dir directive in front of the directory name. For example:"
+msgstr ""
+
+msgid "%dir /etc/xtoolwait"
+msgstr ""
+
+msgid "This example states that the package contains the /usr/X11R6/bin/xtoolwait program and the empty directory /etc/xtoolwait."
+msgstr ""
+
+msgid "In addition to the straight list of files or directories, RPM provides other options, starting with marking certain files as documentation or configuration files."
+msgstr ""
+
+msgid "Marking files as documentation or configuration files"
+msgstr ""
+
+msgid "RPM keeps special track of files within a package that hold documentation or configuration data. You need to identify these files with special directives."
+msgstr ""
+
+msgid "The %doc directive marks a file as a documentation file. For example:"
+msgstr ""
+
+msgid "%doc /usr/X11R6/man/man1/xtoolwait.*"
+msgstr ""
+
+msgid "This example lists all the included files in /usr/X11R6/man/man1 as documentation files."
+msgstr ""
+
+msgid "If you don’t include the full path to a documentation file or files, the RPM system will create a special documentation directory for the package, and place those files into that directory. For example:"
+msgstr ""
+
+msgid "%doc README NEWS"
+msgstr ""
+
+msgid "This example places the files README and NEWS into a newly created package-specific directory, typically a subdirectory under /usr/share/doc or /usr/doc."
+msgstr ""
+
+msgid "The %docdir directive names a directory that holds documentation. All files under that directory in the package will get automatically marked as documentation files. For example:"
+msgstr ""
+
+msgid "%docdir /usr/X11R6/man/man1"
+msgstr ""
+
+msgid "In addition to the marked directories, the standard Linux documentation directories, such as /usr/share/man, are automatically assumed to be documentation directories."
+msgstr ""
+
+msgid "Similar to the %doc directive, the %config directive marks a file as configuration. For example:"
+msgstr ""
+
+msgid "/sbin/ypbind"
+msgstr ""
+
+msgid "%config /etc/rc.d/init.d/*"
+msgstr ""
+
+msgid "%config /etc/yp.conf"
+msgstr ""
+
+msgid "A special option to the %config directive, noreplace, tells RPM not to overwrite, or replace a configuration file. For example:"
+msgstr ""
+
+msgid "%config(noreplace) /etc/yp.conf"
+msgstr ""
+
+msgid "Use this option to help protect local modifications. If you use %config(noreplace), the file will not overwrite an existing file that has been modified. If the file has not been modified on disk, the rpm command will overwrite the file. But, if the file has been modified on disk, the rpm command will copy the new file with an extra file-name extension of .rpmnew."
+msgstr ""
+
+msgid "Similarly, %config(missingok) means that the file does not have to exist on disk. You can use this modifier for files or links that are created during the %post scripts but will need to be removed if the package is removed."
+msgstr ""
+
+msgid "Another special modifier, %ghost, tells the rpm command that the file should not be included in the package. You can use this to name the needed attributes for a file that the program, when installed, will create. For example, you may want to ensure that a program’s log file has certain attributes."
+msgstr ""
+
+msgid "Setting file attributes"
+msgstr ""
+
+msgid "When your package is installed, you can control the file attributes as well as the files that get included into the package. This is very useful since most packages are installed by the root user and you don’t always want the root user owning the files."
+msgstr ""
+
+msgid "The %attr directive allows you to control the permissions for a particular file. The format is:"
+msgstr ""
+
+msgid "%attr(mode, user, group) filename"
+msgstr ""
+
+msgid "%attr(0644, root, root) /etc/yp.conf"
+msgstr ""
+
+msgid "This example sets the file permissions to 644, the user and the group to root. If you don’t need to specify a value, use a dash, -, to leave the setting as is for the file. For example:"
+msgstr ""
+
+msgid "%attr(-, root, -) /etc/yp.conf"
+msgstr ""
+
+msgid "Note that you can combine directives, one after another. For example:"
+msgstr ""
+
+msgid "%config %attr(-, root, -) /etc/yp.conf"
+msgstr ""
+
+msgid "You can also use spaces instead of commas as delimiters. For example:"
+msgstr ""
+
+msgid "%attr(0700 root root) %dir /var/tux"
+msgstr ""
+
+msgid "In addition to using %attr to set the attributes for a file, you should use the %defattr directive to set the default attributes for all files in the package. For example:"
+msgstr ""
+
+msgid "%defattr(-,root,root)"
+msgstr ""
+
+msgid "Just about every spec file uses the %defattr directive as this directive eliminates a lot of work you need to do to set file attributes individually. In addition, using the %defattr directive is considered a best practice when creating packages."
+msgstr ""
+
+msgid "You can also mark files for a particular language. For example, from the tcsh shell package:"
+msgstr ""
+
+msgid "%doc FAQ Fixes NewThings complete.tcsh eight-bit.txt tcsh.html"
+msgstr ""
+
+msgid "%{_bindir}/tcsh"
+msgstr ""
+
+msgid "%{_bindir}/csh"
+msgstr ""
+
+msgid "%{_mandir}/*/*"
+msgstr ""
+
+msgid "%lang(de) %{_datadir}/locale/de/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "%lang(el) %{_datadir}/locale/el/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "%lang(en) %{_datadir}/locale/en/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "%lang(es) %{_datadir}/locale/es/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "%lang(et) %{_datadir}/locale/et/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "%lang(fi) %{_datadir}/locale/fi/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "%lang(fr) %{_datadir}/locale/fr/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "%lang(it) %{_datadir}/locale/it/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "%lang(ja) %{_datadir}/locale/ja/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "%lang(pl) %{_datadir}/locale/pl/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "%lang(ru) %{_datadir}/locale/ru/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "%lang(uk) %{_datadir}/locale/uk/LC_MESSAGES/tcsh*"
+msgstr ""
+
+msgid "This example marks certain files as only being of use with particular languages, such as ja for the Japanese text and fr for the French text."
+msgstr ""
+
+msgid "Verifying the %files section"
+msgstr ""
+
+msgid "You can use the %verify directive to control which tests RPM uses when verifying a package."
+msgstr ""
+
+msgid "See <xref linkend=\"ch-using-rpm-db\" /> for more on package verification."
+msgstr ""
+
+msgid "The %verify directive names the tests to include or not include. Table 10-4 lists the tests."
+msgstr ""
+
+msgid "Table 10-4 Package verification tests"
+msgstr ""
+
+msgid "Test"
+msgstr ""
+
+msgid "group"
+msgstr ""
+
+msgid "Verifies the group of the file"
+msgstr ""
+
+msgid "maj"
+msgstr ""
+
+msgid "Verifies the file’s major device number"
+msgstr ""
+
+msgid "md5"
+msgstr ""
+
+msgid "Verifies the file’s MD5 checksum"
+msgstr ""
+
+msgid "min"
+msgstr ""
+
+msgid "Verifies the file’s minor device number"
+msgstr ""
+
+msgid "mode"
+msgstr ""
+
+msgid "Verifies the file mode, or permissions"
+msgstr ""
+
+msgid "mtime"
+msgstr ""
+
+msgid "Verifies the file’s last modification time"
+msgstr ""
+
+msgid "owner"
+msgstr ""
+
+msgid "Verifies the owner of the file"
+msgstr ""
+
+msgid "size"
+msgstr ""
+
+msgid "Verifies the file’s size"
+msgstr ""
+
+msgid "symlink"
+msgstr ""
+
+msgid "Verifies a symbolic link"
+msgstr ""
+
+msgid "With the %verify directive, you can name test, such as shown following:"
+msgstr ""
+
+msgid "%verify(owner group size) /etc/yp.conf"
+msgstr ""
+
+msgid "This example limits the tests to owner, group, and size. (The default is to perform all the tests.) You can also use the word not to specify that RPM should not run one or more tests. For example:"
+msgstr ""
+
+msgid "%verify(not owner) /etc/yp.conf"
+msgstr ""
+
+msgid "This example turns off just the owner test."
+msgstr ""
+
+msgid "Filling the list of files automatically"
+msgstr ""
+
+msgid "The -f option to the %files section allows you to read in a list of file names from a file. This file is assumed to look like the contents of the %files section, holding one file name per line. You can also include the various directives for files such as %attr or %doc. For example:"
+msgstr ""
+
+msgid "%files -f list_of_filenames.txt"
+msgstr ""
+
+msgid "You can combine this list with filename entries, such as the following:"
+msgstr ""
+
+msgid "%files -f xconfig_files.txt"
+msgstr ""
+
+msgid "This example reads in a list of file names from the file named xconfig_files.txt and also includes two additional files."
+msgstr ""
+
+msgid "This list of files works best if you cannot determine the file names in advance. The build may create different files based on various macro values. In addition, you may not know the final paths for the files until build time."
+msgstr ""
+
+msgid "Handling RPM build errors for unpackaged files"
+msgstr ""
+
+msgid "Starting with RPM 4.1, rpmbuild will exit if all files in the $RPM_BUILD_ROOT directory are not found in the %files section (or in a file that lists file names used with the -f option). This is officially known as a Fascist build policy and you can turn it off with the following macros."
+msgstr ""
+
+msgid "The %_unpackaged_files_terminate_build macro, if set to 1, tells rpmbuild to exit if it finds files that are in the $RPM_BUILD_ROOT directory but not listed as part of the package. Set this macro to 0 to turn off the Fascist build policy. For example:"
+msgstr ""
+
+msgid "%define _unpackaged_files_terminate_build 0"
+msgstr ""
+
+msgid "You can also control the flag that specifies whether missing documentation files cause rpmbuild to exit. Set the %_missing_doc_files_terminate_build macro to 0 to turn off this feature:"
+msgstr ""
+
+msgid "%define _missing_doc_files_terminate_build 0"
+msgstr ""
+
+msgid "See the \"Defining Spec File Macros\" section later in the chapter for more on using macros."
+msgstr ""
+
+msgid "You can also store this setting in a macro file so that it applies for all packages you build. See <xref linkend=\"ch-customizing-rpm\" /> for more on macro files."
+msgstr ""
+
+msgid "While the Fascist build policy may be an annoyance, it can prove very useful. Chances are your spec file has an error if you have files in the $RPM_BUILD_ROOT directory that are not listed in the %files section. The Fascist build policy helps catch these errors. In addition, since the error outputs a list of files in the $RPM_BUILD_ROOT directory that are not listed in the %files section, you can often paste this list into your %files section."
+msgstr ""
+
+msgid "Adding Change Log Entries"
+msgstr ""
+
+msgid "The change log usually appears at the end of a spec file and is marked with %changelog. It holds messages for each significant change. You should add a change log entry for each major change to the application. For example, if you download a new version of the software you are packaging, add a change log entry for the new version:"
+msgstr ""
+
+msgid "%changelog"
+msgstr ""
+
+msgid "* Fri Jun 21 2002 Bob Marley &lt;marley@reggae.com&gt;"
+msgstr ""
+
+msgid "- Downloaded version 1.4, applied patches"
+msgstr ""
+
+msgid "* Tue May 08 2001 Peter Tosh &lt;tosh@reggae.com&gt; 1.3-1"
+msgstr ""
+
+msgid "- updated to 1.3"
+msgstr ""
+
+msgid "Defining Spec File Macros"
+msgstr ""
+
+msgid "The RPM system defines a lot of handy macros so that your spec files can work regardless of where system directories are located. You simply use the macro, such as %_bindir, in place of hard-coded paths. The %_bindir macro, for example, identifies the default directory for binary executables, /usr/bin."
+msgstr ""
+
+msgid "Use these macros wherever possible to avoid hard-coded paths and settings."
+msgstr ""
+
+msgid "Built-in macros"
+msgstr ""
+
+msgid "RPM includes a host of built-in macros, including the following useful directories:"
+msgstr ""
+
+msgid "%_prefix /usr"
+msgstr ""
+
+msgid "%_exec_prefix %{_prefix}"
+msgstr ""
+
+msgid "%_bindir %{_exec_prefix}/bin"
+msgstr ""
+
+msgid "%_sbindir %{_exec_prefix}/sbin"
+msgstr ""
+
+msgid "%_libexecdir %{_exec_prefix}/libexec"
+msgstr ""
+
+msgid "%_datadir %{_prefix}/share"
+msgstr ""
+
+msgid "%_sysconfdir %{_prefix}/etc"
+msgstr ""
+
+msgid "%_sharedstatedir %{_prefix}/com"
+msgstr ""
+
+msgid "%_localstatedir %{_prefix}/var"
+msgstr ""
+
+msgid "%_libdir %{_exec_prefix}/lib"
+msgstr ""
+
+msgid "%_includedir %{_prefix}/include"
+msgstr ""
+
+msgid "%_oldincludedir /usr/include"
+msgstr ""
+
+msgid "%_infodir %{_prefix}/info"
+msgstr ""
+
+msgid "%_mandir %{_prefix}/man"
+msgstr ""
+
+msgid "The example directories shown above come from the standard RPM macro file, /usr/lib/rpm/macros, instead of the Red Hat-specific file, /usr/lib/rpm/redhat/macros, which holds:"
+msgstr ""
+
+msgid "%_sysconfdir /etc"
+msgstr ""
+
+msgid "%_localstatedir /var"
+msgstr ""
+
+msgid "%_infodir /usr/share/info"
+msgstr ""
+
+msgid "%_mandir /usr/share/man"
+msgstr ""
+
+msgid "%_initrddir %{_sysconfdir}/rc.d/init.d"
+msgstr ""
+
+msgid "%_defaultdocdir %{_usr}/share/doc"
+msgstr ""
+
+msgid "Spec file-specific macros"
+msgstr ""
+
+msgid "Most of the pre-defined RPM macros hold directory paths or architecture information. RPM also includes a set of useful macros that you can use to help debug problematic spec files and well as perform common tasks in spec files. Table 10-5 lists these debugging and special spec file macros."
+msgstr ""
+
+msgid "Table 10-5 Special spec-file macros"
+msgstr ""
+
+msgid "Macro"
+msgstr ""
+
+msgid "%dump"
+msgstr ""
+
+msgid "Prints out macro values"
+msgstr ""
+
+msgid "%{echo:message}"
+msgstr ""
+
+msgid "Prints message to stderr"
+msgstr ""
+
+msgid "%{error:message}"
+msgstr ""
+
+msgid "Prints message to stderr and returns BADSPEC"
+msgstr ""
+
+msgid "%{expand:expression}"
+msgstr ""
+
+msgid "Like eval, expands expression"
+msgstr ""
+
+msgid "%{F:file_exp}"
+msgstr ""
+
+msgid "Expands file_exp to a file name"
+msgstr ""
+
+msgid "%global name value"
+msgstr ""
+
+msgid "Defines a global macro"
+msgstr ""
+
+msgid "%{P:patch_exp}"
+msgstr ""
+
+msgid "Expands patch_exp to a patch file name"
+msgstr ""
+
+msgid "%{S:source_exp}"
+msgstr ""
+
+msgid "Expands source_exp to a source file name"
+msgstr ""
+
+msgid "%trace"
+msgstr ""
+
+msgid "Toggles the printing of debugging information"
+msgstr ""
+
+msgid "%{uncompress:filename}"
+msgstr ""
+
+msgid "Tests if file filename is compressed. If so, uncompresses and includes in the given context. If not compressed, calls cat to include file in given context."
+msgstr ""
+
+msgid "%undefine macro"
+msgstr ""
+
+msgid "Undefines the given macro"
+msgstr ""
+
+msgid "%{warn:message}"
+msgstr ""
+
+msgid "To see the current list of macros, put a %dump at the start of your spec file."
+msgstr ""
+
+msgid "Defining new macros"
+msgstr ""
+
+msgid "In addition to the built-in macros, you can define your own to make it easier to manage your packages. Define a new spec file macro with the following syntax:"
+msgstr ""
+
+msgid "%define macro_name value"
+msgstr ""
+
+msgid "%define minor 2"
+msgstr ""
+
+msgid "%define patchlevel 7"
+msgstr ""
+
+msgid "You can then use a macro with the %macro_name or %{macro_name} syntax. For example:"
+msgstr ""
+
+msgid "Version: %{major}.%{minor}.%{patchlevel}"
+msgstr ""
+
+msgid "You can also expand the results of running shell commands using a %(command) syntax with parenthesis instead of curly braces. For example:"
+msgstr ""
+
+msgid "%define today %(date)"
+msgstr ""
+
+msgid "Specifying parameters to macros"
+msgstr ""
+
+msgid "Most macros perform simple text substitution. You can also pass parameters to macros, and access those parameters within your macros, similarly to how shell scripts get command-line parameters."
+msgstr ""
+
+msgid "<xref linkend=\"ch-scripting\" /> covers shell scripting with RPM."
+msgstr ""
+
+msgid "With parameters, you can expand the normal definition of a macro to the following:"
+msgstr ""
+
+msgid "%define macro_name(options) value"
+msgstr ""
+
+msgid "Any text within the parenthesis is passed to getopt(3), and acts as parameters to the macro. This is performed when the macro is expanded. You can also pass options to the macro using the %macro_name syntax (without curly braces). For example:"
+msgstr ""
+
+msgid "%foo 1 2 3"
+msgstr ""
+
+msgid "This example passes the parameters 1, 2, and 3 to the macro foo. Inside the macro, you can use a shell script-like syntax to access the parameters through special macros. Table 10-6 lists these macros."
+msgstr ""
+
+msgid "Table 10-6 Parameter macros inside a macro expansion"
+msgstr ""
+
+msgid "Holds"
+msgstr ""
+
+msgid "%0"
+msgstr ""
+
+msgid "The name of the macro"
+msgstr ""
+
+msgid "%*"
+msgstr ""
+
+msgid "All the parameters to the macro, except for any processed options"
+msgstr ""
+
+msgid "%#"
+msgstr ""
+
+msgid "The number of parameters"
+msgstr ""
+
+msgid "%1"
+msgstr ""
+
+msgid "The first parameter"
+msgstr ""
+
+msgid "%2"
+msgstr ""
+
+msgid "The second parameter"
+msgstr ""
+
+msgid "%3"
+msgstr ""
+
+msgid "The third parameter, and so on with %4, %5 and beyond"
+msgstr ""
+
+msgid "%{-p}"
+msgstr ""
+
+msgid "Holds -p if the -p parameter was passed to the macro; otherwise holds nothing"
+msgstr ""
+
+msgid "%{-p*}"
+msgstr ""
+
+msgid "Holds the value passed with the -p parameter, if the -p parameter was passed to the macro; otherwise holds nothing"
+msgstr ""
+
+msgid "%{-p:text}"
+msgstr ""
+
+msgid "Holds text if the -p parameter was passed to the macro; otherwise holds nothing"
+msgstr ""
+
+msgid "Note that all parameters listed in Table 10-6 hold the remaining parameters after getopt(3) processing. You can use these macros within the definition of your own macros. You can also nest macros, such as the following:"
+msgstr ""
+
+msgid "%define mypatch() patch %{-p:-p%{-p*}}"
+msgstr ""
+
+msgid "This macro expands to the patch command if no -p parameter was passed. If you pass a -p parameter, such as -p 1, then the macro expands to -p with the value of the -p parameter:"
+msgstr ""
+
+msgid "patch -p1"
+msgstr ""
+
+msgid "This type of syntax is used heavily with the patch command."
+msgstr ""
+
+msgid "Creating XML Spec Files"
+msgstr ""
+
+msgid "RPM spec files are text files containing structured information. It is a natural progression to write RPM spec files using XML. The tool rpmxmlbuild will build an RPM package from an XML-formatted spec file."
+msgstr ""
+
+msgid "For example, Listing 10-1 holds a spec file in XML format."
+msgstr ""
+
+msgid "Listing 10-1: An XML spec file."
+msgstr ""
+
+msgid "&lt;?xml version=\"1.0\"?&gt;"
+msgstr ""
+
+msgid "&lt;spec distribution=\"RPM Test\" vendor=\"rpm.org\""
+msgstr ""
+
+msgid "name=\"bash\" version=\"2.05a\" release=\"02test\""
+msgstr ""
+
+msgid "copyright=\"GPL\""
+msgstr ""
+
+msgid "url=\"http://www.gnu.org/software/bash/bash.html\"&gt;"
+msgstr ""
+
+msgid "&lt;source name=\"%{name}-%{version}.tar.bz2\""
+msgstr ""
+
+msgid "size=\"1434025\" md5=\"c29b50db808003e39558a0f6354f4cad\""
+msgstr ""
+
+msgid "path=\"%{name}-%{version}\"&gt;"
+msgstr ""
+
+msgid "&lt;/source&gt;"
+msgstr ""
+
+msgid "&lt;buildrequires&gt;"
+msgstr ""
+
+msgid "&lt;require name=\"bash\" /&gt;"
+msgstr ""
+
+msgid "&lt;require name=\"gcc\" /&gt;"
+msgstr ""
+
+msgid "&lt;require name=\"make\" /&gt;"
+msgstr ""
+
+msgid "&lt;/buildrequires&gt;"
+msgstr ""
+
+msgid "&lt;!-- packages --&gt;"
+msgstr ""
+
+msgid "&lt;package group=\"System/Base\" autoreqprov=\"no\"&gt;"
+msgstr ""
+
+msgid "&lt;requires&gt;"
+msgstr ""
+
+msgid "&lt;require name=\"glibc\" /&gt;"
+msgstr ""
+
+msgid "&lt;/requires&gt;"
+msgstr ""
+
+msgid "&lt;summary&gt;The Bash package contains the bash program.&lt;/summary&gt;"
+msgstr ""
+
+msgid "&lt;description&gt;%{summary}"
+msgstr ""
+
+msgid "Bash is the Bourne-Again SHell, which is a widely used command interpreter"
+msgstr ""
+
+msgid "on Unix systems. Bash is a program that reads from standard input, the"
+msgstr ""
+
+msgid "keyboard. A user types something and the program will evaluate what he has"
+msgstr ""
+
+msgid "typed and do something with it, like running a program.&lt;/description&gt;"
+msgstr ""
+
+msgid "&lt;files list=\"%{name}.files.lst\" /&gt;"
+msgstr ""
+
+msgid "&lt;/package&gt;"
+msgstr ""
+
+msgid "&lt;package name=\"bash-doc\" group=\"Documentation/System/Base\" autoreqprov=\"no\"&gt;"
+msgstr ""
+
+msgid "&lt;require name=\"%{name}\" /&gt;"
+msgstr ""
+
+msgid "&lt;summary&gt;Documentation for the bash package.&lt;/summary&gt;"
+msgstr ""
+
+msgid "&lt;description&gt;%{summary}&lt;/description&gt;"
+msgstr ""
+
+msgid "&lt;pre script=\"%{name}-doc.pre.sh\" /&gt;"
+msgstr ""
+
+msgid "&lt;files list=\"%{name}-doc.files.lst\" /&gt;"
+msgstr ""
+
+msgid "&lt;!-- scripts to create the package --&gt;"
+msgstr ""
+
+msgid "&lt;prep script=\"%{name}.prep.sh\"&gt;"
+msgstr ""
+
+msgid "&lt;setup /&gt;"
+msgstr ""
+
+msgid "&lt;script&gt;echo &amp;quot;Prep completed&amp;quot;&lt;/script&gt;"
+msgstr ""
+
+msgid "&lt;/prep&gt;"
+msgstr ""
+
+msgid "&lt;build script=\"%{name}.build.sh\" /&gt;"
+msgstr ""
+
+msgid "&lt;install script=\"%{name}.install.sh\" /&gt;"
+msgstr ""
+
+msgid "&lt;clean script=\"%{name}.clean.sh\" /&gt;"
+msgstr ""
+
+msgid "&lt;!-- changelog --&gt;"
+msgstr ""
+
+msgid "&lt;changelog&gt;"
+msgstr ""
+
+msgid "&lt;changes date=\"Mon Aug 26 2002\" version=\"2.05a-02test\""
+msgstr ""
+
+msgid "author=\"\" author-email=\"\"&gt;"
+msgstr ""
+
+msgid "&lt;change&gt;Added setup macro to extract files&lt;/change&gt;"
+msgstr ""
+
+msgid "&lt;change&gt;Initial version ready for jbj&lt;/change&gt;"
+msgstr ""
+
+msgid "&lt;/changes&gt;"
+msgstr ""
+
+msgid "&lt;/changelog&gt;"
+msgstr ""
+
+msgid "&lt;/spec&gt;"
+msgstr ""
+
+msgid "XML spec files are a very experimental feature. Future releases of RPM will likely provide more support for XML spec files. The format will likely change."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "This chapter covers spec files, the files that define how to build packages. Start your spec file by defining package information, such as the name, version, and release number. You can also add a detailed description to help administrators decide whether to install your packages."
+msgstr ""
+
+msgid "You need to name all of the source and patch files used to build the package. In most cases, the source files are compressed tar archives. After naming all the sources and patches, you need to control how the rpmbuild command should build your package. This comes in four sections."
+msgstr ""
+
+msgid "The %prep section prepares for the build by extracting the source files and applying patches. The %build section defines the commands to build the software, normally something as simple as running a configure script and then the make command. The %install section contains the commands for installing the software. And, the %clean section provides commands to clean up after the build."
+msgstr ""
+
+msgid "For these sections, you can use handy RPM macros for common tasks, such as running the configure script or the make install command. You can also define scripts the rpm command should run before and after installing, as well as before and after removing the package."
+msgstr ""
+
+msgid "Spec files contain a listing of all the files that should go into the package, as well as where those files should be placed on the user’s hard disk."
+msgstr ""
+
+msgid "You can define RPM macros in your spec files to make commands that can work with different directory structures as well as simplify common commands."
+msgstr ""
+
+msgid "While it may seem that this chapter described a great many options for making spec files, there’s more to come. The next chapter covers advanced spec file topics such as triggers, conditional builds, and specifying dependencies."
+msgstr ""
+

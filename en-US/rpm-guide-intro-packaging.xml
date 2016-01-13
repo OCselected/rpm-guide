@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<preface>
+  <title>Introducing Package Management</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Issues in software management
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Examining Linux management tools
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Introducing the package concept
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    In 1991, a young Finnish graduate student started a new personal
+    hobby. He had acquired an Intel 386 computer and had spent a few
+    weeks exploring it and playing early PC computer games. Eventually,
+    however, he grew bored with the limitations of the MS-DOS
+    environment that had come with his toy and decided that he wanted an
+    operating system for it that he could use more productively. After
+    exploring Minix, a feature-limited teaching operating system, he
+    decided he needed a full-featured OS.
+  </para>
+  <para>
+    At that time, no full-featured PC operating systems were freely
+    available, so he decided to write his own operating system. Today,
+    that small hobby OS that Linus Torvalds started almost as a whim has
+    become Linux, a significant new variant of Unix that runs millions
+    of the world's network servers and, increasingly, desktop computers
+    and embedded processors.
+  </para>
+  <para>
+    Linux has grown up, successfully making the transition from a
+    one-man personal project to a functional, full-featured operating
+    system used by many of the world's major corporations and deployed
+    on millions of corporate and personal systems. Along the way, Linux
+    has had to address many of the same issues any new operating system
+    must face. One of these concerns is how software for Linux, and how
+    the Linux operating system itself, should be installed. How can
+    administrators safely remove software packages without affecting
+    other installed packages? And how can you safely upgrade packages?
+    Answering these questions is what this book is all about.
+  </para>
+  <sect1>
+    <title>Installing, Removing, and Upgrading Applications</title>
+    <para>
+      Applications for most operating systems consist of multiple files
+      that must be copied to specific locations on the computer's file
+      system before each application can be run. This is true for common
+      PC operating systems such as MS-DOS or Microsoft Windows, as well
+      as for Unix and Linux.
+    </para>
+    <para>
+      In the case of a Unix-like operating system such as Linux, other
+      issues must also be considered. Unix and Linux are multiple-user
+      systems, so they must track ownership of files. Furthermore, Unix
+      and Linux use a system of file permissions. Administrators can
+      grant some users access to files and can control how users may
+      access those files, for example, allowing some users the
+      permission to read only certain files. Administrators can deny
+      other users access to the same files. So, installation of an
+      application on Linux requires consideration of all these details.
+      After files are copied into their appropriate locations, they must
+      be granted correct permissions and correct ownerships.
+    </para>
+    <para>
+      Similarly, administrators occasionally need to remove installed
+      software from the computer. Maybe the program is no longer needed;
+      maybe it does not work correctly for the needed task, or maybe the
+      space it is using is needed for more important programs. In
+      addition, installed software sometimes needs to be upgraded.
+      Perhaps a new version of the software has come out and the
+      currently installed version needs to be replaced with the
+      presumably improved version. In most respects, software upgrades
+      are the same as the removal of one application (the old version),
+      followed by installation of another application (the new version).
+      Upgrades do, however, have additional issues. Many applications
+      must be configured before they can be used. Ideally, the upgrade
+      for an installed application takes the current configuration into
+      account, preserving old configuration information and applying it
+      to the recently installed version.
+    </para>
+    <para>
+      All these considerations make installation of a new application
+      onto Unix or Linux a labor-intensive process. To further
+      complicate matters, Unix applications have primarily been
+      distributed as source code. To install a new application, such as
+      the Apache Web server, you download the source code for that
+      application—in this case, from the Apache Project's Web page
+      (<ulink url="http://httpd.apache.org"/>). Typically, the source
+      code is provided in some sort of archive (such as the Zip archival
+      and compression format often used in the Windows world or the tar
+      archive format typically used in the Unix world) that you must
+      then unpack. After unpacking this source code, you have to
+      configure it to support the options and systems you want,
+      compiling it to produce an executable program that can run on your
+      particular operating system (CPU combination).
+    </para>
+    <para>
+      After compiling the source code, you still have to install the
+      application by putting all of its components (executable programs,
+      documentation, configuration files, and so forth) into the correct
+      locations on your hard drive and setting correct permissions on
+      all those files. You might also need to perform other steps to
+      prepare the system for the software. In the case of Apache, for
+      example, some space needs to be set aside for storage of
+      Web-access logs, and a special user account needs to be created so
+      that the Apache Web server can operate more securely. Finally, you
+      are ready to try running the application you have spent so much
+      time installing.
+    </para>
+    <para>
+      To help with all these tasks, precompiled software is becoming
+      increasingly prevalent in the Unix and Linux communities, so you
+      might be able to find executable (precompiled binary) copies of
+      the application you wish to install that are appropriate for your
+      particular machine's CPU. In that case, download an archive of the
+      compiled application and unpack it. Then skip the compilation
+      step, since that has already been done for you. The other steps
+      required to install the package (copying files into correct
+      locations, setting file permissions, and doing any needed system
+      or application configuration) are exactly the same as the steps
+      performed to install that application from source code. Once those
+      steps are finished, you are ready to test your freshly installed
+      application.
+    </para>
+    <para>
+      When you run your newly installed application, you might be
+      thrilled, perhaps discovering that it is something you want to use
+      regularly. On the other hand, you might discover that you have no
+      use for the software you have just installed, deciding that you
+      want to uninstall it.
+    </para>
+    <para>
+      Uninstallation occurs by reversing the installation steps.
+      Remember any special steps you have performed (such as adding a
+      user account), and undo those. Then remember all the files you
+      have installed and where you have installed them. Manually delete
+      them. As you can see, this can become a pretty tedious exercise.
+    </para>
+    <para>
+      If you like the application you have installed, you will likely
+      find yourself wanting to upgrade it eventually. The Apache Web
+      server, for example, like any network service, must be upgraded
+      whenever security problems are found and fixed. If you find that
+      you need to upgrade Apache, you need to back up your Apache
+      configuration files and then uninstall Apache. The next step is to
+      install a new version of Apache, applying your
+      Apache-configuration customizations to your new installation of
+      Apache.
+    </para>
+    <para>
+      All of this is a big pain. There has to be a better way. And there
+      is.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Overcoming the Installation Obstacles</title>
+    <para>
+      None of the tasks you must perform to install, upgrade, or
+      uninstall applications are especially difficult. However, these
+      steps quickly become daunting when you consider all the files that
+      must be managed. A full Fedora installation provides around
+      3,000 executable commands and over 160,000 total files (some other
+      Linux distributions are even larger!). Obviously, managing all
+      these files by hand, although theoretically possible, is not
+      technically feasible. On a smaller scale, even management of
+      single applications is not practical. The Postfix e-mail server
+      application, for example, consists of around 275 files scattered
+      in a dozen or so different directories. Imagine trying to remember
+      and manually remove all of those files (and only those files) to
+      uninstall Postfix from your system!
+    </para>
+    <para>
+      All the steps needed to manage software on Unix or Linux systems
+      are hardly unique to Unix; all operating systems have similar
+      procedures that must be followed to make software usable on the
+      system. For this reason, many approaches have been adopted toward
+      software installation, uninstallation, and upgrading.
+    </para>
+    <sect2>
+      <title>Application-level utilities</title>
+      <para>
+        Some operating systems, such as MS-DOS, have supplied absolutely
+        no built-in tools for software management. Installation of
+        applications on such systems occurs in one of two ways: software
+        is installed manually, using file-copy utilities to put all the
+        application files in the appropriate places on the system, or
+        software is installed using a custom-written installation
+        application (as is usually the case for MS-DOS applications).
+      </para>
+      <para>
+        Once installed, software can be uninstalled in one of two ways:
+        you can manually delete each file installed for the application
+        (assuming you can even remember them all), or the application
+        might come with a custom uninstallation utility that can be run
+        to remove the application. Upgrading an already installed
+        application on such a system uses a similar procedure. If the
+        application comes with an installation utility capable of
+        handling application upgrades, you can use the utility to
+        perform the upgrade. Otherwise, the software must be manually
+        upgraded using the procedure described previously.
+      </para>
+      <note>
+        <title>Current Windows Versions</title>
+
+        <para>
+          Current versions of Windows, such as Windows XP, have a
+          central database of installed applications.
+        </para>
+      </note>
+    </sect2>
+    <sect2>
+      <title>Built-in system utilities</title>
+      <para>
+        Other operating systems have come with built-in utilities that a
+        system administrator can use to manage the system’s software.
+        These utilities can be run to install the software on the
+        system; typically, they take some of the work out of manually
+        installing software, dealing with issues such as figuring out
+        which files need to be put where on the system. Once installed,
+        these utilities typically track the files that have been
+        installed. This knowledge can usually be used to uninstall those
+        applications automatically. Since the software knows which files
+        are associated with the application, it can be told to uninstall
+        the application, and it can find and delete all the files that
+        belong to that application.
+      </para>
+      <para>
+        These built-in utilities typically come in two different forms.
+        One type focuses on managing the installation process, providing
+        custom utilities that can be used to perform the otherwise
+        manual tasks of compiling software and copying files into their
+        final locations. The three major freely available Berkeley Unix,
+        or BSD, operating systems, NetBSD, FreeBSD, and OpenBSD, for
+        example, ship with a software-management system called,
+        variously, ports (FreeBSD and OpenBSD) or packages (NetBSD).
+      </para>
+      <para>
+        The ports system is composed of extensions to the normal Unix
+        software-compilation utilities that help it automate and track
+        many of the steps of a standard source-code compilation. When
+        using ports, you still download source code, unarchive it,
+        configure it, compile it, and install it, but the ports software
+        automates many of these steps. Furthermore, the ports system
+        does limited tracking of the files it installs. Although it does
+        not offer more advanced features (such as an interface to search
+        all installed files to see what application supplied that file)
+        or the ability to upgrade installed applications, it does
+        provide the ability to uninstall applications that are installed
+        using ports. These sorts of limitations are typical of
+        management applications that function as the ports system does,
+        by enhancing the compilation and installation phases of
+        application installation. The packages system on NetBSD has
+        similar limitations.
+      </para>
+      <para>
+        Other system-management utilities focus less attention on
+        compiling an application for installation and more attention on
+        the files that must be installed on the system after the
+        application has been compiled.
+      </para>
+      <para>
+        For example, the standard System V Unix package-management
+        software supplied with most commercial Unix systems (Sun's
+        Solaris, for example) devotes no attention to management of
+        software compilation at all. Instead, it tracks the individual
+        files associated with each application in a system database.
+      </para>
+      <para>
+        To install software using the System V tools, you must compile
+        the software. After compiling the software in the standard
+        fashion, prepare a list of the files from that compilation that
+        need to be installed on the system. Be certain to state where
+        the files need to be installed and what permissions and
+        ownerships they need to have once installed. Then run a series
+        of commands that look at this list, find the files listed in it,
+        and archive them into one file, along with a copy of this list
+        that specifies where they should be installed and the ownerships
+        and permissions. This single archive file can then be
+        transferred to other machines, where a System V
+        software-management command can be used to install it. This
+        System V installation command (typically called
+        <command>pkgadd</command>) unpacks the archive, copies the files
+        into their final destinations based on the enclosed listing, and
+        sets permissions and ownerships on the files as specified by the
+        listing. Finally, this <command>pkgadd</command> command
+        registers the list of freshly installed files into a system-wide
+        database of installed files.
+      </para>
+      <para>
+        Such a system offers several advantages over manual software
+        installation. Software can now be installed and uninstalled
+        easily, and the system-wide database of installed files can be
+        readily searched to locate installed applications and files.
+        However, this sort of system also has severe limitations; it is
+        far less flexible in the software-configuration stages than
+        software such as the FreeBSD ports system, which offers great
+        control over the software-compilation stage of software
+        installation.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Linux Software Management Tools: Packages</title>
+    <para>
+      Initially, Linux had neither type of software-management tool. In
+      the early days of Linux, you installed Linux by cross-compiling it
+      under a different operating system (Minix), then manually
+      installing the compiled Linux programs into the appropriate
+      locations to produce a working system. As Linux has matured,
+      however, it has acquired software-management tools that have made
+      software installation, removal, and upgrade significantly easier
+      than in the early days. The exact software-management tool used on
+      modern Linux systems varies from distribution to distribution, but
+      both approaches to system management can be found in the tools
+      used by various distributions.
+    </para>
+    <para>
+      The Gentoo Linux (<ulink url="http://www.gentoo.org/"/>)
+      distribution, for example, uses a software-management system
+      called Portage, which is very similar to the FreeBSD ports system.
+      Like ports, Portage provides great control over software
+      compilation and installation, providing a collection of scripts
+      that automate much of the basic work of downloading and compiling
+      software.
+    </para>
+    <para>
+      At the other end of the spectrum, the now-defunct deepLinux
+      distribution used a software-management system called
+      <command>deep-package</command>. 
+      <command>deep-package</command> was intended to be a complete
+      reimplementation of the Solaris <command>pkgadd</command> utility
+      and its helpers. Like the Solaris <command>pkgadd</command>
+      software, <command>deep-package</command> paid no attention to
+      half of the question of how to manage software, focusing entirely
+      on software installation and tracking issues while entirely
+      ignoring the initial compilation of the software.
+    </para>
+    <para>
+      More typically, however, Linux software-management tools use an
+      approach somewhere between the two extremes represented by Portage
+      and deep-package. Most Linux software-management tools provide
+      software that manages the compilation of software, similarly to
+      the FreeBSD ports tools. However, these software-management tools
+      typically produce packages from the software they compile. Much
+      like the archives produced by the System V software-management
+      tools, packages are simply archive files that contain two things:
+      a collection of related files, which together have a common use,
+      and a script that provides all the metadata about those files
+      necessary to install and manage those files.
+    </para>
+    <para>
+      Typically, packages represent applications. For example, a Postfix
+      package contains the 275 files that make up Postfix and a script
+      that specifies where on the system those 275 files need to be
+      placed, as well as what permissions and ownership those files
+      need. A single command can then take this Postfix package file,
+      extract its 275 archived files, and use the script to place those
+      files correctly on the system.
+    </para>
+    <para>
+      In addition, most Linux software-management tools have a database
+      component that tracks files and applications that have been
+      installed using the package-management software, helping the
+      package manager do its job of easing the management of installed
+      software.
+    </para>
+    <para>
+      In the case of a full Fedora installation, this
+      package-management software maintains a database of information
+      regarding all 160,000 files on the system; as applications are
+      installed on the system, this database is updated with information
+      regarding the new application and the locations of its component
+      files. This database is the key component, making it possible to
+      manage the system. Since this database remembers which 275 files
+      compose the Postfix application, it ensures that I can uninstall
+      Postfix with a single command that accesses this database, without
+      my having to remember the locations of all 275 files that make up
+      the Postfix application.
+    </para>
+    <para>
+      A wide variety of software-management tools are available for
+      Linux to help lessen the work involved with installing, removing,
+      and upgrading applications installed on the system. This book
+      focuses on one of these tools, the RPM Package Management
+      software, or RPM.
+    </para>
+    <note>
+      <title>Change of Name</title>
+<!-- SE: Don't replace "Red Hat" with an entity here: we don't want the text to change -->
+      <para>
+        RPM was originally called Red Hat Package Manager. After
+        adoption by other Linux distributions, the name has changed to
+        simply the RPM Package Manager. The RPM initials remain the
+        same.
+      </para>
+    </note>
+    <para>
+      As the original name implies, RPM was developed by Red Hat, Inc.,
+      the major Linux distributor in the United States. Even though the
+      original name seems to point to a Red Hat-only solution, many Linux
+      distributions use the RPM software. The RPM software provides a
+      foundation needed by Linux system administrators throughout the
+      world. You can even use RPM on other operating systems, both Linux
+      and non-Linux, as covered in <xref linkend="ch-other-linuxes"/> and <xref linkend="ch-other-os"/>, respectively.
+    </para>
+    <para>
+      The RPM system provides all of the features needed to manage
+      applications, including a database of installed packages with
+      their version numbers, the ability to install, remove, and update
+      packages, and the ability to recompile an application from a
+      source code RPM package.
+    </para>
+    <para>
+      The remaining chapters in Part I go into depth on what you can do
+      with RPM packages and the commands you need to work with the RPM
+      system:
+    </para>
+    <orderedlist>
+      <listitem>
+        <para>
+          <xref linkend="ch-intro-rpm"/> provides an overview of the RPM
+          system, exploring what it was designed for and where it has
+          weaknesses.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <xref linkend="ch-rpm-overview" /> discusses the technical
+          details of how the RPM system works, where the database of
+          packages gets stored, and what commands should be available
+          for working with RPM packages.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <xref linkend="ch-using-rpm"/> continues the discussion by
+          covering the three major tasks you need to perform with RPM
+          packages: installing software, removing software, and
+          upgrading software you have already installed.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <xref linkend="ch-using-rpm-db" /> covers the RPM database,
+          how it works, where it resides, and how you can use it to
+          better manage your system.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <xref linkend="ch-dependencies"/> delves into package
+          dependencies, a very important concept. Most major
+          applications depend on a number of other packages. Sometimes
+          these dependencies get very complex, with one package
+          depending on particular versions of other packages. With
+          thousands of packages on your system, this can lead to a big
+          mess. This chapter helps you to sort through the issues.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <xref linkend="ch-transactions"/> covers the important issue
+          of transactions, so that you can ensure your system gets
+          updated in an orderly manner and so that you can roll back
+          changes if something does not work out.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <xref linkend="ch-management-software"/> introduces a host of
+          tools that can help you find RPM packages as well as manage
+          the packages on your system. This includes graphical
+          interfaces on top of the RPM system and special Internet
+          search sites devoted just to RPM packages.
+        </para>
+      </listitem>
+    </orderedlist>
+    <para>
+      Later chapters cover creating RPM packages, programming with RPM,
+      and extending the functionality provided by the base RPM system.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      Modern operating systems have large complex sets of applications,
+      resulting in thousands of files to keep track of for upgrades,
+      installation, and removal of packages. All this complexity has
+      lead Linux vendors to develop a variety of package-management
+      tools.
+    </para>
+    <para>
+      This chapter briefly introduced the RPM Package Manager, or RPM
+      for short. The next chapter provides an overview of the RPM
+      system, showing how all the parts fit together.
+    </para>
+  </sect1>
+</preface>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "preface")
+fill-column: 72
+End:
+-->

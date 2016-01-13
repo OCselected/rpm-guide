@@ -1,0 +1,2941 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-specfiles">
+  <title>Working with Spec Files</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Writing spec files
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Defining package information
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Controlling the build
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Listing the files in the package
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Defining spec file macros
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    The previous chapter introduces the concepts of how to build RPMs,
+    and briefly covered the spec file, which controls how RPM packages
+    are built and installed. This chapter delves into how to create spec
+    files and the next chapter covers advanced spec file topics such as
+    using conditional commands and making relocatable packages.
+  </para>
+  <para>
+    A spec file defines all the commands and values that are required
+    for creating a package, everything from the name and version number
+    to the actual commands used to build the program you are packaging.
+  </para>
+  <para>
+    This chapter covers the spec file syntax and how to write spec
+    files. In goes in depth into defining information about your
+    package, controlling how the software will be built, defining what
+    exactly should go into the package, and customizing your build with
+    RPM macros.
+  </para>
+  <sect1>
+    <title>Reading Spec Files</title>
+    <para>
+      The first step to learning more about spec files is to read
+      through some of the huge number of spec files for the source RPMs
+      that come with your Linux distribution. Looking at these files
+      will show two things right away:
+    </para>
+    <para>
+      *You will see that the spec file syntax is not really as
+      complicated as it appears.
+    </para>
+    <para>
+      *You will see how many others have solved problems similar to
+      those you need to solve.
+    </para>
+    <para>
+      I’ve used real-world examples throughout this book, to show how
+      the RPMs you need to deal with actually work. Some of the more
+      interesting packages include anything that has a client and a
+      server component, anything with networking or e-mail, and anything
+      that installs a system service. All these types of packages solve
+      problems that you will commonly face. Some useful spec files to
+      look at are those for anonftp, telnet, vnc, and sendmail. To get
+      these spec files, you need to install the corresponding source
+      RPMs for each of these packages.
+    </para>
+    <para>
+      As you read through spec files, you’ll start to see common
+      patterns in how packages are defined, named, the macros used, and
+      common elements in the build sections of the spec files. You’ll
+      also see how network services are installed on Linux, as well as
+      example install and uninstall scripts. The next sections provide
+      more information on the things to look for within spec files.
+    </para>
+    <para>
+      Furthermore, even with the plethora of options RPM provides, if
+      you know shell scripting basics and something about how C programs
+      are normally built, with configure scripts and make commands, you
+      will find most spec files relatively easy to understand.
+    </para>
+    <para>
+      The following sections go into the details of writing your own
+      spec files. Keep your example spec files handy as you read through
+      these sections.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Writing Spec Files</title>
+    <para>
+      Spec files are text files containing RPM directives. These
+      directives use a simple syntax of a tag name, a colon, and a
+      value:
+    </para>
+    <para>
+      TagName: value
+    </para>
+    <para>
+      For example:
+    </para>
+    <para>
+      Version: 1.15
+    </para>
+    <para>
+      This example sets the package version to 1.15. The name of the
+      item is not case sensitive, so tag names of version, Version, or
+      VERSION all set the same value. This syntax works for most
+      settings, including Name, Release, and so on.
+    </para>
+    <para>
+      In addition to this directive syntax, you can define macros using
+      the RPM %define syntax. For example:
+    </para>
+    <para>
+      %define major 2
+    </para>
+    <para>
+      This example defines a macro named major with a value of 2. Once
+      defined, you can access macros using the %{macro_name} or just
+      %macro_name syntaxes. For example:
+    </para>
+    <para>
+      source: %{name}-%{version}.tar.gz
+    </para>
+    <para>
+      See the section "Defining Spec File Macros" later in this chapter
+      for more options for macros.
+    </para>
+    <para>
+      Major sections in the spec file are also delimited with % markers.
+      For example, the build section starts with %build on a line by
+      itself.
+    </para>
+    <para>
+      Note
+    </para>
+    <para>
+      The multiple uses of the % sign aren’t really that confusing in
+      practice. Read through some spec files and you should find most of
+      the commands are easily understood.
+    </para>
+    <para>
+      Blank lines separate sections in the spec file, which makes sense
+      for readability as well.
+    </para>
+    <sect2>
+      <title>Comments</title>
+      <para>
+        To help document your work, you can include comments (to
+        yourself and others reading the spec file). Any line starting
+        with a hash character, #, holds a comment. RPM will ignore
+        comments.
+      </para>
+      <para>
+        # This is a comment.
+      </para>
+      <para>
+        In spec files, comments are mostly to help explain your syntax
+        choices to yourself should you view the spec file later.
+        Comments are a good thing. You should comment heavily,
+        especially for any choice that deviates from the norm. For
+        example, if you provide special C compiler options for building
+        the package, add comments to describe why you picked the options
+        and how necessary they are. Such comments help immensely should
+        you need to port the RPM to another architecture or modify how
+        it was built.
+      </para>
+      <para>
+        Tip
+      </para>
+      <para>
+        Avoid single percent signs, %, in comments. For example:
+      </para>
+      <para>
+        # Added new commands to %prep
+      </para>
+      <para>
+        The rpmbuild command may report an error of a second %prep
+        section. To get around this problem, use two percent signs, such
+        as %%prep, in spec file comments.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Storing spec files on disk</title>
+      <para>
+        As discussed in <xref linkend="ch-creating-rpms"/> , the
+        rpmbuild command expands source RPMs to the /usr/src/redhat
+        directory. Under this directory, the RPM system assumes five
+        subdirectories, listed in Table 10-1.
+      </para>
+      <para>
+        Table 10-1 Default RPM directories
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Directory
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  BUILD
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Where the rpmbuild command builds software
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  RPMS
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Where the rpmbuild command stores binary RPMs it
+                  creates
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  SOURCES
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Where you should put the sources for the application
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  SPECS
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Where you should place the spec file
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  SRPMS
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Where the rpmbuild command places source RPMs
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        The spec files you create should be stored in the SPECS
+        directory while building RPMs. (You can store your spec files
+        permanently in any location you desire.)
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        These directories are the default directories. See
+        <xref linkend="ch-specfile-syntax"/> for changing RPM default
+        values. In addition, these are the defaults for Red Hat Linux. See
+        <xref linkend="ch-other-linuxes"/> and
+        <xref linkend="ch-other-linuxes"/> for discussions on other
+        versions of Linux and other non-Linux operating systems,
+        respectively.
+      </para>
+      <para>
+        With the knowledge of the spec file syntax covered in the
+        preceding sections, you can start to write spec files. The first
+        step is to define the basic package information.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Defining Package Information</title>
+    <para>
+      Most of the package information you need to enter into a spec file
+      fleshes out the information you can query for a given package,
+      such as the name, version, and release information, along with a
+      longer description and a one-line summary.
+    </para>
+    <para>
+      This gets a little more complicated when you set build locations,
+      name source files, and name patches. The following sections cover
+      how to specify the package information.
+    </para>
+    <sect2>
+      <title>Describing the package</title>
+      <para>
+        The first part of the spec file defines macros (covered in the
+        section "Defining Spec File Macros"), and describes the package.
+        Starting with the basics, you need a name, version, and release.
+        You also should provide a longer description. For legal reasons,
+        you may need to include ownership and copyright information.
+      </para>
+      <sect3>
+        <title>Naming the Package</title>
+        <para>
+          The most important part of the package description is the NVR,
+          or Name-Version-Release information, because this information
+          is so crucial for the RPM system to compare versions and track
+          dependencies.
+        </para>
+        <para>
+          Set the name with the Name: directive. For example:
+        </para>
+        <para>
+          Name: myapp
+        </para>
+        <para>
+          The name should not contain any spaces or other whitespace
+          characters such as tabs or newlines. Remember, RPM files are
+          named, by default, name-version-release.rpm, or
+          name-version-release-architecture.rpm, so use valid characters
+          for file names.
+        </para>
+        <para>
+          The version number is used in version comparisons. The RPM
+          comparison algorithm is fairly complex, but can get fooled by
+          strange version numbers. So, your best bet is to stick to
+          dotted numerics, such as 1.5 or 2.3.1.1.4 or 1.0. Version
+          numbers such as these will compare best from within the RPM
+          system. For example:
+        </para>
+        <para>
+          Version: 1.1.2
+        </para>
+        <para>
+          You cannot use a dash in the version number, as RPM uses the
+          dash to separate the Name-Version-Release elements. You can
+          use a dash in the package name, though.
+        </para>
+        <para>
+          The release number should start at 1 for the first RPM you
+          build for a given version of the package, and count up from
+          there. For example:
+        </para>
+        <para>
+          Release: 1
+        </para>
+        <para>
+          The release differentiates newer updates of the RPM itself,
+          even if the underlying application hasn’t changed. (The
+          application may be compiled with different compiler options,
+          though.) For most usage, simply start at 1 and each time you
+          modify the spec file and recreate the package, increment the
+          release number.
+        </para>
+        <para>
+          If the version number is not enough to allow for comparisons,
+          for example, if the version numbering scheme has changed
+          radically between releases, you can define an Epoch:
+          directive. For example:
+        </para>
+        <para>
+          Epoch: 3
+        </para>
+        <para>
+          If you renumber your versions, use an Epoch setting to clarify
+          the version history. For example, Sun Microsystems went from
+          SunOS 4.1 to Solaris 2. The Epoch: helps RPM properly handle
+          strange version number changes. Define the Epoch: as a whole
+          number such as 1, 2, or 3.
+        </para>
+        <para>
+          Warning
+        </para>
+        <para>
+          Avoid using the Epoch: directive if at all possible. It is far
+          better to use a sane version-numbering scheme than to try to
+          resolve the mess with epoch values. The main problems with
+          using an epoch value are that epochs are hidden from users in
+          most cases, and using epochs can lead to very strange-looking
+          tasks such as a newer package with a version number that looks
+          older than the older package.
+        </para>
+        <para>
+          The older Serial: directive also works similarly to the Epoch:
+          directive. For example:
+        </para>
+        <para>
+          Serial: 6
+        </para>
+        <para>
+          Like the Epoch:, the Serial: directive should be a number that
+          counts upward. Modern packages should use the Epoch: directive
+          instead of Serial:, since Serial: has been deprecated for
+          many, many rpm versions.
+        </para>
+        <para>
+          The Group: directive provides a classification for your
+          packages. If at all possible, use a category name that already
+          exists for other packages, such as System Environment/Shells
+          for a Linux shell. For example:
+        </para>
+        <para>
+          Group: System Environment/Shells
+        </para>
+        <para>
+          Many graphical installation tools divide packages by these
+          categories, so you want to fit into the existing group names
+          if possible. (See <xref linkend="ch-using-rpm-db"/> for more
+          on querying group information from RPMs.) The official list of
+          groups are located in the file /usr/share/doc/rpm-4.1/GROUPS
+          for RPM 4.1, and in a similar location for other RPM versions.
+        </para>
+        <para>
+          The Distribution: directive is used by Linux distribution
+          vendors such as Red Hat to identify that the package is part of a
+          given distribution, or was built for a particular
+          distribution. Most packages created outside of the Linux
+          vendors don’t provide this directive.
+        </para>
+        <para>
+          Distribution: Red Hat Linux
+        </para>
+        <para>
+          The Icon: directive names an icon file stored in the RPM. The
+          file format should be XPM or GIF, with an extension of .xpm or
+          .gif, respectively. Some packaging tools will use this icon in
+          a package display.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Specifying Company Information</title>
+        <para>
+          For legal reasons, you probably want to specify the
+          organization behind the RPM, any copyright or licensing
+          information, as well as a URL to find out more information.
+          Even if you are not concerned about corporate legal issues,
+          you may want to identify where the package came from. Use the
+          following directives to provide this information.
+        </para>
+        <para>
+          The Vendor: directive names the company or organization behind
+          an RPM. For example:
+        </para>
+        <para>
+          Vendor: The Really Cool Company
+        </para>
+        <para>
+          The URL: directive provides a URL to your company or
+          organization home page, or perhaps to a URL for a particular
+          application. For example:
+        </para>
+        <para>
+          URL: http://mycompany.yow/products/coolstuff
+        </para>
+        <para>
+          Similarly, the Packager: directive provides an optional name
+          and e-mail address for the person who created the RPM:
+        </para>
+        <para>
+          Packager: Bob Marley &lt;marley@reggae.com&gt;
+        </para>
+        <para>
+          The License: and Copyright: directives provide legal
+          information about your package. Older packages tended to use
+          Copyright: as a statement of the package’s license, not
+          copyright. For example:
+        </para>
+        <para>
+          Copyright: BSD
+        </para>
+        <para>
+          License: LGPL
+        </para>
+        <para>
+          Warning
+        </para>
+        <para>
+          The Copyright: directive is deprecated in favor of License:.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Filling in the Description</title>
+        <para>
+          The Summary: directive provides a one-line short description
+          of the package. You should not exceed much more than 50
+          characters when writing your summary. For example:
+        </para>
+        <para>
+          Summary: A program that does exactly what you want
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          The Summary: directive of the spec file replaces the older
+          Description: directive.
+        </para>
+        <para>
+          The %description section allows for longer text describing
+          your package. Fill in as many lines as you need after the
+          %description section. For example:
+        </para>
+        <para>
+          %description
+        </para>
+        <para>
+          This is a really cool package. It contains the really cool
+        </para>
+        <para>
+          program that provides a maximum return on investment,
+        </para>
+        <para>
+          or ROI, for achieving your crucial business objectives
+        </para>
+        <para>
+          utilizing world-class high-caliber componentized software
+        </para>
+        <para>
+          implemented with world-class quality and performance
+        </para>
+        <para>
+          metrics.
+        </para>
+        <para>
+          The %description section supports a limited amount of
+          formatting. Blank lines are assumed to separate paragraphs.
+          Some graphical user interface installation programs will
+          reformat paragraphs into a nicer-looking font and change the
+          display width.
+        </para>
+        <para>
+          Lines in the %description section that start with whitespace,
+          such as a space or tab, will be treated as preformatted text
+          and displayed as is, normally with a fixed-width font. The rpm
+          command supports text formatting this way. Other rpm programs
+          may not.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Specifying the Platform Architecture</title>
+        <para>
+          Spec files can announce that a package can run on more than
+          one operating system or is tied to a particular version of a
+          particular operating system.
+        </para>
+        <para>
+          For example, the Excludearch: directive states that a package
+          should not be built on the given architecture or
+          architectures. For example:
+        </para>
+        <para>
+          ExcludeArch: sparc s390 s390x
+        </para>
+        <para>
+          This example excludes the SPARC and S/390 mainframe
+          architectures. You can provide more than one architecture in
+          the directive, separated by spaces or commas.
+        </para>
+        <para>
+          Similarly, the Exclusivearch: directive states that a package
+          can only be built on the given architecture or architectures.
+          For example:
+        </para>
+        <para>
+          ExclusiveArch: i386 ia64 alpha
+        </para>
+        <para>
+          This example identifies the package as only working on the
+          Intel i386, IA-64, and Alpha architectures.
+        </para>
+        <para>
+          The Excludeos: and Exclusiveos: directives restrict the
+          operating system. For example:
+        </para>
+        <para>
+          Excludeos: windows
+        </para>
+        <para>
+          This example states that the package should not be built on
+          Windows. In contrast, the Exclusiveos: directive names only
+          the operating system or systems that the package can be built
+          on. For example:
+        </para>
+        <para>
+          Exclusiveos: linux
+        </para>
+        <para>
+          Cross Reference
+        </para>
+        <para>
+          <xref linkend="ch-other-linuxes"/> and
+          <xref linkend="ch-other-os"/> cover RPMs on other versions of
+          Linux and other operating systems, respectively.
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Setting build locations</title>
+      <para>
+        RPM supports two build-related directories with very similar
+        names, the build directory and the buildroot.
+      </para>
+      <para>
+        The build directory is the location where RPM actually builds
+        the software, compiling source code, running the configure
+        script, and so on. Normally, you do not need to worry about the
+        build directory as the rpmbuild command properly changes to this
+        directory as needed.
+      </para>
+      <para>
+        The buildroot, on the other hand, acts as a staging area that
+        looks like the final installation directory. The name buildroot
+        refers to the fact that the final installation directory is
+        usually the root directory, /. The install section of the spec
+        file (covered in the section "Installing the Software") installs
+        files into the buildroot directory in the proper subdirectories,
+        as if the files were really under the system root directory, /.
+        This allows the buildroot directory to hold all the final
+        installed files for a package, so you can see what will really
+        be installed by the package.
+      </para>
+      <para>
+        You should always set the buildroot by defining a Buildroot:
+        entry in your spec file. For example:
+      </para>
+      <para/>
+      <para>
+        Buildroot: %{_tmppath}/%{name}-%{version}-root
+      </para>
+      <para>
+        This example sets the buildroot under the temporary directory
+        named in the %_tmppath macro. The subdirectory is named based on
+        the name and version of the package. For example, for a package
+        named ypbind and a version 1.12, with a %_tmppath value of /tmp,
+        the final buildroot directory would be:
+      </para>
+      <para>
+        /tmp/ypbind-1.12-root
+      </para>
+      <para>
+        Once you set a buildroot, your scripts run from the spec file
+        and commands within the spec file can access the buildroot using
+        the RPM_BUILD_ROOT environment variable. You normally need to
+        access the RPM_BUILD_ROOT environment variable in the install
+        section of the spec file (covered in the section "Installing the
+        Software").
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        You can override the buildroot with the --buildroot command-line
+        parameter to the rpmbuild command.
+      </para>
+      <para>
+        The buildroot replaces the older, and now obsolete directive,
+        Root:.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Naming source files</title>
+      <para>
+        Most packages have one or more bundles of source code, which you
+        need to name in the spec file. In most cases, you will have a
+        compressed tar archive of source files. These may be files
+        developed by your organization or downloaded from an Internet
+        site. You can define one or more source tags, counting from 0.
+        For example:
+      </para>
+      <para>
+        Source0: telnet-client.tar.gz
+      </para>
+      <para>
+        Source1: telnet-xinetd
+      </para>
+      <para>
+        Source2: telnet.wmconfig
+      </para>
+      <para>
+        In this example, Source0: refers to a compressed tar archive.
+        The rpmbuild program will extract the files into the buildroot
+        directory. The Source1: and Source2: directives name individual
+        source files. You can name compressed tar archives or individual
+        files as needed.
+      </para>
+      <para>
+        If you just have one Source directive, you can skip the 0. For
+        example:
+      </para>
+      <para>
+        Source: telnet-client.tar.gz
+      </para>
+      <para>
+        You can also use FTP or HTTP URLs to name sources. For example:
+      </para>
+      <para>
+        Source0:
+        ftp://ftp.somesite.yow/pub/linux/%{telnet_version}.tar.gz
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        The URLs listed in source directives are for convenience and
+        future reference only. RPM will not download these files.
+      </para>
+      <para>
+        The files named by the Source directives will get included into
+        the source RPM. Sometimes you need to keep some sources out of
+        the source RPM. This could be for proprietary sources you cannot
+        ship, or simply due to size. The Nosource: directive tells RPM
+        to skip a source file from the source RPM. For example:
+      </para>
+      <para>
+        NoSource: 0
+      </para>
+      <para>
+        This example means that the first source item should not be
+        included in the package.
+      </para>
+      <para>
+        NoSource: 3
+      </para>
+      <para>
+        This example means that the third source item should not be
+        included in the package. The NoPatch directive works similarly.
+        In addition, do not place more than one number on any given
+        NoSource or NoPatch directive.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        Using the Nosource: or NoPatch: directives, covered following,
+        mean you are creating a source RPM that cannot be rebuilt unless
+        you also have the sources or patches, respectively, that were
+        used to create the original RPM.
+      </para>
+      <para>
+        If the package contains a Nosource: or Nopatch: directive,
+        rpmbuild will use a file-name extension of .nosrc.rpm instead of
+        .src.rpm.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Naming patches</title>
+      <para>
+        Patches are named similar to sources, using a similar syntax.
+        For example:
+      </para>
+      <para>
+        Patch1: telnet-client-cvs.patch
+      </para>
+      <para>
+        Patch2: telnetd-0.17.diff
+      </para>
+      <para>
+        Patch3: telnet-0.17-env.patch
+      </para>
+      <para>
+        Patch4: telnet-0.17-issue.patch
+      </para>
+      <para>
+        Patch5: telnet-0.17-sa-01-49.patch
+      </para>
+      <para>
+        Patch6: telnet-0.17-env-5x.patch
+      </para>
+      <para>
+        Patch10: telnet-0.17-pek.patch
+      </para>
+      <para>
+        Note that you can have Patch directives are not numbered
+        sequentially, such as the Patch10: directive in this example. In
+        addition, you must apply each patch manually using %patch
+        directives.
+      </para>
+      <para>
+        The patch files may be individual files or compressed (with
+        gzip) patch files.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See the patch and diff online manual pages for more on patches.
+      </para>
+      <para>
+        Patches are important because they allow you to start with
+        pristine sources, the source code for the original application.
+        You can then apply patches as needed to get a working
+        application, more clearly separating the work needed to create
+        an RPM from the original application source code.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-packaging-guidelines"/> discusses packaging
+        guidelines and best practices. Starting from pristine sources is
+        one of the best practices.
+      </para>
+      <para>
+        Similar to the sources directives, you can define a Nopatch:
+        directive, which defines a patch that is applied to the sources,
+        but is not included in the source RPM.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Controlling the Build</title>
+    <para>
+      After describing information about the package, the crucial step
+      comes when you need to build the package. The spec file should
+      contain all the commands needed to build the application or
+      library you want to package. But, and this is the important part,
+      most of the build process should be run from a Makefile or other
+      conventional way to build applications. Using a build tool such as
+      make means that you can test the application outside of the RPM
+      system. You don’t need an RPM to build the application. Instead,
+      you use the RPM to package the application.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      <xref linkend="ch-creating-rpms"/> covers make and other Linux
+      build tools.
+    </para>
+    <para>
+      In RPM terms, building the package is split into four steps:
+    </para>
+    <para>
+      1.Preparing for building, including unpacking the sources
+    </para>
+    <para>
+      2.Building
+    </para>
+    <para>
+      3.Installing the application or library
+    </para>
+    <para>
+      4.Cleaning up
+    </para>
+    <para>
+      The next sections cover how to control the build run by rpmbuild
+      by defining commands within your spec files.
+    </para>
+    <sect2>
+      <title>Preparing for the build</title>
+      <para>
+        The %prep section defines the commands to prepare for the build.
+        In most cases, you can run the simple %setup macro. For example:
+      </para>
+      <para>
+        %prep
+      </para>
+      <para>
+        %setup -q
+      </para>
+      <para>
+        This command changes to the build directory, typically
+        /usr/src/redhat/BUILD, and then extracts the source files. This
+        macro expects that at least one of the source files will create
+        the necessary subdirectory under /usr/src/redhat/BUILD. This
+        subdirectory should be named with the package name and version,
+        such as telnet-1.0.1. If you are not using a compressed tar
+        archive that will automatically create the right subdirectory,
+        add the –c option to the %setup macro. The –c option creates
+        the subdirectory for extracting the sources.
+      </para>
+      <para>
+        The –q command-line option runs in quiet mode with minimal
+        output. The –T option disables the automatic extraction of
+        compressed tar files. You can set the name of the build
+        subdirectory with the –n option.
+      </para>
+      <para>
+        Normally, the %setup macro deletes the subdirectory prior to
+        extracting the sources. You can disable the directory deletion
+        with the –D option.
+      </para>
+      <para>
+        Table 10-2 summarizes the %setup command-line parameters. Many
+        of these options apply mostly for subpackages, a topic covered
+        in <xref linkend="ch-advanced-packaging"/> .
+      </para>
+      <para>
+        Table 10-2 Command-line parameters for %setup
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Parameter
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -a number
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Only unpack the source directive of the given number,
+                  such as –a 0 for source0:, after changing to the
+                  directory.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -b number
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Only unpack the source directive of the given number,
+                  such as –b 0 for source0:, before changing to the
+                  directory.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -c
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Create directory before unpacking, used if your
+                  sources will not create the directory as part of
+                  unpacking.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -D
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not delete the directory before unpacking.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -n name
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Name the directory as name.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -q
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Run quietly with minimal output.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -T
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Disable the automatic unpacking of the archives.
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        The %setup directive can automatically extract tar, zip, gzip,
+        bzip2, pack, compress, and lzh compressed files. The tar-gzip
+        format is most widely used, though.
+      </para>
+      <para>
+        Like the %setup macro, the %patch directive applies a patch to
+        the sources. Use this macro in your %prep section if you have
+        patches. You need a %patch directive for each patch.
+      </para>
+      <para>
+        The %patch directive accepts –p and other command-line
+        parameters for the underlying patch command. The –p option,
+        with a number, such as –p0, tells the patch command to remove
+        that many slashes from the file names within the patch. A –p0
+        option tells the patch command to remove no slashes, a –p1
+        option tells patch to remove one slash, and correspondingly, one
+        directory level from the files in the patch. You can also pass
+        other options for the patch command.
+      </para>
+      <para>
+        Use these options if you need them for the patch command when
+        manually patching the sources. Otherwise, you can set up your
+        %prep section as follows, for a spec file with two patches:
+      </para>
+      <para>
+        %prep
+      </para>
+      <para>
+        %setup –q
+      </para>
+      <para>
+        %patch1
+      </para>
+      <para>
+        %patch2
+      </para>
+      <para>
+        Use numbers to identify which patch to apply. For example,
+        %patch0 corresponds to the patch file named with the Patch0:
+        directive.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        You must define a separate %patch directive for each patch. In
+        most packages, this format, %patch1, %patch2, and so on, is
+        used.
+      </para>
+      <para>
+        The %patch directive without a number corresponds to %patch0.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See the patch and diff online manual pages for more on patches.
+      </para>
+      <para>
+        In addition to the options supported by the patch command, you
+        can use special options to the %patch directive to control how
+        the directive works. The –P option tells the %patch directive
+        to apply a given patch. For example, to only apply the patch
+        named with the Patch2: directive, use the following %patch
+        directive:
+      </para>
+      <para>
+        %patch –P 2
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        This is an uppercase P. The lowercase p performs a different
+        function, described earlier in this section. The -P option is
+        rarely used. Instead, patches are normally applied with %patch0,
+        %patch1, and so on directives.
+      </para>
+      <para/>
+      <para/>
+    </sect2>
+    <sect2>
+      <title>Building the software</title>
+      <para>
+        The %prep section prepares for the build, which the %build
+        section performs. You need to fill in the %build section with
+        all the commands necessary to build the software. In most cases,
+        this consists simply of the following commands:
+      </para>
+      <para>
+        %build
+      </para>
+      <para>
+        ./configure
+      </para>
+      <para>
+        make
+      </para>
+      <para>
+        In this case, the %build section runs two commands, ./configure
+        to run the configure script, and make to build the software. For
+        most applications, this may be all you need. You can use the
+        %configure macro in place of the call to the ./configure script.
+        For example:
+      </para>
+      <para>
+        %build
+      </para>
+      <para>
+        %configure
+      </para>
+      <para>
+        make
+      </para>
+      <para>
+        Most spec files should use the %configure macro, since it
+        automatically sets many environment variables that are often
+        used within the configure script, especially path-related values
+        such as the online manual path, the temporary directory, and so
+        on. You can use the rpm --eval to see how the %configure macro
+        expands. For example:
+      </para>
+      <para>
+        $ rpm --eval '%configure'
+      </para>
+      <para/>
+      <para>
+        CFLAGS="${CFLAGS:--O2 -march=i386 -mcpu=i686}" ; export CFLAGS ;
+      </para>
+      <para>
+        CXXFLAGS="${CXXFLAGS:--O2 -march=i386 -mcpu=i686}" ; export
+        CXXFLAGS ;
+      </para>
+      <para>
+        FFLAGS="${FFLAGS:--O2 -march=i386 -mcpu=i686}" ; export FFLAGS ;
+      </para>
+      <para>
+        [ -f configure.in ] &amp;&amp; libtoolize --copy --force ;
+      </para>
+      <para>
+        ./configure i386-redhat-linux \
+      </para>
+      <para>
+        --prefix=/usr \
+      </para>
+      <para>
+        --exec-prefix=/usr \
+      </para>
+      <para>
+        --bindir=/usr/bin \
+      </para>
+      <para>
+        --sbindir=/usr/sbin \
+      </para>
+      <para>
+        --sysconfdir=/etc \
+      </para>
+      <para>
+        --datadir=/usr/share \
+      </para>
+      <para>
+        --includedir=/usr/include \
+      </para>
+      <para>
+        --libdir=/usr/lib \
+      </para>
+      <para>
+        --libexecdir=/usr/libexec \
+      </para>
+      <para>
+        --localstatedir=/var \
+      </para>
+      <para>
+        --sharedstatedir=/usr/com \
+      </para>
+      <para>
+        --mandir=/usr/share/man \
+      </para>
+      <para>
+        --infodir=/usr/share/info
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        The vast majority of the work of building the software should
+        remain in the Makefile where it belongs. The commands in the
+        spec file should invoke the targets defined in the Makefile.
+        Don’t place too much logic in your RPM spec file as this makes
+        it harder to test the application or library you plan to
+        package.
+      </para>
+      <para>
+        If you intend to support relocatable packages, covered in
+        <xref linkend="ch-advanced-packaging"/> , you will likely need
+        to pass a --prefix option to the configure script. For example:
+      </para>
+      <para>
+        %build
+      </para>
+      <para>
+        ./configure --prefix=$RPM_BUILD_ROOT/usr
+      </para>
+      <para>
+        make
+      </para>
+      <para>
+        You can also pass other options to the configure script, as
+        needed, for compiling the application.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Installing the software</title>
+      <para>
+        The %install section should install the software built in the
+        %build section. If your Makefile contains all the instructions
+        to install, you can define an %install section as follows:
+      </para>
+      <para>
+        %install
+      </para>
+      <para>
+        make install PREFIX=$RPM_BUILD_ROOT/usr
+      </para>
+      <para>
+        In most cases, you need to pass some parameter to make or
+        install or another command to install all files into the
+        buildroot directory, as shown in this example with the
+        $RPM_BUILD_ROOT environment variable. You need to look within
+        the Makefile to determine if the make variable should be PREFIX,
+        prefix, or something else.
+      </para>
+      <para>
+        Sometimes, you want to call the install command instead of make
+        to perform the installation. For example:
+      </para>
+      <para>
+        %install
+      </para>
+      <para>
+        install -m755 myapp $RPM_BUILD_ROOT/usr/bin/myapp
+      </para>
+      <para>
+        This example uses a hypothetical application name of myapp.
+      </para>
+      <para>
+        Many packages use the %makeinstall macro, which runs the make
+        install command. For example:
+      </para>
+      <para>
+        %install
+      </para>
+      <para>
+        rm -rf $RPM_BUILD_ROOT
+      </para>
+      <para>
+        %makeinstall
+      </para>
+      <para>
+        This example also cleans the files from the buildroot. Use the
+        rpm --eval command to see how the %makeinstall macro expands.
+        For example:
+      </para>
+      <para>
+        $ rpm --eval '%makeinstall'
+      </para>
+      <para/>
+      <para>
+        make \
+      </para>
+      <para>
+        prefix=/usr \
+      </para>
+      <para>
+        exec_prefix=/usr \
+      </para>
+      <para>
+        bindir=/usr/bin \
+      </para>
+      <para>
+        sbindir=/usr/sbin \
+      </para>
+      <para>
+        sysconfdir=/etc \
+      </para>
+      <para>
+        datadir=/usr/share \
+      </para>
+      <para>
+        includedir=/usr/include \
+      </para>
+      <para>
+        libdir=/usr/lib \
+      </para>
+      <para>
+        libexecdir=/usr/libexec \
+      </para>
+      <para>
+        localstatedir=/var \
+      </para>
+      <para>
+        sharedstatedir=/usr/com \
+      </para>
+      <para>
+        mandir=/usr/share/man \
+      </para>
+      <para>
+        infodir=/usr/share/info \
+      </para>
+      <para>
+        install
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        RPM 4.2 adds a %check section after the %install.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Cleaning up after the build</title>
+      <para>
+        The %clean section should clean up after the build and
+        installation, removing compiled files and other files created as
+        part of the build. If you use a buildroot, discussed previously,
+        then you can provide a %clean section like the following:
+      </para>
+      <para>
+        %clean
+      </para>
+      <para>
+        rm -rf $RPM_BUILD_ROOT
+      </para>
+    </sect2>
+    <sect2>
+      <title>Defining installation scripts</title>
+      <para>
+        In addition to the sections described previously for controlling
+        the build of the package software, you can define more scripts
+        in your RPM spec files. RPM supports a script run prior to
+        installation, %pre, and a script run after installation, %post.
+        The same concepts apply when a package is erased, or
+        uninstalled. The %preun script is run just before the uninstall
+        and the %postun script just after the uninstall.
+      </para>
+      <para>
+        The basic syntax is similar to the <literal>%build</literal>,
+        <literal>%install</literal>, and other sections of the rpm spec file.
+      </para>
+      <para>
+        The scripts support a special flag, -p which specifies the interpreter
+        that should be used to run the script (the default is /bin/sh).
+        Sometimes the -p option is used with no body in order to run a single
+        command directly rather than having to spawn a shell to invoke the
+        programs (i.e. %post -p /sbin/ldconfig).  Note that this form requires
+        that there be nothing but white space (not even comments) until the
+        next section begins.
+      </para>
+
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-advanced-packaging"/> covers triggers, another
+        form of script that gets run when packages are installed or
+        removed.
+      </para>
+      <para>
+        Start your scripts with the RPM section marker for the given
+        script, such as %pre for the pre-install script. Then, place the
+        shell commands you want to run. For example, the following
+        define %post, %preun and %postun scripts from the ypbind
+        networking package:
+      </para>
+      <para>
+        %post
+      </para>
+      <para>
+        /sbin/chkconfig --add ypbind
+      </para>
+      <para/>
+      <para>
+        %preun
+      </para>
+      <para>
+        if [ "$1" = 0 ] ; then
+      </para>
+      <para>
+        /sbin/service ypbind stop &gt; /dev/null 2&gt;&amp;1
+      </para>
+      <para>
+        /sbin/chkconfig --del ypbind
+      </para>
+      <para>
+        fi
+      </para>
+      <para>
+        exit 0
+      </para>
+      <para/>
+      <para>
+        %postun
+      </para>
+      <para>
+        if [ "$1" -ge 1 ]; then
+      </para>
+      <para>
+        /sbin/service ypbind condrestart &gt; /dev/null 2&gt;&amp;1
+      </para>
+      <para>
+        fi
+      </para>
+      <para>
+        exit 0
+      </para>
+      <para>
+        Few packages need to perform any work prior to installation, so
+        the %pre script is rarely used.
+      </para>
+      <para>
+        In this example, the chkconfig command is called to update the
+        runlevel information for system services after installation and
+        prior to removal. This is an example where just installing the
+        application, ypbind in this case, is not enough. Since this
+        application acts as a system service, more work needs to be done
+        to finish the installation with the %pre script or clean up the
+        service on removal with the %preun script.
+      </para>
+      <para>
+        Warning
+      </para>
+      <para>
+        Do not try to write interactive scripts. Many users install RPMs
+        automatically. In such cases, or if the user runs a graphical
+        RPM tool, any information your scripts output will be lost. User
+        input will not be available.
+      </para>
+      <para>
+        The rpm command will pass one argument to your scripts, shown as
+        $1 in the previous example, which holds a count of the number of
+        versions of the package that are installed. Table 10-3 lists the
+        counts for specific cases.
+      </para>
+      <para>
+        Table 10-3 Install and uninstall script count values
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Action
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Count
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Install the first time
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  1
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Upgrade
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  2 or higher (depending on the number of versions
+                  installed)
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Remove last version of package
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  0
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        The previous script example accesses the count using the shell
+        variable $1.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Filling the List of Files</title>
+    <para>
+      The %files section holds a list of all the files that RPM should
+      install from the package. This list should be exhaustive, so that
+      the RPM system knows exactly what your package installs. There are
+      some options, though, to name all the files within a directory to
+      help with packages containing hundreds of files.
+    </para>
+    <para>
+      In the default case, each line under the %files section names a
+      separate file with its full path. For example:
+    </para>
+    <para>
+      %files
+    </para>
+    <para>
+      /usr/X11R6/bin/xtoolwait
+    </para>
+    <para>
+      /usr/X11R6/man/man1/xtoolwait.1
+    </para>
+    <para>
+      This example lists two files, /usr/X11R6/bin/xtoolwait and
+      /usr/X11R6/man/man1/xtoolwait.1, presumably an online manual
+      files.
+    </para>
+    <sect2>
+      <title>Using wildcards</title>
+      <para>
+        In addition to naming each file on a line, you can use
+        glob-style wildcards. For example:
+      </para>
+      <para>
+        %files
+      </para>
+      <para>
+        /usr/X11R6/bin/xtoolwait
+      </para>
+      <para>
+        /usr/X11R6/man/man1/xtoolwait.*
+      </para>
+      <para>
+        This example states that all files in /usr/X11R6/man/man1 that
+        start with xtoolwait. should be included in the package.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Naming directories of files</title>
+      <para>
+        In addition to using wildcard globs, you can specify whole
+        directories as part of your package. For example:
+      </para>
+      <para>
+        %files
+      </para>
+      <para>
+        /usr/X11R6/bin/xtoolwait
+      </para>
+      <para>
+        /etc/xtoolwait
+      </para>
+      <para>
+        This example names all the files in the directory /etc/xtoolwait
+        as part of the package. Be very careful when listing this
+        directory. Do not include a system directory such as /usr/bin,
+        as RPM will assume your package owns all of /usr/bin, which
+        contains hundreds of commands. This can be a problem when you
+        try to remove a package.
+      </para>
+      <para>
+        It is OK to name a subdirectory that your package owns. For
+        example, while /etc is a system directory, /etc/xtoolwait is a
+        reasonable directory for the xtoolwait package to control.
+      </para>
+      <para>
+        If you just want to include an empty directory in the package,
+        and not the files within the directory, use the %dir directive
+        in front of the directory name. For example:
+      </para>
+      <para>
+        %files
+      </para>
+      <para>
+        /usr/X11R6/bin/xtoolwait
+      </para>
+      <para>
+        %dir /etc/xtoolwait
+      </para>
+      <para>
+        This example states that the package contains the
+        /usr/X11R6/bin/xtoolwait program and the empty directory
+        /etc/xtoolwait.
+      </para>
+      <para>
+        In addition to the straight list of files or directories, RPM
+        provides other options, starting with marking certain files as
+        documentation or configuration files.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Marking files as documentation or configuration files</title>
+      <para>
+        RPM keeps special track of files within a package that hold
+        documentation or configuration data. You need to identify these
+        files with special directives.
+      </para>
+      <para>
+        The %doc directive marks a file as a documentation file. For
+        example:
+      </para>
+      <para>
+        %files
+      </para>
+      <para>
+        /usr/X11R6/bin/xtoolwait
+      </para>
+      <para>
+        %doc /usr/X11R6/man/man1/xtoolwait.*
+      </para>
+      <para>
+        This example lists all the included files in /usr/X11R6/man/man1
+        as documentation files.
+      </para>
+      <para>
+        If you don’t include the full path to a documentation file or
+        files, the RPM system will create a special documentation
+        directory for the package, and place those files into that
+        directory. For example:
+      </para>
+      <para>
+        %doc README NEWS
+      </para>
+      <para>
+        This example places the files README and NEWS into a newly
+        created package-specific directory, typically a subdirectory
+        under /usr/share/doc or /usr/doc.
+      </para>
+      <para>
+        The %docdir directive names a directory that holds
+        documentation. All files under that directory in the package
+        will get automatically marked as documentation files. For
+        example:
+      </para>
+      <para>
+        %files
+      </para>
+      <para>
+        /usr/X11R6/bin/xtoolwait
+      </para>
+      <para>
+        %docdir /usr/X11R6/man/man1
+      </para>
+      <para>
+        /usr/X11R6/man/man1/xtoolwait.*
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        In addition to the marked directories, the standard Linux
+        documentation directories, such as /usr/share/man, are
+        automatically assumed to be documentation directories.
+      </para>
+      <para>
+        Similar to the %doc directive, the %config directive marks a
+        file as configuration. For example:
+      </para>
+      <para>
+        %files
+      </para>
+      <para>
+        /sbin/ypbind
+      </para>
+      <para>
+        %config /etc/rc.d/init.d/*
+      </para>
+      <para>
+        %config /etc/yp.conf
+      </para>
+      <para>
+        %doc README NEWS
+      </para>
+      <para>
+        A special option to the %config directive, noreplace, tells RPM
+        not to overwrite, or replace a configuration file. For example:
+      </para>
+      <para>
+        %files
+      </para>
+      <para>
+        /sbin/ypbind
+      </para>
+      <para>
+        %config /etc/rc.d/init.d/*
+      </para>
+      <para>
+        %config(noreplace) /etc/yp.conf
+      </para>
+      <para>
+        %doc README NEWS
+      </para>
+      <para>
+        Use this option to help protect local modifications. If you use
+        %config(noreplace), the file will not overwrite an existing file
+        that has been modified. If the file has not been modified on
+        disk, the rpm command will overwrite the file. But, if the file
+        has been modified on disk, the rpm command will copy the new
+        file with an extra file-name extension of .rpmnew.
+      </para>
+      <para>
+        Similarly, %config(missingok) means that the file does not have
+        to exist on disk. You can use this modifier for files or links
+        that are created during the %post scripts but will need to be
+        removed if the package is removed.
+      </para>
+      <para>
+        Another special modifier, %ghost, tells the rpm command that the
+        file should not be included in the package. You can use this to
+        name the needed attributes for a file that the program, when
+        installed, will create. For example, you may want to ensure that
+        a program’s log file has certain attributes.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Setting file attributes</title>
+      <para>
+        When your package is installed, you can control the file
+        attributes as well as the files that get included into the
+        package. This is very useful since most packages are installed
+        by the root user and you don’t always want the root user
+        owning the files.
+      </para>
+      <para>
+        The %attr directive allows you to control the permissions for a
+        particular file. The format is:
+      </para>
+      <para>
+        %attr(mode, user, group) filename
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        %attr(0644, root, root) /etc/yp.conf
+      </para>
+      <para>
+        This example sets the file permissions to 644, the user and the
+        group to root. If you don’t need to specify a value, use a
+        dash, -, to leave the setting as is for the file. For example:
+      </para>
+      <para>
+        %attr(-, root, -) /etc/yp.conf
+      </para>
+      <para>
+        Note that you can combine directives, one after another. For
+        example:
+      </para>
+      <para>
+        %config %attr(-, root, -) /etc/yp.conf
+      </para>
+      <para>
+        You can also use spaces instead of commas as delimiters. For
+        example:
+      </para>
+      <para>
+        %attr(0700 root root) %dir /var/tux
+      </para>
+      <para/>
+      <para>
+        In addition to using %attr to set the attributes for a file, you
+        should use the %defattr directive to set the default attributes
+        for all files in the package. For example:
+      </para>
+      <para>
+        %files
+      </para>
+      <para>
+        %defattr(-,root,root)
+      </para>
+      <para>
+        /usr/X11R6/bin/xtoolwait
+      </para>
+      <para>
+        /usr/X11R6/man/man1/xtoolwait.*
+      </para>
+      <para>
+        Just about every spec file uses the %defattr directive as this
+        directive eliminates a lot of work you need to do to set file
+        attributes individually. In addition, using the %defattr
+        directive is considered a best practice when creating packages.
+      </para>
+      <para>
+        You can also mark files for a particular language. For example,
+        from the tcsh shell package:
+      </para>
+      <para>
+        %files
+      </para>
+      <para>
+        %defattr(-,root,root)
+      </para>
+      <para>
+        %doc FAQ Fixes NewThings complete.tcsh eight-bit.txt tcsh.html
+      </para>
+      <para>
+        %{_bindir}/tcsh
+      </para>
+      <para>
+        %{_bindir}/csh
+      </para>
+      <para>
+        %{_mandir}/*/*
+      </para>
+      <para>
+        %lang(de) %{_datadir}/locale/de/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        %lang(el) %{_datadir}/locale/el/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        %lang(en) %{_datadir}/locale/en/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        %lang(es) %{_datadir}/locale/es/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        %lang(et) %{_datadir}/locale/et/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        %lang(fi) %{_datadir}/locale/fi/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        %lang(fr) %{_datadir}/locale/fr/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        %lang(it) %{_datadir}/locale/it/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        %lang(ja) %{_datadir}/locale/ja/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        %lang(pl) %{_datadir}/locale/pl/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        %lang(ru) %{_datadir}/locale/ru/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        %lang(uk) %{_datadir}/locale/uk/LC_MESSAGES/tcsh*
+      </para>
+      <para>
+        This example marks certain files as only being of use with
+        particular languages, such as ja for the Japanese text and fr
+        for the French text.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Verifying the %files section</title>
+      <para>
+        You can use the %verify directive to control which tests RPM
+        uses when verifying a package.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See <xref linkend="ch-using-rpm-db"/> for more on package
+        verification.
+      </para>
+      <para>
+        The %verify directive names the tests to include or not include.
+        Table 10-4 lists the tests.
+      </para>
+      <para>
+        Table 10-4 Package verification tests
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Test
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  group
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verifies the group of the file
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  maj
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verifies the file’s major device number
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  md5
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verifies the file’s MD5 checksum
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  min
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verifies the file’s minor device number
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  mode
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verifies the file mode, or permissions
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  mtime
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verifies the file’s last modification time
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  owner
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verifies the owner of the file
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  size
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verifies the file’s size
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  symlink
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verifies a symbolic link
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        With the %verify directive, you can name test, such as shown
+        following:
+      </para>
+      <para>
+        %verify(owner group size) /etc/yp.conf
+      </para>
+      <para>
+        This example limits the tests to owner, group, and size. (The
+        default is to perform all the tests.) You can also use the word
+        not to specify that RPM should not run one or more tests. For
+        example:
+      </para>
+      <para>
+        %verify(not owner) /etc/yp.conf
+      </para>
+      <para>
+        This example turns off just the owner test.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Filling the list of files automatically</title>
+      <para>
+        The -f option to the %files section allows you to read in a list
+        of file names from a file. This file is assumed to look like the
+        contents of the %files section, holding one file name per line.
+        You can also include the various directives for files such as
+        %attr or %doc. For example:
+      </para>
+      <para>
+        %files -f list_of_filenames.txt
+      </para>
+      <para>
+        You can combine this list with filename entries, such as the
+        following:
+      </para>
+      <para>
+        %files -f xconfig_files.txt
+      </para>
+      <para>
+        %defattr(-,root,root)
+      </para>
+      <para>
+        /usr/X11R6/bin/xtoolwait
+      </para>
+      <para>
+        /usr/X11R6/man/man1/xtoolwait.1
+      </para>
+      <para>
+        This example reads in a list of file names from the file named
+        xconfig_files.txt and also includes two additional files.
+      </para>
+      <para>
+        This list of files works best if you cannot determine the file
+        names in advance. The build may create different files based on
+        various macro values. In addition, you may not know the final
+        paths for the files until build time.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Handling RPM build errors for unpackaged files</title>
+      <para>
+        Starting with RPM 4.1, rpmbuild will exit if all files in the
+        $RPM_BUILD_ROOT directory are not found in the %files section
+        (or in a file that lists file names used with the -f option).
+        This is officially known as a Fascist build policy and you can
+        turn it off with the following macros.
+      </para>
+      <para>
+        The %_unpackaged_files_terminate_build macro, if set to 1, tells
+        rpmbuild to exit if it finds files that are in the
+        $RPM_BUILD_ROOT directory but not listed as part of the package.
+        Set this macro to 0 to turn off the Fascist build policy. For
+        example:
+      </para>
+      <para>
+        %define _unpackaged_files_terminate_build 0
+      </para>
+      <para>
+        You can also control the flag that specifies whether missing
+        documentation files cause rpmbuild to exit. Set the
+        %_missing_doc_files_terminate_build macro to 0 to turn off this
+        feature:
+      </para>
+      <para>
+        %define _missing_doc_files_terminate_build 0
+      </para>
+      <para>
+        See the "Defining Spec File Macros" section later in the chapter
+        for more on using macros.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        You can also store this setting in a macro file so that it
+        applies for all packages you build. See
+        <xref linkend="ch-customizing-rpm"/> for more on macro files.
+      </para>
+      <para>
+        While the Fascist build policy may be an annoyance, it can prove
+        very useful. Chances are your spec file has an error if you have
+        files in the $RPM_BUILD_ROOT directory that are not listed in
+        the %files section. The Fascist build policy helps catch these
+        errors. In addition, since the error outputs a list of files in
+        the $RPM_BUILD_ROOT directory that are not listed in the %files
+        section, you can often paste this list into your %files section.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Adding Change Log Entries</title>
+    <para>
+      The change log usually appears at the end of a spec file and is
+      marked with %changelog. It holds messages for each significant
+      change. You should add a change log entry for each major change to
+      the application. For example, if you download a new version of the
+      software you are packaging, add a change log entry for the new
+      version:
+    </para>
+    <para>
+      %changelog
+    </para>
+    <para>
+      * Fri Jun 21 2002 Bob Marley &lt;marley@reggae.com&gt;
+    </para>
+    <para>
+      - Downloaded version 1.4, applied patches
+    </para>
+    <para/>
+    <para>
+      * Tue May 08 2001 Peter Tosh &lt;tosh@reggae.com&gt; 1.3-1
+    </para>
+    <para>
+      - updated to 1.3
+    </para>
+  </sect1>
+  <sect1>
+    <title>Defining Spec File Macros</title>
+    <para>
+      The RPM system defines a lot of handy macros so that your spec
+      files can work regardless of where system directories are located.
+      You simply use the macro, such as %_bindir, in place of hard-coded
+      paths. The %_bindir macro, for example, identifies the default
+      directory for binary executables, /usr/bin.
+    </para>
+    <para>
+      Use these macros wherever possible to avoid hard-coded paths and
+      settings.
+    </para>
+    <sect2>
+      <title>Built-in macros</title>
+      <para>
+        RPM includes a host of built-in macros, including the following
+        useful directories:
+      </para>
+      <para>
+        %_prefix /usr
+      </para>
+      <para>
+        %_exec_prefix %{_prefix}
+      </para>
+      <para>
+        %_bindir %{_exec_prefix}/bin
+      </para>
+      <para>
+        %_sbindir %{_exec_prefix}/sbin
+      </para>
+      <para>
+        %_libexecdir %{_exec_prefix}/libexec
+      </para>
+      <para>
+        %_datadir %{_prefix}/share
+      </para>
+      <para>
+        %_sysconfdir %{_prefix}/etc
+      </para>
+      <para>
+        %_sharedstatedir %{_prefix}/com
+      </para>
+      <para>
+        %_localstatedir %{_prefix}/var
+      </para>
+      <para>
+        %_libdir %{_exec_prefix}/lib
+      </para>
+      <para>
+        %_includedir %{_prefix}/include
+      </para>
+      <para>
+        %_oldincludedir /usr/include
+      </para>
+      <para>
+        %_infodir %{_prefix}/info
+      </para>
+      <para>
+        %_mandir %{_prefix}/man
+      </para>
+      <para>
+        The example directories shown above come from the standard RPM
+        macro file, /usr/lib/rpm/macros, instead of the Red Hat-specific
+        file, /usr/lib/rpm/redhat/macros, which holds:
+      </para>
+      <para/>
+      <para>
+        %_prefix /usr
+      </para>
+      <para>
+        %_sysconfdir /etc
+      </para>
+      <para>
+        %_localstatedir /var
+      </para>
+      <para>
+        %_infodir /usr/share/info
+      </para>
+      <para>
+        %_mandir /usr/share/man
+      </para>
+      <para>
+        %_initrddir %{_sysconfdir}/rc.d/init.d
+      </para>
+      <para>
+        %_defaultdocdir %{_usr}/share/doc
+      </para>
+    </sect2>
+    <sect2>
+      <title>Spec file-specific macros</title>
+      <para>
+        Most of the pre-defined RPM macros hold directory paths or
+        architecture information. RPM also includes a set of useful
+        macros that you can use to help debug problematic spec files and
+        well as perform common tasks in spec files. Table 10-5 lists
+        these debugging and special spec file macros.
+      </para>
+      <para>
+        Table 10-5 Special spec-file macros
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Macro
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %dump
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Prints out macro values
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{echo:message}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Prints message to stderr
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{error:message}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Prints message to stderr and returns BADSPEC
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{expand:expression}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Like eval, expands expression
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{F:file_exp}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Expands file_exp to a file name
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %global name value
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Defines a global macro
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{P:patch_exp}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Expands patch_exp to a patch file name
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{S:source_exp}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Expands source_exp to a source file name
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %trace
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Toggles the printing of debugging information
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{uncompress:filename}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Tests if file filename is compressed. If so,
+                  uncompresses and includes in the given context. If not
+                  compressed, calls cat to include file in given
+                  context.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %undefine macro
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Undefines the given macro
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{warn:message}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Prints message to stderr
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Note
+      </para>
+      <para>
+        To see the current list of macros, put a %dump at the start of
+        your spec file.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Defining new macros</title>
+      <para>
+        In addition to the built-in macros, you can define your own to
+        make it easier to manage your packages. Define a new spec file
+        macro with the following syntax:
+      </para>
+      <para>
+        %define macro_name value
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        %define major 2
+      </para>
+      <para>
+        %define minor 2
+      </para>
+      <para>
+        %define patchlevel 7
+      </para>
+      <para>
+        You can then use a macro with the %macro_name or %{macro_name}
+        syntax. For example:
+      </para>
+      <para>
+        Version: %{major}.%{minor}.%{patchlevel}
+      </para>
+      <para>
+        You can also expand the results of running shell commands using
+        a %(command) syntax with parenthesis instead of curly braces.
+        For example:
+      </para>
+      <para>
+        %define today %(date)
+      </para>
+    </sect2>
+    <sect2>
+      <title>Specifying parameters to macros</title>
+      <para>
+        Most macros perform simple text substitution. You can also pass
+        parameters to macros, and access those parameters within your
+        macros, similarly to how shell scripts get command-line
+        parameters.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-scripting"/> covers shell scripting with RPM.
+      </para>
+      <para>
+        With parameters, you can expand the normal definition of a macro
+        to the following:
+      </para>
+      <para>
+        %define macro_name(options) value
+      </para>
+      <para>
+        Any text within the parenthesis is passed to getopt(3), and acts
+        as parameters to the macro. This is performed when the macro is
+        expanded. You can also pass options to the macro using the
+        %macro_name syntax (without curly braces). For example:
+      </para>
+      <para>
+        %foo 1 2 3
+      </para>
+      <para>
+        This example passes the parameters 1, 2, and 3 to the macro foo.
+        Inside the macro, you can use a shell script-like syntax to
+        access the parameters through special macros. Table 10-6 lists
+        these macros.
+      </para>
+      <para>
+        Table 10-6 Parameter macros inside a macro expansion
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Macro
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Holds
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %0
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The name of the macro
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %*
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  All the parameters to the macro, except for any
+                  processed options
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %#
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The number of parameters
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %1
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The first parameter
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %2
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The second parameter
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %3
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The third parameter, and so on with %4, %5 and beyond
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{-p}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Holds -p if the -p parameter was passed to the macro;
+                  otherwise holds nothing
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{-p*}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Holds the value passed with the -p parameter, if the
+                  -p parameter was passed to the macro; otherwise holds
+                  nothing
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{-p:text}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Holds text if the -p parameter was passed to the
+                  macro; otherwise holds nothing
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Note that all parameters listed in Table 10-6 hold the remaining
+        parameters after getopt(3) processing. You can use these macros
+        within the definition of your own macros. You can also nest
+        macros, such as the following:
+      </para>
+      <para>
+        %define mypatch() patch %{-p:-p%{-p*}}
+      </para>
+      <para>
+        This macro expands to the patch command if no -p parameter was
+        passed. If you pass a -p parameter, such as -p 1, then the macro
+        expands to -p with the value of the -p parameter:
+      </para>
+      <para>
+        patch -p1
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        This type of syntax is used heavily with the patch command.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Creating XML Spec Files</title>
+    <para>
+      RPM spec files are text files containing structured information.
+      It is a natural progression to write RPM spec files using XML. The
+      tool rpmxmlbuild will build an RPM package from an XML-formatted
+      spec file.
+    </para>
+    <para>
+      For example, Listing 10-1 holds a spec file in XML format.
+    </para>
+    <para>
+      Listing 10-1: An XML spec file.
+    </para>
+    <para>
+      &lt;?xml version="1.0"?&gt;
+    </para>
+    <para>
+      &lt;spec distribution="RPM Test" vendor="rpm.org"
+    </para>
+    <para>
+      name="bash" version="2.05a" release="02test"
+    </para>
+    <para>
+      copyright="GPL"
+    </para>
+    <para>
+      url="http://www.gnu.org/software/bash/bash.html"&gt;
+    </para>
+    <para/>
+    <para>
+      &lt;source name="%{name}-%{version}.tar.bz2"
+    </para>
+    <para>
+      size="1434025" md5="c29b50db808003e39558a0f6354f4cad"
+    </para>
+    <para>
+      path="%{name}-%{version}"&gt;
+    </para>
+    <para>
+      &lt;/source&gt;
+    </para>
+    <para/>
+    <para>
+      &lt;buildrequires&gt;
+    </para>
+    <para>
+      &lt;require name="bash" /&gt;
+    </para>
+    <para>
+      &lt;require name="gcc" /&gt;
+    </para>
+    <para>
+      &lt;require name="make" /&gt;
+    </para>
+    <para>
+      &lt;/buildrequires&gt;
+    </para>
+    <para/>
+    <para>
+      &lt;!-- packages --&gt;
+    </para>
+    <para>
+      &lt;package group="System/Base" autoreqprov="no"&gt;
+    </para>
+    <para>
+      &lt;requires&gt;
+    </para>
+    <para>
+      &lt;require name="glibc" /&gt;
+    </para>
+    <para>
+      &lt;/requires&gt;
+    </para>
+    <para>
+      &lt;summary&gt;The Bash package contains the bash
+      program.&lt;/summary&gt;
+    </para>
+    <para>
+      &lt;description&gt;%{summary}
+    </para>
+    <para>
+      Bash is the Bourne-Again SHell, which is a widely used command
+      interpreter
+    </para>
+    <para>
+      on Unix systems. Bash is a program that reads from standard input,
+      the
+    </para>
+    <para>
+      keyboard. A user types something and the program will evaluate
+      what he has
+    </para>
+    <para>
+      typed and do something with it, like running a
+      program.&lt;/description&gt;
+    </para>
+    <para>
+      &lt;files list="%{name}.files.lst" /&gt;
+    </para>
+    <para>
+      &lt;/package&gt;
+    </para>
+    <para/>
+    <para>
+      &lt;package name="bash-doc" group="Documentation/System/Base"
+      autoreqprov="no"&gt;
+    </para>
+    <para>
+      &lt;requires&gt;
+    </para>
+    <para>
+      &lt;require name="%{name}" /&gt;
+    </para>
+    <para>
+      &lt;/requires&gt;
+    </para>
+    <para>
+      &lt;summary&gt;Documentation for the bash package.&lt;/summary&gt;
+    </para>
+    <para>
+      &lt;description&gt;%{summary}&lt;/description&gt;
+    </para>
+    <para>
+      &lt;pre script="%{name}-doc.pre.sh" /&gt;
+    </para>
+    <para>
+      &lt;files list="%{name}-doc.files.lst" /&gt;
+    </para>
+    <para>
+      &lt;/package&gt;
+    </para>
+    <para/>
+    <para>
+      &lt;!-- scripts to create the package --&gt;
+    </para>
+    <para>
+      &lt;prep script="%{name}.prep.sh"&gt;
+    </para>
+    <para>
+      &lt;setup /&gt;
+    </para>
+    <para>
+      &lt;script&gt;echo &amp;quot;Prep
+      completed&amp;quot;&lt;/script&gt;
+    </para>
+    <para>
+      &lt;/prep&gt;
+    </para>
+    <para>
+      &lt;build script="%{name}.build.sh" /&gt;
+    </para>
+    <para>
+      &lt;install script="%{name}.install.sh" /&gt;
+    </para>
+    <para>
+      &lt;clean script="%{name}.clean.sh" /&gt;
+    </para>
+    <para/>
+    <para>
+      &lt;!-- changelog --&gt;
+    </para>
+    <para>
+      &lt;changelog&gt;
+    </para>
+    <para>
+      &lt;changes date="Mon Aug 26 2002" version="2.05a-02test"
+    </para>
+    <para>
+      author="" author-email=""&gt;
+    </para>
+    <para>
+      &lt;change&gt;Added setup macro to extract files&lt;/change&gt;
+    </para>
+    <para>
+      &lt;change&gt;Initial version ready for jbj&lt;/change&gt;
+    </para>
+    <para>
+      &lt;/changes&gt;
+    </para>
+    <para>
+      &lt;/changelog&gt;
+    </para>
+    <para>
+      &lt;/spec&gt;
+    </para>
+    <para>
+      Note
+    </para>
+    <para>
+      XML spec files are a very experimental feature. Future releases of
+      RPM will likely provide more support for XML spec files. The
+      format will likely change.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      This chapter covers spec files, the files that define how to build
+      packages. Start your spec file by defining package information,
+      such as the name, version, and release number. You can also add a
+      detailed description to help administrators decide whether to
+      install your packages.
+    </para>
+    <para>
+      You need to name all of the source and patch files used to build
+      the package. In most cases, the source files are compressed tar
+      archives. After naming all the sources and patches, you need to
+      control how the rpmbuild command should build your package. This
+      comes in four sections.
+    </para>
+    <para>
+      The %prep section prepares for the build by extracting the source
+      files and applying patches. The %build section defines the
+      commands to build the software, normally something as simple as
+      running a configure script and then the make command. The %install
+      section contains the commands for installing the software. And,
+      the %clean section provides commands to clean up after the build.
+    </para>
+    <para>
+      For these sections, you can use handy RPM macros for common tasks,
+      such as running the configure script or the make install command.
+      You can also define scripts the rpm command should run before and
+      after installing, as well as before and after removing the
+      package.
+    </para>
+    <para>
+      Spec files contain a listing of all the files that should go into
+      the package, as well as where those files should be placed on the
+      user’s hard disk.
+    </para>
+    <para>
+      You can define RPM macros in your spec files to make commands that
+      can work with different directory structures as well as simplify
+      common commands.
+    </para>
+    <para>
+      While it may seem that this chapter described a great many options
+      for making spec files, there’s more to come. The next chapter
+      covers advanced spec file topics such as triggers, conditional
+      builds, and specifying dependencies.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

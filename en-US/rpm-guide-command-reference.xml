@@ -1,0 +1,2325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-command-reference">
+  <title>RPM Command Reference</title>
+  <para>
+    This appendix covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        rpm command
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        rpmbuild command
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    This appendix covers the syntax of the command-line options for the
+    rpm and rpmbuild commands.
+  </para>
+  <sect1>
+    <title>The rpm Command</title>
+    <para>
+      The rpm command is the workhorse of the RPM system. The following
+      sections cover options for the major operations with the rpm
+      command.
+    </para>
+    <para>
+      Table A-1 lists the query options for the rpm command.
+    </para>
+    <para>
+      Table A-1 rpm query options with –q or --query
+    </para>
+    <informaltable frame="all">
+      <tgroup cols="2">
+        <tbody>
+          <row>
+            <entry>
+              <para>
+                Option
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Usage
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                -a, --all
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query all packages
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                -c, --configfiles
+              </para>
+            </entry>
+            <entry>
+              <para>
+                List configuration files
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --changelog
+              </para>
+            </entry>
+            <entry>
+              <para>
+                List changelog entries
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --conflicts
+              </para>
+            </entry>
+            <entry>
+              <para>
+                List capabilities this package conflicts with
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                -d, --docfiles
+              </para>
+            </entry>
+            <entry>
+              <para>
+                List documentation files
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --dump
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Dump out extra information on files.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                -f, --file filename
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query for packages owning given file
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --filesbypapkg
+              </para>
+            </entry>
+            <entry>
+              <para>
+                List all files in each selected package
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --fileid md5_id
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query for the package with the given MD5 digest
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                -g, --group group_name
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query packages in the given group
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --hdrid sha1_header_id
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query for the package with the given header identifier
+                number, in SHA1 format
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                -i, --info
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Display a lot of package information including
+                description
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --last
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Reorder the output of the rpm command to show the most
+                recently installed packages first
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --obsoletes
+              </para>
+            </entry>
+            <entry>
+              <para>
+                List capabilities this package obsoletes
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                -p, --package rpm_file
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query the given package file or files
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --pkgid md5_id
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query for the package with the given MD5 package ID
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --provides
+              </para>
+            </entry>
+            <entry>
+              <para>
+                List capabilities provided by package
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --querybynumber number
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query for the given entry, by number, in the RPM
+                database
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --qf, --queryformat format
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Use the given query format for displaying the output
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --redhatprovides capability
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Look in rpmdb-redhat database for packages that provide
+                the given capability
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --redhatrequires capability
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Look in rpmdb-redhat database for packages that require
+                the given capability
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                -R, --requires
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Lists packages and capabilities that this package
+                depends on
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --specfile specfile
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query the given spec file
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                -s, --state
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Display the state of the listed files
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --scripts
+              </para>
+            </entry>
+            <entry>
+              <para>
+                List scripts in the package
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --tid transaction_id
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query for the package or packages with the given
+                transaction ID
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --triggeredby package
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query packages triggered by the given package
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --triggers, --triggerscripts
+              </para>
+            </entry>
+            <entry>
+              <para>
+                List trigger scripts
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --whatrequires capability
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Query packages that require the given capability
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                --whatprovides capability
+              </para>
+            </entry>
+            <entry>
+              <para>
+                List packages that provide the given capability
+              </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+    <sect2>
+      <title>Upgrade, freshen, and install options</title>
+      <para>
+        Table A-2 lists the upgrade, freshen, and installation options
+        for the rpm command.
+      </para>
+      <para>
+        Table A-2 rpm upgrade, freshen, and install options
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --aid
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Add any suggested packages to the list to install or
+                  upgrade
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --allfiles
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Install all the files, even if some might otherwise be
+                  skipped
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --badreloc
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Relocate files even if the package is not relocatable
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --excludedocs
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip the files marked as documentation
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --excludepath path
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip files that begin with path
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --force
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  A short hand for --replacepkgs and --replacefiles
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -h, --hash
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Print hash marks, #, periodically while performing
+                  operation to provide some feedback
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --ignorearch
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Ignore the architecture listed in the package
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --ignoreos
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Ignore the operating system listed in the package
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --ignoresize
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip the check to see if there is enough disk space to
+                  install the package
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --includedocs
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Install files marked as documentation, turned on by
+                  default
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --justdb
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Just update the RPM database, do not modify any files
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nodeps
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip verification of package dependencies
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nodigest
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip verification of package and header digests
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nomd5
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip verification of file MD5 checksums
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --noorder
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not reorder the list of packages to be installed
+                  based on dependencies
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nopost
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not run post-install scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nopostun
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not run post-uninstall scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nopre
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not run pre-install scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nopreun
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not run pre-uninstall scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nosuggest
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not suggest packages for missing dependencies
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --noscripts
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not execute scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nosignature
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip verification of package and header signatures
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --notriggers
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not execute trigger scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --notriggerin
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not run trigger install scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --notriggerpostun
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not run trigger post uninstall scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --notriggerun
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not run trigger uninstall scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --oldpackage
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Allow an upgrade to an older version of a package
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --percent
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Print out percentage of work completed as command
+                  executes
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --prefix directory
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Relocate package to directory, if package is
+                  relocatable
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --relocate old=new
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Relocate all paths that start with old to new, if
+                  relocatable
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --repackage
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Create a package from any files that would be erased
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --replacefiles
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Install package even if it replaces files from other
+                  packages
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --replacepkgs
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Install packages even if they are already installed
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --test
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not install or remove packages, just see if the
+                  command would work
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Use rpm –U or --upgrade to upgrade, rpm –i or --install to
+        install, and –F or --freshen to freshen a package.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Erase options</title>
+      <para>
+        Table A-3 lists the erase, or package removal, options for the
+        rpm command.
+      </para>
+      <para>
+        Table A-3 rpm erase (removal) options with –e or --erase
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --allmatches
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Remove all versions of the packages; normally an error
+                  would occur if there is more than one package of the
+                  same name and you try to erase the package
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nodeps
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip verification of package dependencies
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --noscripts
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not execute scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nopostun
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not run post-uninstall scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nopreun
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not run pre-uninstall scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --notriggers
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not execute trigger scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --notriggerpostun
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not run trigger post uninstall scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --notriggerun
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not run trigger uninstall scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --repackage
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Create a package from any files that would be erased
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --test
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not install or remove packages, just see if the
+                  command would work
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </sect2>
+    <sect2>
+      <title>Signature options</title>
+      <para>
+        Table A-4 lists the signature-related options to the rpm
+        command.
+      </para>
+      <para>
+        Table A-4 rpm signature options with –K, --checksig, or
+        --import
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --addsign
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Sign packages, same as --resign
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --import public_key
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Add given public key to the RPM database
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nodigest
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip verification of package and header digests
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nosignature
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip verification of package and header signatures
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --resign
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Sign packages
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        The --import option works on its own. The rest of the options
+        work with one or more RPM packages.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Verify options</title>
+      <para>
+        The rpm command can verify packages. This involves comparing all
+        files installed by the package with the information in the RPM
+        database, and looking for differences or missing files.
+      </para>
+      <para>
+        Table A-5 lists the verify options to the rpm command.
+      </para>
+      <para>
+        Table A-5 rpm verify options with –V or --verify
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -a, --all
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verify all packages
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -f, --file filename
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verify packages owning given file
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -g, --group group_name
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verify packages in the given group
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nodeps
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip verification of package dependencies
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nodigest
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip verification of package and header digests
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nofiles
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not verify the files in the package
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nogroup
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not verify the group owner
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nolinkto
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not verify the link file attribute
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nomd5
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip verification of file MD5 checksums
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nomtime
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not verify the mtime attribute
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nomode
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not verify the file mode (permissions)
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nordev
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not verify the rdev attribute
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --noscripts
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not execute the verify scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nosignature
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Skip verification of package and header signatures
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nosize
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not verify the file size
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nouser
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not verify the owner of the file
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -p, --package rpm_file
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verify the given package file or files
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --specfile specfile
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verify the given spec file
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --whatrequires capability
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verify packages that require the given capability
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --whatprovides capability
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Verify packages that provide the given capability
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </sect2>
+    <sect2>
+      <title>Database options</title>
+      <para>
+        You can create a new, empty, RPM database as well as rebuild all
+        the inverted lists used for quick access using the database
+        options listed in Table A-6.
+      </para>
+      <para>
+        Table A-6 rpm database options
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --initdb
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Initialize database
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --rebuilddb
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Rebuild all the inverted lists from the Packages file
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </sect2>
+    <sect2>
+      <title>Miscellaneous options</title>
+      <para>
+        These options can be used with any rpm command. Three of the
+        options, --querytags, --version, and --showrc, run on their own.
+        The rest can be used with the other rpm options. Table A-7 lists
+        these miscellaneous options.
+      </para>
+      <para>
+        Table A-7 Miscellaneous rpm options
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -?, --help
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Print the popt help information for all the
+                  command-line options
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --dbpath path_to_rpm_db
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Use the given directory for the RPM database, instead
+                  of the default
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -D, --define 'macro value'
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Define the given macro to hold the given value
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -E, --eval expression
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Print the evaluation of the given expression
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --ftpport port
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Use the given port number for FTP access
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --ftpproxy host
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Use the given host name as a proxy for FTP access
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --httpport port
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Use the given port number for HTTP access
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --httpproxy host
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Use the given host name as a proxy for HTTP access
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --macros file:file:file
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Read the given colon-separated files as the macro
+                  files to define RPM macros; only the first file must
+                  exist
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --pipe command
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Pipe the output of the rpm command to the given
+                  command
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --querytags
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Print the query tag names and exit
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --quiet
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Provide less output, normally show only errors
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --rcfile file:file:file
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Read the given colon-separated files as the rc files
+                  to define RPM settings; only the first file must exist
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --root directory
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Use directory as the top-level directory instead of /.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --showrc
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Print the rpmrc and macro configuration and exit
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -v, --verbose
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Provide more verbose output
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -vv
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Provide even more verbose output, including debugging
+                  information
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --version
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Print the RPM version and exit
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>The rpmbuild Command</title>
+    <para>
+      The rpmbuild command builds RPMs. Most of the options are
+      duplicated. The options that begin with –b build from a spec
+      file, and the options that begin with –t build from a compressed
+      tar archive, commonly called a tarball.
+    </para>
+    <sect2>
+      <title>Building from a spec file</title>
+      <para>
+        Table A-8 lists the rpmbuild options for building RPMs from a
+        spec file.
+      </para>
+      <para>
+        Table A-8 Options for building RPMs from a spec file
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -ba
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build all, both a binary and source RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bb
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build a binary RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bc
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build (compile) the program but do not make the full
+                  RPM, by executing the build commands through the
+                  %build section and stopping
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bp
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Prepare for building a binary RPM, by executing the
+                  build commands through the %prep section and stopping
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bi
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Execute the build commands through the %install
+                  section and stop
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bl
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Check the listing of files for the RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bs
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build a source RPM only
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Each of these options requires the name of a spec file at the
+        end of the command line.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Building from a compressed tar archive</title>
+      <para>
+        Table A-9 lists the rpmbuild options for working with a
+        compressed tar archive.
+      </para>
+      <para>
+        Table A-9 Options for building RPMs from a compressed tar
+        archive
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -ta
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build all, both a binary and source RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -tb
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build a binary RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -tc
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build (compile) the program but do not make the full
+                  RPM, by executing the build commands through the
+                  %build section and stopping
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -tp
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Prepare for building a binary RPM, by executing the
+                  build commands through the %prep section and stopping
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -ti
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Execute the build commands through the %install
+                  section and stop
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -tl
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Check the listing of files for the RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -ts
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build a source RPM only
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Each of these options requires the name of a compressed tar
+        archive at the end of the command line. The tar archive must
+        contain a valid spec file inside the archive.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Rebuilding RPMs from source RPMs</title>
+      <para>
+        You can use the rpmbuild command to rebuild an RPM from a source
+        RPM with the options listed in Table A-10.
+      </para>
+      <para>
+        Table A-10 Options for rebuilding RPMs from source RPMs
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --rebuild
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Rebuild binary RPM from source RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --recompile
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Recompile binary RPM from source RPM
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Each of these options requires the name of a source RPM file on
+        the end of the command line.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Customizing the build</title>
+      <para>
+        You can customize the rpmbuild command with the options listed
+        in Table A-11.
+      </para>
+      <para>
+        Table A-11 Extra build options for the rpmbuild command
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -?, --help
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Print the popt help information for all the
+                  command-line options
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --buildroot directory
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Override the default root directory for building with
+                  directory.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --clean
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Remove the build tree after building
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -D, --define 'macro value'
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Define the given macro to hold the given value
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --dbpath path_to_rpm_db
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Use the given directory for the RPM database instead
+                  of the default
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -E, --eval expression
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Print the evaluation of the given expression
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --macros file:file:file
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Read the given colon-separated files as the macro
+                  files to define RPM macros; only the first file must
+                  exist
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --nobuild
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Don't really build anything, which really tests the
+                  spec file
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --pipe command
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Pipe the output of the rpm command to the given
+                  command
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --quiet
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Provide less output, normally show only errors
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --rcfile file:file:file
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Read the given colon-separated files as the rc files
+                  to define RPM settings; only the first file must exist
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --rmsource
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Remove the sources after the build
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --rmspec
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Remove the spec file after the build
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --root directory
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Use directory as the top-level directory instead of /
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --short-circuit
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  With the -bc or -bi options, jumps directly to the
+                  given stage and just executes that stage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --showrc
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Print the rpmrc and macro configuration and exit
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --sign
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Sign the package with a GPG signature
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --target platform
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build for the given platform. May not work if you
+                  don't have the other platform build commands, such as
+                  cross compilers, set up. Can work for Intel platforms
+                  with i386, i686, and so on.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -v, --verbose
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Provide more verbose output
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -vv
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Provide even more verbose output, including debugging
+                  information
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  --version
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Print the RPM version and exit
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para/>
+    </sect2>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

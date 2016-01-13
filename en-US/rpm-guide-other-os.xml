@@ -1,0 +1,1622 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-other-os">
+  <title>RPM on Other Operating Systems</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Running RPM on other operating systems
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Bootstrapping RPM on other operating systems
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Setting up the RPM environment
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Creating non-Linux RPMs
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Setting up an RPM build environment
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Cross-building packages
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    RPM was originally designed on Linux and for most of its life has
+    been a Linux-centric package management system. But most Linux
+    programs are portable to most versions of Unix or Unix -like
+    operating systems. Linux is, after all, a Unix-workalike operating
+    system.
+  </para>
+  <para>
+    The RPM system is no exception. It has been ported to a number of
+    operating systems, including quite a few Unix variants. The source
+    code is freely available, so you can port RPM to other systems as
+    well.
+  </para>
+  <para>
+    This chapter covers running RPM on non-Linux operating systems,
+    including getting the RPM system in the first place, bootstrapping
+    an RPM environment, and creating packages for other operating
+    systems.
+  </para>
+  <para>
+    The first step is to get RPM for your system, or port RPM if it
+    isn’t already available.
+  </para>
+  <sect1>
+    <title>Running RPM on Other Operating Systems</title>
+    <para>
+      The RPM system, made up of mostly the rpm and rpmbuild commands,
+      have been ported to a number of operating systems. There is
+      nothing stopping you from running the RPM system on other
+      platforms.
+    </para>
+    <para>
+      Other operating systems have their own native package management
+      software. You may prefer the way RPM works, or merely want to
+      standardize on RPM across all platforms you manage. There will
+      always be a few issues, however, when running RPM on other
+      operating systems. For example, operating system patches and
+      updates are likely to be distributed in the operating system’s
+      native package management format, not RPM. Many applications will
+      be updated also using the system’s native package management
+      format.
+    </para>
+    <para>
+      You will need to always keep in mind that there are two package
+      management schemes in use: RPM and the native one. This issue has
+      not stopped a great many people from using RPM on other systems,
+      though, as shown by the list of platforms RPM has been ported to
+      (see Table 20-1 for the list).
+    </para>
+    <para>
+      On the plus side, package management has always been one of the
+      main areas where versions of Linux, Unix, and other operating
+      systems differ, sometimes quite a lot. By using RPM, you can
+      transfer your knowledge of package management from one system to
+      another, saving valuable time and hassles. You will be able to
+      update systems in the same manner, a big plus if you manage a
+      diverse set of systems.
+    </para>
+    <para>
+      Another reason to use RPM on other operating systems is that in
+      most cases, RPM provides far more capabilities than the native
+      package management software. Following the RPM philosophy, each
+      package can be separately verified, checked, and updated. Each
+      package lists the other packages it depends on, and also lists the
+      capabilities it provides. You can automate the installation and
+      upgrade processes with RPM. You can also perform a lot of version
+      and signature comparisons. All of this leads to a more secure,
+      more robust system.
+    </para>
+    <para>
+      Many operating systems don’t include these capabilities in the
+      native package management software. This is why many users run RPM
+      on other operating systems.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      See <xref linkend="ch-intro-rpm"/>  for more on the philosophy behind RPM.
+    </para>
+    <para>
+      If you decide to use RPM on a non-Linux system, the first step is
+      getting RPM for your system, if it is available.
+    </para>
+    <sect2>
+      <title>Getting RPM for your system</title>
+      <para>
+        The first step to using RPM on non-Linux platforms is getting
+        the RPM system for your platform. In most cases, this is a
+        relatively easy step, as RPM has been ported to a great many
+        platforms, as listed on the main RPM Web site.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        Links to RPM versions for various platforms are listed at
+        www.rpm.org/platforms/.
+      </para>
+      <para>
+        Go to this site and download the versions for the platforms you
+        need. Table 20-1 lists the platforms RPM has been ported to, as
+        reported by the RPM site.
+      </para>
+      <para>
+        Table 20-1 Available Platforms for RPM
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Platform
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Notes
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  AIX
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  AmigaOS
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  With GeekGadgets
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  BeOS
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  With GeekGadgets
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  FreeBSD
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  HP-UX
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  10.20+, 9.04
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  IRIX
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Linux
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Multiple platforms including Alpha, Intel, Motorola
+                  68000, SGI MIPS, PowerPC, and SPARC
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  LynxOS
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  MachTen
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  MacOS X
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Mint
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  NCS System V
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  NetBSD
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  OS/2
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  OSF/1
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  3.2+
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  SCO OpenServer
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  5.0.2+
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Sinix
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Solaris
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Solaris for SPARC 2.4 and 8+, Solaris for Intel
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  SunOS 4.1.3
+                </para>
+              </entry>
+              <entry>
+                <para/>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Windows
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Under Cygwin
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Note that RPM has likely been ported to even more platforms.
+        These are just the ones reported to the rpm.org site.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        If you fix a bug in RPM on a non-Linux system, or if you port
+        RPM to a new system, please report this to the rpm.org site
+        maintainers, as well as make your work available for others. You
+        never know, but someone else may fix a problem you’re facing.
+      </para>
+      <para>
+        If Table 20-1 does not cover the platforms you need, you must
+        compile and bootstrap the RPM environment for your platforms, as
+        covered in the "Bootstrapping RPM on Other Operating Systems"
+        section, following.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        Don’t expect to find RPMs of the RPM system for these other
+        platforms. If you did, there would be no way to install RPM.
+        Instead, you’ll find RPM packaged in a variety of formats,
+        typically using a native bundling format for a given system, or
+        at least a supported format. Compressed tar files are very
+        common. RPM for IRIX systems come in IRIX tardist format.
+      </para>
+      <para>
+        If RPM is available for your system, download the package and
+        follow any installation instructions that come with the package.
+        For example, RPM for Solaris 8 requires the libiconv library, as
+        well as the Solaris packages SUNWzlib and SUNWbzip. You must
+        install these packages prior to installing RPM.
+      </para>
+      <para>
+        Each operating system will have similar requirements. Windows
+        systems have a few extra requirements due to the fact that
+        Windows is very different from Linux or Unix-like systems.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Running RPM on Windows</title>
+      <para>
+        The version of RPM for Windows requires cygwin, originally the
+        Cygnus port of many Unix tools to Windows. Now part of Red Hat,
+        you can download the cygwin environment from the main cygwin
+        site.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        Download cygwin from www.cygwin.com.
+      </para>
+      <para>
+        You can download a setup.exe program to install the environment
+        on Windows. After installation, you can download the RPM system
+        for Windows.
+      </para>
+      <para>
+        After you have RPM installed, you can set up your RPM system. If
+        RPM wasn’t already ported to your operating systems, however,
+        you will need to bootstrap RPM on your platforms.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Bootstrapping RPM On Other Operating Systems</title>
+    <para>
+      If you cannot find a version of RPM that has been ported to your
+      platform, you can port it yourself. The RPM system usually isn’t
+      that hard to port to any platform that can appear like Unix or
+      Linux systems, such as any platform that supports POSIX system
+      calls or something like these system calls.
+    </para>
+    <para>
+      Don’t be dismayed by the sheer size of the RPM package. Much of
+      the RPM system was carefully designed to run across multiple
+      platforms, so file access is abstracted to special portability
+      routines. For example, RPM has been ported to both AmigaOS and
+      BeOS, two non-Unix operating systems.
+    </para>
+    <sect2>
+      <title>Downloading the RPM software</title>
+      <para>
+        To bootstrap RPM on another operating system, download the RPM
+        source code from the main RPM site.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        You can download the RPM source code from
+        ftp://ftp.rpm.org/pub/rpm/dist/.
+      </para>
+      <para>
+        Note that you probably do not want to download an RPM of the
+        sources, since your platform won’t have RPM available. In most
+        cases, you’ll want to download a tarred compressed archive,
+        such as rpm-4.1.tar.gz for RPM version 4.1.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Extracting the software</title>
+      <para>
+        If the system you plan to port RPM doesn’t have the tar and
+        gzip commands available, or something that supports these
+        formats, then you need to find a way to extract the software.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        Programs such as WinZip on Windows support extracting .tar.gz
+        files. Your platform may have a similar program.
+      </para>
+      <para>
+        One way is to port the gzip and tar commands to your platform.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        You can download the sources for tar and gzip from www.gnu.org.
+      </para>
+      <para>
+        Another way is to extract the sources on a platform with these
+        commands available, such as a Linux platform. Then, create a
+        file using a format supported by your operating system and
+        transfer the files to the other system.
+      </para>
+      <para>
+        Once you have the RPM source code available on your target
+        system, and all the files are extracted, you are ready to start
+        porting. The first step is really simple: read.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Reading the INSTALL file</title>
+      <para>
+        In the main RPM source directory, you will see two very
+        important files: README and INSTALL. Read them both. (You would
+        be surprised at how many times people need to be told this.)
+      </para>
+      <para>
+        Of the two, the INSTALL file has much more detailed information
+        on installing RPM on a new system. The INSTALL file describes
+        the libraries required by RPM, provides tips on compiling RPM,
+        and describes some of the set up work necessary after compiling
+        the RPM system.
+      </para>
+      <para>
+        Some of the hardest parts of the RPM system to port, though, may
+        be in the database, compression, and encryption calls, used as
+        libraries by the RPM system.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Libraries required by RPM</title>
+      <para>
+        Rather than invent everything from scratch, the RPM system makes
+        use of a number of libraries, including those listed in Table
+        20-2.
+      </para>
+      <para>
+        Table 20-2 Libraries used by RPM
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Library
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Purpose
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Berkeley DB
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  RPM database, using db1 and db3
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  bzip2
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Compression
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  gettext
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  International text lookup
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  gpg
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  For digital signatures
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  gzip
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Compression
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  popt
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Processing command-line options
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  zlib
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Compression
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Read through the INSTALL file to find out where you can download
+        versions of these libraries. You may find that each library has
+        its own set of dependencies, all of which you need to port to
+        your target platform.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Tools for building RPM</title>
+      <para>
+        In addition to the libraries listed in Table 20-2, RPM requires
+        a number of GNU utilities for building RPM, including those
+        listed in Table 20-3.
+      </para>
+      <para>
+        Table 20-3 Tools used to build RPM
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Tool
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Autoconf
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Builds configure scripts
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Automake
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Used with autoconf
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  GNU make
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Used to control building the sources
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Libtool
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Used by the autogen.sh script
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        In addition to all this, RPM works best with the GNU C compiler,
+        GCC, and the GNU make program, gnumake, or simply gmake.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        The source code for all the GNU tools is available at
+        www.gnu.org.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Compiling RPM</title>
+      <para>
+        After downloading the RPM sources, extracting all the files and
+        installing all the prerequisite libraries, you are ready to
+        start compiling RPM.
+      </para>
+      <para>
+        RPM includes quite a few subsystems, such as popt for parsing
+        command-line options. Each of these subsystems requires some
+        configuration. Most of this configuration is automated through
+        the use of the autogen.sh script and the autoconf/automake tool
+        used to create configure scripts.
+      </para>
+      <para>
+        The autogen.sh script is a Bourne shell script that checks for
+        specific versions of necessary tools and libraries. After
+        checking dependencies, the autogen.sh script calls different
+        autogen.sh scripts in the beecrypt, libelf, popt, and zlib
+        directories. When done with that task, the autogen.sh script
+        calls configure.
+      </para>
+      <para>
+        Pass a command-line option of --noconfigure to disable the call
+        to configure.
+      </para>
+      <para>
+        Edit the autogen.sh script if you are using different versions
+        of the necessary tools. The autogen.sh script is coded to
+        require the specific versions of these tools as were used
+        originally to build the RPM package. In addition, your system
+        may have libraries stored in different locations than those
+        expected by the autogen.sh, so it's a good idea to edit this
+        script and verify all the assumptions.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        One really big assumption in this script is that you have a
+        Unix-like operating system. If not, you will need to determine
+        how to set up the Makefiles manually. This requires a lot of
+        trial and error while you edit the Makefiles and then see if you
+        can build the software. Fix each problem that arises and try
+        again.
+      </para>
+      <para>
+        When you are done with the autogen.sh script, you can use the
+        following basic commands to create system-specific Makefiles,
+        compile RPM and install the commands:
+      </para>
+      <para>
+        $ ./configure
+      </para>
+      <para>
+        $ make
+      </para>
+      <para>
+        $ make install
+      </para>
+      <para>
+        The configure script takes the Makefile.in files and uses these
+        files as templates to create custom versions of Makefile.in
+        files, tuned to your system. (The automake system starts with a
+        Makefile.am file, creates an expanded Makefile.in file, and
+        finally results in a Makefile tuned to your system.) If all else
+        fails, you can copy each Makefile.in file to Makefile and then
+        edit the Makefile to make one that will work on your system.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See the GNU site, at www.gnu.org, for more on the autoconf and
+        automake tools.
+      </para>
+      <para>
+        If the make install step fails, you can manually copy the RPM
+        executables and scripts to a directory for system commands.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Handling problems</title>
+      <para>
+        If RPM fails to compile or install, you can still work around
+        many issues. The key is to find out what went wrong, fix the
+        problem, and try again. You may go through this loop many times
+        before RPM successfully compiles and installs.
+      </para>
+      <para>
+        Most problems can be solved by changing the configuration
+        settings. If possible, change the inputs to the configure
+        command to specify C compiler options, and so on, that you
+        discover you need. You can then run the basic commands to build
+        RPM again, but with any special options you discovered are
+        necessary:
+      </para>
+      <para>
+        $ ./configure –any_options_set_here
+      </para>
+      <para>
+        $ make
+      </para>
+      <para>
+        $ make install
+      </para>
+      <para>
+        If you take this approach, you avoid having to edit a number of
+        Makefiles (one in each source code subdirectory) by hand. You
+        also have an easier time of switching to different command-line
+        options as you determine more solutions to the compilation
+        problems.
+      </para>
+      <para>
+        If this won’t work, though, you can edit the Makefile.am file
+        or the generated Makefile directly to add whatever settings are
+        needed. For example, you may need to specify additional
+        directories for libraries, or some C compiler compatibility
+        option.
+      </para>
+      <para>
+        As you discover problems, remember you are not alone in porting
+        RPM. Check the RPM mailing list, where the question of getting
+        RPM going on other platforms comes up frequently.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        For details on viewing the RPM mailing list archives and signing
+        up for the list, see www.rpm.org/mailing_list/.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Setting Up the RPM System</title>
+    <para>
+      Once you have RPM available on your platform, you need to set up
+      the RPM system. This includes setting up the RPM database and
+      creating an RPM environment.
+    </para>
+    <sect2>
+      <title>Setting up the RPM database</title>
+      <para>
+        After you have the RPM system available on your platform, you
+        need to set up the RPM database. This usually involves two
+        steps:
+      </para>
+      <para>
+        *Initializing an empty RPM database
+      </para>
+      <para>
+        *Populating the database with packages, especially for
+        dependencies
+      </para>
+      <para>
+        Both steps are necessary.
+      </para>
+      <sect3>
+        <title>Initializing an Empty RPM Database</title>
+        <para>
+          After you have the RPM system installed on your platform, the
+          next big step is to create an RPM database for your platform.
+          You can make an empty database with the rpm --initdb command,
+          as shown following:
+        </para>
+        <para>
+          # mkdir /var/lib/rpm
+        </para>
+        <para>
+          # rpm --initdb
+        </para>
+        <para>
+          The first command creates the default directory for the RPM
+          database.
+        </para>
+        <para>
+          You may need to pass command-line options to specify a
+          non-default location of the RPM database, such as the
+          following:
+        </para>
+        <para>
+          # rpm --dbpath /location/of/your/rpm/database --initdb
+        </para>
+        <para>
+          Use a command like this one if you don’t want to place the
+          RPM database in its default location.
+        </para>
+        <para>
+          In addition, use the –v option to add more verbose output.
+          This is very useful if errors occur. Use the --root option to
+          specify a different root directory for RPM operations. Use the
+          --rcfile option to specify a non-default set of rc files and
+          the --macros option to specify a non-default set of macros.
+        </para>
+        <para>
+          Cross Reference
+        </para>
+        <para>
+          <xref linkend="ch-customizing-rpm"/>  covers RPM customization.
+        </para>
+        <para>
+          Initializing the RPM database creates the necessary structure
+          for an empty database. You can then fill, or populate, the
+          database with packages. In most cases, all you need to do is
+          install packages to populate the RPM database, as each
+          installed package gets added to the database.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Handling Dependencies for Packages Installed Without RPM</title>
+        <para>
+          Each time you install a package, you populate the RPM
+          database. This works well, as long as you have already
+          installed all the dependencies for the packages you want to
+          install.
+        </para>
+        <para>
+          On an operating system that is based on RPM, such as Red Hat
+          Linux, all packages (except for some bootstrapping code) are
+          installed with RPM. That means nearly everything on the system
+          is defined in the RPM database. The RPM database then has a
+          full knowledge of what you have installed and can properly
+          handle dependencies. Thus, a failure to find a dependency
+          means that you have not installed the requisite package that
+          provides the needed capability.
+        </para>
+        <para>
+          On an operating system that is not based on RPM, however, such
+          as Solaris or IRIX, most packages have already been installed
+          by some means other than RPM.. That’s because these
+          operating systems use different native package-management
+          techniques and different package formats.
+        </para>
+        <para>
+          It is very likely that RPM packages you want to install have
+          dependencies that come from non-RPM packages. For example, the
+          rpm program on Windows depends on the cygwin environment, yet
+          this environment needs to be installed with a Windows
+          setup.exe program, not with the rpm command.
+        </para>
+        <para>
+          To get around this problem, you need to populate the new RPM
+          database with a package or packages that reflect the current
+          system in order to properly handle dependencies. The main way
+          to do this is to set up a virtual package.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Setting Up A Virtual Package</title>
+        <para>
+          You can get around the problem of pre-existing software by
+          building a virtual package that lists the system
+          libraries@mdinstalled without RPM@mdin an RPM package. This
+          way, the rpm command will find that the dependencies are
+          installed, even if they were not really installed with RPM.
+          You need to do this for all capabilities and system libraries
+          installed outside of RPM control.
+        </para>
+        <para>
+          To help create such a virtual package, use the
+          vpkg-provides.sh script from the scripts directory. The
+          vpkg-provides.sh script searches a list of directories for
+          shared libraries and interpreters (such as shells). The
+          vpkg-provides.sh script then creates a spec file that lists
+          all the files found, files that are managed outside of RPM.
+          You can use this spec file to create an RPM and install the
+          RPM using the rpm command to populate the RPM database.
+        </para>
+        <para>
+          The RPM spec file created by the vpkg-provides.sh doesn’t
+          really install any files, as all the files are already
+          installed. Instead it makes a package that claims ownership
+          for all these files so that RPM dependencies can function
+          properly.
+        </para>
+        <para>
+          The vpkg-provides.sh script accepts three main command-line
+          options: --spec_header, --ignore_dirs, and --no_verify.
+        </para>
+        <para>
+          The --spec_header option tells the script the name of the RPM
+          spec file it should use as a header for the spec file it will
+          produce. You need to provide the path to the file. For
+          example:
+        </para>
+        <para>
+          # sh vpkg-provides.sh --spec_header /path/to/spec/file
+        </para>
+        <para>
+          You need to provide a spec file header to make a complete spec
+          file. This header should contain the Summary, Name, Version,
+          and Release settings, at least. <xref linkend="ch-specfiles"/>  covers these spec
+          file tags.
+        </para>
+        <para>
+          The --ignore_dirs option tells the vpkg-provides.sh script to
+          ignore certain directories. You need to pass a list of egrep
+          search patterns that identify the directories to ignore.
+          Separate each pattern with a pipe character, |.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          The egrep command may not be available on your system. It may
+          be easier to edit the vpkg-provides.sh script and manually
+          specify the directories to ignore.
+        </para>
+        <para>
+          The --no_verify option tells the vpkg-provides.sh script to
+          skip the step of creating a script to verify checksums of all
+          files in the package.
+        </para>
+        <para>
+          In addition to these main command-line options, you can also
+          pass the following options to the vpkg-provides.sh script.
+        </para>
+        <para>
+          The --shlib_dirs option tells the vpkg-provides.sh script the
+          directories to look for shared libraries. Pass a
+          colon-delimited list of directories. For example:
+        </para>
+        <para>
+          # sh vpkg-provides.sh --spec_header /path/to/spec/file \
+        </para>
+        <para>
+          --shlib_dirs "/bin:/usr/bin:/sbin:/usr/sbin:/usr/ucb:/usr/bsd"
+        </para>
+        <para>
+          The --interp_dirs option tells the vpkg-provides.sh script
+          which directories to look in to find interpreters such as sh,
+          bash, perl, wish (Tcl/Tk), and awk. The --interps option tells
+          the vpkg-provides.sh script the names of the interpreter
+          commands. Both these options expect a colon-delimited list.
+        </para>
+        <para>
+          The --find_provides option tells the vpkg-provides.sh script
+          the name of the find-provides script to use, defaulting to
+          /usr/lib/rpm/find-provides.
+        </para>
+        <para>
+          The vpkg-provides.sh script defines specific directories to
+          look in for shared libraries and interpreters under various
+          operating systems. You will most likely need to edit this
+          section.
+        </para>
+        <para>
+          In fact, if you are working with a non-Unix system, or if you
+          experience problems running the vpkg-provides.sh script, you
+          can edit the file to remove the problematic commands. You can
+          also create a new script in a scripting language supported on
+          your system. The vpkg-provides.sh script is a Linux shell
+          script. Linux and Unix systems should be able to run the
+          script, but non-Unix systems likely won’t have the commands
+          and may also not support shell scripts at all. In an effort to
+          be generic, the vpkg-provides.sh script does a lot of work.
+          You can limit this by explicitly specifying directories and
+          commands, for example. And, if all else fails, you can create
+          a virtual package manually (covered in the following section).
+        </para>
+        <para>
+          When complete, the vpkg-provides.sh script outputs a spec
+          file, using the header you provided, and outputs a set of
+          Provides: lines to specify what the package provides. It then
+          outputs some empty definitions for the prep, build, install,
+          and clean sections of the spec file.
+        </para>
+        <para>
+          For example, you can run the vpkg-provides.sh script with a
+          command like the following:
+        </para>
+        <para>
+          $ sh ./vpkg-provides.sh --spec_header my_header.spec
+          --find_provides ./find-provides --no_verify
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          If you run this script as a non-root user, you may get a
+          number of permission errors as the vpkg-provides.sh script
+          searches through system directories.
+        </para>
+        <para>
+          The script will then output your spec file header along with
+          output like that shown in Listing 20-1.
+        </para>
+        <para>
+          Listing 20-1: Output from the vpkg-provides.sh script
+        </para>
+        <para>
+          Provides: /bin/sh
+        </para>
+        <para>
+          Provides: /bin/csh
+        </para>
+        <para>
+          Provides: /bin/ksh
+        </para>
+        <para>
+          Provides: /bin/perl
+        </para>
+        <para>
+          Provides: /bin/awk
+        </para>
+        <para>
+          Provides: /bin/nawk
+        </para>
+        <para>
+          Provides: /bin/oawk
+        </para>
+        <para>
+          Provides: /usr/bin/sh
+        </para>
+        <para>
+          Provides: /usr/bin/csh
+        </para>
+        <para>
+          Provides: /usr/bin/ksh
+        </para>
+        <para>
+          Provides: /usr/bin/perl
+        </para>
+        <para>
+          Provides: /usr/bin/awk
+        </para>
+        <para>
+          Provides: /usr/bin/nawk
+        </para>
+        <para>
+          Provides: /usr/bin/oawk
+        </para>
+        <para>
+          Provides: /sbin/sh
+        </para>
+        <para>
+          Provides: /usr/dt/bin/dtksh
+        </para>
+        <para>
+          Provides: /usr/xpg4/bin/sh
+        </para>
+        <para>
+          Provides: /usr/xpg4/bin/awk
+        </para>
+        <para>
+          %prep
+        </para>
+        <para>
+          # nothing to do
+        </para>
+        <para>
+          %build
+        </para>
+        <para>
+          # nothing to do
+        </para>
+        <para>
+          %install
+        </para>
+        <para>
+          # nothing to do
+        </para>
+        <para>
+          %clean
+        </para>
+        <para>
+          # nothing to do
+        </para>
+        <para>
+          %files
+        </para>
+        <para>
+          # no files in a virtual package
+        </para>
+        <para>
+          The vpkg-provides.sh script also outputs a package description
+          that explains how the package was created. This is important
+          so that you know this is a virtual package.
+        </para>
+        <para>
+          When done, use the rpmbuild command to create an RPM from the
+          generated spec file.
+        </para>
+        <para>
+          Cross Reference
+        </para>
+        <para>
+          <xref linkend="ch-creating-rpms"/> covers how to run the rpmbuild command, and <xref linkend="ch-specfiles"/> covers spec files in detail.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Creating a Virtual Package Manually</title>
+        <para>
+          Even on Unix-like systems you may experience troubles with the
+          vpkg-provides.sh script. That’s simply because the
+          vpkg-provides.sh script assumes a number of Unix and GNU
+          utilities are available. In most cases, it will work best if
+          you can fix what went wrong and run the vpkg-provides.sh
+          script again.
+        </para>
+        <para>
+          If all else fails, though, you can create a virtual package
+          spec file manually. Create a spec file starting with the
+          Summary, Name, Version, and Release settings.
+        </para>
+        <para>
+          Looking at the output shown in Listing 20-1, you can create a
+          Provides: statement for each shared library on your system,
+          and each interpreter, such as shells. Add each statement to
+          your spec file. For example:
+        </para>
+        <para>
+          Provides: libgen.so
+        </para>
+        <para>
+          Copy the prep, build, install, and clean sections exactly as
+          they are in Listing 20-1. You can now run the rpmbuild command
+          to create a virtual package. Install this package.
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Creating the RPM environment</title>
+      <para>
+        The RPM environment is made up of a large number of RPM settings
+        and macro definitions. Run the rpm --showrc command to see the
+        current environment settings on Linux:
+      </para>
+      <para>
+        $ rpm –showrc
+      </para>
+      <para>
+        ARCHITECTURE AND OS:
+      </para>
+      <para>
+        build arch : i386
+      </para>
+      <para>
+        compatible build archs: i686 i586 i486 i386 noarch
+      </para>
+      <para>
+        build os : Linux
+      </para>
+      <para>
+        compatible build os's : Linux
+      </para>
+      <para>
+        install arch : i686
+      </para>
+      <para>
+        install os : Linux
+      </para>
+      <para>
+        compatible archs : i686 i586 i486 i386 noarch
+      </para>
+      <para>
+        compatible os's : Linux
+      </para>
+      <para/>
+      <para>
+        RPMRC VALUES:
+      </para>
+      <para>
+        macrofiles :
+        /usr/lib/rpm/macros:/usr/lib/rpm/i686-linux/macros:/etc/
+      </para>
+      <para>
+        rpm/macros.specspo:/etc/rpm/macros.db1:/etc/rpm/macros.cdb:/etc/rpm/macros:/etc/
+      </para>
+      <para>
+        rpm/i686-linux/macros:~/.rpmmacros
+      </para>
+      <para>
+        optflags : -O2 -march=i686
+      </para>
+      <para>
+        This output was truncated for space. As you can see, there are a
+        lot of expected settings. You need to set up these same settings
+        and macros, but with the proper values for the new system on
+        which you are running RPM.
+      </para>
+      <para>
+        The files rpmrc.in and macros.in serve as the default templates
+        used to create the rc and macro settings, respectively. These
+        files are modified by the configure script to include values
+        specific to the local operating system. You can edit these files
+        as needed for your system, prior to installing RPM. That is,
+        edit these files between calling the make command and the make
+        install command.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-customizing-rpm"/>  covers how to customize the RPM settings and macros,
+        along with the popt aliases.
+      </para>
+      <para>
+        The INSTALL file in the RPM sources also describes some
+        modifications you may want to make to the macros.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Creating Non-Linux RPMS</title>
+    <para>
+      Once you have RPM set up on a system, you should be able to create
+      RPMs using the rpmbuild command on that system.
+    </para>
+    <para>
+      Warning
+    </para>
+    <para>
+      Do not build RPM packages logged in as a root or Administrator
+      user. If something goes wrong, rpmbuild could destroy files in
+      your system. Remember that spec files can define a number of
+      commands and shell scripts. Any of these could have an error that
+      could cause major damage when run as a root user.
+    </para>
+    <para>
+      Before building RPMs with the rpmbuild command, though, you may
+      want to customize the build environment to better reflect your
+      system. You may also find it is too difficult to build most RPMs
+      on the non-Linux system and instead focus on cross-building
+      packages, should the rpmbuild command not work on the target
+      systems.
+    </para>
+    <para>
+      This section covers topics related to building RPMs on or for
+      non-Linux systems.
+    </para>
+    <sect2>
+      <title>Setting up a build environment</title>
+      <para>
+        In RPM terms, your build environment consists of the directories
+        where you build RPMs, as well as the rc and macro settings that
+        define all of the variables in an RPM-based system. To set up
+        your build environment, you need to ensure that all the rc and
+        macro settings reflect the true environment on your non-Linux
+        system.
+      </para>
+      <para>
+        The rpm --showrc command, discussed previously in the "Creating
+        the RPM Environment" section, lists the settings for your
+        system. You can use this command to verify all the settings.
+      </para>
+      <para>
+        You may want to change some settings, such as the top directory
+        where RPMs are built. By default, this setting is something like
+        the following:
+      </para>
+      <para>
+        _topdir %{_usrsrc}/redhat
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See <xref linkend="ch-customizing-rpm"/>  for more on how to customize the rc and macro
+        settings.
+      </para>
+      <para>
+        In most cases the _topdir setting on Red Hat Linux systems map
+        to the /usr/src/redhat directory. Your system may not even have
+        a /usr/src directory. Also you may not want to build RPMs in a
+        redhat directory, which may cause confusion if you are building
+        on a non-Red Hat Linux system.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See <xref linkend="ch-other-linuxes"/>  for more information on setting up a build
+        environment for RPMs. <xref linkend="ch-other-linuxes"/>  focuses on other Linux systems,
+        but many of the same techniques apply.
+      </para>
+      <para>
+        With a build environment set up, you should be able to create
+        RPMs with the rpmbuild command. If this doesn’t work, or is
+        too difficult, then you can try cross-building packages.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Cross-building packages</title>
+      <para>
+        You may find that it is too difficult to create RPMs on a given
+        platform. It may be easier to build the RPMs on another
+        platform, such as a Linux system, as if it were on the target
+        platform. This is called cross-building packages, since you are
+        building a package on one system specifically designed for
+        another.
+      </para>
+      <para>
+        In most cases, the target platform is quite different from the
+        system where you cross-build packages. Otherwise, you would
+        likely just build the RPMs on the target platform.
+      </para>
+      <para>
+        The key issues with cross-building are the following:
+      </para>
+      <para>
+        *You must compile any executables with a cross compiler for the
+        proper target platform.
+      </para>
+      <para>
+        *You must set the target platform in the RPMs you build.
+      </para>
+      <para>
+        *You must manage dependencies, and likely need to turn off the
+        automatic generation of dependencies.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        Setting up a cross-building environment is oftentimes more work
+        than it is worth. If you can compile applications and build
+        packages on the target system, do that. The cross-building
+        option should be used only if you really cannot build packages
+        on the target system. For example, many handheld or small-format
+        computers lack the processor performance or memory to compile
+        applications. These are good candidates for cross-building.
+      </para>
+      <para>
+        To compile executables for another platform, especially a
+        platform with a different processor architecture, you need a
+        cross compiler. A cross compiler runs on one system and produces
+        executables for another.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        Cross compilers are heavily used when working with embedded and
+        small device systems. The embedded system may not have the
+        processor power to compile applications, or it may simply be
+        inconvenient to compile applications on the embedded system.
+      </para>
+      <para>
+        The Linux gcc compiler can act as a cross compiler if you
+        install the right gcc add-on packages. See the GNU site for more
+        on the gcc compiler.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        You can download GCC and other GNU software from www.gnu.org.
+      </para>
+      <para>
+        In addition to compiling for the target platform, you need to
+        ensure that the RPM is marked as being for the target
+        architecture. If not, the rpm command will fail when trying to
+        install the RPM on the target system.
+      </para>
+      <para>
+        You can set the target architecture with the --target option to
+        the rpmbuild command. For example:
+      </para>
+      <para>
+        rpmbuild –bi --target arm-sharp-linux
+      </para>
+      <para>
+        This specifies a target CPU architecture of ARM, the vendor
+        Sharp (which just happens to make an ARM-based Linux device) and
+        the operating system of Linux. The basic format is:
+      </para>
+      <para>
+        cpu-vendor-os
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See <xref linkend="ch-rpmbuild"/>  for more on using the --target option to the
+        rpmbuild command.
+      </para>
+      <para>
+        You must also turn off or correct any automatically generated
+        dependencies in RPMs you build for other platforms. That is, any
+        dependencies based on the operating system or architecture of
+        the system you are cross-building on will likely not be found,
+        or be found in a different location or format, on the target
+        platform.
+      </para>
+      <para>
+        This is where the handy RPM feature of automatically building
+        the dependencies does not work to your advantage. You can turn
+        off this feature, however.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See <xref linkend="ch-other-linuxes"/>  for information on how to turn off the automatic
+        generation of dependencies.
+      </para>
+      <para>
+        You should turn off the automatically building of dependencies
+        for any packages you cross build.
+      </para>
+      <para>
+        Using these techniques, you can build packages on one system for
+        use on another, very different system. Due to the difficulties,
+        you should only go this route if it becomes too difficult to use
+        the rpmbuild command on the target systems.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      With its superior package-management capabilities, especially for
+      automated installations and upgrades, you may want to use RPM on
+      non-Linux platforms. As the experience of many developers has
+      shown, you can indeed use RPM on non-Linux platforms.
+    </para>
+    <para>
+      The rpm.org site maintains a listing of operating systems where
+      developers have ported RPM. If you are lucky, you can download RPM
+      for your operating system and start working right away. If you are
+      not lucky, you will need to port RPM to your target system.
+    </para>
+    <para>
+      If RPM has been ported to your architecture, download the package
+      and follow the installation instructions. If RPM has not been
+      ported to your architecture, download the RPM sources and all
+      prerequisite libraries. You may need to port each library to your
+      architecture before you can even begin to port RPM.
+    </para>
+    <para>
+      The RPM sources use a configured build process that also requires
+      some prerequisite tools. You need to get or port these to your
+      architecture as well. Whew.
+    </para>
+    <para>
+      Once everything is in place, you can start the port of RPM. In
+      many cases, you just need to figure out how to get RPM to compile
+      and everything will fall into place. In other cases, you will need
+      to work on each RPM subsystem to get it to build and run.
+    </para>
+    <para>
+      After you have RPM for your system, you need to initialize the RPM
+      database with the rpm --initdb command. You can then start to
+      populate your RPM database. Because a large number of libraries
+      have already been installed on your system, you may need to create
+      a virtual package that claims to provide these files. Installing
+      such a virtual package will allow you to install other RPMs that
+      may be dependent on system libraries.
+    </para>
+    <para>
+      Much of porting RPM to another platform depends on the RPM
+      environment and how you need to customize that environment. The
+      next chapter shows how to customize your RPM environment, on Linux
+      or on other operating systems.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

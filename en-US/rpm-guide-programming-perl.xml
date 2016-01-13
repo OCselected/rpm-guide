@@ -1,0 +1,1581 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-programming-perl">
+  <title>Programming RPM with Perl</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Using the RPM2 module to access information on package files
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Querying the RPM database from Perl
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Cross-referencing capabilities by the packages that provide and
+        require capabilities
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Extracting information on packages
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    Perl is one of the most popular scripting languages. Used by system
+    administrators, software developers, and a host of other users, Perl
+    runs on many operating systems including Linux, UNIX, and Windows.
+    Perl stands for Practical Extraction and Report Language, or
+    sometimes Pathologically Eclectic Rubbish Lister.
+  </para>
+  <para>
+    Note
+  </para>
+  <para>
+    In the same vein, LISP stands for Lots of Irritating Single
+    Parenthesis and COBOL for Completely Obnoxious Business Oriented
+    Language.
+  </para>
+  <para>
+    I began my book Cross-Platform Perl (John Wiley &amp; Sons, 2000) by
+    mentioning that when I first started learning Perl, I thought it was
+    an evil plot. I still do. But it is a very practical evil plot. You
+    can get a lot of work done with Perl, and quickly.
+  </para>
+  <para>
+    Because of a long history of text processing, Perl is especially
+    popular among system administrators. Perl also supports add-on
+    packages, called modules. You can find thousands of add-on modules
+    for text processing, networking, and a plethora of other tasks.
+    There are so many modules available that some people who don’t
+    like the Perl syntax script with Perl anyway, because the available
+    modules save a lot of time.
+  </para>
+  <para>
+    Cross Reference
+  </para>
+  <para>
+    See search.cpan.org, the Comprehensive Perl Archive Network, for a
+    listing of many Perl modules.
+  </para>
+  <para>
+    This chapter covers working with RPM files and the RPM database
+    using Perl. You can combine RPM usage with other Perl usage, such as
+    generating HTML files or downloading RPMs over a network link.
+  </para>
+  <para>
+    Cross Reference
+  </para>
+  <para>
+    Many of the RPM tools covered in <xref linkend="ch-management-software"/>  are written in Perl.
+  </para>
+  <sect1>
+    <title>Getting and Using the Perl RPM Modules</title>
+    <para>
+      A number of Perl RPM modules are available. No one module provides
+      all the features you need, although with time, the Perl modules
+      will consolidate into a few modules that most everyone uses. As of
+      this writing, the RPM2 module, by Chip Turner of Red Hat, provides
+      the most recent approach to working with the RPM system from Perl.
+      This chapter covers the RPM2 module.
+    </para>
+    <para>
+      Red Hat Linux 8.0 comes with a perl-RPM2 package, which you need
+      to install to use this module. Otherwise, you can download the
+      module from www.cpan.org. Install this module, as well as the perl
+      module, which provides the Perl language interpreter. Once you
+      have this module installed and the perl package installed, you are
+      ready to go.
+    </para>
+    <para>
+      Note
+    </para>
+    <para>
+      The version of the perl-RPM2 package that ships with Red Hat Linux
+      8.0 has a bug in that it will not open package files that were
+      created with the version of rpm that ships with Red Hat Linux 8.0.
+      That is, the Perl module cannot read package files that ship with
+      Red Hat Linux. You can read older package files, though. This
+      problem only affects attempts to read .rpm files, not installed
+      packages. The bug is related to reading signed packages but not
+      having the GPG keys in the keyring. The latest version on
+      search.cpan.org fixes this problem.
+    </para>
+    <para>
+      The RPM2 module contains Perl methods to work on two types of RPM
+      objects: RPM files and installed packages.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Working with RPM Files</title>
+    <para>
+      The RPM2 module provides a top-level object, RPM2, that acts as an
+      entry point into the module. From the RPM2 object, you either open
+      the RPM database, covered in the "Programming with the RPM
+      Database" section, or open an RPM package file, covered here.
+    </para>
+    <para>
+      The first step in working with an RPM file is to open the file
+      inside a Perl script.
+    </para>
+    <sect2>
+      <title>Opening package files</title>
+      <para>
+        The open_package subroutine opens an RPM package file and
+        returns a header object (an RPM2::Header). The basic syntax
+        follows:
+      </para>
+      <para>
+        my $header = RPM2-&gt;open_package( $filename );
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        my $header =
+        RPM2-&gt;open_package("jikes-1.14-1-glibc-2.2.i386.rpm");
+      </para>
+      <para>
+        After you’ve opened a package, you can perform a number of
+        query operations on the header object returned by the
+        open_package subroutine.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Listing tags from the package</title>
+      <para>
+        Each RPM package has information stored under a variety of tags,
+        such as the package name under the NAME tag and the package long
+        description under the DESCRIPTION tag.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        These are the same tags introduced with the --queryformat option
+        to the rpm command discussed in <xref linkend="ch-using-rpm-db"/> .
+      </para>
+      <para>
+        The tag subroutine returns the value of a given tag. For
+        example, to get the name of the package, use the NAME tag:
+      </para>
+      <para>
+        use RPM2;
+      </para>
+      <para/>
+      <para>
+        my $header =
+        RPM2-&gt;open_package("jikes-1.14-1-glibc-2.2.i386.rpm" );
+      </para>
+      <para/>
+      <para>
+        print $header-&gt;tag("NAME"), "\n";
+      </para>
+      <para>
+        Pulling this together, Listing 18-1 shows example script that
+        lists the name and one-line short summary of a package file.
+      </para>
+      <para>
+        Listing 18-1: rpmsum.pl
+      </para>
+      <para>
+        #!/usr/bin/perl
+      </para>
+      <para/>
+      <para>
+        #
+      </para>
+      <para>
+        # Lists summary from an RPM package file
+      </para>
+      <para>
+        # Usage:
+      </para>
+      <para>
+        # rpmsum.pl package_name.rpm
+      </para>
+      <para>
+        #
+      </para>
+      <para>
+        use strict;
+      </para>
+      <para>
+        use RPM2;
+      </para>
+      <para/>
+      <para>
+        my $header = RPM2-&gt;open_package( $ARGV[0] );
+      </para>
+      <para/>
+      <para>
+        print $header-&gt;tag("NAME"), ": ", $header-&gt;tag("SUMMARY"),
+        "\n";
+      </para>
+      <para>
+        Enter this script and name the file rpmsum.pl.
+      </para>
+      <para>
+        When you run this script, you need to pass the name of a package
+        file on the command line. For example:
+      </para>
+      <para>
+        $ ./rpmsum.pl jikes-1.14-1-glibc-2.2.i386.rpm
+      </para>
+      <para>
+        jikes: java source to bytecode compiler
+      </para>
+    </sect2>
+    <sect2>
+      <title>Convenience methods</title>
+      <para>
+        The RPM2 module includes convenience methods for all RPM tags.
+        This means you can use the method name in place of tag("NAME").
+        For example:
+      </para>
+      <para>
+        print $header-&gt;name(), ": ", $header-&gt;summary(), "\n";
+      </para>
+    </sect2>
+    <sect2>
+      <title>Listing the name and version</title>
+      <para>
+        The RPM2 module provides a handy subroutine for getting the
+        NAME, VERSION, RELEASE, and EPOCH tags, often abbreviated as
+        NVRE. The subroutine, as_nvre, returns a single string with
+        these values in the standard format, with the values separated
+        by minus signs.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        Usually, the EPOCH tag has no value. If there is an EPOCH value,
+        you will see it output first, and then a colon, and then the
+        name, version, and release values. For example:
+      </para>
+      <para>
+        5:redhat-config-httpd-1.0.1-13
+      </para>
+      <para>
+        In this case, the EPOCH value is 5.
+      </para>
+      <para>
+        You can call this subroutine on any header object, or any
+        package object to get the full name of the package. For example:
+      </para>
+      <para>
+        print $header-&gt;as_nvre(), "\n";
+      </para>
+    </sect2>
+    <sect2>
+      <title>Checking whether the package is a source package</title>
+      <para>
+        Another handy subroutine tells you if an RPM file represents a
+        source RPM or a binary RPM. The is_source_package subroutine
+        returns a true value if the package is a source package, and a
+        false value otherwise.
+      </para>
+      <para>
+        The rpmpkg.pl script, shown in Listing 18-2, shows how to use
+        the as_nvre and is_source_package subroutines.
+      </para>
+      <para>
+        Listing 18-2: rpmpkg.pl
+      </para>
+      <para>
+        #!/usr/bin/perl
+      </para>
+      <para/>
+      <para>
+        #
+      </para>
+      <para>
+        # Queries RPM package file and prints
+      </para>
+      <para>
+        # out name and whether this is a source pkg.
+      </para>
+      <para>
+        # Usage:
+      </para>
+      <para>
+        # rpmpkg.pl package_name
+      </para>
+      <para>
+        #
+      </para>
+      <para>
+        use strict;
+      </para>
+      <para>
+        use RPM2;
+      </para>
+      <para/>
+      <para>
+        my $header = RPM2-&gt;open_package( $ARGV[0] );
+      </para>
+      <para/>
+      <para>
+        if ( $header-&gt;is_source_package() ) {
+      </para>
+      <para>
+        print "Source package ", $header-&gt;as_nvre(), "\n";
+      </para>
+      <para>
+        } else {
+      </para>
+      <para>
+        print $header-&gt;as_nvre(), "\n";
+      </para>
+      <para>
+        }
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Programming with the RPM Database</title>
+    <para>
+      In addition to providing query routines for RPM files, you can
+      also access the RPM database with the RPM2 package.
+    </para>
+    <para>
+      To access the RPM database, your Perl script must first open the
+      database.
+    </para>
+    <sect2>
+      <title>Opening the database</title>
+      <para>
+        Open the RPM database with a call to open_rpm_db on the RPM2
+        object. For example:
+      </para>
+      <para>
+        my $rpm_db = RPM2-&gt;open_rpm_db();
+      </para>
+      <para>
+        You can also specify the directory where the RPM database
+        resides. This is most useful for accessing a database in a
+        non-standard location. For example:
+      </para>
+      <para>
+        my $rpm_db = RPM2-&gt;open_rpm_db( "-path" =&gt; "/var/lib/rpm"
+        );
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        The -path is normally used as a Perl bareword but is shown here
+        as a string.
+      </para>
+      <para>
+        Once you have an RPM database object, you can call one of the
+        find subroutines to find packages in most of the same ways as
+        supported by the rpm –q command.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Finding packages</title>
+      <para>
+        The find_by_name subroutine finds a package or packages by name.
+        It returns a Perl list of the entries found. For example, if you
+        installed more than one version of a package, find_by_name would
+        return a list of all the packages at the different versions.
+      </para>
+      <para>
+        Similar to find_by_name, find_by_name_iter returns an iterator
+        to iterate over the packages that match the query. The iterator
+        approach is usually more efficient.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Iterating over packages</title>
+      <para>
+        Iterators are important in the RPM2 package because they provide
+        a more efficient interface to potentially large sets of
+        packages, and because iterators more closely match the
+        underlying C API. Furthermore, iterators are very easy to use.
+        Simply call the next subroutine to move ahead to the next
+        element, that is, the next package.
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        my $pkg_iter = $rpm_db-&gt;find_by_name_iter( "kernel" );
+      </para>
+      <para/>
+      <para>
+        while (my $pkg = $pkg_iter-&gt;next() ) {
+      </para>
+      <para/>
+      <para>
+        # Do something ...
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        Listing 18-3 shows a script that acts much like the rpm –q
+        command, without any other command-line options.
+      </para>
+      <para>
+        Listing 18-3: rpmname.pl
+      </para>
+      <para>
+        #!/usr/bin/perl
+      </para>
+      <para/>
+      <para>
+        #
+      </para>
+      <para>
+        # Queries RPM database for given package.
+      </para>
+      <para>
+        # Usage:
+      </para>
+      <para>
+        # rpmname.pl package_name
+      </para>
+      <para>
+        #
+      </para>
+      <para>
+        use strict;
+      </para>
+      <para>
+        use RPM2;
+      </para>
+      <para/>
+      <para>
+        my $rpm_db = RPM2-&gt;open_rpm_db( "âˆ’path" =&gt;
+        "/var/lib/rpm" );
+      </para>
+      <para/>
+      <para>
+        my $pkg_iter = $rpm_db-&gt;find_by_name_iter( $ARGV[0] );
+      </para>
+      <para/>
+      <para>
+        while (my $pkg = $pkg_iter-&gt;next() ) {
+      </para>
+      <para/>
+      <para>
+        print $pkg-&gt;tag("NAME"), "-", $pkg-&gt;tag("VERSION"), "\n";
+      </para>
+      <para>
+        }
+      </para>
+      <para/>
+      <para>
+        $rpm_db-&gt;close_rpm_db();
+      </para>
+      <para>
+        When you run this script, you need to pass the name of a package
+        to query. For example:
+      </para>
+      <para>
+        $ ./rpmname.pl kernel
+      </para>
+      <para>
+        kernel-2.4.18
+      </para>
+    </sect2>
+    <sect2>
+      <title>Additional query subroutines</title>
+      <para>
+        The find_by_name_iter subroutine finds a package by its name.
+        The RPM2 module also supports a number of other query routines,
+        listed in Table 18-1.
+      </para>
+      <para>
+        Table 18-1 RPM2 module query routines
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Routine
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  find_all()
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns a list with all the packages in the database
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  find_all_iter()
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns an iterator over all the packages in the
+                  database
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  find_by_file($filename)
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Finds all packages that own the given file, returning
+                  a list
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  find_by_file_iter($filename)
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Finds all packages that own the given file, returning
+                  an iterator
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  find_by_name($package_name)
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Finds all packages with the given name, returning a
+                  list
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  find_by_name_iter($package_name)
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Finds all packages with the given name, returning an
+                  iterator
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  find_by_provides($capability)
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Finds all packages that provide the given capability,
+                  returning a list
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  find_by_provides_iter($capability)
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Finds all packages that provide the given capability,
+                  returning an iterator
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  find_by_requires($capability)
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Finds all packages that require the given capability,
+                  returning a list
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  find_by_requires_iter($capability)
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Finds all packages that require the given capability,
+                  returning an iterator
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        To verify the find routines, you can try the following script
+        and compare the results with the rpm command. Listing 18-4 shows
+        the script that finds what package provides a capability and
+        also which packages require the capability.
+      </para>
+      <para>
+        Listing 18-4: rpmprovides.pl
+      </para>
+      <para>
+        #!/usr/bin/perl
+      </para>
+      <para/>
+      <para>
+        #
+      </para>
+      <para>
+        # Queries RPM database for given package,
+      </para>
+      <para>
+        # listing what it provides and what other
+      </para>
+      <para>
+        # packages require the capability.
+      </para>
+      <para>
+        #
+      </para>
+      <para>
+        # Usage:
+      </para>
+      <para>
+        # rpmprovides.pl package_name
+      </para>
+      <para>
+        #
+      </para>
+      <para>
+        use strict;
+      </para>
+      <para>
+        use RPM2;
+      </para>
+      <para/>
+      <para>
+        my $rpm_db = RPM2-&gt;open_rpm_db();
+      </para>
+      <para/>
+      <para>
+        my $pkg_iter = $rpm_db-&gt;find_by_provides_iter( $ARGV[0] );
+      </para>
+      <para/>
+      <para>
+        print "Provides: ", $ARGV[0], "\n";
+      </para>
+      <para/>
+      <para>
+        while (my $pkg = $pkg_iter-&gt;next() ) {
+      </para>
+      <para>
+        print "\t", $pkg-&gt;as_nvre(), "\n";
+      </para>
+      <para>
+        }
+      </para>
+      <para/>
+      <para/>
+      <para>
+        # Now, what packages require this capability.
+      </para>
+      <para/>
+      <para>
+        my $pkg_iter2 = $rpm_db-&gt;find_by_requires_iter( $ARGV[0] );
+      </para>
+      <para/>
+      <para>
+        print "Requires: ", $ARGV[0], "\n";
+      </para>
+      <para>
+        while (my $pkg2 = $pkg_iter2-&gt;next() ) {
+      </para>
+      <para>
+        print "\t", $pkg2-&gt;as_nvre(), "\n";
+      </para>
+      <para>
+        }
+      </para>
+      <para/>
+      <para>
+        $rpm_db-&gt;close_rpm_db();
+      </para>
+      <para>
+        When you run this script with the name of a capability, you'll
+        see output like the following:
+      </para>
+      <para>
+        $ ./rpmprovides.pl httpd
+      </para>
+      <para>
+        Provides: httpd
+      </para>
+      <para>
+        httpd-2.0.40-8
+      </para>
+      <para>
+        Requires: httpd
+      </para>
+      <para>
+        mod_perl-1.99_05-3
+      </para>
+      <para>
+        5:redhat-config-httpd-1.0.1-13
+      </para>
+      <para>
+        mod_python-3.0.0-10
+      </para>
+      <para>
+        1:mod_ssl-2.0.40-8
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        The 5: in 5:redhat-config-httpd-1.0.1-13 and 1: in
+        1:mod_ssl-2.0.40-8 represent the EPOCH tag value.
+      </para>
+      <para>
+        To verify this script, run the rpm -q command to see if you get
+        the same packages listed. For example:
+      </para>
+      <para>
+        $ rpm -q --whatprovides httpd
+      </para>
+      <para>
+        httpd-2.0.40-8
+      </para>
+      <para/>
+      <para>
+        $ rpm -q --whatrequires httpd
+      </para>
+      <para>
+        mod_perl-1.99_05-3
+      </para>
+      <para>
+        redhat-config-httpd-1.0.1-13
+      </para>
+      <para>
+        mod_python-3.0.0-10
+      </para>
+      <para>
+        mod_ssl-2.0.40-8
+      </para>
+      <para>
+        In both cases, you see the same packages listed. You can use
+        this technique to verify your scripts.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        The find_by_provides_iter subroutine requires the name of a
+        package, such as bash. You cannot pass a file name, such as
+        /bin/bash, to get the name of the package that provides this
+        capability (a file, really).
+      </para>
+    </sect2>
+    <sect2>
+      <title>Getting information on packages</title>
+      <para>
+        The tag, as_nvre, and is_source_package subroutines that worked
+        on header objects read from RPM files, shown previously, also
+        work with package entries returned from the RPM database.
+      </para>
+      <para>
+        For example, Listing 18-5 shows a script, rpminfo.pl, that
+        prints out descriptive information about a given package.
+      </para>
+      <para>
+        Listing 18-5: rpminfo.pl
+      </para>
+      <para>
+        #!/usr/bin/perl
+      </para>
+      <para/>
+      <para>
+        #
+      </para>
+      <para>
+        # Queries RPM database for given package and prints info.
+      </para>
+      <para>
+        # Usage:
+      </para>
+      <para>
+        # rpminfo.pl package_name
+      </para>
+      <para>
+        #
+      </para>
+      <para>
+        use strict;
+      </para>
+      <para>
+        use RPM2;
+      </para>
+      <para/>
+      <para>
+        my $rpm_db = RPM2-&gt;open_rpm_db( "-path" =&gt; "/var/lib/rpm"
+        );
+      </para>
+      <para/>
+      <para>
+        my $pkg_iter = $rpm_db-&gt;find_by_name_iter( $ARGV[0] );
+      </para>
+      <para/>
+      <para>
+        while (my $pkg = $pkg_iter-&gt;next() ) {
+      </para>
+      <para/>
+      <para>
+        printInfo( $pkg );
+      </para>
+      <para>
+        }
+      </para>
+      <para/>
+      <para>
+        $rpm_db-&gt;close_rpm_db();
+      </para>
+      <para/>
+      <para/>
+      <para>
+        # Prints info on one package.
+      </para>
+      <para>
+        sub printInfo {
+      </para>
+      <para>
+        my($pkg) = shift;
+      </para>
+      <para/>
+      <para>
+        print $pkg-&gt;as_nvre(), ", ", $pkg-&gt;tag("ARCH"), ", ",
+      </para>
+      <para>
+        $pkg-&gt;tag("OS"), ", ", $pkg-&gt;tag("PLATFORM"), "\n";
+      </para>
+      <para/>
+      <para>
+        print $pkg-&gt;tag("SUMMARY"), "\n";
+      </para>
+      <para>
+        print "Group: ", $pkg-&gt;tag("GROUP"), "\n";
+      </para>
+      <para>
+        print $pkg-&gt;tag("DESCRIPTION"), "\n";
+      </para>
+      <para>
+        print "Vendor: ", $pkg-&gt;tag("VENDOR"), ", ",
+        $pkg-&gt;tag("URL"), "\n";
+      </para>
+      <para>
+        print "Size: ", $pkg-&gt;tag("SIZE"), "\n";
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        When you run this script, you’ll see output like the
+        following:
+      </para>
+      <para>
+        $ ./rpminfo.pl XFree86
+      </para>
+      <para>
+        XFree86-4.2.0-72, i386, linux, i386-redhat-linux-gnu
+      </para>
+      <para>
+        The basic fonts, programs and docs for an X workstation.
+      </para>
+      <para>
+        Group: User Interface/X
+      </para>
+      <para>
+        XFree86 is an open source implementation of the X Window System.
+        It
+      </para>
+      <para>
+        provides the basic low level functionality which full fledged
+      </para>
+      <para>
+        graphical user interfaces (GUIs) such as GNOME and KDE are
+        designed
+      </para>
+      <para>
+        upon.
+      </para>
+      <para>
+        Vendor: Red Hat, Inc., http://www.xfree86.org
+      </para>
+      <para>
+        Size: 30552239
+      </para>
+      <sect3>
+        <title>Listing the Installed Date</title>
+        <para>
+          The installed date is a number value representing the number
+          of seconds since the start of the UNIX epoch, January 1, 1970,
+          which predates the start of the Linux epoch by about 20 years.
+          So, when you get the value of the INSTALLTIME tag, you’ll
+          see a meaningless number.
+        </para>
+        <para>
+          To make sense of this number, pass the value to the Perl
+          localtime function. Listing 18-6 shows an example of this.
+        </para>
+        <para>
+          Listing 18-6: rpmdate.pl
+        </para>
+        <para>
+          #!/usr/bin/perl
+        </para>
+        <para/>
+        <para>
+          #
+        </para>
+        <para>
+          # Queries RPM database for given package,
+        </para>
+        <para>
+          # prints out name, vendor, and date installed.
+        </para>
+        <para>
+          # Usage:
+        </para>
+        <para>
+          # rpmdate.pl package_name
+        </para>
+        <para>
+          #
+        </para>
+        <para>
+          use strict;
+        </para>
+        <para>
+          use RPM2;
+        </para>
+        <para/>
+        <para>
+          my $rpm_db = RPM2-&gt;open_rpm_db();
+        </para>
+        <para/>
+        <para>
+          my $pkg_iter = $rpm_db-&gt;find_by_name_iter( $ARGV[0] );
+        </para>
+        <para/>
+        <para>
+          while (my $pkg = $pkg_iter-&gt;next() ) {
+        </para>
+        <para/>
+        <para>
+          printDate( $pkg );
+        </para>
+        <para>
+          }
+        </para>
+        <para/>
+        <para>
+          $rpm_db-&gt;close_rpm_db();
+        </para>
+        <para/>
+        <para/>
+        <para/>
+        <para>
+          # Prints installation data for one package.
+        </para>
+        <para>
+          sub printDate {
+        </para>
+        <para>
+          my($pkg) = shift;
+        </para>
+        <para/>
+        <para>
+          my $date = localtime( $pkg-&gt;tag("INSTALLTIME") );
+        </para>
+        <para/>
+        <para>
+          printf("%-20s %-17s %s\n", $pkg-&gt;as_nvre(),
+          $pkg-&gt;tag("VENDOR"), $date);
+        </para>
+        <para>
+          }
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          The printf function in this script can do something the rpm
+          command cannot do. Even with the --queryformat option, you
+          cannot group multiple items and then set the size; with Perl,
+          you can. Simply assign the multiple values to a string, or use
+          the handy as_nvre subroutine, which gathers up to four tags
+          together into one string.
+        </para>
+        <para>
+          When you pass the name of a package to this script, you’ll
+          see the date the package was installed. For example:
+        </para>
+        <para>
+          $ ./rpmdate.pl kernel
+        </para>
+        <para>
+          kernel-2.4.18-14 Red Hat, Inc. Sat Oct 5 12:29:58 2002
+        </para>
+      </sect3>
+      <sect3>
+        <title>Handling String Array Tags</title>
+        <para>
+          Not only is the date stored in a format that adds complication
+          to your script. A number of tags are string arrays, not scalar
+          strings. This means you may see output that is all mashed
+          together.
+        </para>
+        <para>
+          To help deal with this, the following subroutine takes in an
+          array of strings and returns a string that is built using a
+          passed-in delimiter:
+        </para>
+        <para>
+          sub arrayToString {
+        </para>
+        <para>
+          my($sep) = shift;
+        </para>
+        <para>
+          my(@array) = @_;
+        </para>
+        <para>
+          my($str);
+        </para>
+        <para/>
+        <para>
+          $str = $array[0];
+        </para>
+        <para/>
+        <para>
+          for ( $i = 1; $i &lt; $#array; $i++ )
+        </para>
+        <para>
+          {
+        </para>
+        <para>
+          $str = $str . $sep . $array[$i];
+        </para>
+        <para>
+          }
+        </para>
+        <para/>
+        <para>
+          return $str;
+        </para>
+        <para>
+          }
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          Show your Perl expertise and earn extra points by implementing
+          the arrayToString subroutine as a single Perl statement that
+          uses the join function.
+        </para>
+        <para>
+          The following list shows the tags that are an array of
+          strings:
+        </para>
+        <para>
+          *BASENAMES
+        </para>
+        <para>
+          *CHANGELOGNAME
+        </para>
+        <para>
+          *CHANGELOGTEXT
+        </para>
+        <para>
+          *DIRNAMES
+        </para>
+        <para>
+          *FILEGROUPNAME
+        </para>
+        <para>
+          *FILELANGS
+        </para>
+        <para>
+          *FILELINKTOS
+        </para>
+        <para>
+          *FILEMD5S
+        </para>
+        <para>
+          *FILEUSERNAME
+        </para>
+        <para>
+          *OLDFILENAMES
+        </para>
+        <para>
+          *PROVIDENAME
+        </para>
+        <para>
+          *PROVIDEVERSION
+        </para>
+        <para>
+          *REQUIRENAME
+        </para>
+        <para>
+          *REQUIREVERSION
+        </para>
+        <para>
+          Cross Reference
+        </para>
+        <para>
+          <xref linkend="ch-using-rpm-db"/>  covers more on these tags.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Listing the Files In A Package</title>
+        <para>
+          The files subroutine provides a list of all the files in a
+          package. Listing 18-7 shows how to access this list.
+        </para>
+        <para>
+          Listing 18-7: rpmfiles.pl
+        </para>
+        <para>
+          #!/usr/bin/perl
+        </para>
+        <para/>
+        <para>
+          #
+        </para>
+        <para>
+          # Queries RPM database for given package,
+        </para>
+        <para>
+          # prints out the files in the package.
+        </para>
+        <para>
+          # Usage:
+        </para>
+        <para>
+          # rpmfiles.pl package_name
+        </para>
+        <para>
+          #
+        </para>
+        <para>
+          use strict;
+        </para>
+        <para>
+          use RPM2;
+        </para>
+        <para/>
+        <para>
+          my $rpm_db = RPM2-&gt;open_rpm_db();
+        </para>
+        <para/>
+        <para>
+          my $pkg_iter = $rpm_db-&gt;find_by_name_iter( $ARGV[0] );
+        </para>
+        <para/>
+        <para>
+          while (my $pkg = $pkg_iter-&gt;next() ) {
+        </para>
+        <para/>
+        <para>
+          printFiles( $pkg );
+        </para>
+        <para>
+          }
+        </para>
+        <para/>
+        <para>
+          $rpm_db-&gt;close_rpm_db();
+        </para>
+        <para/>
+        <para/>
+        <para/>
+        <para>
+          # Prints installation data for one package.
+        </para>
+        <para>
+          sub printFiles {
+        </para>
+        <para>
+          my($pkg) = shift;
+        </para>
+        <para/>
+        <para>
+          my $files = arrayToString("\n", $pkg-&gt;files() );
+        </para>
+        <para/>
+        <para>
+          print "Files:\n", $files, "\n";
+        </para>
+        <para>
+          }
+        </para>
+        <para/>
+        <para>
+          sub arrayToString {
+        </para>
+        <para>
+          my($sep) = shift;
+        </para>
+        <para>
+          my(@array) = @_;
+        </para>
+        <para>
+          my($str);
+        </para>
+        <para/>
+        <para>
+          $str = $array[0];
+        </para>
+        <para/>
+        <para>
+          for ( my $i = 1; $i &lt; $#array; $i++ )
+        </para>
+        <para>
+          {
+        </para>
+        <para>
+          $str = $str . $sep . $array[$i];
+        </para>
+        <para>
+          }
+        </para>
+        <para/>
+        <para>
+          return $str;
+        </para>
+        <para>
+          }
+        </para>
+        <para>
+          When you run this script, you’ll see output like the
+          following:
+        </para>
+        <para>
+          $ ./rpmfiles.pl jikes
+        </para>
+        <para>
+          Files:
+        </para>
+        <para>
+          /usr/bin/jikes
+        </para>
+        <para>
+          /usr/doc/jikes-1.17/license.htm
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Comparing versions</title>
+      <para>
+        The RPM2 module overrides the spaceship operator, &lt;=&gt;, to
+        perform version comparisons between packages. The script in
+        Listing 18-8 shows how to compare all local RPM files against
+        the newest installed version of the same package, if the package
+        is installed.
+      </para>
+      <para>
+        Listing 18-8: rpmver.pl
+      </para>
+      <para>
+        #!/usr/bin/perl -w
+      </para>
+      <para/>
+      <para>
+        #
+      </para>
+      <para>
+        # Compare versions of all *.rpm files against the
+      </para>
+      <para>
+        # latest packages installed (if installed)
+      </para>
+      <para>
+        #
+      </para>
+      <para>
+        # Usage:
+      </para>
+      <para>
+        # rpmver.pl
+      </para>
+      <para>
+        # This script looks for all *.rpm files.
+      </para>
+      <para>
+        #
+      </para>
+      <para>
+        use strict;
+      </para>
+      <para>
+        use RPM2;
+      </para>
+      <para/>
+      <para>
+        my $rpm_db = RPM2-&gt;open_rpm_db();
+      </para>
+      <para/>
+      <para>
+        for my $filename (&lt;*.rpm&gt;) {
+      </para>
+      <para>
+        my $h = RPM2-&gt;open_package( $filename );
+      </para>
+      <para/>
+      <para>
+        # Ensure we compare against the newest
+      </para>
+      <para>
+        # package of the given name.
+      </para>
+      <para>
+        my ($installed) =
+      </para>
+      <para>
+        sort { $b &lt;=&gt; $a } $rpm_db-&gt;find_by_name($h-&gt;name);
+      </para>
+      <para/>
+      <para>
+        if (not $installed) {
+      </para>
+      <para>
+        printf "Package %s not installed.\n", $h-&gt;as_nvre;
+      </para>
+      <para>
+        } else {
+      </para>
+      <para>
+        my ($result) = ($h &lt;=&gt; $installed);
+      </para>
+      <para/>
+      <para>
+        if ($result &lt; 0) {
+      </para>
+      <para>
+        printf "Installed package %s newer than file %s\n",
+      </para>
+      <para>
+        $installed-&gt;as_nvre,
+      </para>
+      <para>
+        $h-&gt;as_nvre;
+      </para>
+      <para>
+        } else {
+      </para>
+      <para>
+        printf "File %s newer than installed package %s\n",
+      </para>
+      <para>
+        $h-&gt;as_nvre,
+      </para>
+      <para>
+        $installed-&gt;as_nvre;
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        The sort { $a &lt;=&gt; $b } in front of the find_by_name call
+        sorts all the packages of that name by the version number, so
+        that the comparison is performed against the newest installed
+        version of the package. The ($h &lt;=&gt; $installed) compares
+        the header from the RPM file on disk against the newest
+        installed version of the package.
+      </para>
+      <para>
+        When you run this script, you’ll see output like the
+        following, depending on which RPM files you have in the local
+        directory:
+      </para>
+      <para>
+        $ perl rpmver.pl
+      </para>
+      <para>
+        Package acroread-4.0-0 not installed.
+      </para>
+      <para>
+        Package canvas-7.0b2.0-1 not installed.
+      </para>
+      <para>
+        Installed package jikes-1.18-1 newer than file jikes-1.14-1
+      </para>
+      <para>
+        Installed package SDL-1.2.4-5 newer than file SDL-0.9.9-4
+      </para>
+      <para>
+        Package ted-2.8-1 not installed.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Closing the database</title>
+      <para>
+        When you are done with the RPM database, call close_rpm_db, as
+        shown following:
+      </para>
+      <para>
+        $rpm_db-&gt;close_rpm_db();
+      </para>
+      <para>
+        Note that this call is not necessary, as the RPM2 module will
+        close the database when the object, in this case $rpm_db, goes
+        out of scope.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Where to Go from Here</title>
+    <para>
+      One of the strengths of Perl is that there are so many add-on
+      packages available. In addition, Perl is really strong in text
+      processing. You can combine these strengths to provide cleaner
+      output for RPM database queries, for example, avoiding the complex
+      syntax for the --queryformat option to the rpm command. Perl can
+      do more than the --queryformat option allows. For example, you can
+      combine multiple values together into a Perl string and then
+      format the output. The --queryformat option only allows formatting
+      on each value individually, not groups of values.
+    </para>
+    <para>
+      In addition, you can combine one of the Perl templating modules,
+      such as Text::Template or HTML::Template, to create an HTML page
+      for a given package. You could use Perl to create formatted HTML
+      pages for all the installed packages on your system, with HTML
+      links to cross-reference all the dependencies.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      Download these modules from the CPAN site, www.cpan.org.
+    </para>
+    <para>
+      This chapter covers the RPM2 module. Right now, the RPM2 module
+      supports only querying packages and the RPM database. Future
+      versions will likely add the ability to install, update, and
+      remove packages.
+    </para>
+    <para>
+      In addition to this module, you can find an RPM module with
+      RPM::Header and RPM::Database classes. Another module,
+      RPM::Specfile, provides the ability to turn Perl modules, such as
+      those stored on CPAN, into RPM packages. The RPM::Specfile module
+      helps create an RPM spec file for a Perl module.
+    </para>
+    <para>
+      The Perl-RPM-Perlonly bundle provides an alternative version of
+      the RPM::Header module written entirely in Perl with no usage of
+      the C rpm library. This makes RPM access much easier on platforms
+      for which you don’t have the RPM system.
+    </para>
+    <para>
+      The RPM-Tools bundle includes RPM::Update, which compares the
+      packages installed on your system (listed by calling rpm –qa)
+      with the packages available on another system, that may be
+      available only with a network link. This module can also update
+      packages that are older than the designated master system.
+      RPM::Make, also part of the RPM-Tools bundle, helps create RPM
+      packages from a Perl script. This module does not support all the
+      spec file options described in <xref linkend="ch-specfiles"/> , but it can help you
+      make simple packages.
+    </para>
+    <para>
+      You can download all these modules from the CPAN site.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      This chapter introduces the RPM2 add-on module to allow Perl
+      scripts to access information on RPM package files and in the RPM
+      database. To access an RPM file and query information about that
+      file, you need to call the open_package subroutine. Once you’ve
+      opened the file, you can call the tag, as_nvre, is_source_package,
+      and files subroutines on the header object to query data about the
+      package.
+    </para>
+    <para>
+      To access the RPM database, call open_rpm_db. Once you’ve opened
+      the database, you can call one of the find subroutines, such as
+      find_by_name or find_by_name_iter, to search for packages. The
+      subroutines that have names ending with _iter, such as
+      find_by_name_iter, return an iterator object to iterate over the
+      packages found. The other find subroutines, such as find_by_name,
+      return a Perl list of the packages found.
+    </para>
+    <para>
+      You can then call the tag, as_nvre, and files subroutines on the
+      package objects to query information about the packages.
+    </para>
+    <para>
+      When you are done with the RPM database, call close_rpm_db.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

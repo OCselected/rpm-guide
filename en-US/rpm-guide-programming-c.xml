@@ -1,0 +1,3978 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-programming-c">
+  <title>Programming RPM with C</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Using the RPM C library
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Setting up a development environment
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Programming with the RPM C library
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        The power of <command>popt</command> for command-line argument
+        processing
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Comparing package files to installed packages
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    The RPM C library allows you to perform all the operations of the
+    rpm command from within your own C or C++ programs.
+  </para>
+  <para>
+    The reason is simple: The rpm command was created using the RPM
+    libraries. These same libraries are available for you to use in your
+    own programs.
+  </para>
+  <para>
+    The rpm command itself is quick and, for the most part, simple. So,
+    why would you want to write RPM programs?
+  </para>
+  <para>
+    There are many reasons, some of which are listed here:
+  </para>
+  <para>
+    *Speed: If you need to perform a task on many RPM files such as
+    verifying a large set of files, then performing the task from one
+    program will be a lot faster than launching the rpm command for each
+    file.
+  </para>
+  <para>
+    *Custom options: If you need to do something the rpm command doesn't
+    offer, or doesn't make easy, then you may want to write your own
+    program.
+  </para>
+  <para>
+    *Convenience: If you need to make many packages quickly, with custom
+    options, your best bet may be to create a program suited for your
+    tasks. Before doing this, though, be sure to look into whether
+    writing a shell script will handle your task adequately. You'll find
+    writing RPM shell scripts goes much faster than writing whole
+    programs.
+  </para>
+  <para>
+    *Installation programs: The Windows world has standardized on
+    graphical installation programs such as InstallShield or
+    InstallAnywhere. The RPM system, on the other hand, has focused on
+    automated installation with the rpm command. You can combine the
+    best of both worlds by writing a graphical installation program on
+    top of the RPM system.
+  </para>
+  <para>
+    *Integration with environments: You may want to better integrate RPM
+    with a Linux desktop environment such as GNOME or KDE.
+  </para>
+  <para>
+    *Working with other languages: This book covers programming RPM with
+    C, the core language for the library, as well as the Python and Perl
+    scripting languages. You can use the RPM library, though, to help
+    bind with other languages such as Tcl, Ruby, or even C# (especially
+    one of the C# implementations for Linux).
+  </para>
+  <para>
+    This chapter and the next cover RPM programming. This chapter covers
+    the RPM C programming library, which provides low-level access to
+    RPM functionality. The next chapter covers the RPM Python
+    programming library, which provides a much higher-level of
+    abstraction. If you are attempting to write a complex RPM program,
+    your best bet is to try the Python API first. Even so, there is a
+    lot you can do with the RPM C library.
+  </para>
+  <sect1>
+    <title>Programming with the C Library</title>
+    <para>
+      RPM C programs are C programs that call on functions in the RPM
+      library, often called rpmlib. To use the rpmlib, you need to set
+      up a C programming environment and install the rpm-devel package.
+    </para>
+    <sect2>
+      <title>Setting Up a C Programming Environment</title>
+      <para>
+        At the very least, you’ll need a C compiler, gcc, and a text
+        editor. The easiest way to get the C compiler is to install the
+        packages grouped under Software Development with the Red Hat
+        package management tool.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See <xref linkend="ch-management-software"/>  for more on the Red Hat package management tool.
+      </para>
+      <para>
+        The gcc package requires a number of capabilities. Make sure you
+        install all the necessary packages. Just about every Linux
+        distribution includes gcc and everything you need to develop C
+        programs, so this should not be a problem.
+      </para>
+      <para>
+        For text editors, you can use the vi or emacs text editors, or
+        any of a number of graphical editors such as gedit.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-development-tools"/>  covers Linux text editors and development tools.
+      </para>
+      <para>
+        Once you have a C programming environment set up, you next need
+        to get the RPM library for an RPM development environment.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Setting Up the RPM Programming Environment</title>
+      <para>
+        To program with the RPM library, you need to install the
+        rpm-devel package. You must have a version of rpm-devel that
+        matches your version of the rpm package. If you have Red Hat
+        Linux, your installation CDs will also have the version of the
+        RPM development package that corresponds to your system.
+      </para>
+      <para>
+        Your program should link against the same libraries that are
+        used by the rpm command itself in order to insure compatibility,
+        so make sure that the version of the rpm-devel package matches
+        the rpm package itself. In most cases, the best bet is to use
+        the RPM programs and libraries that come with your version of
+        Linux.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        You can also download the rpm packages from
+        ftp://ftp.rpm.org/pub/rpm/dist/. This site includes versions of
+        the RPM libraries going back to 1996, ancient history in terms
+        of Linux.
+      </para>
+      <para>
+        The package you need is rpm-devel. If you installed Red Hat
+        Linux 8.0, the package is rpm-devel-4.1-1.06. This package
+        includes header files, documentation, and libraries.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Using the RPM Library</title>
+      <para>
+        All C programs using the RPM library need to include the file
+        rpmlib.h, which defines the core data structures, constants, and
+        functions. One thing you’ll quickly note is that the RPM C
+        library accesses RPM data at a very low level. This is one
+        reason why many developers are moving to Python for their RPM
+        programs, since the Python RPM API presents a higher level of
+        abstraction.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-rpm-programming-python"/>  covers programming RPM with Python.
+      </para>
+      <para>
+        In addition to rpmlib.h, the header file rpmcli.h defines a
+        high-level API based on the command-line options to the rpm
+        command. (The cli in rpmcli stands for command-line interface.)
+        Table 16-1 lists other important RPM header files that make up
+        the major subsystems of the RPM system.
+      </para>
+      <para>
+        Table 16-1 RPM sub-system header files
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  File
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Defines
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpmdb.h
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  RPM database access
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpmio.h
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  RPM input/output routines
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  popt.h
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Command-line option processing
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        In addition, a number of header files define the major data
+        objects in the RPM system and the functions that operate on
+        these data objects. Table 16-2 lists these header files.
+      </para>
+      <para>
+        Table 16-2 RPM data object header files
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  File
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Defines
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpmts.h
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Transaction sets
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpmte.h
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Transaction elements (packages)
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpmds.h
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Dependency sets
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpmfi.h
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  File information
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  header.h
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Package headers
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        All the RPM include files are located in /usr/include/rpm on
+        most versions of Linux.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        You can use the rpm command and the queries introduced in
+        <xref linkend="ch-using-rpm-db"/>  to determine exactly where the header files are
+        located. Simply execute the following command:
+      </para>
+      <para>
+        $ rpm –ql rpm-devel
+      </para>
+      <para>
+        Examine the output of this command for include files.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Compiling and Linking RPM Programs</title>
+      <para>
+        RPM programs using the rpmlib C API are the same as C programs
+        everywhere. You need to include the proper header files that
+        define the API calls you need, and link with the right set of
+        libraries.
+      </para>
+      <sect3>
+        <title>Include Files</title>
+        <para>
+          The rpm include files are located in /usr/include/rpm, so you
+          should add this directory to the set of directories that the C
+          compiler looks in for include files with the –I command-line
+          option. For example:
+        </para>
+        <para>
+          $ gcc –I/usr/include/rpm –c rpm1.c
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          This also means that you can install the rpm header files in
+          other directories as needed, and just change the –I
+          command-line option.
+        </para>
+        <para>
+          To help debug problems, you probably want to add the -Wall
+          (output all warnings) and -g (compile with debugging
+          information). For example:
+        </para>
+        <para>
+          $ gcc -Wall -g –I/usr/include/rpm –c rpm1.c
+        </para>
+      </sect3>
+      <sect3>
+        <title>Libraries</title>
+        <para>
+          The main rpm library is librpm.a, or a shared version of this
+          same library. To do most anything with RPM programming, you
+          need to link in the following libraries, as listed in Table
+          16-3.
+        </para>
+        <para>
+          Table 16-3 Required rpm libraries
+        </para>
+        <informaltable frame="all">
+          <tgroup cols="2">
+            <tbody>
+              <row>
+                <entry>
+                  <para>
+                    Library
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Usage
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Main RPM library
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpmdb
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    RPM database library
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpmio
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    RPM input/output
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    popt
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Command-line option parsing library
+                  </para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <para>
+          If you are creating RPMs from your C programs, you also need
+          to link in the rpmbuild library. To compile and link a simple
+          RPM program, you need a command like the following:
+        </para>
+        <para>
+          gcc -I/usr/include/rpm -o program program.c –lrpmbuild \
+        </para>
+        <para>
+          -lrpm -lrpmdb -lrpmio –lpopt
+        </para>
+        <para>
+          On some versions of Linux or on other operating systems,
+          you’ll likely need to link a set of helper libraries, as
+          shown following:
+        </para>
+        <para>
+          gcc -I/usr/include/rpm -o program program.c –lrpmbuild \
+        </para>
+        <para>
+          -lrpm -lrpmdb -lrpmio –lpopt -lelf -lbz2 -lz
+        </para>
+        <para>
+          If you have installed the rpm libraries in a non-standard
+          directory, you need to use the –L option to specify where
+          else to look for libraries. For example:
+        </para>
+        <para>
+          gcc -I/usr/include/rpm -o program program.c –L/opt/lib/rpm \
+        </para>
+        <para>
+          -lrpmbuild -lrpm -lrpmdb -lrpmio –lpopt -lelf -lbz2 -lz
+        </para>
+        <para>
+          The -L option tells the cc compiler to look in the
+          /opt/lib/rpm directory as well as in the standard locations
+          such as /usr/lib.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          Starting with RPM 4.2, you should just need to link in the rpm
+          library. The other libraries will get pulled in automatically
+          if needed.
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Getting information on your RPM environment</title>
+      <para>
+        A large part of the RPM system lies in system-specific
+        configuration, including the platform you are running on,
+        compatible platforms, and locations of various files. The RPM rc
+        and macro systems support hundreds of options tuned to the
+        specifics of your system, and any customizations you have
+        configured.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-customizing-rpm"/>  covers customizing RPM.
+      </para>
+      <para>
+        Your C programs need to access these RPM system settings to
+        ensure that all data values are properly set up for your system
+        architecture and installation. So, to start an RPM C program,
+        you need to read in all the configuration files. To do this,
+        call rpmReadConfigFiles.
+      </para>
+      <para>
+        int rpmReadConfigFiles(const char *files, const char *target);
+      </para>
+      <para>
+        The files parameter holds a colon-delimited list of files that
+        make up your system’s configuration. The target parameter
+        holds the target platform. You can pass NULL for both these
+        parameters to use the RPM defaults, which is generally what you
+        want.
+      </para>
+      <para>
+        The rpmReadConfigFiles function returns a 0 on success, or –1
+        on errors.
+      </para>
+      <para>
+        Once you have read in the configuration files, you can access
+        values in the configuration, or print it out.
+      </para>
+      <sect3>
+        <title>Printing the Configuration</title>
+        <para>
+          To print out the configuration, call rpmShowRC.
+        </para>
+        <para>
+          int rpmShowRC(FILE* output);
+        </para>
+        <para>
+          Pass in an output file to print the configuration to, such as
+          stdout. For example:
+        </para>
+        <para>
+          rpmShowRC( stdout );
+        </para>
+        <para>
+          The rpmShowRC function always returns 0.
+        </para>
+        <para>
+          To control some of the output from rpmShowRC, and other RPM
+          library functions, you can set the logging verbosity level by
+          calling rpmSetVerbosity:
+        </para>
+        <para>
+          void rpmSetVerbosity(int level);
+        </para>
+        <para>
+          For example:
+        </para>
+        <para>
+          rpmSetVerbosity(RPMMESS_NORMAL);
+        </para>
+        <para>
+          Table 16-4 lists the verbosity levels from rpmio/rpmmessages.h
+          going from least output to more output.
+        </para>
+        <para>
+          Table 16-4 Output verbosity levels
+        </para>
+        <informaltable frame="all">
+          <tgroup cols="2">
+            <tbody>
+              <row>
+                <entry>
+                  <para>
+                    Level
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Usage
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    RPMMESS_FATALERROR
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Only critical error conditions and above
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    RPMMESS_ERROR
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Only error conditions and above
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    RPMMESS_WARNING
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Only warning conditions and above
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    RPMMESS_QUIET
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Same as RPMMESS_WARNING
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    RPMMESS_NORMAL
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Only significant messages
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    RPMMESS_VERBOSE
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Verbose informational messages
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    RPMMESS_DEBUG
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Debugging messages, and everything above
+                  </para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <para>
+          You can put together a simple RPM program such as the one
+          shown in Listing 16-1.
+        </para>
+        <para>
+          Listing 16-1: rpm1.c
+        </para>
+        <para>
+          /* Show the rpmrc settings. */
+        </para>
+        <para>
+          #include &lt;stdio.h&gt;
+        </para>
+        <para>
+          #include &lt;stdlib.h&gt;
+        </para>
+        <para/>
+        <para>
+          #include &lt;rpmlib.h&gt;
+        </para>
+        <para/>
+        <para/>
+        <para>
+          int main(int argc, char * argv[]) {
+        </para>
+        <para/>
+        <para>
+          int status = rpmReadConfigFiles( (const char*) NULL,
+        </para>
+        <para>
+          (const char*) NULL);
+        </para>
+        <para/>
+        <para>
+          if (status != 0) {
+        </para>
+        <para>
+          printf("Error reading RC files.\n");
+        </para>
+        <para>
+          exit(-1);
+        </para>
+        <para>
+          } else {
+        </para>
+        <para>
+          printf("Read RC OK\n");
+        </para>
+        <para>
+          }
+        </para>
+        <para/>
+        <para>
+          rpmSetVerbosity(RPMMESS_NORMAL);
+        </para>
+        <para/>
+        <para>
+          rpmShowRC( stdout );
+        </para>
+        <para/>
+        <para>
+          exit(0);
+        </para>
+        <para>
+          }
+        </para>
+        <para>
+          Compile this program with a command like the following:
+        </para>
+        <para>
+          $ cc -I/usr/include/rpm -o rpm1 rpm1.c -lrpm -lrpmdb -lrpmio
+          –lpopt
+        </para>
+        <para>
+          When you run this program, you should see the contents of your
+          configuration printed to the screen.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Expanding the Value of Macros</title>
+        <para>
+          With all the rc and macro configuration files, the RPM system
+          has a lot of values, usually called macros, that you can use
+          to refer to settings. The term macro is used because the
+          values can be more than simple strings. You can have one macro
+          refer to the value of other macros, for example. The basic
+          macro syntax is:
+        </para>
+        <para>
+          %name_of_macro
+        </para>
+        <para>
+          For example:
+        </para>
+        <para>
+          %_target
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          Most of the internal RPM macros start with an underscore, _.
+        </para>
+        <para>
+          You can expand a macro with the rpm --eval command:
+        </para>
+        <para>
+          $ rpm --eval %_target
+        </para>
+        <para>
+          i386-linux
+        </para>
+        <para>
+          You can also refer to a macro using the following syntax:
+        </para>
+        <para>
+          %{name_of_macro}
+        </para>
+        <para>
+          For example:
+        </para>
+        <para>
+          %{_target}
+        </para>
+        <para>
+          This syntax makes it easier to include a macro in combinations
+          with other text and other macros, since it clearly delineates
+          the macro name.
+        </para>
+        <para>
+          Cross Reference
+        </para>
+        <para>
+          <xref linkend="ch-customizing-rpm"/>  covers macros in depth. In your C programs, your
+          code will likely need to expand the value of macros to place
+          data in the proper directories, determine the platform
+          architecture, and so on.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Expanding Macros in Your Code</title>
+        <para>
+          You can use rpmExpand to determine the value of system macros
+          from within your C programs.
+        </para>
+        <para>
+          The rpmExpand function can expand the values of one or more
+          macros, returning the expanded value. You can pass a variable
+          number of parameters to rpmExpand, and you must terminate the
+          list with a NULL:
+        </para>
+        <para>
+          char* rpmExpand (const char *arg,...);
+        </para>
+        <para>
+          You need to free the data returned by rpmExpand by calling
+          free.
+        </para>
+        <para>
+          The program in Listing 16-2 takes the first command-line
+          argument to your program (after the program name) and expands
+          that argument as a macro.
+        </para>
+        <para>
+          Listing 16-2: rpmexpand.c
+        </para>
+        <para>
+          /* Show some macro settings. */
+        </para>
+        <para>
+          #include &lt;stdio.h&gt;
+        </para>
+        <para>
+          #include &lt;stdlib.h&gt;
+        </para>
+        <para/>
+        <para>
+          #include &lt;rpmlib.h&gt;
+        </para>
+        <para>
+          #include &lt;rpmmacro.h&gt;
+        </para>
+        <para/>
+        <para>
+          int main(int argc, char * argv[]) {
+        </para>
+        <para/>
+        <para>
+          int status = rpmReadConfigFiles( (const char*) NULL,
+        </para>
+        <para>
+          (const char*) NULL);
+        </para>
+        <para/>
+        <para>
+          if (status != 0) {
+        </para>
+        <para>
+          printf("Error reading RC files.\n");
+        </para>
+        <para>
+          exit(-1);
+        </para>
+        <para>
+          }
+        </para>
+        <para/>
+        <para>
+          char* value = rpmExpand(argv[1], (const char*) NULL);
+        </para>
+        <para/>
+        <para>
+          printf("Value of macro is [%s]\n", value);
+        </para>
+        <para/>
+        <para>
+          exit(0);
+        </para>
+        <para>
+          }
+        </para>
+        <para>
+          Compile and link this program as shown previously.
+        </para>
+        <para>
+          When you run this program, pass the name of a macro to expand.
+          For example:
+        </para>
+        <para>
+          $ ./rpmexpand %_target
+        </para>
+        <para>
+          Value of macro is [i386-linux]
+        </para>
+        <para>
+          You can pass multiple macros together, as shown following:
+        </para>
+        <para>
+          $ ./rpmexpand %_builddir/%_target
+        </para>
+        <para>
+          Value of macro is [/usr/src/redhat/BUILD/i386-linux]
+        </para>
+        <para>
+          You can verify this program with the rpm --eval command,
+          introduced previously:
+        </para>
+        <para>
+          $ rpm --eval %_builddir/%_target
+        </para>
+        <para>
+          /usr/src/redhat/BUILD/i386-linux
+        </para>
+      </sect3>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>The Power of popt</title>
+    <para>
+      Popt provides a powerful command-line processing library, allowing
+      the rpm command to handle a variety of options in a very flexible
+      way. You can use popt alone as a library in its own right, or use
+      it combined with the rpm library to handle command-line options
+      like those of the rpm command.
+    </para>
+    <para>
+      At its most basic, popt processes the command-line arguments to a
+      C program, traditionally called argc and argv, into an option
+      table that describes and contains all the option values.
+    </para>
+    <para>
+      The main advantage popt has over simpler libraries such as getopt
+      lies in the ability to handle complex arguments and to define
+      aliases. The rpm command supports three different behaviors for
+      the –i option, depending on the context (install a package, get
+      information on a package as part of a query, and perform the
+      install stage of a source RPM, as part of rpmbuild).
+    </para>
+    <para>
+      The popt library supports both traditional UNIX short options such
+      as –U and the longer options common for GNU programs, especially
+      on Linux, such as --upgrade. For the popt library, you can define
+      both short and long variants for each option. In addition,
+      command-line options may be individual flags, such as –v for
+      verbose, or options that expect one or more data values as
+      arguments, such as –f, which requires a file name.
+    </para>
+    <sect2>
+      <title>Popt aliases</title>
+      <para>
+        One of the most powerful features of popt is the ability to
+        define aliases. A popt alias allows you to define one
+        command-line option as an alias for a set of options. As its
+        simplest, the rpm command-line options --upgrade and –U refer
+        to the same action. You could define one as an alias for the
+        other.
+      </para>
+      <para>
+        With rpm, the file /usr/lib/rpm/rpmpopt-4.1 (for RPM version
+        4.1) defines over 400 lines of popt aliases to configure the rpm
+        command-line options. For example:
+      </para>
+      <para>
+        Rpm alias –requires --qf \
+      </para>
+      <para>
+        "[%{REQUIRENAME} %{REQUIREFLAGS:depflags} %{REQUIREVERSION}\n]"
+        \
+      </para>
+      <para>
+        --POPTdesc=$"list capabilities required by package(s)"
+      </para>
+      <para>
+        This example defines rpm --requires as really a query using the
+        --qf or --queryformat options covered in <xref linkend="ch-using-rpm-db"/> .
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See <xref linkend="ch-customizing-rpm"/>  for more on defining popt aliases.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Programming with popt</title>
+      <para>
+        To use popt in your programs, you need to fill in a table of
+        options and then call poptGetContext. The poptGetContext
+        function parses the command-line options and returns a
+        poptContext, an opaque data type that you need to pass as a
+        parameter to a number of popt functions. The poptContext holds
+        the state of your command-line processing. This allows you to
+        call the popt library with multiple sets of arguments. Each set
+        will have an associate poptContext to keep all the data
+        separate.
+      </para>
+      <para>
+        The basic poptGetContext function signature follows:
+      </para>
+      <para>
+        poptContext poptGetContext (const char * name,
+      </para>
+      <para>
+        int argc,
+      </para>
+      <para>
+        const char ** argv,
+      </para>
+      <para>
+        const struct poptOption * options,
+      </para>
+      <para>
+        int flags );
+      </para>
+      <para>
+        All the popt functions require the popt.h include file:
+      </para>
+      <para>
+        #include &lt;popt.h&gt;
+      </para>
+      <para>
+        The flags should be a bitmask of any options you require,
+        including those listed in Table 16-5.
+      </para>
+      <para>
+        Table 16-5 Flags for poptGetContext
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Flag
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Meaning
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  POPT_CONTEXT_NO_EXEC
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Ignore executable expansions
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  POPT_CONTEXT_KEEP_FIRST
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Treat argv[0], the command name, as an option
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  POPT_CONTEXT_POSIXMEHARDER
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Do not allow options to follow arguments
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        When done with a poptContext, you should free it by calling
+        poptFreeContext:
+      </para>
+      <para>
+        poptContext poptFreeContext(poptContext context);
+      </para>
+      <para>
+        The call to poptFreeContext frees up the memory allocated for
+        the context.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        You can also fill in a poptContext from settings in a file with
+        poptReadConfigFile:
+      </para>
+      <para>
+        int poptReadConfigFile(poptContext context,
+      </para>
+      <para>
+        const char * file_name);
+      </para>
+      <sect3>
+        <title>Filling in the Options Table</title>
+        <para>
+          You need to pass in a table that defines all the possible
+          options. This table is an array of structures, where each
+          structure defines one option. The format for a single option
+          follows:
+        </para>
+        <para>
+          struct poptOption {
+        </para>
+        <para>
+          const char * longName;
+        </para>
+        <para>
+          char shortName;
+        </para>
+        <para>
+          int argInfo;
+        </para>
+        <para>
+          void * arg;
+        </para>
+        <para>
+          int val;
+        </para>
+        <para>
+          const char * descrip;
+        </para>
+        <para>
+          const char * argDescrip;
+        </para>
+        <para>
+          };
+        </para>
+        <para>
+          Going through this structure, the longName defines the long
+          version of the option, such as "upgrade" for --upgrade. The
+          shortName defines the short, one-character option, such as 'U'
+          for an option of -U. You can place a null character, '\0', to
+          specify no short option. With the rpm command, the --rebuilddb
+          option has only a long name and not a short name, for example.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          The longName is not preceded by the double minus sign.
+          Similarly, the shortName is not preceded by the single minus
+          sign.
+        </para>
+        <para>
+          The descrip field holds a short description of the option and
+          the argDescrip field holds a description of the types of
+          values it expects, or NULL if this option expects no values.
+        </para>
+        <para>
+          The argInfo field holds a flag that tells the popt library how
+          to treat the option. At the very least, you need to define the
+          type of the option. You can also define special processing
+          flags. Table 16-6 lists the argument types in the options
+          table.
+        </para>
+        <para>
+          Table 16-6 Popt option table argInfo argument types
+        </para>
+        <informaltable frame="all">
+          <tgroup cols="3">
+            <tbody>
+              <row>
+                <entry>
+                  <para>
+                    Type
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Value
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Meaning
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ARG_NONE
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    0
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    No argument data, just the option such as -v
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ARG_STRING
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    1
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    arg treated as string
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ARG_INT
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    2
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    arg treated as int
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ARG_LONG
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    3
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    arg treated as long
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ARG_INCLUDE_TABLE
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    4
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    arg points to a table
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ARG_CALLBACK
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    5
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    arg points to a callback function
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ARG_INTL_DOMAIN
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    6
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    sets translation domain
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ARG_VAL
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    7
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    use value of val field for arg
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ARG_FLOAT
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    8
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    arg treated as float
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ARG_DOUBLE
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    9
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    arg treated as double
+                  </para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <para>
+          Use these constants, from the include file popt.h, in place of
+          the actual numbers.
+        </para>
+        <para>
+          Depending on the type you define in the argInfo field, popt
+          will interpret the generic pointer field, arg, in different
+          ways. Using a pointer allows the popt library to automatically
+          update your program variables based on the command-line option
+          settings.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          You can pass NULL for the arg field. In this case, the popt
+          library will not set any values for you.
+        </para>
+        <para>
+          The POPT_ARG_NONE type indicates that this option has no
+          argument. For example, the -v verbose option has no data. On
+          the other hand, the POPT_ARG_STRING type indicates that the
+          user should provide a string. For example, the -f option to
+          the rpm command is expected to include a string argument, the
+          name of the file to look up.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          If the argInfo argument type is POPT_ARG_NONE, the popt
+          library will set arg to 1 if the option is present on the
+          command line. You should pass a pointer to an int if you want
+          this set for you.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Popt Callbacks</title>
+        <para>
+          The POPT_ARG_CALLBACK type indicates that the arg field holds
+          a function pointer to a callback function of the following
+          type:
+        </para>
+        <para>
+          typedef void (*poptCallbackType) (poptContext con,
+        </para>
+        <para>
+          enum poptCallbackReason reason,
+        </para>
+        <para>
+          const struct poptOption * opt,
+        </para>
+        <para>
+          const char * arg,
+        </para>
+        <para>
+          const void * data);
+        </para>
+        <para>
+          The callback reason will be one of the following enum values:
+        </para>
+        <para>
+          enum poptCallbackReason {
+        </para>
+        <para>
+          POPT_CALLBACK_REASON_PRE = 0,
+        </para>
+        <para>
+          POPT_CALLBACK_REASON_POST = 1,
+        </para>
+        <para>
+          POPT_CALLBACK_REASON_OPTION = 2
+        </para>
+        <para>
+          };
+        </para>
+        <para>
+          The data field holds the value of the descrip field in the
+          poptOption entry. You can cheat and stuff a pointer to
+          arbitrary data into this field.
+        </para>
+        <para>
+          The callback function is most useful if you are using nested
+          option tables. You can place your processing code for the
+          nested options into a callback.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Special Option Table Flags</title>
+        <para>
+          In addition to the types in Table 16-6, you can also define
+          special bit flags that define extra processing information for
+          each option. Combine these bit flags with the type values
+          using a logical OR operation:
+        </para>
+        <para>
+          *The POPT_ARGFLAG_ONEDASH flag allows the longName to be used
+          with one or two dashes, such as -upgrade or --upgrade.
+        </para>
+        <para>
+          *For bitmask options, the POPT_ARGFLAG_OR, POPT_ARGFLAG_NOR,
+          POPT_ARGFLAG_AND, POPT_ARGFLAG_NAND, and POPT_ARGFLAG_XOR type
+          flags tell the popt library to apply the given operation, OR,
+          NOR, AND, NAND, or XOR, to the value if set. The
+          POPT_ARGFLAG_NOT flag tells the popt library to negate the
+          value first.
+        </para>
+        <para>
+          *You can also use the macros POPT_BIT_SET to set a bit and
+          POPT_BIT_CLR to clear a bit.
+        </para>
+        <para>
+          *The POPT_ARGFLAG_OPTIONAL flag indicates that the argument
+          value is optional.
+        </para>
+        <para>
+          *The POPT_ARGFLAG_DOC_HIDDEN flag tells popt to hide this
+          option when displaying the help documentation. In other words,
+          this is an internal option.
+        </para>
+        <para>
+          *The rarely used POPT_ARGFLAG_STRIP flag tells popt to consume
+          an option and ignore it. This option is rarely used.
+        </para>
+        <para>
+          *The POPT_ARGFLAG_SHOW_DEFAULT flag tells popt to show the
+          initial value of the argument for this option as a default
+          when displaying a help message.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Magic Options</title>
+        <para>
+          With RPM programs, developers usually round out the option
+          table with three special options: POPT_AUTOALIAS,
+          POPT_AUTOHELP, and POPT_TABLEEND. The POPT_AUTOALIAS option
+          sets up a table of aliases:
+        </para>
+        <para>
+          #define POPT_AUTOALIAS { NULL, '\0', POPT_ARG_INCLUDE_TABLE,
+          poptAliasOptions, \
+        </para>
+        <para>
+          0, "Options implemented via popt alias/exec:", NULL },
+        </para>
+        <para>
+          This option refers to the table, poptAliasOptions. You can use
+          the POPT_ARG_INCLUDE_TABLE argInfo type to include another
+          table of options. These options get filled in from popt
+          aliases. In addition, within RPM programs, another table,
+          rpmcliAllPoptTable, holds a set of options common to all RPM
+          programs.
+        </para>
+        <para>
+          The POPT_AUTOHELP option supports standard help options. The
+          POPT_AUTOHELP macro adds in automatic support for -?, --help,
+          and --usage options.
+        </para>
+        <para>
+          #define POPT_AUTOHELP { NULL, '\0', POPT_ARG_INCLUDE_TABLE,
+          poptHelpOptions, \
+        </para>
+        <para>
+          0, "Help options:", NULL },
+        </para>
+        <para>
+          The POPT_TABLEEND option defines an empty option to mark the
+          end of the table. You must include an empty option to end the
+          table, and POPT_TABLEEND makes this easy.
+        </para>
+        <para>
+          #define POPT_TABLEEND { NULL, '\0', 0, 0, 0, NULL, NULL }
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          The code in Listing 16-3, in the "Running a Popt Example"
+          section later in this chapter, shows a full option table.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Parsing the Command-Line Options</title>
+        <para>
+          Once you have set up a poptGetContext, you need to iterate
+          over all the command-line parameters. To do this, call
+          poptGetNextOpt:
+        </para>
+        <para>
+          int poptGetNextOpt(poptContext context);
+        </para>
+        <para>
+          If an error occurs, poptGetNextOpt returns a negative error
+          code. If the context is at the end of the options,
+          poptGetNextOpt returns –1. Table 16-7 lists the error codes:
+        </para>
+        <para>
+          Table 16-7 Error codes from poptGetNextOpt
+        </para>
+        <informaltable frame="all">
+          <tgroup cols="2">
+            <tbody>
+              <row>
+                <entry>
+                  <para>
+                    Code
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Meaning
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ERROR_NOARG
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Option requires an argument, but it is missing
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ERROR_BADOPT
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Argument could not be parsed
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ERROR_OPTSTOODEEP
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Aliases are nested too deeply
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ERROR_BADQUOTE
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Start and end quotation marks don't match
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ERROR_BADNUMBER
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Argument could not be converted to a number
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ERROR_OVERFLOW
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Argument number was too big or too small
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    POPT_ERROR_ERRNO
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    A system call returned an error in errno
+                  </para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+      </sect3>
+      <sect3>
+        <title>Walking Through the Command-Line Options</title>
+        <para>
+          In normal circumstances, poptGetNextOpt parses all the options
+          and returns –1. If your needs are simple, you can use the
+          pointers to the variables passed in the options table,
+          described previously. If you need some special processing for
+          options not handled by popt, that is, options of type
+          POPT_ARG_NONE, then poptGetNextOpt returns the
+          single-character option.
+        </para>
+        <para>
+          In this case, you can call poptGetNextOpt in a while loop. For
+          example:
+        </para>
+        <para>
+          while ((option = poptGetNextOpt(context) ) {
+        </para>
+        <para>
+          /* Do something... */
+        </para>
+        <para>
+          }
+        </para>
+        <para>
+          Inside your while loop, you can call poptGetOptArg to get the
+          value of the argument:
+        </para>
+        <para>
+          char * poptGetOptArg(poptContext context);
+        </para>
+        <para>
+          You can restart the processing of the options by calling
+          poptResetContext:
+        </para>
+        <para>
+          void poptResetContext(poptContext context);
+        </para>
+        <para>
+          The popt system is just looking for arguments that start with
+          a dash, -. In most command-line applications, you may have a
+          number of extra arguments at the end, such as a list of file
+          names. The popt library doesn’t process these, but can
+          provide them to you.
+        </para>
+        <para>
+          Call poptGetArg to return the next extra argument:
+        </para>
+        <para>
+          char * poptGetArg(poptContext context);
+        </para>
+        <para>
+          Keep calling this function until it returns NULL.
+        </para>
+        <para>
+          Call poptPeekArg to look at the next argument but not mark it
+          as being processed:
+        </para>
+        <para>
+          char * poptPeekArg(poptContext context);
+        </para>
+        <para>
+          Or, you can get the whole list of extra arguments by calling
+          poptGetArgs:
+        </para>
+        <para>
+          char ** poptGetArgs(poptContext context);
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Handling Errors</title>
+      <para>
+        Inside your while loop processing the command-line arguments,
+        you can call poptBadOption to get the option that was bad, and
+        poptStrerror to look up the error message associated with the
+        error.
+      </para>
+      <para>
+        For poptBadOption, you need to pass in the context, and a
+        bitmask of flags. Normally, pass 0 for no flags or
+        POPT_BADOPTION_NOALIAS, which tells popt to return the actual
+        option, not a value defined in an alias. This makes
+        poptBadOption return the option closest to, if not exactly the
+        same as, what the user entered, which makes for better error
+        reporting.
+      </para>
+      <para>
+        The poptBadOption function signature follows:
+      </para>
+      <para>
+        char * poptBadOption(poptContext context, int flags);
+      </para>
+      <para>
+        Pass the error number returned by poptGetOptArg to poptStrerror
+        to get the standard error message for that option:
+      </para>
+      <para>
+        const char * poptStrerror(const int error_code);
+      </para>
+      <para>
+        You can combine these and print out an error with code like the
+        following:
+      </para>
+      <para>
+        fprintf( stderr, "Error with option [%s]\n %s",
+      </para>
+      <para>
+        poptBadOption(context, POPT_BADOPTION_NOALIAS),
+      </para>
+      <para>
+        poptStrerror(error_code);
+      </para>
+      <para>
+        To print out a usage message, call poptPrintUsage:
+      </para>
+      <para>
+        void poptPrintUsage(poptContext context,
+      </para>
+      <para>
+        FILE *output,
+      </para>
+      <para>
+        int flags);
+      </para>
+      <para>
+        This function prints out the usage help information, which is a
+        useful function when the user has called a program with
+        incomplete or wrong options.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Running a popt example</title>
+      <para>
+        Pulling this all together, you can use the popt1.c program, in
+        Listing 16-3, as an example for using popt to process
+        command-line options.
+      </para>
+      <para>
+        Listing 16-3: popt1.c
+      </para>
+      <para>
+        /* Processes command-line options. */
+      </para>
+      <para/>
+      <para>
+        #include &lt;stdio.h&gt;
+      </para>
+      <para>
+        #include &lt;stdlib.h&gt;
+      </para>
+      <para/>
+      <para>
+        #include &lt;popt.h&gt;
+      </para>
+      <para/>
+      <para>
+        /* Data values for the options. */
+      </para>
+      <para>
+        static int intVal = 55;
+      </para>
+      <para>
+        static int print = 0;
+      </para>
+      <para/>
+      <para>
+        static char* stringVal;
+      </para>
+      <para/>
+      <para/>
+      <para>
+        void callback(poptContext context,
+      </para>
+      <para>
+        enum poptCallbackReason reason,
+      </para>
+      <para>
+        const struct poptOption * option,
+      </para>
+      <para>
+        const char * arg,
+      </para>
+      <para>
+        const void * data)
+      </para>
+      <para>
+        {
+      </para>
+      <para>
+        switch(reason)
+      </para>
+      <para>
+        {
+      </para>
+      <para>
+        case POPT_CALLBACK_REASON_PRE:
+      </para>
+      <para>
+        printf("\t Callback in pre setting\n"); break;
+      </para>
+      <para>
+        case POPT_CALLBACK_REASON_POST:
+      </para>
+      <para>
+        printf("\t Callback in post setting\n"); break;
+      </para>
+      <para>
+        case POPT_CALLBACK_REASON_OPTION:
+      </para>
+      <para>
+        printf("\t Callback in option setting\n"); break;
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        }
+      </para>
+      <para/>
+      <para/>
+      <para/>
+      <para>
+        /* Set up a table of options. */
+      </para>
+      <para>
+        static struct poptOption optionsTable[] = {
+      </para>
+      <para>
+        { (const) "int", (char) 'i', POPT_ARG_INT, (void*) &amp;intVal,
+        0,
+      </para>
+      <para>
+        (const) "follow with an integer value", (const) "2, 4, 8, or 16"
+        },
+      </para>
+      <para/>
+      <para>
+        { "callback", '\0', POPT_ARG_CALLBACK|POPT_ARGFLAG_DOC_HIDDEN,
+      </para>
+      <para>
+        &amp;callback, 0, NULL, NULL },
+      </para>
+      <para/>
+      <para>
+        { (const) "file", (char) 'f', POPT_ARG_STRING, (void*)
+        &amp;stringVal, 0,
+      </para>
+      <para>
+        (const) "follow with a file name", NULL },
+      </para>
+      <para/>
+      <para>
+        { (const) "print", (char) 'p', POPT_ARG_NONE, &amp;print, 0,
+      </para>
+      <para>
+        (const) "send output to the printer", NULL },
+      </para>
+      <para/>
+      <para>
+        POPT_AUTOALIAS
+      </para>
+      <para>
+        POPT_AUTOHELP
+      </para>
+      <para>
+        POPT_TABLEEND
+      </para>
+      <para>
+        };
+      </para>
+      <para/>
+      <para>
+        int main(int argc, char *argv[]) {
+      </para>
+      <para/>
+      <para>
+        poptContext context = poptGetContext(
+      </para>
+      <para>
+        (const char*) "popt1",
+      </para>
+      <para>
+        argc,
+      </para>
+      <para>
+        argv,
+      </para>
+      <para>
+        (const struct poptOption* ) &amp;optionsTable,
+      </para>
+      <para>
+        0);
+      </para>
+      <para/>
+      <para/>
+      <para>
+        int option = poptGetNextOpt(context);
+      </para>
+      <para>
+        printf("option = %d\n", option);
+      </para>
+      <para/>
+      <para>
+        /* Print out option values. */
+      </para>
+      <para>
+        printf("After processing, options have values:\n");
+      </para>
+      <para/>
+      <para>
+        printf("\t intVal holds %d\n", intVal);
+      </para>
+      <para>
+        printf("\t print flag holds %d\n", print);
+      </para>
+      <para>
+        printf("\t stringVal holds [%s]\n", stringVal);
+      </para>
+      <para/>
+      <para>
+        poptFreeContext(context);
+      </para>
+      <para/>
+      <para>
+        exit(0);
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        This example defines a callback but otherwise uses the simplest
+        case for processing the command-line options. This program lets
+        the popt library simply set the values into the option table. In
+        most cases, you should avoid more complex command-line
+        processing.
+      </para>
+      <para>
+        To compile popt programs, you just need the popt library. For
+        example:
+      </para>
+      <para>
+        gcc -I/usr/include/rpm -o popt1 popt1.c -lpopt
+      </para>
+      <para>
+        When you run this program, try out the different options. For
+        example, when you set all the options, you’ll see output like
+        the following:
+      </para>
+      <para>
+        $ ./popt1 -i 42 --print -f filename1
+      </para>
+      <para>
+        Callback in option setting
+      </para>
+      <para>
+        Callback in option setting
+      </para>
+      <para>
+        Callback in post setting
+      </para>
+      <para>
+        option = -1
+      </para>
+      <para>
+        After processing, options have values:
+      </para>
+      <para>
+        intVal holds 42
+      </para>
+      <para>
+        print flag holds 1
+      </para>
+      <para>
+        stringVal holds [filename1]
+      </para>
+      <para>
+        This command used two short options and one long. You can mix
+        and match short and long options, as shown following:
+      </para>
+      <para>
+        $ ./popt1 --int 42 -p --file filename1
+      </para>
+      <para>
+        Callback in option setting
+      </para>
+      <para>
+        Callback in option setting
+      </para>
+      <para>
+        Callback in post setting
+      </para>
+      <para>
+        option = -1
+      </para>
+      <para>
+        After processing, options have values:
+      </para>
+      <para>
+        intVal holds 42
+      </para>
+      <para>
+        print flag holds 1
+      </para>
+      <para>
+        stringVal holds [filename1]
+      </para>
+      <para>
+        This example used a short option for print, -p, and long options
+        for the other two options. The popt library also provides handy
+        help and usage messages, using the option table macro
+        POPT_AUTOALIAS. To get a help message, use --help or -?:
+      </para>
+      <para>
+        $ ./popt1 --help
+      </para>
+      <para>
+        Usage: popt1 [OPTION...]
+      </para>
+      <para>
+        -i, --int=2, 4, 8, or 16 follow with an integer value
+      </para>
+      <para>
+        -f, --file=STRING follow with a file name
+      </para>
+      <para>
+        -p, --print send output to the printer
+      </para>
+      <para/>
+      <para>
+        Options implemented via popt alias/exec:
+      </para>
+      <para/>
+      <para>
+        Help options:
+      </para>
+      <para>
+        -?, --help Show this help message
+      </para>
+      <para>
+        --usage Display brief usage message
+      </para>
+      <para>
+        Notice how the help descriptions from the options table are
+        used.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        With some shells, especially the tcsh shell, you need to wrap a
+        -? In single quotes. For example:
+      </para>
+      <para>
+        $ ./popt1 '-?'
+      </para>
+      <para>
+        The usage message is shorter, and you also get it for free:
+      </para>
+      <para>
+        $ ./popt1 --usage
+      </para>
+      <para>
+        Usage: popt1 [-i|--int 2, 4, 8, or 16] [-f|--file STRING]
+        [-p|--print]
+      </para>
+      <para>
+        [-?|--help] [--usage]
+      </para>
+      <para>
+        All in all, the popt library provides a handy library for
+        processing command-line options and aliases, covered in <xref linkend="ch-customizing-rpm"/>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Handling rpm command-line options</title>
+      <para>
+        The RPM C library makes extensive use of popt for processing
+        command-line arguments. Functions that set up the RPM library,
+        such as rpmcliInit, which sets up the RPM command-line
+        environment, require a table of poptOption entries that define
+        the command-line options for your program.
+      </para>
+      <para>
+        To create a simple program that handles the standard rpm
+        command-line options, set up the following options table:
+      </para>
+      <para>
+        static struct poptOption optionsTable[] = {
+      </para>
+      <para/>
+      <para>
+        { NULL, '\0', POPT_ARG_INCLUDE_TABLE, rpmcliAllPoptTable, 0,
+      </para>
+      <para>
+        "Common options for all rpm modes and executables:",
+      </para>
+      <para>
+        NULL },
+      </para>
+      <para/>
+      <para>
+        POPT_AUTOALIAS
+      </para>
+      <para>
+        POPT_AUTOHELP
+      </para>
+      <para>
+        POPT_TABLEEND
+      </para>
+      <para>
+        };
+      </para>
+      <para>
+        Then, initialize your program with a call to rpmcliInit:
+      </para>
+      <para>
+        poptContext rpmcliInit(int argc, char *const argv[],
+      </para>
+      <para>
+        struct poptOption * optionsTable);
+      </para>
+      <para>
+        When you call rpmcliInit, it will set up all the variables for
+        the standard rpm command-line options.
+      </para>
+      <para>
+        For example, to see if the verbose flag is turned on, call
+        rpmIsVerbose:
+      </para>
+      <para>
+        int rpmIsVerbose();
+      </para>
+      <para>
+        When you are done with a program that called rpmcliInit, call
+        rpmcliFini to clean up the global data:
+      </para>
+      <para>
+        poptContext rpmcliFini(poptContext context);
+      </para>
+      <para>
+        The call to rpmcliFini returns NULL.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Working with RPM Files</title>
+    <para>
+      The RPM C library provides functions to read RPM files as well as
+      query the RPM database. Going beyond querying, you can perform all
+      the tasks that the rpm and rpmbuild commands do, since both these
+      commands are written in C using the RPM library. That said, some
+      tasks are much easier than other tasks. If you are writing a
+      complex package installation program, or a program that keeps
+      various systems up to date with regards to package versions, you
+      may want to look at the Python RPM API instead of the C RPM
+      library.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      <xref linkend="ch-rpm-programming-python"/>  covers the Python RPM API.
+    </para>
+    <sect2>
+      <title>Opening RPM files</title>
+      <para>
+        When working with an RPM file from within a program, the first
+        thing you need to do is open the file. Use Fopen:
+      </para>
+      <para>
+        FD_t Fopen(const char * path,
+      </para>
+      <para>
+        const char * fmode);
+      </para>
+      <para>
+        Fopen works like the standard C function fopen(3).
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        The reason the RPM library wraps the input/output C library
+        functions is to ensure portability to other operating systems.
+        This is a fairly common technique.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Reading the RPM lead and signature</title>
+      <para>
+        Once you have opened an RPM file, you can start to read header
+        information, which is the most interesting information to most
+        RPM programs. (You may also want to read the files in the RPM
+        payload, for example.) Before you can start reading the header,
+        though, you must read forward in the RPM file past the lead and
+        signature.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-rpm-overview"/>  introduces the lead and signature.
+      </para>
+      <para>
+        Even if your programs don’t want to examine the lead or
+        signature, you must read past to position the file offset
+        properly for reading the header information. To read past the
+        lead, call readLead:
+      </para>
+      <para>
+        int readLead(FD_t fd, struct rpmlead *lead);
+      </para>
+      <para>
+        The readLead function returns 0 on success or 1 on an error. It
+        fills in an rpmlead struct:
+      </para>
+      <para>
+        struct rpmlead {
+      </para>
+      <para>
+        unsigned char magic[4];
+      </para>
+      <para>
+        unsigned char major;
+      </para>
+      <para>
+        unsigned char minor;
+      </para>
+      <para>
+        short type;
+      </para>
+      <para>
+        short archnum;
+      </para>
+      <para>
+        char name[66];
+      </para>
+      <para>
+        short osnum;
+      </para>
+      <para>
+        short signature_type;
+      </para>
+      <para>
+        char reserved[16];
+      </para>
+      <para>
+        };
+      </para>
+      <para>
+        To read past the signature, call rpmReadSignature:
+      </para>
+      <para>
+        rpmRC rpmReadSignature(FD_t fd,
+      </para>
+      <para>
+        Header * header,
+      </para>
+      <para>
+        sigType sig_type);
+      </para>
+      <para>
+        The return code is one of the values listed in Table 16-8.
+      </para>
+      <para>
+        Table 16-8 Return codes from rpmReadSignature
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="1">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Code
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  RPMRC_OK
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  RPMRC_BADMAGIC
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  RPMRC_FAIL
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  RPMRC_BADSIZE
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  RPMRC_SHORTREAD
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        You can do more with the signature than merely reading past it,
+        of course. Look in the online RPM documentation for more on
+        verifying signatures.
+      </para>
+      <para>
+        After reading the signature, you can start to read the general
+        header entries.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Reading header information</title>
+      <para>
+        The header information includes the package name, version, pre-
+        and post-installation scripts, and so on. To read in the RPM
+        header, call headerRead. If successful, headerRead returns a
+        Header object. You can then read data values from the Header.
+      </para>
+      <para>
+        Header headerRead(FD_t fd,
+      </para>
+      <para>
+        enum hMagic magicp);
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        When working with the RPM database, you will also use Header
+        objects.
+      </para>
+      <para>
+        The trickiest thing about calling headerRead is that you must
+        pass a special magic number flag. This value must be
+        HEADER_MAGIC_YES if the header has a set of magic numbers, and
+        HEADER_MAGIC_NO if not. If you guess incorrectly, headerRead
+        will return an error. To get around, this, you can compare the
+        major number in the lead. For example:
+      </para>
+      <para>
+        Header header = headerRead(fd, (lead.major &gt;= 3) ?
+      </para>
+      <para>
+        HEADER_MAGIC_YES : HEADER_MAGIC_NO);
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        This snippet is one of the gems you'll find when you browse the
+        RPM source code. Use the source.
+      </para>
+      <para>
+        To read values from the Header, call headerGetEntry. To call
+        headerGetEntry, you pass in a Header and a tag ID. You get back
+        the type of the tag, a pointer to the tag values, and a count of
+        the number of values stored under this tag.
+      </para>
+      <para>
+        int headerGetEntry(Header header,
+      </para>
+      <para>
+        int_32 tag,
+      </para>
+      <para>
+        hTYP_t type,
+      </para>
+      <para>
+        void **pointer,
+      </para>
+      <para>
+        hCNT_t data_size);
+      </para>
+      <para>
+        The call to headerGetEntry returns a 1 on success, or a 0 on
+        failure. On success, the pointer will point at the retrieved
+        data, with the type parameter set to one of the following enum
+        values:
+      </para>
+      <para>
+        enum rpmTagType_e {
+      </para>
+      <para>
+        RPM_NULL_TYPE = 0,
+      </para>
+      <para>
+        RPM_CHAR_TYPE = 1,
+      </para>
+      <para>
+        RPM_INT8_TYPE = 2,
+      </para>
+      <para>
+        RPM_INT16_TYPE = 3,
+      </para>
+      <para>
+        RPM_INT32_TYPE = 4,
+      </para>
+      <para>
+        RPM_STRING_TYPE = 6,
+      </para>
+      <para>
+        RPM_BIN_TYPE = 7,
+      </para>
+      <para>
+        RPM_STRING_ARRAY_TYPE = 8,
+      </para>
+      <para>
+        RPM_I18NSTRING_TYPE
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        If the type is RPM_STRING_ARRAY_TYPE or RPM_BIN_TYPE, you must
+        free the pointer. Call headerFreeData to free the data:
+      </para>
+      <para>
+        void* headerFreeData(const void *pointer,
+      </para>
+      <para>
+        rpmTagType type);
+      </para>
+      <para>
+        You need to pass in the data pointer and the type flag. You can
+        safely call headerFreeData for all types. The function will do
+        nothing if the type is not set up to require freeing.
+      </para>
+      <para>
+        When you call headerGetEntry, you must identify the tag you want
+        from the header. This tag is an identifier for the --queryformat
+        tags introduced in <xref linkend="ch-using-rpm-db"/> . The file rpmlib.h lists the
+        various tags, such as RPMTAG_NAME, RPMTAG_VERSION, and
+        RPMTAG_RELEASE.
+      </para>
+      <para>
+        The following function shows how to read a string entry from a
+        Header:
+      </para>
+      <para>
+        /* Function to read a string header entry. */
+      </para>
+      <para>
+        char* readHeaderString(Header header, int_32 tag_id) {
+      </para>
+      <para/>
+      <para>
+        int_32 type;
+      </para>
+      <para>
+        void* pointer;
+      </para>
+      <para>
+        int_32 data_size;
+      </para>
+      <para/>
+      <para>
+        int header_status = headerGetEntry(header,
+      </para>
+      <para>
+        tag_id,
+      </para>
+      <para>
+        &amp;type,
+      </para>
+      <para>
+        &amp;pointer,
+      </para>
+      <para>
+        &amp;data_size);
+      </para>
+      <para/>
+      <para>
+        if (header_status) {
+      </para>
+      <para/>
+      <para>
+        if (type == RPM_STRING_TYPE) {
+      </para>
+      <para>
+        return pointer;
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        }
+      </para>
+      <para/>
+      <para>
+        return NULL;
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        Pass the Header object and the ID of the tag to read. For
+        example:
+      </para>
+      <para>
+        char* name = readHeaderString(header, RPMTAG_NAME);
+      </para>
+      <para>
+        char* version = readHeaderString(header, RPMTAG_VERSION);
+      </para>
+      <para>
+        char* release = readHeaderString(header, RPMTAG_RELEASE);
+      </para>
+      <para>
+        To just get the name, version, and release number, you can call
+        the utility function headerNVR, which has the following function
+        signature:
+      </para>
+      <para>
+        int headerNVR(Header header,
+      </para>
+      <para>
+        const char **nameptr,
+      </para>
+      <para>
+        const char **versionptr,
+      </para>
+      <para>
+        const char **releaseptr);
+      </para>
+      <para>
+        When you are through with a header, free it by calling
+        headerFree:
+      </para>
+      <para>
+        Header headerFree(Header header);
+      </para>
+      <para>
+        The call to headerFree returns NULL, so you can use the call to
+        set the original pointer to to NULL to prevent accidental reuse.
+        For example:
+      </para>
+      <para>
+        header = headerFree(header);
+      </para>
+    </sect2>
+    <sect2>
+      <title>A shortcut to header information</title>
+      <para>
+        You can read in a Header using the shortcut utility method
+        rpmReadPackageFile:
+      </para>
+      <para>
+        int rpmReadPackageFile(rpmts ts,
+      </para>
+      <para>
+        FD_t fd,
+      </para>
+      <para>
+        const char *filename,
+      </para>
+      <para>
+        Header *header);
+      </para>
+      <para>
+        You need to pass a transaction set to rpmReadPackageFile and an
+        open file. The filename is just used for reporting errors. On
+        success, rpmReadPackageFile fills in a Header object from the
+        package file. The return value is 0 for success.
+      </para>
+      <para>
+        To get the necessary transaction set, you need to create one
+        with rpmtsCreate, covered in the "Programming with the RPM
+        Database" section, following.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        In most cases, you should call rpmReadPackageFile in place of
+        readLead, rpmReadSignature, and headerRead, since
+        rpmReadPackageFile also verifies the package integrity.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Closing RPM files</title>
+      <para>
+        When you’re done with an RPM file, close it with Fclose:
+      </para>
+      <para>
+        int Fclose(FD_t fd);
+      </para>
+      <para>
+        Fclose acts much like the standard C function fclose(3). The
+        FD_t is an RPM data type that is very similar to a FILE pointer.
+      </para>
+      <para>
+        The RPM I/O subsystem, defined with rpmio.h, includes functions
+        that mimic (and in most cases wrap) the ANSI C stdio functions.
+        These include: Fopen, Fclose, Fread, Fwrite, Ferror, Fflush,
+        Fileno, and Fseek.
+      </para>
+      <para>
+        These functions wrap the ANSI C stdio functions to add new
+        features. The Fopen function, for example, supports HTTP or FTP
+        URLs in the place of a file name, so long as you append ".ufdio"
+        to the mode.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Programming with the RPM Database</title>
+    <para>
+      Many functions in rpmlib require a transaction set. In particular,
+      accessing the rpm database is quite easy using a transaction set.
+    </para>
+    <para>
+      Create a transaction set by calling rpmtsCreate:
+    </para>
+    <para>
+      rpmts rpmtsCreate(void);
+    </para>
+    <para>
+      RPM uses transaction sets to bracket operations on the RPM
+      database. As the RPM API evolves, transaction sets will become
+      more and more important. Transaction sets also help in that the
+      RPM library will automatically open the RPM database as needed.
+    </para>
+    <para>
+      When you are done with a transaction set, call rpmtsFree:
+    </para>
+    <para>
+      rpmts rpmtsFree(rpmts ts);
+    </para>
+    <para>
+      The call to rpmtsFree returns NULL.
+    </para>
+    <sect2>
+      <title>Database iterators</title>
+      <para>
+        Once you have a transaction set, you can iterate over the
+        installed packages in the RPM database by creating an iterator.
+        To do this, call rpmtsInitIterator:
+      </para>
+      <para>
+        rpmdbMatchIterator rpmtsInitIterator(const rpmts ts,
+      </para>
+      <para>
+        rpmTag rpmtag,
+      </para>
+      <para>
+        const void *keypointer,
+      </para>
+      <para>
+        size_t keylen);
+      </para>
+      <para>
+        You need to specify which tag to iterate by, which in most cases
+        will be the package name, RPMTAG_NAME, introduced previously
+        With the RPMTAG_NAME tag, you need to pass the name of a package
+        to look for in the keypointer parameter. (The keypointer varies
+        based on the tag you pass.)
+      </para>
+      <para>
+        For string data, you can pass 0 for the keylen parameter. For
+        example, this call to rpmtsInitIterator looks for all packages
+        named sendmail.
+      </para>
+      <para>
+        rpmdbMatchIterator iter;
+      </para>
+      <para>
+        iter = rpmtsInitIterator(ts, RPMTAG_NAME, "sendmail", 0);
+      </para>
+      <para>
+        The rpmdbMatchIterator allows you to iterate through a number of
+        packages, in this case, all the packages that match a given
+        name. After calling rpmtsInitIterator, the next step is to call
+        rpmdbNextIterator:
+      </para>
+      <para>
+        Header rpmdbNextIterator(rpmdbMatchIterator iter);
+      </para>
+      <para>
+        This function returns the next package Header object in the
+        iterator. The Header will be NULL if there are no more packages
+        in the iterator.
+      </para>
+      <para>
+        If the Header is not NULL, you can get entries from it, as shown
+        previously. You can use a while loop to go through all the
+        matching packages. For example:
+      </para>
+      <para>
+        while ( (installed_header = rpmdbNextIterator(iter) ) != NULL) {
+      </para>
+      <para>
+        /* Do something... */
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        In future versions of the RPM library, rpmtsNextIterator, will
+        replace rpmdbNextIterator.
+      </para>
+      <para>
+        You do not need to free the Header returned by
+        rpmdbNextIterator. Also, the next call to rpmdbNextIterator will
+        reset the Header.
+      </para>
+      <para>
+        You can customize how an iterator works by adding a pattern to
+        the iterator with rpmdbSetIteratorRE:
+      </para>
+      <para>
+        int rpmdbSetIteratorRE(rpmdbMatchIterator iter,
+      </para>
+      <para>
+        rpmTag tag,
+      </para>
+      <para>
+        rpmMireMode mode,
+      </para>
+      <para>
+        const char * pattern);
+      </para>
+      <para>
+        Calling rpmdbSetIteratorRE modifies the passed-in iterator to
+        use the given pattern as a further test on the given tag. The
+        mode parameter names the type of pattern used, which can be one
+        of those listed in Table 16-9.
+      </para>
+      <para>
+        Table 16-9 Types of patterns for rpmdbSetIteratorRE
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Type
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Meaning
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  RPMMIRE_DEFAULT
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Same as regular expressions but with \., .*, and ^..$
+                  added.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  RPMMIRE_GLOB
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Glob-style patterns using fnmatch.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  RPMMIRE_REGEX
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Regular expressions using regcomp.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  RPMMIRE_STRCMP
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  String comparisons using strcmp.
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        For more on these patterns, see the online manual pages for
+        fnmatch(3), glob(7), regcomp(3), regex(7), and strcmp(3).
+      </para>
+      <para>
+        Free the iterator when done with rpmdbFreeIterator:
+      </para>
+      <para>
+        rpmdbMatchIterator rpmdbFreeIterator(rpmdbMatchIterator iter);
+      </para>
+      <para>
+        The call to rpmdbFreeIterator returns NULL.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Dependency Sets</title>
+      <para>
+        To compare package versions, create a dependency set. The rpm
+        command, for example, uses dependency sets to compare package
+        versions.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        You could compare the version numbers directly, calling
+        headerGetEntry to get the version and release tags, converting
+        these strings to numbers and then comparing, but this would
+        cause problems. The custom comparison is not as exact as the
+        code in this section, especially since many packages have
+        version numbers that are not true numbers, such as 1.12.4, with
+        one too many decimal points. This makes the comparisons harder.
+        In addition, there is more than just the version number to take
+        into account. You need to deal with the Epoch value, as well as
+        the release, too.
+      </para>
+      <para>
+        To handle all the complicated logic of comparing versions, you
+        can use the code in this section, or call rpmvercmp. Do not try
+        to compare version numbers with custom code.
+      </para>
+      <para>
+        To create a dependency set for a given package Header, call
+        rpmdsThis. Calling rpmdsThis creates a dependency set that holds
+        a triple of the package name, the Epoch/Version/Release
+        information, and the flags.
+      </para>
+      <para>
+        rpmds rpmdsThis(Header header,
+      </para>
+      <para>
+        rpmTag tagID,
+      </para>
+      <para>
+        int_32 Flags);
+      </para>
+      <para>
+        For comparing packages, you can pass RPMTAG_REQUIRENAME for the
+        tagID. The actual tagID here is ignored for the version check.
+        What you do need, though, are flags to check whether another
+        package is less than or equal to the Epoch/Version/Release
+        information in this dependency set. For this task, pass the
+        following bit flags:
+      </para>
+      <para>
+        (RPMSENSE_EQUAL|RPMSENSE_LESS)
+      </para>
+      <para>
+        Once you have a dependency set, you can use the handy function
+        rpmdsNVRMatchesDep to compare the NVR, or Name, Version, Release
+        entries in the header of one package against the data in the
+        dependency set.
+      </para>
+      <para>
+        int rpmdsNVRMatchesDep(const Header header,
+      </para>
+      <para>
+        const rpmds dependency_set,
+      </para>
+      <para>
+        int nopromote);
+      </para>
+      <para>
+        After checking the dependencies, rpmdsNVRMatchesDep returns 1 if
+        the dependency overlaps, or 0 otherwise. In terms of comparing
+        packages, 1 means that the package file is as old or older than
+        the installed package, and 0 means that the package already
+        installed is newer. Pass 1 to prevent promoting the Epoch value
+        in the packages during the comparison.
+      </para>
+      <para>
+        The actual comparison is controlled by the call that creates the
+        dependency set, especially the flags. Thus, passing flags of
+        (RPMSENSE_EQUAL|RPMSENSE_LESS) to rpmdsThis set up the test as a
+        less than or equal test.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        The RPM C API documentation marks rpmdsNVRMatchesDep as
+        deprecated, to be replaced in the future.
+      </para>
+      <para>
+        You can also call rpmVersionCompare to compare the versions of
+        two packages:
+      </para>
+      <para>
+        int rpmVersionCompare(Header header1, Header header2);
+      </para>
+      <para>
+        The return value is -1 if the header1 represents an older
+        version than header2, 0 if the two headers represent the same
+        version, and 1 if header1 represents a newer version than
+        header2.
+      </para>
+      <para>
+        To get the name of the package from a dependency set, call
+        rpmdsN:
+      </para>
+      <para>
+        const char* rpmdsN(const rpmds dependency_set);
+      </para>
+      <para>
+        You can use rpmdsN to get the name when calling
+        rpmtsInitIterator if you are working with dependency sets when
+        searching the RPM database.
+      </para>
+      <para>
+        Free a dependency set when done by calling rpmdsFree:
+      </para>
+      <para>
+        rpmds rpmdsFree(rpmds dependency_set);
+      </para>
+      <para>
+        As with other free functions, rpmdsFree returns NULL.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Comparing an RPM File to an Installed Package</title>
+    <para>
+      You can pull together the RPM file and database discussions, shown
+      previously, to create a number of RPM programs. A useful utility
+      that shows the RPM C library compares a package file against
+      installed packages, reporting whether the package in the RPM file
+      represents a newer or older package than what was already
+      installed.
+    </para>
+    <para>
+      Listing 16-4 shows such a program.
+    </para>
+    <para>
+      Listing 16-4: vercompare.c
+    </para>
+    <para>
+      /* Compares a package file with an installed package,
+    </para>
+    <para>
+      telling which one is newer.
+    </para>
+    <para/>
+    <para>
+      Usage:
+    </para>
+    <para>
+      vercompare pkg_files+
+    </para>
+    <para/>
+    <para>
+      Compile as
+    </para>
+    <para>
+      cc -I/usr/include/rpm -o vercompare vercompare.c -lrpm -lrpmdb
+      -lrpmio -lpopt
+    </para>
+    <para/>
+    <para>
+      */
+    </para>
+    <para>
+      #include &lt;stdlib.h&gt;
+    </para>
+    <para/>
+    <para>
+      #include &lt;rpmcli.h&gt;
+    </para>
+    <para>
+      #include &lt;rpmdb.h&gt;
+    </para>
+    <para>
+      #include &lt;rpmds.h&gt;
+    </para>
+    <para>
+      #include &lt;rpmts.h&gt;
+    </para>
+    <para/>
+    <para>
+      /* Set up a table of options using standard RPM options. */
+    </para>
+    <para>
+      static struct poptOption optionsTable[] = {
+    </para>
+    <para/>
+    <para>
+      { NULL, '\0', POPT_ARG_INCLUDE_TABLE, rpmcliAllPoptTable, 0,
+    </para>
+    <para>
+      "Common options for all rpm modes and executables:",
+    </para>
+    <para>
+      NULL },
+    </para>
+    <para/>
+    <para>
+      POPT_AUTOALIAS
+    </para>
+    <para>
+      POPT_AUTOHELP
+    </para>
+    <para>
+      POPT_TABLEEND
+    </para>
+    <para>
+      };
+    </para>
+    <para/>
+    <para>
+      int main(int argc, char * argv[])
+    </para>
+    <para>
+      {
+    </para>
+    <para>
+      poptContext context;
+    </para>
+    <para>
+      const char ** fnp;
+    </para>
+    <para>
+      rpmdbMatchIterator iter;
+    </para>
+    <para>
+      Header file_header, installed_header;
+    </para>
+    <para>
+      rpmts ts;
+    </para>
+    <para>
+      rpmds dependency_set;
+    </para>
+    <para>
+      FD_t fd;
+    </para>
+    <para>
+      rpmRC rpmrc;
+    </para>
+    <para>
+      int rc;
+    </para>
+    <para/>
+    <para>
+      context = rpmcliInit(argc, argv, optionsTable);
+    </para>
+    <para>
+      if (context == NULL) {
+    </para>
+    <para>
+      exit(EXIT_FAILURE);
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      ts = rpmtsCreate();
+    </para>
+    <para/>
+    <para/>
+    <para>
+      for (fnp = poptGetArgs(context); fnp &amp;&amp; *fnp; fnp++) {
+    </para>
+    <para/>
+    <para>
+      /* Read package header, continuing to next arg on failure. */
+    </para>
+    <para>
+      fd = Fopen(*fnp, "r.ufdio");
+    </para>
+    <para/>
+    <para>
+      if (fd == NULL || Ferror(fd)) {
+    </para>
+    <para>
+      rpmError(RPMERR_OPEN, "open of %s failed: %s\n", *fnp,
+    </para>
+    <para>
+      Fstrerror(fd));
+    </para>
+    <para>
+      if (fd) {
+    </para>
+    <para>
+      Fclose(fd);
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      continue;
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      rpmrc = rpmReadPackageFile(ts, fd, *fnp, &amp;file_header);
+    </para>
+    <para>
+      Fclose(fd);
+    </para>
+    <para/>
+    <para>
+      if (rpmrc != RPMRC_OK) {
+    </para>
+    <para>
+      rpmError(RPMERR_OPEN, "%s cannot be read\n", *fnp);
+    </para>
+    <para>
+      continue;
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      /* Generate "name &lt;= epoch:version-release" depset for package
+      */
+    </para>
+    <para>
+      dependency_set = rpmdsThis(file_header, RPMTAG_REQUIRENAME,
+    </para>
+    <para>
+      (RPMSENSE_EQUAL|RPMSENSE_LESS));
+    </para>
+    <para/>
+    <para>
+      rc = -1; /* assume no package is installed. */
+    </para>
+    <para/>
+    <para>
+      /* Search all installed packages with same name. */
+    </para>
+    <para>
+      iter = rpmtsInitIterator(ts, RPMTAG_NAME, rpmdsN(dependency_set),
+      0);
+    </para>
+    <para/>
+    <para>
+      while ((installed_header = rpmdbNextIterator(iter)) != NULL) {
+    </para>
+    <para/>
+    <para>
+      /* Is the installed package newer than the file? */
+    </para>
+    <para>
+      rc = rpmdsNVRMatchesDep(installed_header, dependency_set, 1);
+    </para>
+    <para/>
+    <para>
+      switch (rc) {
+    </para>
+    <para>
+      case 1:
+    </para>
+    <para>
+      if ( rpmIsVerbose() )
+    </para>
+    <para>
+      fprintf(stderr, "installed package is older (or same) as %s\n",
+    </para>
+    <para>
+      *fnp);
+    </para>
+    <para>
+      break;
+    </para>
+    <para>
+      case 0:
+    </para>
+    <para>
+      if ( rpmIsVerbose() )
+    </para>
+    <para>
+      fprintf(stderr, "installed package is newer than %s\n",
+    </para>
+    <para>
+      *fnp);
+    </para>
+    <para>
+      break;
+    </para>
+    <para>
+      }
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para/>
+    <para>
+      /* Clean up. */
+    </para>
+    <para>
+      iter = rpmdbFreeIterator(iter);
+    </para>
+    <para/>
+    <para>
+      dependency_set = rpmdsFree(dependency_set);
+    </para>
+    <para/>
+    <para>
+      if (rc &lt; 0 &amp;&amp; rpmIsVerbose() )
+    </para>
+    <para>
+      fprintf(stderr, "no package is installed %s\n", *fnp);
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      ts = rpmtsFree(ts);
+    </para>
+    <para>
+      context = rpmcliFini(context);
+    </para>
+    <para/>
+    <para>
+      return rc;
+    </para>
+    <para/>
+    <para>
+      }
+    </para>
+    <para>
+      The vercompare.c program shows reading in RPM package files as
+      well as querying the RPM database. It introduces transaction sets,
+      used extensively in the RPM API, and also dependency sets. You can
+      use this program as a guide for making your own RPM programs.
+    </para>
+    <para>
+      When you run the vercompare.c program, pass the names of one or
+      more RPM files. The vercompare.c program will extract the package
+      name from the files, and then query the RPM database for matching
+      packages. For each matching package, vercompare.c checks whether
+      the installed package is newer than the RPM file, or at the same
+      version or older. For example, if you have installed version
+      1.17-1 of the jikes package (a Java compiler), you can compare the
+      installed version against RPM files. If you have a package that
+      has a newer version, you should see output like the following:
+    </para>
+    <para>
+      $ ./vercompare -v jikes-1.18-1.i386.rpm
+    </para>
+    <para>
+      installed package is older (or same) as jikes-1.18-1.i386.rpm
+    </para>
+    <para>
+      Note that the output is relative to the installed package.
+    </para>
+    <para>
+      If you compare against a file that has an older version of the
+      package, you will see results like the following:
+    </para>
+    <para>
+      $ ./vercompare -v jikes-1.14-1-glibc-2.2.i386.rpm
+    </para>
+    <para>
+      installed package is newer than jikes-1.14-1-glibc-2.2.i386.rpm
+    </para>
+    <para>
+      And, if you compare to an RPM file that holds the same package,
+      you will see output as follows:
+    </para>
+    <para>
+      $ ./vercompare -v jikes-1.17-glibc2.2-1.i386.rpm
+    </para>
+    <para>
+      installed package is older (or same) as
+      jikes-1.17-glibc2.2-1.i386.rpm
+    </para>
+    <para>
+      You can change this aspect of the test by changing the flags
+      passed to rpmdsThis.
+    </para>
+    <para>
+      Note
+    </para>
+    <para>
+      The vercompare.c program prints out nothing unless there is an
+      error. Instead, it sets the program exit status based on the
+      package version comparison. You can use this with automated tools,
+      such as make, that check the exit status.
+    </para>
+    <para>
+      If you want output from the program, pass the –v, verbose,
+      option to the command, as shown in the previous examples.
+    </para>
+    <para>
+      The RPM cli or command-line interface functions, such as
+      rpmcliInit, are based on the command-line options expected by the
+      rpm and rpmbuild commands. You can use these functions to provide
+      a high level of abstraction onto the RPM system. For example, to
+      run the query options just like the rpm command, call rpmcliQuery.
+    </para>
+    <para>
+      int rpmcliQuery(rpmts transaction_set,
+    </para>
+    <para>
+      QVA_t qva,
+    </para>
+    <para>
+      const char **argv);
+    </para>
+    <para>
+      Set the QVA_t variable to point at the global variable rpmQVKArgs,
+      which is set up from the global option table for the query mode,
+      rpmQueryPoptTable. Pass rpmcliQuery a set of file names or package
+      names. You can get these names in the given format by calling
+      poptGetArgs, introduced previously.
+    </para>
+    <para>
+      To support the query options, you need the rpm query entries in
+      your poptOption table. To get these options, add the following
+      entry:
+    </para>
+    <para>
+      { NULL, '\0', POPT_ARG_INCLUDE_TABLE, rpmQueryPoptTable, 0,
+    </para>
+    <para>
+      "Query options (with -q or --query):",
+    </para>
+    <para>
+      NULL },
+    </para>
+    <para>
+      With the rpmQueryPoptTable options, you can make a program that
+      works like the rpm --query command using just the following code:
+    </para>
+    <para>
+      poptContext context;
+    </para>
+    <para>
+      QVA_t qva = &amp;rpmQVKArgs&semi;
+    </para>
+    <para>
+      rpmts ts;
+    </para>
+    <para>
+      int ec;
+    </para>
+    <para/>
+    <para/>
+    <para>
+      context = rpmcliInit(argc, argv, optionsTable);
+    </para>
+    <para>
+      if (context == NULL) {
+    </para>
+    <para>
+      /* Display error and exit... */
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      ts = rpmtsCreate();
+    </para>
+    <para/>
+    <para>
+      if (qva-&gt;qva_mode == 'q') {
+    </para>
+    <para>
+      /* Make sure there's something to do. */
+    </para>
+    <para>
+      if (qva-&gt;qva_source != RPMQV_ALL &amp;&amp;
+      !poptPeekArg(context)) {
+    </para>
+    <para>
+      fprintf(stderr, "no arguments given for --query");
+    </para>
+    <para>
+      exit(EXIT_FAILURE);
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      ec = rpmcliQuery(ts, qva, (const char **) poptGetArgs(context));
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      ts = rpmtsFree(ts);
+    </para>
+    <para/>
+    <para>
+      context = rpmcliFini(context);
+    </para>
+    <para>
+      This code supports all the query options just like the rpm
+      command. That's both good and bad. If you wanted everything
+      exactly like the rpm command, chances are you could use the rpm
+      command as is. But if you need to add RPM query support into your
+      programs, this is probably the easiest way to do it.
+    </para>
+    <para>
+      With a small additional set of code, you can add support for all
+      the --verify options to your program. You need to include the
+      --verify command-line option definitions, which come from the
+      global rpmVerifyPoptTable table:
+    </para>
+    <para>
+      /* Add in --verify options. */
+    </para>
+    <para>
+      { NULL, '\0', POPT_ARG_INCLUDE_TABLE, rpmVerifyPoptTable, 0,
+    </para>
+    <para>
+      "Verify options (with -V or --verify):",
+    </para>
+    <para>
+      NULL },
+    </para>
+    <para>
+      You can then check for the verify mode, and support the options,
+      with code like the following:
+    </para>
+    <para>
+      if (qva-&gt;qva_mode == 'V') {
+    </para>
+    <para>
+      rpmVerifyFlags verifyFlags = VERIFY_ALL;
+    </para>
+    <para/>
+    <para>
+      /* Verify flags are negated from query flags. */
+    </para>
+    <para>
+      verifyFlags &amp;= ~qva-&gt;qva_flags;
+    </para>
+    <para>
+      qva-&gt;qva_flags = (rpmQueryFlags) verifyFlags;
+    </para>
+    <para/>
+    <para>
+      /* Make sure there's something to do. */
+    </para>
+    <para>
+      if (qva-&gt;qva_source != RPMQV_ALL &amp;&amp;
+      !poptPeekArg(context)) {
+    </para>
+    <para>
+      fprintf(stderr, "no arguments given for --verify");
+    </para>
+    <para>
+      exit(EXIT_FAILURE);
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      ec = rpmcliVerify(ts, qva, (const char **)
+    </para>
+    <para>
+      poptGetArgs(context));
+    </para>
+    <para>
+      }
+    </para>
+    <para>
+      The workhorse function in this code is rpmcliVerify, a high-level
+      function that performs all the --verify work done by the rpm
+      command.
+    </para>
+    <para>
+      int rpmcliVerify(rpmts transaction_set,
+    </para>
+    <para>
+      QVA_t qva,
+    </para>
+    <para>
+      const char **argv);
+    </para>
+    <para>
+      Again, set the QVA_t variable to point at the global variable
+      rpmQVKArgs, which is set up from the global option table for the
+      query mode, rpmQueryPoptTable.
+    </para>
+    <para>
+      Putting this all together, Listing 16-5 shows a program that
+      performs the same as the rpm command for the --query and --verify
+      options.
+    </para>
+    <para>
+      Listing 16-5: rpmq.c
+    </para>
+    <para>
+      /*
+    </para>
+    <para>
+      rpm --query and --verify modes in standalone program.
+    </para>
+    <para/>
+    <para>
+      Compile as
+    </para>
+    <para>
+      cc -I/usr/include/rpm -o rpmq rpmq.c -lrpm -lrpmdb -lrpmio -lpopt
+    </para>
+    <para/>
+    <para>
+      See option usage by invoking
+    </para>
+    <para>
+      ./rpmq --help
+    </para>
+    <para>
+      */
+    </para>
+    <para>
+      #include &lt;stdlib.h&gt;
+    </para>
+    <para/>
+    <para>
+      #include &lt;rpmcli.h&gt;
+    </para>
+    <para>
+      #include &lt;rpmdb.h&gt;
+    </para>
+    <para>
+      #include &lt;rpmds.h&gt;
+    </para>
+    <para>
+      #include &lt;rpmts.h&gt;
+    </para>
+    <para/>
+    <para>
+      /* Set up a table of options. */
+    </para>
+    <para>
+      static struct poptOption optionsTable[] = {
+    </para>
+    <para/>
+    <para>
+      { NULL, '\0', POPT_ARG_INCLUDE_TABLE, rpmcliAllPoptTable, 0,
+    </para>
+    <para>
+      "Common options for all rpm modes and executables:",
+    </para>
+    <para>
+      NULL },
+    </para>
+    <para/>
+    <para>
+      { NULL, '\0', POPT_ARG_INCLUDE_TABLE, rpmQueryPoptTable, 0,
+    </para>
+    <para>
+      "Query options (with -q or --query):",
+    </para>
+    <para>
+      NULL },
+    </para>
+    <para/>
+    <para>
+      /* Add in --verify options. */
+    </para>
+    <para>
+      { NULL, '\0', POPT_ARG_INCLUDE_TABLE, rpmVerifyPoptTable, 0,
+    </para>
+    <para>
+      "Verify options (with -V or --verify):",
+    </para>
+    <para>
+      NULL },
+    </para>
+    <para/>
+    <para>
+      POPT_AUTOALIAS
+    </para>
+    <para>
+      POPT_AUTOHELP
+    </para>
+    <para>
+      POPT_TABLEEND
+    </para>
+    <para>
+      };
+    </para>
+    <para/>
+    <para/>
+    <para>
+      int main(int argc, char * argv[])
+    </para>
+    <para>
+      {
+    </para>
+    <para>
+      poptContext context;
+    </para>
+    <para>
+      QVA_t qva = &amp;rpmQVKArgs&semi;
+    </para>
+    <para>
+      rpmts ts;
+    </para>
+    <para>
+      int ec;
+    </para>
+    <para/>
+    <para/>
+    <para>
+      context = rpmcliInit(argc, argv, optionsTable);
+    </para>
+    <para>
+      if (context == NULL) {
+    </para>
+    <para>
+      poptPrintUsage(context, stderr, 0);
+    </para>
+    <para>
+      exit(EXIT_FAILURE);
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      ts = rpmtsCreate();
+    </para>
+    <para/>
+    <para>
+      /* Check for query mode. */
+    </para>
+    <para>
+      if (qva-&gt;qva_mode == 'q') {
+    </para>
+    <para>
+      /* Make sure there's something to do. */
+    </para>
+    <para>
+      if (qva-&gt;qva_source != RPMQV_ALL &amp;&amp;
+      !poptPeekArg(context)) {
+    </para>
+    <para>
+      fprintf(stderr, "no arguments given for --query");
+    </para>
+    <para>
+      exit(EXIT_FAILURE);
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      ec = rpmcliQuery(ts, qva, (const char **) poptGetArgs(context));
+    </para>
+    <para>
+      }
+    </para>
+    <para>
+      /* Check for verify mode. */
+    </para>
+    <para>
+      else if (qva-&gt;qva_mode == 'V') {
+    </para>
+    <para>
+      rpmVerifyFlags verifyFlags = VERIFY_ALL;
+    </para>
+    <para/>
+    <para>
+      /* Verify flags are negated from query flags. */
+    </para>
+    <para>
+      verifyFlags &amp;= ~qva-&gt;qva_flags;
+    </para>
+    <para>
+      qva-&gt;qva_flags = (rpmQueryFlags) verifyFlags;
+    </para>
+    <para/>
+    <para>
+      /* Make sure there's something to do. */
+    </para>
+    <para>
+      if (qva-&gt;qva_source != RPMQV_ALL &amp;&amp;
+      !poptPeekArg(context)) {
+    </para>
+    <para>
+      fprintf(stderr, "no arguments given for --verify");
+    </para>
+    <para>
+      exit(EXIT_FAILURE);
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      ec = rpmcliVerify(ts, qva, (const char **) poptGetArgs(context));
+    </para>
+    <para>
+      }
+    </para>
+    <para>
+      else {
+    </para>
+    <para>
+      poptPrintUsage(context, stderr, 0);
+    </para>
+    <para>
+      exit(EXIT_FAILURE);
+    </para>
+    <para>
+      }
+    </para>
+    <para/>
+    <para>
+      ts = rpmtsFree(ts);
+    </para>
+    <para/>
+    <para>
+      context = rpmcliFini(context);
+    </para>
+    <para/>
+    <para>
+      return ec;
+    </para>
+    <para>
+      }
+    </para>
+    <para>
+      There is not a lot of code in rpmq.c, as this program is mostly
+      calling the high-level functions for the rpm command-line
+      interface.
+    </para>
+    <para>
+      When you run the rpmq program, it performs the same tasks as the
+      rpm command with the --query (or -q) and --verify (or -V)
+      command-line options.
+    </para>
+    <para>
+      For example, rpmq supports query formats:
+    </para>
+    <para>
+      $ ./rpmq -q --qf "%{NAME} %{INSTALLTID:date}\n" jikes
+    </para>
+    <para>
+      jikes Fri 25 Oct 2002 06:49:38 PM CDT
+    </para>
+  </sect1>
+  <sect1>
+    <title>Where to Go from Here</title>
+    <para>
+      There is a lot more you can do with the RPM library; you're
+      limited only by your imagination. The best way to get started is
+      to follow the examples in this chapter and then try out some RPM
+      programs on your own. After working with the RPM library for a
+      while, you can delve into other RPM topics.
+    </para>
+    <para>
+      The RPM Web site, at www.rpm.org, has most of the available
+      documentation on the RPM system. This site also includes official
+      RPM released software.
+    </para>
+    <para>
+      One of the best ways to help find out about how to perform RPM
+      tasks is to look at the source code for the rpm program itself.
+      For this, download the rpm-src source RPM, too. To see the rpm
+      command-line interface functions in action, look especially at
+      tools/rpmcache.c and tools/rpmgraph.c, two relatively short RPM
+      files that show how to take advantage of a number of short cuts.
+      The source code for the Python and Perl bindings can also provide
+      extra hints about the purposes of the RPM API calls.
+    </para>
+    <para>
+      The RPM Web site also has a cross-referenced set of HTML pages on
+      the RPM programming API. The pages for version 4.1 of RPM are
+      available at www.rpm.org/rpmapi-4.1/. A good starting page is
+      www.rpm.org/rpmapi-4.1/modules.html, which lists a number of
+      modules within the overall RPM library. This extra level of
+      organization can help you locate the functions you need.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      Everything you can do with RPM you can program in C. That’s
+      because the source code for the entire RPM system is available. In
+      addition, the rpm and rpmbuild programs make use of a published
+      API, called rpmlib, to access RPM functionality. You can use this
+      library yourself.
+    </para>
+    <para>
+      The popt library, short for parse options, provides a lot of handy
+      utilities for parsing very complex command-line options. You can
+      use popt inside your own programs, even if you don’t use the
+      rest of the RPM functionality.
+    </para>
+    <para>
+      Most RPM programs start up by calling rpmcliInit, which sets up
+      RPM variables for the large set of command-line options supported
+      by most RPM commands.
+    </para>
+    <para>
+      Call rpmReadPackageFile to read in the Header object from a
+      package file. You can also get Header objects for the packages
+      installed in a system by initializing an iterator to iterate over
+      a set of packages that meet a certain criteria.
+    </para>
+    <para>
+      This chapter covers a fairly low level of access to RPM
+      functionality. The next chapter, on Python programming, shows a
+      higher level of abstraction for working with RPM.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

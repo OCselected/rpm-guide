@@ -1,0 +1,5 @@
+<!ENTITY PRODUCT "Fedora Documentation">
+<!ENTITY BOOKID "RPM_Guide">
+<!ENTITY YEAR "2005,2011">
+<!ENTITY HOLDER "Fedora Project Contributors">
+<!ENTITY BZURL "<ulink url='https://bugzilla.redhat.com/enter_bug.cgi?product=&PRODUCT;&amp;component=&BOOKID;'>http://bugzilla.redhat.com/</ulink>">

@@ -1,0 +1,997 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "RPM Management Software"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Finding packages in RPM format"
+msgstr ""
+
+msgid "Graphical tools to manage RPM packages"
+msgstr ""
+
+msgid "Extending RPM management with additional tools"
+msgstr ""
+
+msgid "You can find a variety of software packages to ease the work of managing RPM-based systems. These utilities can help you find a specific software application packaged using RPM or search through a collection of RPM-packaged software to locate applications with specific features. Similarly, several utilities provide features to ease long-term system-management tasks. These applications provide features such as automatic updating of existing installed software with more recent versions or simplification of software installation by automating installation of any required software dependencies."
+msgstr ""
+
+msgid "This chapter covers a number of tools for finding packages in RPM format, as well as tools to help manage the RPMs on your system."
+msgstr ""
+
+msgid "Locating RPMs"
+msgstr ""
+
+msgid "RPM provides a powerful tool for managing software installed on a system. With a single command, an entire application can be installed on the system in a ready-to-run configuration. With a different command, the entire application can be removed without having manually to track down all of the associated files scattered throughout the hard drive. For RPM to work, however, the software being managed must be packaged in the proper RPM format. RPM packages can be easily prepared if necessary, but you can save time by using the wide variety of software already available in the RPM format. The only trick to using this RPM-packaged software is finding it."
+msgstr ""
+
+msgid "As you start to search for RPM packages on the Internet, you’ll find thousands of packages available. Many of these packages are built specifically for various Linux distributions, such as Conectiva, SUSE, Red Hat, or Mandrake. In many cases, the Linux distribution won’t matter, but in general it's best to download packages built for your version of Linux, such as Red Hat."
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Although the examples in this book assume Red Hat Linux as a base, just about everything applies to all versions of Linux that use the RPM system, unless noted otherwise."
+msgstr ""
+
+msgid "Internet search engines are popular, but they aren’t very helpful for finding RPM packages, especially because lots of Web pages have the term rpm (including those covering revolutions per minute). A more efficient approach is to use one of the RPM-specific Internet search tools such as rpmfind."
+msgstr ""
+
+msgid "rpmfind and rpm2html"
+msgstr ""
+
+msgid "One popular free tool for locating RPMs is rpmfind, written by Daniel Veillard. This tool provides a command-line utility that can search for packages by name or description, displaying or optionally downloading any matching packages it finds. It can even provide a list of the dependencies that those matching packages require to run and can download those required dependencies as well."
+msgstr ""
+
+msgid "When searching for packages, rpmfind can search both the software already installed on the local system and remote databases, including the databases located at http://rpmfind.net/."
+msgstr ""
+
+msgid "The databases at http://rpmfind.net/ are, in turn, created by another utility: rpm2html. Both are covered in the sections following."
+msgstr ""
+
+msgid "Commonly, rpmfind is used to search for packages by name, though it can be used to search package descriptions for key words. For example, I might want to find new e-mail clients to install on my system. I happen to know that one popular Linux e-mail client is Ximian’s evolution, so I search for that."
+msgstr ""
+
+msgid "The basic syntax for rpmfind follows:"
+msgstr ""
+
+msgid "rpmfind package_name"
+msgstr ""
+
+msgid "For example, to search for evolution, use a command like the following:"
+msgstr ""
+
+msgid "$ rpmfind evolution"
+msgstr ""
+
+msgid "Resource evolution already installed"
+msgstr ""
+
+msgid "$"
+msgstr ""
+
+msgid "Before accessing the Internet, rpmfind searches my local system and finds that I already have evolution installed, so it does not even bother searching for copies to download. It looks like I’m forgetful, not remembering that I already have evolution installed. At this point, I might realize that I already have the software I need, or I might decide to search for a similar application, such as exmh, another popular Unix e-mail client."
+msgstr ""
+
+msgid "To search for exmh (which in this example has not been installed), use a command like the following:"
+msgstr ""
+
+msgid "$ rpmfind exmh"
+msgstr ""
+
+msgid "Installing exmh will require 7301 KBytes"
+msgstr ""
+
+msgid "### To Transfer:"
+msgstr ""
+
+msgid "ftp://ftp.redhat.com/pub/redhat/linux/7.2/en/os/i386/RedHat/RPMS//nmh-1.0.4-9.i3"
+msgstr ""
+
+msgid "86.rpm"
+msgstr ""
+
+msgid "ftp://ftp.redhat.com/pub/redhat/linux/7.2/en/os/i386/RedHat/RPMS//exmh-2.4-2.noarch.rpm"
+msgstr ""
+
+msgid "Do you want to download these files to /tmp [Y/n/a/i] ? : a"
+msgstr ""
+
+msgid "transferring"
+msgstr ""
+
+msgid "ftp://ftp.redhat.com/pub/redhat/linux/7.2/en/os/i386/RedHat/RPMS//nmh-1.0.4-9.i386.rpm"
+msgstr ""
+
+msgid "saving to /tmp/nmh-1.0.4-9.i386.rpm"
+msgstr ""
+
+msgid "saving to /tmp/exmh-2.4-2.noarch.rpm"
+msgstr ""
+
+msgid "rpm -U /tmp/nmh-1.0.4-9.i386.rpm /tmp/exmh-2.4-2.noarch.rpm"
+msgstr ""
+
+msgid "Here, rpmfind searches my local system for exmh. Since exmh is not installed there, rpmfind searches the databases at http://rpmfind.net/ and does two things: it finds exmh, and it learns that exmh depends upon another package: nmh. After double-checking and learning that nmh is not installed on my local system, rpmfind gives me a choice regarding whether I should download both of those packages; rpmfind gives me four possible answers:"
+msgstr ""
+
+msgid "My possible answers were:"
+msgstr ""
+
+msgid "YYes, do download the files."
+msgstr ""
+
+msgid "NNo, do not download the files."
+msgstr ""
+
+msgid "AGet all. By default, run in Automatic mode, trying to upgrade packages after they are downloaded"
+msgstr ""
+
+msgid "IInstall packages after download."
+msgstr ""
+
+msgid "Any user can download packages, but usually only the root user can install packages. Unless you are logged in as root, rpmfind will likely fail to install the downloaded RPMs."
+msgstr ""
+
+msgid "Because I select the \"a\" answer, rpmfind downloads all necessary packages to /tmp and tries to upgrade the packages automatically by running the following command:"
+msgstr ""
+
+msgid "In this case, the rpm -U command silently fails, since I am not running it as root and do not have permission to install software."
+msgstr ""
+
+msgid "If the name of a package is unknown, rpmfind also supports searching by keywords. The --apropos pattern option tells rpmfind to search through all package descriptions in the databases for the pattern. If I do not know the names of any e-mail clients, I might use this code for my search:"
+msgstr ""
+
+msgid "$ rpmfind --apropos \"mail client\""
+msgstr ""
+
+msgid "Searching the RPM catalog for mail client ..."
+msgstr ""
+
+msgid "1:"
+msgstr ""
+
+msgid "ftp://ftp.redhat.com/pub/redhat/linux/7.2/en/os/i386/RedHat/RPMS//netscape-communicator-4.78-2.i386.rpm"
+msgstr ""
+
+msgid "netscape-communicator : A Web browser, news reader and e-mail client."
+msgstr ""
+
+msgid "2:"
+msgstr ""
+
+msgid "ftp://ftp.redhat.com/pub/redhat/linux/7.2/en/os/i386/RedHat/RPMS//sylpheed-0.5.0-3.i386.rpm"
+msgstr ""
+
+msgid "sylpheed : A GTK+ based, lightweight, and fast email client."
+msgstr ""
+
+msgid "&lt;snip&gt;"
+msgstr ""
+
+msgid "364: ftp://ftp.pld.org.pl/PLD-1.0/dists/ra/PLD/SRPMS/SRPMS/sylpheed-0.7.4-1.src.rpm"
+msgstr ""
+
+msgid "sylpheed : GTK+ based fast e-mail client"
+msgstr ""
+
+msgid "From my search, rpmfind returns the following output (with most of the entries edited out for space):"
+msgstr ""
+
+msgid "Found 364 packages related to mail client"
+msgstr ""
+
+msgid "With this command, rpmfind connects to the databases at http://rpmfind.net/ and returns the location of all packages whose description contains the text “mail client”. Notice that 364 packages are found; there are lots of e-mail clients available for Linux! That number, however, is slightly misleading. Some of the packages found are prepared for the distribution I am running (Red Hat Linux version 7.2), but others are not. Result #364, for example, appears to be the Polish(ed) Linux Distribution 1.0 package of sylpheed, the same software offered to me packaged for my Red Hat Linux version 7.2 system in Result #2."
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "Use caution when working with rpmfind. By default, it connects to the databases on the server http://rpmfind.net/ and queries them. These databases are indexes of all RPM-based distributions, and of all versions of each RPM-based distribution, and of all architectures, and of both source and binary RPMs for all these distributions!"
+msgstr ""
+
+msgid "To help you avoid being overwhelmed with results (such as the 364 results I obtain when I search for “mail client”), options are available to fine-tune rpmfind’s searches in various ways. Common options are presented in Table 8-1."
+msgstr ""
+
+msgid "Table 8-1SEARCH OPTIONS FOR rpmfind"
+msgstr ""
+
+msgid "Option"
+msgstr ""
+
+msgid "Result"
+msgstr ""
+
+msgid "-v"
+msgstr ""
+
+msgid "increases verbosity of output (can be used multiple times)"
+msgstr ""
+
+msgid "-s server"
+msgstr ""
+
+msgid "connects to a specific rpmfind database server"
+msgstr ""
+
+msgid "--sources package"
+msgstr ""
+
+msgid "looks for source RPMs of the package"
+msgstr ""
+
+msgid "--apropos key word(s)"
+msgstr ""
+
+msgid "looks by keyword instead of package name"
+msgstr ""
+
+msgid "--dist dist"
+msgstr ""
+
+msgid "restricts packages to a specific distribution"
+msgstr ""
+
+msgid "--latest package"
+msgstr ""
+
+msgid "finds the most current version of package available"
+msgstr ""
+
+msgid "--upgrade package"
+msgstr ""
+
+msgid "finds the most current dependencies available for package"
+msgstr ""
+
+msgid "The rpmfind databases that rpmfind searches are created using the utility rpm2html. If you desire, rpm2html can be used to set up a local mirror of the databases at rpmfind.net or to make a custom database of locally available RPMs for in-house use."
+msgstr ""
+
+msgid "rpm2html"
+msgstr ""
+
+msgid "The rpm2html utility generates HTML Web pages that describe RPM packages. Very simple in concept, rpm2html has proven very useful over the years."
+msgstr ""
+
+msgid "With rpm2html, each package is displayed as a single HTML page that describes the package using information much like that returned by the rpm -qi command, covered in <xref linkend=\"ch-using-rpm\" /> . The HTML page also lists the capabilities the package requires and those it provides. This shows the needed dependency information. Finally, the page includes a download link to download the RPM file."
+msgstr ""
+
+msgid "All packages of the same name, such as the exmh e-mail client, are collected on summary pages. The summary page tries to list all RPMs for all Linux distributions that provide the given package. For exmh, for example, the database as of this writing includes 71 versions of the exmh package, for Conectiva Linux, Mandrake Linux, Yellow Dog PowerPC Linux, and so on. The summary page also links to the URL in the RPMs that is listed as the home page for the application."
+msgstr ""
+
+msgid "Used together with its database, rpm2html provides a powerful RPM-centric search engine. You can find more on rpm2html at rpmfind.net/linux/rpm2html/ or just access an RPM search site such as rpmfind.net."
+msgstr ""
+
+msgid "In addition to rpm2html, the program pdbv creates a set of cross-linked HTML files that list the packages on your system. Pdbv doesn’t support searching and wasn’t built as a front end for search sites, so it is simpler than rpm2html. Instead, pdbv just creates a set of HTML pages that list data that you can query with the rpm command, including the package descriptions, the capabilities required and provided, as well as all the files in the package."
+msgstr ""
+
+msgid "The primary advantage of pdbv is that it runs relatively quickly to provide you a snapshot of your system."
+msgstr ""
+
+msgid "RPM Sites On the Internet"
+msgstr ""
+
+msgid "In addition to the command-line RPM search tools, a number of Web sites provide handy front ends to databases of available packages. These Web sites make it easy to query for packages and also provide snapshots of what is happening in Linux development, especially with the sites that list recently created RPMs."
+msgstr ""
+
+msgid "The following sections list some of the more popular sites."
+msgstr ""
+
+msgid "As with anything on the Internet, sites come and go. I’ve used rpmfind.net for years, but it is always possible that any of these sites may suddenly disappear."
+msgstr ""
+
+msgid "rpmfind.net"
+msgstr ""
+
+msgid "The rpmfind utility is associated with an online database available at www.rpmfind.net. You can search this site and see the results in the same format as that created by the rpm2html utility. In essence, this site acts as an HTML front end to the rpmfind query commands. By providing a search engine accessible from a Web browser, instead of the command line as used by the rpmfind utility, the rpmfind.net site is easy to search and also displays the data in an easier-to-read format."
+msgstr ""
+
+msgid "Use the rpmfind command when you know you want to install something. Use the rpmfind.net Web site when you want to browse through the lists of available RPMs."
+msgstr ""
+
+msgid "You can download the rpmfind command RPM from the rpmfind.net site."
+msgstr ""
+
+msgid "freshrpms.net"
+msgstr ""
+
+msgid "The site name,freshrpms.net, is a play on the popular but oddly named Linux site freshmeat.net. The freshmeat.net site provides listings of newly-updated applications for Linux and other operating systems. The freshrpms.net site provides a similar service devoted to freshly-made RPMs."
+msgstr ""
+
+msgid "You don’t always want the most recently made RPMs. Sometimes it's good to wait a while and see if others have faced problems with a given RPM before downloading it."
+msgstr ""
+
+msgid "One of the best features of the freshrpms.net site is that it also provides links to the RPM spec files for the packages it references. This is a very useful source of examples when you try to build RPMs."
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "See <xref linkend=\"ch-specfiles\" /> for more on RPM spec files."
+msgstr ""
+
+msgid "RPM PBone Search"
+msgstr ""
+
+msgid "The site http://rpm.pbone.net/ provides a database of RPM packages you can search. This site also lists quite a few recently created RPMs. In fact, much of the focus here lies in finding the latest updates to the applications you run."
+msgstr ""
+
+msgid "The feature I like most about the PBone search is the ability to specify which Linux distributions to search by using a set of check boxes. Although in theory most Linux RPMs should work on most Linux distributions, I prefer to get something made for and tested on my version of Linux."
+msgstr ""
+
+msgid "Other Sites"
+msgstr ""
+
+msgid "Table 8-2 lists additional sites where you can find RPMs. As with all listings of Internet sites, these may come and go."
+msgstr ""
+
+msgid "Table 8-2MORE RPM SITES"
+msgstr ""
+
+msgid "Site"
+msgstr ""
+
+msgid "Holds"
+msgstr ""
+
+msgid "http://plf.zarb.org/"
+msgstr ""
+
+msgid "The Penguin Liberation Front has RPMs that for legal reasons cannot be included in the Mandrake Linux distribution."
+msgstr ""
+
+msgid "www.math.unl.edu/~rdieter/Projects/"
+msgstr ""
+
+msgid "Rex Dieter’s RPM site"
+msgstr ""
+
+msgid "www.rpmhelp.net/"
+msgstr ""
+
+msgid "Mandrake Linux RPMs"
+msgstr ""
+
+msgid "www.aucs.org/rpmcenter/"
+msgstr ""
+
+msgid "Edwin Chan's Red Hat RPMs"
+msgstr ""
+
+msgid "www.owlriver.com/projects/links/"
+msgstr ""
+
+msgid "Owl River Company RPMs"
+msgstr ""
+
+msgid "Graphical RPM Management"
+msgstr ""
+
+msgid "Once appropriate RPMs have been obtained, they have to be installed before the application they provide can be used. You can use the rpm command-line utility to do this. The rpmfind utility also has the capability to launch the rpm utility automatically to install any software located. In addition to these two tools, however, several graphical applications are available that provide basic RPM package-management capabilities. Most of these programs offer easy-to-use GUIs that can be used to install and uninstall packages, to query packages, and to verify installed packages."
+msgstr ""
+
+msgid "Even though Linux and Unix fans generally aren’t bothered by command-line tools such as rpm, many newcomers to Linux fret over the seeming difficulty of the command line. They are more used to graphical applications and, in many cases, are more productive in a graphical environment. Keeping with the Linux tradition of freedom of choice, you can use the command-line tools such as the rpm commandor pick from a variety of graphical tools."
+msgstr ""
+
+msgid "Nautilus"
+msgstr ""
+
+msgid "Nautilus provides a visually appealing file manager that is part of the GNOME desktop. Nautilus acts as a normal file manager that can also display some types of files, such as images. In addition, you can launch applications that Nautilus knows about when you double click files. Figure 8-1 shows Nautilus in action."
+msgstr ""
+
+msgid "Insert 54965-0 fg0801.tif"
+msgstr ""
+
+msgid "Figure 8-1: Browsing RPM files with Nautilus."
+msgstr ""
+
+msgid "If you double click an RPM file (a file ending with the extension .rpm), Nautilus will install the RPM file. First, though, Nautilus will prompt you for the root password, since you must be logged in as root to install RPMs. Figure 8-2 shows Nautilus prompting for a password."
+msgstr ""
+
+msgid "Insert 54965-0 fg0802.tif"
+msgstr ""
+
+msgid "Figure 8-2: You must be logged in as root to install packages."
+msgstr ""
+
+msgid "After some time processing, you should see the Completed System Preparation window, as shown in Figure 8-3."
+msgstr ""
+
+msgid "Insert 54965-0 fg0803.tif"
+msgstr ""
+
+msgid "Figure 8-3: Installing RPM files with Nautilus."
+msgstr ""
+
+msgid "When you install RPMs with Nautilus, it really runs the Red Hat Package Management tool."
+msgstr ""
+
+msgid "Nautilus only supports RPM functionality starting with Red Hat Linux 8.0. This functionality may not be supported in other versions of Linux."
+msgstr ""
+
+msgid "Red Hat Package Management"
+msgstr ""
+
+msgid "The redhat-config-packages application (say that three times fast) comes new with Red Hat Linux 8.0. You can use the Python program in this package to manage the packages that come with Red Hat Linux, using an interface that is very similar to the Red Hat Linux installation program. This similarity may make it easier for many users to manage their packages, although I found the program a bit short on explanations."
+msgstr ""
+
+msgid "To run this program, you first have to do a bit of searching to find it. It appears under the System Settings menu from the main Red Hat Start menu under the default Bluecurve desktop. Select the Packages choice to launch this program. You can also start the program from the command line with the following command:"
+msgstr ""
+
+msgid "# redhat-config-packages"
+msgstr ""
+
+msgid "This program takes a long time to read in all the information and start up. Once started, the interface provides the same categories and much the same look as the Red Hat Linux installer, as shown in Figure 8-4."
+msgstr ""
+
+msgid "Insert 54965-0 fg0804.tif"
+msgstr ""
+
+msgid "Figure 8-4: The redhat-config-packages package manager."
+msgstr ""
+
+msgid "The packages tool divides the packages into groups. Inside each group, the packages are divided into two sets: standard and extra packages. (Red Hat places the packages into these categories, striving to make a reasonable division among the many packages that come with Linux.) If you click the check box for a group, the tool will queue up all the standard packages within that group for installation. If you uncheck a check box for a group that was checked before, the tool will queue up all the installed packages in that group for removal, both standard and extra."
+msgstr ""
+
+msgid "Installing or removing all the packages in a group when you don’t know what is in the group is not a good idea."
+msgstr ""
+
+msgid "To delve into a group and see what is inside, click the Details link associated with that group. Clicking the Details link will bring up a window where you can check individual packages for installation and uncheck individual packages for removal. Figure 8-5 shows the details of the Web Server group."
+msgstr ""
+
+msgid "Insert 54965-0 fg0805.tif"
+msgstr ""
+
+msgid "Figure 8-5: Package details for the Web Server group."
+msgstr ""
+
+msgid "Once you have selected all the packages you want to install, and unselected all the packages you want to remove, click the Update button on the main window of the package-management tool. After some processing, you should see the Completed System Preparation window, which lists the amount of disk space required for the new packages and the amount that will be freed by the packages to be removed. Figure 8-6 shows this window."
+msgstr ""
+
+msgid "Insert 54965-0 fg0806.tif"
+msgstr ""
+
+msgid "Figure 8-6: The Completed Systems Preparation window."
+msgstr ""
+
+msgid "Click the Show Details button to see a complete list of all the packages to be installed and removed."
+msgstr ""
+
+msgid "If the packages you choose to install depend on any other packages, the package-management tool will automatically add these packages to the list to be installed. More important, if any packages installed on your system depend on any of the packages you have marked for removal, the tool will add those additional installed packages to the list to be removed. Always examine the Show Details window to see what will really be installed and removed."
+msgstr ""
+
+msgid "Figure 8-7 shows the window with the package details."
+msgstr ""
+
+msgid "Insert 54965-0 fg0807.tif"
+msgstr ""
+
+msgid "Figure 8-7: The Show Details window."
+msgstr ""
+
+msgid "The package-management tool worries me. It has an absolutely beautiful look, but it tries to do too much, especially when removing packages. Always use this program with care. I much prefer to just launch it with single packages from the Nautilus file manager."
+msgstr ""
+
+msgid "KPackage"
+msgstr ""
+
+msgid "One popular graphical RPM management tool is KPackage, supplied with the KDE Desktop. (You can find this product at www.kde.org). KPackage offers basic package-management functionality. It can install and uninstall packages and display information about installed and available packages’ contents and headers. In addition, KPackage supports a wide variety of package formats in addition to RPMs. Be aware, however, that KPackage cannot automatically resolve dependencies. When you are installing new software packages, any dependencies required by that software must first be manually installed."
+msgstr ""
+
+msgid "When started, KPackage presents a basic two-paned interface."
+msgstr ""
+
+msgid "The left-hand panel lists Installed packages already on the system, Updated packages available to update the system, New packages available for installation, and All packages (both installed and available for installation/upgrade). When displaying package lists, KPackage organizes the displayed packages into categories based on their group."
+msgstr ""
+
+msgid "The right-hand panel lists information about the package currently selected in the left-hand panel. Information displayed includes the package Properties, listing the package’s header, and the File List of files that package owns. Figure 8-8 shows this panel on the right side of the interface."
+msgstr ""
+
+msgid "Note: old fig 8-8 deleted; renumber all remaining to match. Chapter has been changed to reflect deletion."
+msgstr ""
+
+msgid "Insert 54965-0 fg0808.tif"
+msgstr ""
+
+msgid "Figure 8-8: The KPackage interface, showing properties of the selected package"
+msgstr ""
+
+msgid "After packages have been selected, they can be installed or uninstalled, as shown in Figure 8-9"
+msgstr ""
+
+msgid "Insert 54965-0 fg0809.tif"
+msgstr ""
+
+msgid "Figure 8-9: KPackage installs the selected package on your command."
+msgstr ""
+
+msgid "In addition to supporting RPM, KPackage can be used on systems that use other packaging methods. Current versions of KPackage support Debian’s dpkg and the BSD projects’ package formats as well as RPM."
+msgstr ""
+
+msgid "Gnome-RPM"
+msgstr ""
+
+msgid "The GNOME Desktop (www.gnome.org) provides another graphical RPM-management tool, Gnome-RPM. Also known as gnorpm, Gnome-RPM is very similar to KPackage in terms of its basic functionality, although Gnome-RPM can manage only RPMs."
+msgstr ""
+
+msgid "When started, Gnome-RPM presents a hierarchical list of installed packages, arranged by group, as shown in Figure 8-10:"
+msgstr ""
+
+msgid "Insert 54965-0 fg0810.tif"
+msgstr ""
+
+msgid "Figure 8-10: The main Gnome-RPM window."
+msgstr ""
+
+msgid "After a specific package has been selected, you can can query to see its details, as shown in Figure 8-11:"
+msgstr ""
+
+msgid "Insert 54965-0 fg0811.tif"
+msgstr ""
+
+msgid "Figure 78-11: Querying the details for a package."
+msgstr ""
+
+msgid "With Gnome-RPM, you can also filter the list of packages to see only the list of uninstalled RPMs, as shown in Figure 8-12."
+msgstr ""
+
+msgid "Insert 54965-0 fg0812.tif"
+msgstr ""
+
+msgid "Figure 78-12: Filtering to see only the uninstalled packages."
+msgstr ""
+
+msgid "Like KPackage, when installing new software, Gnome-RPM lacks the ability to automatically install any dependencies needed by that software."
+msgstr ""
+
+msgid "Extending RPM Management"
+msgstr ""
+
+msgid "RPM makes it very easy to install and uninstall software from systems. One simple command installs an entire application onto the computer, and another removes all files associated with an application. Using RPM to install and uninstall software can become tedious in some situations, however. Manually installing software on one system is no great task, but what if that same software package needs to be installed on all the computers in the department? Or on all the computers in a company? Suddenly, that one rpm -i command has become a major chore!"
+msgstr ""
+
+msgid "Similarly, keeping one system up-to-date with the latest vendor errata, although an extremely important administrative task, is not terribly time-consuming or difficult — simply download all the errata and associated packages from the vendor; then use the command rpm -Fvh to install the packages on the system, freshening all installed software with the latest updates of that software."
+msgstr ""
+
+msgid "If several machines are being managed, though, the task becomes slightly more difficult. Now the vendor errata and packages must be manually copied to each machine, and rpm -Fvh must be run on each machine to update it. If many machines are being managed, and those systems are running different versions of the operating system (so that they require different errata), the task becomes even more complicated. Separate errata packages must be downloaded for every operating system version in use; then the appropriate errata collections must be pushed to each machine and manually freshened. To make life as a system administrator even more frustrating, sometimes vendor-supplied errata cannot be installed using the freshen option. A package supplied as one RPM in the initial operating-system release might be split into two RPMs for the errata, for example. When this happens, freshen cannot be used. Instead, the administrator must determine what software is currently installed on the system, and the errata for that software must be manually installed. Typically, this involves several rounds of comparing output from rpm -qa with the list of current errata, using rpm -Uvh to upgrade only the appropriate errata for that system."
+msgstr ""
+
+msgid "Worse yet, errata updating should ideally be done on an automatic basis. While rpm commands can be scheduled using system utilities such as cron or at, obviously this cannot be done when the rpm commands to be scheduled need to be interactive."
+msgstr ""
+
+msgid "Installation of new packages can pose problems as well. New software will often have logical dependencies upon other software that is also not currently installed. Although RPM does track software dependencies, it does not magically find all dependencies an application needs, nor does it automatically install them along with the initial application. Instead, all required “helper” applications must be searched out and manually installed. Then the desired software can be installed."
+msgstr ""
+
+msgid "These and similar problems are very common in the real world. Typically, system administrators manage as many as 200 or more systems. Manually logging into 200 systems and executing an rpm -i command every time another application is needed is not practical. Even when managing one system, downloading errata and manually installing it regularly quickly becomes tedious."
+msgstr ""
+
+msgid "Like any regular system-administration task, it should be automated. When installing new software on machines, managing dependencies and downloading and installing required support software becomes tiresome as well."
+msgstr ""
+
+msgid "To aid with these common problems, a variety of helper applications are available for RPM. These management aids can perform functions such as automatically managing dependencies. When an application is being installed using one of these helpers, the utility also finds and installs any required dependencies. Similarly, when errata are being installed, these management aids can automatically determine which errata are needed by the current system, even in situations in which rpm -F does not work. Some of these tools can even be used to manage clusters of computers. Running one command applies the RPM install or delete on the entire group of machines. All of these commands are designed with scriptability in mind, making them perfect for use automatically via tools such as cron or at."
+msgstr ""
+
+msgid "AutoRPM"
+msgstr ""
+
+msgid "One popular tool to lessen the work involved with administering RPM-based systems is AutoRPM. Written by Kirk Bauer, AutoRPM is available under a free MIT-style license from the home page www.autorpm.org."
+msgstr ""
+
+msgid "A Perl script, AutoRPM provides several features that make it especially useful. First, it can create local mirrors of RPM repositories. Typically, this feature might be used to create a local archive of errata for a Linux distribution. AutoRPM can also compare all currently installed RPMs against a list stored elsewhere. This list can be either an FTP site or a directory on the local system. After comparing the currently-installed RPMs against the list, AutoRPM can then update any packages from the list site that are newer than what is installed on the local system. This way, you can define one site or directory as the master site of the package versions that need to get installed on all systems and let AutoRPM ensure that all computers on your network are up to date."
+msgstr ""
+
+msgid "Together, these two functions make AutoRPM very convenient for keeping systems current with all errata the vendor releases. They can also be used to create a method of distributing software to a network of systems. For example, every workstation in the department can run AutoRPM, configured to watch a common directory on a local NFS server. Installing new software on every workstation in the department occurs simply by copying an RPM of the software into that directory, letting AutoRPM do the rest of the work."
+msgstr ""
+
+msgid "AutoRPM is designed to be used both automatically from cron and interactively from the command line. By default, AutoRPM runs via a nightly cron job and downloads all updates for software currently installed on the system. It then stores these updates in a local directory, typically /var/spool/autorpm, and e-mails an administrator a notification on the new updates. The administrator can then log onto the system and manually install the updates using the rpm command. AutoRPM can also be easily configured to install automatically any new packages it downloads. If AutoRPM is so configured, the system administrator does not even have to log in and run rpm commands to keep the system up-to-date!"
+msgstr ""
+
+msgid "In interactive mode, AutoRPM provides a basic set of commands, listed in Table 8-2."
+msgstr ""
+
+msgid "Table 8-2Basic AutoRPM commands"
+msgstr ""
+
+msgid "Command"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+msgid "?"
+msgstr ""
+
+msgid "displays help on the various commands"
+msgstr ""
+
+msgid "Help"
+msgstr ""
+
+msgid "Info"
+msgstr ""
+
+msgid "displays information about an RPM"
+msgstr ""
+
+msgid "Fullinfo"
+msgstr ""
+
+msgid "displays complete information about an RPM"
+msgstr ""
+
+msgid "Install"
+msgstr ""
+
+msgid "installs RPMs onto the system"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "adds RPMs to the queue of RPMs to be processed"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "deletes RPMs from the queue of RPMs waiting to be processed"
+msgstr ""
+
+msgid "List"
+msgstr ""
+
+msgid "displays all RPMs currently in the queue waiting to be processed"
+msgstr ""
+
+msgid "Cd"
+msgstr ""
+
+msgid "changes the local directory"
+msgstr ""
+
+msgid "Auto"
+msgstr ""
+
+msgid "executes commands defined in the system-wide configuration file"
+msgstr ""
+
+msgid "Set"
+msgstr ""
+
+msgid "displays or modifies current AutoRPM settings"
+msgstr ""
+
+msgid "Abort"
+msgstr ""
+
+msgid "exits without saving changes"
+msgstr ""
+
+msgid "Exit"
+msgstr ""
+
+msgid "Exits and saves changes"
+msgstr ""
+
+msgid "The commands that manipulate RPMs (such as install, used to install an RPM) accept as arguments both paths to RPM files on the local system, and also URLs pointing to RPMs on an FTP repository. In addition, they support wild cards and directory accesses, so a command such as install ftp://ftp.redhat.com/pub/redhat/linux/updates/current/* can be used to install all errata for the current release of Red Hat Linux."
+msgstr ""
+
+msgid "In addition to interactive mode, AutoRPM provides a noninteractive mode, suitable for use through cron. In noninteractive mode, invoked by the command autorpm --notty auto, AutoRPM consults the configuration file /etc/autorpm.conf to decide what to do. By default, /etc/autorpm.d/autorpm.conf is configured to download, but not automatically install, all errata for the release of Red Hat Linux running on the local system. Editing this file makes it possible to use AutoRPM to download all errata — or errata for other Linux distributions — or to install errata automatically once downloaded."
+msgstr ""
+
+msgid "Typically, AutoRPM is used to automate installation of errata updates and other software on all machines in the enterprise. To do this, one machine is selected to serve as a file server. On it, AutoRPM is configured to download and install all errata. The directory where the errata are stored on that server is then exported to the other machines in the enterprise, which also run AutoRPM. These other machines have AutoRPM configured to install all files that the file server exports. Using a configuration such as this, all machines in the enterprise get all security updates automatically installed. In addition, installing a desired new software application on all hosts in the enterprise can be done simply by copying an RPM of the application onto the file server, making it available for the AutoRPM nightly updates to access and install automatically."
+msgstr ""
+
+msgid "AutoUpdate"
+msgstr ""
+
+msgid "AutoUpdate, written by Gerald Teschl, is another Perl script that can be used to automate RPM downloads or installations. Available freely under the terms of the GNU GPL from www.mat.univie.ac.at/~gerald/ftp/autoupdate, AutoUpdate is very similar to AutoRPM in terms of both functionality and potential applications. Unlike AutoRPM, AutoUpdate offers no interactive capability. However, AutoUpdate does have the capability to manage dependencies correctly; when using AutoUpdate to install software that depends upon other uninstalled software, AutoUpdate attempts to resolve the dependencies and to install all necessary software packages."
+msgstr ""
+
+msgid "AutoUpdate bases all decisions about what software to download or install upon its configuration file, /etc/autoupdate.d/autoupdate.conf. By default, AutoUpdate provides several additional configuration files pre-defined for downloading updates for the most popular RPM-based Linux distributions (Red Hat Linux, Mandrake Linux, Caldera/SCO OpenLinux, and SUSE Linux). The autoupdate.conf file can be modified to configure AutoUpdate to install software automatically."
+msgstr ""
+
+msgid "Table 8-3 lists the five commands that compose all the utilities provided by AutoUpdate:"
+msgstr ""
+
+msgid "Table 8-3AutoUpdate commands"
+msgstr ""
+
+msgid "autodld"
+msgstr ""
+
+msgid "downloads updated versions of all installed software"
+msgstr ""
+
+msgid "autoget"
+msgstr ""
+
+msgid "downloads specific RPMs from remote sites"
+msgstr ""
+
+msgid "autoupd"
+msgstr ""
+
+msgid "installs more recent versions of currently installed software"
+msgstr ""
+
+msgid "autoins"
+msgstr ""
+
+msgid "installs specific applications"
+msgstr ""
+
+msgid "automerge"
+msgstr ""
+
+msgid "merges new RPMs into an existing directory of RPMs, removing any old versions"
+msgstr ""
+
+msgid "autopurge"
+msgstr ""
+
+msgid "removes old RPMs from an existing directory of RPMs."
+msgstr ""
+
+msgid "These tools can access remote files by using a variety of methods. Like AutoRPM, AutoUptodate can download files if given an FTP URL. AutoUpdate can also access HTTP URLs and local files. Its additional dependency-tracking functionality and support for additional file-access methods make it suitable for use in cases where AutoRPM might be inappropriate. AutoUpdate cannot be used interactively, however, making AutoRPM more useful for nonautomated purposes."
+msgstr ""
+
+msgid "The Red Hat Network and up2date"
+msgstr ""
+
+msgid "Some vendors of RPM-based Linux distributions also provide utilities that can help with management of the distributions they create. Red Hat has created two complementary products, the Red Hat Network (RHN) and up2date, which together provide much the same functionality for managing Red Hat Linux installations as tools such as AutoUpdate and AutoRPM, as well as offering more advanced features."
+msgstr ""
+
+msgid "Red Hat Network is a subscription-based service offered by Red Hat Red Hat Network makes software available for installation via the network. (A free evaluation is also available.) After registering machines with Red Hat Network, administrators can pull updates or new software for installation to those registered machines. In addition, administrators have access to a Web-based administrative console from which they can view the systems they manage and can push software out to those systems."
+msgstr ""
+
+msgid "Red Hat offers two tiers of access to Red Hat Network. Basic Service subscriptions to Red Hat Network provide the ability to manage single systems. Multiple machines can be subscribed by the same administrator for Basic Service level Red Hat Network access, but they must all be managed independently. The administrator must push out errata to each machine separately. Workgroup Service subscriptions provide the same functionality as Basic Service subscriptions, but they also provide the ability to group multiple machines for simultaneous administration. All errata updates for all machines subscribed to Workgroup Service can be pushed out by a single action, for example. Furthermore, Workgroup Service subscriptions can allow management by multiple administrators if desired, making it possible for large organizations to share responsibilities among administrators."
+msgstr ""
+
+msgid "When using Red Hat Network to manage machines with Workgroup Service subscriptions, Red Hat also offers two optional services: Red Hat Network Proxy Server and Red Hat Network Satellite. The Red Hat Network Proxy Server is, as its name suggests, a proxy server for the Red Hat Network. Using it, errata pushed out via Red Hat Network is downloaded by the organization (only once) to a central server in-house. All machines in that organization subscribed to Red Hat Network get their updated software from that in-house proxy server, significantly reducing the network bandwidth requirements needed to keep large organizations up to date."
+msgstr ""
+
+msgid "In addition, the Red Hat Network Proxy Server can be used to provide all subscribed machines with software not provided with Red Hat Linux. Custom “channels” of supplemental software can be created on the Proxy Server, and machines can be subscribed to those channels as desired. Using this feature, different departments in the organization with different software needs can create independent channels for each department, ensuring that machines get only the software needed on them. Similarly, distinct channels can be created for separate classes of machines, ensuring that servers get only software appropriate for server machines and that desktops only get only software that desktop machines need."
+msgstr ""
+
+msgid "The Red Hat Network is normally centrally administered through Red Hat. Machines subscribed to the Red Hat Network have a system profile on file with Red Hat that details the system’s essential configuration information (what software is installed on it, what CPU architecture it contains, and so forth) needed to determine which software errata are appropriate for that system. Similarly, the Web console through which machines subscribed to Red Hat Network can be administered is also located on a Red Hat server. Customers wishing to use Red Hat Network services, but not wanting the dependency upon Internet access to Red Hat, can create an in-house Red Hat Network by using the Red Hat Network Satellite. This solution is often practical for customers who need to keep system information confidential or for customers whose systems are not able to access the Internet."
+msgstr ""
+
+msgid "Red Hat provides several interfaces for administering machines subscribed to the Red Hat Network. A Web-management console is available at https://rhn.redhat.com/. Administrators of machines subscribed to any level of the Red Hat Network can simply log into this Web site and perform a variety of package-management operations from their Web browsers. In addition to viewing other things, administrators can see what software is currently installed, select and install Red Hat Linux errata or new software, or schedule a time for automatic installation of Red Hat Linux errata."
+msgstr ""
+
+msgid "When using Red Hat Network, rhnsd is a client-side daemon that should be run on subscribed systems. It periodically launches a helper utility, rhn_check, which connects to the Red Hat Network servers and checks for any actions (such as a scheduled installation of errata) that an administrator has selected in the Web console. If any actions have been scheduled for that client machine, rhn_check on the client initiates those actions. By default, rhnsd runs rhn_check every two hours. This time can be increased to check for configuration changes as frequently as every hour if necessary."
+msgstr ""
+
+msgid "In addition, Red Hat provides client-side tools that can be used in a more interactive fashion to connect to the Red Hat Network from subscribed systems. The up2date program provides a graphical and command-line tool that can be used to install packages from Red Hat Network servers. When installing a new package, up2date automatically installs any necessary dependencies the package requires, making it a very convenient tool for adding software to the system. up2date can also be run in update mode, thus telling it to install all updates available for the software already installed on the system. Commonly used options with up2date include those listed in Table 8-4."
+msgstr ""
+
+msgid "Table 8-4Options for the up2date command"
+msgstr ""
+
+msgid "--configure"
+msgstr ""
+
+msgid "Start a dialog for configuring up2date options"
+msgstr ""
+
+msgid "-d"
+msgstr ""
+
+msgid "Download packages but do not install them"
+msgstr ""
+
+msgid "-f"
+msgstr ""
+
+msgid "Force packages to be installed, even if they have been marked to be skipped"
+msgstr ""
+
+msgid "-i"
+msgstr ""
+
+msgid "Download and install packages"
+msgstr ""
+
+msgid "-l"
+msgstr ""
+
+msgid "List available updated versions of already installed packages"
+msgstr ""
+
+msgid "--showall"
+msgstr ""
+
+msgid "List all available packages, including packages not currently installed at all"
+msgstr ""
+
+msgid "-k"
+msgstr ""
+
+msgid "List local directories containing packages"
+msgstr ""
+
+msgid "--nosig"
+msgstr ""
+
+msgid "Disable GPG package signature checking"
+msgstr ""
+
+msgid "--src"
+msgstr ""
+
+msgid "Download both source and binary RPMs"
+msgstr ""
+
+msgid "--nosrc"
+msgstr ""
+
+msgid "Do not download source RPMs"
+msgstr ""
+
+msgid "-p"
+msgstr ""
+
+msgid "Update the list of installed packages associated with this computer in the Red Hat Network database"
+msgstr ""
+
+msgid "--whatprovides"
+msgstr ""
+
+msgid "Ask the RHN servers which packages will resolve the listed dependencies"
+msgstr ""
+
+msgid "--solvedeps"
+msgstr ""
+
+msgid "Ask the RHN servers which packages will resolve the listed dependencies, then downloads and installs those packages"
+msgstr ""
+
+msgid "--tmpdir"
+msgstr ""
+
+msgid "Specify the temporary directory to which packages should be downloaded"
+msgstr ""
+
+msgid "-u"
+msgstr ""
+
+msgid "Update all software currently installed on the system to the latest available version"
+msgstr ""
+
+msgid "--nox"
+msgstr ""
+
+msgid "Short for No X, this disables the X-based GUI, instead using only the command-line interface"
+msgstr ""
+
+msgid "Provide more verbose output"
+msgstr ""
+
+msgid "Current"
+msgstr ""
+
+msgid "The up2date command, the Red Hat Network client software, is open-source software released by Red Hat under the terms of the GNU GPL. Red Hat Network Proxy Server and Red Hat Network Satellite, the server applications with which up2date interacts, are not freely available, open-source applications. For this reason, an effort is underway to develop servers available under the terms of the GNU GPL that can be used with up2date clients. The main program in this effort is called current, which refers to keeping your systems current."
+msgstr ""
+
+msgid "The current server can be downloaded from http://current.tigris.org. Although not yet as functional as Red Hat Network Proxy Server or Red Hat Network Satellite, current can already be used to create a RPM repository from which up2date-using clients can retrieve and install software. More advanced features, such as support for multiple “channels” of software, will be added to current in future releases."
+msgstr ""
+
+msgid "urpmi and RpmDrake"
+msgstr ""
+
+msgid "Mandrake provides a set of software similar to the combination of up2date and Red Hat Network or current that can be used with the Mandrake Linux distribution. Links to the source code for the Mandrake applications can be found at www.linux-mandrake.com/cooker/urpmi.html. This suite of applications is typically referred to as urpmi and includes both the urpmi command and several helper applications. urpmi itself is a command that acts as a wrapper around the rpm command. When given the name of a package to install, urpmi determines what dependencies, if any, required by the application are not already resolved and offers to install the packages necessary to fulfill those dependencies."
+msgstr ""
+
+msgid "When installing packages, urpmi can install from a variety of sources: FTP repositories, Web servers, local or NFS directories, and removable media such as CD-ROMs. The helper application urpmi.addmedia is used to add package sources, and the corresponding utility urpmi.removemedia is used to remove package sources no longer desired."
+msgstr ""
+
+msgid "Mandrake’s urpmi program includes one very handy feature. It comes with an autoirpm helper utility that can be used to configure the system to install packages on demand. This is done by running the command autoirpm.update-all, an application that scans all packages available for installation via urpmi. For every package available through urpmi, autoirpm.update-all determines what executable programs it provides, and it creates a symbolic link from that executable’s name to the autoirpm script. Attempting to execute such a symbolic link executes autoirpm, which in turn automatically uses urpmi to install the associated package. The result: on-demand installation of packages when users on the system attempt to execute the programs that those packages provide."
+msgstr ""
+
+msgid "Two different interfaces are available for urpmi. The urpmi command starts up urpmi in command-line mode, and the gurpmi command (or urpmi --X) starts urpmi in a graphical X-based mode. In addition, Mandrake provides a more full-featured graphical application: RpmDrake. RpmDrake provides the same package-management capabilities as urpmi, including the capability to install all required dependencies whenever installing any new packages."
+msgstr ""
+
+msgid "apt-rpm"
+msgstr ""
+
+msgid "Another free RPM management utility is available that provides many of the features of both vendor solutions such as up2date or urpmi and of third-party utilities such as autoUpdate or KPackage. This tool is apt-rpm, a port of the Debian Project’s excellent apt (Advanced Package Tool) software."
+msgstr ""
+
+msgid "The Debian Project (www.debian.org/) is a nonprofit volunteer group that develops a Linux distribution, Debian GNU/Linux. The group uses a different package format, dpkg, which was developed independently of and simultaneous to Red Hat’s creation of RPM. The two formats, dpkg and RPM, are very similar in terms of utility and functionality. In addition to having created a package format, the Debian Project later developed a collection of software, apt, which could be used to manage and install dpkg-format software. And, since Debian distributions are typically installed over the Internet, this apt software has to supply advanced distributed package management functionality."
+msgstr ""
+
+msgid "In many respects, Debian’s implementation of apt is very similar to the functionality provided by Red Hat’s up2date/Red Hat Network products or Mandrake’s urpmi software. On Debian systems, apt is a client tool used to select and install new software packages or to update existing packages already installed on the system. To do this, it accesses a user-configured list of resources that supply new packages; these resources are typically the Debian Project’s FTP or Web servers, though they can also be CD-ROMs or local or remote file systems. For apt to be able to download packages from a resource such as a CD-ROM or an FTP server, that resource must supply two things: the software packages being downloaded and a database supplying metadata about all the packages in the repository. These resource databases are essential for apt to operate. For this reason, apt can only be used to update systems from apt-capable repositories."
+msgstr ""
+
+msgid "Although apt was created by the Debian Project and designed for dpkg-format software packages, nothing about apt requires that it inherently be usable only with dpkg-format packages. Because of this, and because of its powerful capabilities, Conectiva, a Brazilian Linux distribution vendor (www.conectiva.com), extended apt to support management of RPM packages in addition to dpkg packages. Conectiva’s work, commonly referred to as apt-rpm, makes the apt client software available for use on any RPM-based Linux distribution. Conectiva also provides its customers with access to apt-capable FTP servers. A related project, apt4rpm (http://apt4rpm.sourceforge.net/), supplies the necessary utilities that can be used to make any RPM repository apt-capable. By creating apt-capable servers using apt4rpm and then installing apt-rpm on the client systems, any RPM-based distribution, such as Red Hat Linux, Mandrake Linux, Caldera/SCO OpenLinux, or SUSE Linux, can then be easily managed using apt."
+msgstr ""
+
+msgid "The freshrpms.net site, mentioned previously, provides a touted apt repository."
+msgstr ""
+
+msgid "Administrators managing multiple dispersed machines as well as those used to Debian administration often find it useful to configure their machines to use apt; its dependency tracking is far better than any other tool, except for Red Hat’s up2date/RHN combination. To use apt, administrators must install it on their machines and have access to an apt-capable RPM repository for the distribution they use. Several public FTP sites that support apt are now available for most of the major RPM-based distributions. Also, the administrator can create another apt-capable repository."
+msgstr ""
+
+msgid "Configuration of machines to use apt is simple. The apt and libapt RPMs simply need to be installed. Although binaries are sometimes available, the best success can usually be obtained by building binary RPMs from the latest Conectiva apt SRPM (source RPM), available at ftp://ftp.conectiva.com/pub/conectiva/EXPERIMENTAL/apt/."
+msgstr ""
+
+msgid "Once apt and libapt RPMs are installed, the sources.list file in /etc/apt needs to be modified to reference the apt-capable software site that will be used. For example, to configure a machine to access the apt-capable Red Hat Linux 7.2 software distributed by the Tuxfamily.org server, the /etc/apt/sources.list file needs to list:"
+msgstr ""
+
+msgid "rpm http://apt-rpm.tuxfamily.org/apt redhat-7.2-i386/redhat os"
+msgstr ""
+
+msgid "rpm http://apt-rpm.tuxfamily.org/apt redhat-updates-7.2/redhat os"
+msgstr ""
+
+msgid "These two lines, respectively, access the Red Hat Linux 7.2 and Red Hat Linux 7.2 errata RPMs being served by the system apt-rpm.tuxfamily.org. If you also want access to source RPMs, the following lines are necessary as well."
+msgstr ""
+
+msgid "rpm-src http://apt-rpm.tuxfamily.org/apt redhat-7.2-i386/redhat os"
+msgstr ""
+
+msgid "rpm-src http://apt-rpm.tuxfamily.org/apt redhat-updates-7.2/redhat os"
+msgstr ""
+
+msgid "In addition to, or instead of, using public apt-capable servers, many sites want to create their own apt servers. If apt is being used to manage all the machines in the enterprise, a custom apt server might be needed that contains apt-accessible RPMs of all the custom software used in the enterprise. This can be done using the tools provided by the apt4rpm package (http://apt4rpm.sourceforge.net)."
+msgstr ""
+
+msgid "Once apt has been installed on clients, and the clients have been configured to access an apt-capable server, keeping systems updated is simple. The command apt-get update updates the client system’s apt database of available software, after which the command apt-get upgrade upgrades all currently installed software to the latest version available in the software repository. By listing a site that provides vendor errata updates in /etc/apt/sources.list and then setting up a nightly cron job to run the apt-get upgrade command, administrators can be sure that client systems always have the latest errata installed. You can use a similar technique to ensure that all client systems are always up to date with the latest custom in-house applications. To do this, set up your own apt server and ensure that the latest custom applications are placed on the apt server."
+msgstr ""
+
+msgid "In addition, apt simplifies interactive installation of RPMs on systems that are using it. The command apt-get install package retrieves the named RPM from the apt-capable software repository and installs it. If the package requires any dependencies that are not already resolved, apt will ask for confirmation, then download and install the package and all dependencies. Similarly, apt-get remove package uninstalls the named RPM. If any other packages depend on it, it will prompt for confirmation, then uninstall the named RPM and all of its dependencies."
+msgstr ""
+
+msgid "In addition to these command-line utilities, several graphical front-end tools for manipulating apt are currently being ported for use with apt-rpm. Because of its ease of use for automating installation of system errata and necessary custom software, and because of the excellent dependency tracking it provides for interactive installation and uninstallation of software, apt-rpm can be excellent for managing RPM-based systems."
+msgstr ""
+
+msgid "The poldek"
+msgstr ""
+
+msgid "Also similar to the Debian apt tool, a utility called the poldek works like apt-get. The poldek was designed to quickly scan through dependencies and install a number of packages at once. You can specify all the packages to install in a file."
+msgstr ""
+
+msgid "The poldek automatically downloads any needed dependencies. The poldek can download files over the Internet and also help create the packages for storage on CD-ROMs. The poldek optimizes the set of packages to reduce the number of times users have to switch CDs."
+msgstr ""
+
+msgid "For more on the poldek, see poldek.pld.org.pl."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "This chapter has covered a number of tools for finding packages in RPM format, as well as tools to help manage the RPMs on your system. The rpm command does a great job of installing, removing, and upgrading packages. You can use it or choose from one of the many graphical RPM management tools shown in this chapter."
+msgstr ""
+
+msgid "The rpmfind utility helps find RPM packages on Internet servers. You can use rpmfind to find the latest version of the packages installed on your system."
+msgstr ""
+
+msgid "The Nautilus file manager allows you to browse files on disk, and it installs any RPM files you double-click."
+msgstr ""
+
+msgid "Red Hat Linux 8 comes with a new package-management tool available from the System Settings menu. Be careful with this tool, though, as it automatically installs--and removes--dependent packages."
+msgstr ""
+
+msgid "AutoRPM and AutoUpdate provide utilites that you can run periodically to ensure that your systems are up to date. The Red Hat Network and up2date also provides this capability."
+msgstr ""
+
+msgid "The Debian GNU/Linux apt system provides many of the same capabilities as RPM, along with the network-updating capabilities of up2date and the Red Hat Network. You can use special apt packages that adapt apt for RPM-based Linux distributions and get the best of both the RPM system and the apt system."
+msgstr ""
+
+msgid "The next chapter starts the major section on creating RPMs. The RPM system reduces a lot of the burden of administering Linux systems. You can take advantage of this when building any sort of software for distribution--or even when managing your own system."
+msgstr ""
+

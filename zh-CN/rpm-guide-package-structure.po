@@ -1,0 +1,895 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "RPM Package File Structure"
+msgstr ""
+
+msgid "This appendix covers:"
+msgstr ""
+
+msgid "RPM package file structure"
+msgstr ""
+
+msgid "RPM header entry formats"
+msgstr ""
+
+msgid "Payload format"
+msgstr ""
+
+msgid "This appendix describes the format of RPM package files. You can combine this information with C, Perl, or Python data structures to access the information. In all cases, you should access elements in an RPM file using one of the available programming libraries. Do not attempt to access the files directly, as you may inadvertently damage the RPM file."
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "<xref linkend=\"ch-programming-c\" />, <xref linkend=\"ch-rpm-programming-python\" />, and <xref linkend=\"ch-programming-perl\" /> cover programming with C, Python, and Perl, respectively."
+msgstr ""
+
+msgid "The RPM package format described here has been standardized as part of the Linux Standards Base, or LSB, version 1.3."
+msgstr ""
+
+msgid "The LSB 1.3 section on package file formats is available at www.linuxbase.org/spec/refspecs/LSB_1.3.0/gLSB/gLSB.html#PACKAGEFMT."
+msgstr ""
+
+msgid "The Package File"
+msgstr ""
+
+msgid "RPM packages are delivered with one file per package. All RPM files have the following basic format of four sections:"
+msgstr ""
+
+msgid "*A lead or file identifier"
+msgstr ""
+
+msgid "*A signature"
+msgstr ""
+
+msgid "*Header information"
+msgstr ""
+
+msgid "*Archive of the payload, the files to install"
+msgstr ""
+
+msgid "All values are encoded in network byte order, for portability to multiple processor architectures."
+msgstr ""
+
+msgid "The file identifier"
+msgstr ""
+
+msgid "Also called the lead or the rpmlead, the identifier marks that this file is an RPM file. It contains a magic number that the file command uses to detect RPM files. It also contains version and architecture information."
+msgstr ""
+
+msgid "The start of the identifier is the so-called magic number. The file command reads the first few bytes of a file and compares the values found with the contents of /usr/share/magic (/etc/magic on many UNIX systems), a database of magic numbers. This allows the file command to quickly identify files."
+msgstr ""
+
+msgid "The identifier includes the RPM version number, that is, the version of the RPM file format used for the package. The identifier also has a flag that tells the type of the RPM file, whether the file contains a binary or source package. An architecture flag allows RPM software to double-check that you are not trying to install a package for a non-compatible architecture."
+msgstr ""
+
+msgid "The signature"
+msgstr ""
+
+msgid "The signature appears after the lead or identifier section. The RPM signature helps verify the integrity of the package, and optionally the authenticity."
+msgstr ""
+
+msgid "The signature works by performing a mathematical function on the header and archive section of the file. The mathematical function can be an encryption process, such as PGP (Pretty Good Privacy), or a message digest in MD5 format."
+msgstr ""
+
+msgid "The header"
+msgstr ""
+
+msgid "The identifier section no longer contains enough information to describe modern RPMs. Furthermore, the identifier section is nowhere near as flexible as today’s packages require. To counter these deficiencies, the header section was introduced to include more information about the package."
+msgstr ""
+
+msgid "The header structure contains three parts:"
+msgstr ""
+
+msgid "*Header record"
+msgstr ""
+
+msgid "*One or more header index record structures"
+msgstr ""
+
+msgid "*Data for the index record structures"
+msgstr ""
+
+msgid "The header record identifies this as the RPM header. It also contains a count of the number of index records and the size of the index record data."
+msgstr ""
+
+msgid "Each index record uses a structure that contains a tag number for the data it contains. This includes tag IDs for the copyright message, name of the package, version number, and so on. A type number identifies the type of the item. An offset indicates where in the data section the data for this header item begins. A count indicates how many items of the given type are in this header entry. You can multiply the count by the size of the type to get the number of bytes used for the header entry."
+msgstr ""
+
+msgid "Table D-1 lists the type identifiers."
+msgstr ""
+
+msgid "Table D-1 Header type identifiers"
+msgstr ""
+
+msgid "Constant"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Size in Bytes"
+msgstr ""
+
+msgid "RPM_NULL_TYPE"
+msgstr ""
+
+msgid "0"
+msgstr ""
+
+msgid "No size"
+msgstr ""
+
+msgid "RPM_CHAR_TYPE"
+msgstr ""
+
+msgid "1"
+msgstr ""
+
+msgid "RPM_INT8_TYPE"
+msgstr ""
+
+msgid "2"
+msgstr ""
+
+msgid "RPM_INT16_TYPE"
+msgstr ""
+
+msgid "3"
+msgstr ""
+
+msgid "RPM_INT32_TYPE"
+msgstr ""
+
+msgid "4"
+msgstr ""
+
+msgid "RPM_INT64_TYPE"
+msgstr ""
+
+msgid "5"
+msgstr ""
+
+msgid "Not supported yet"
+msgstr ""
+
+msgid "RPM_STRING_TYPE"
+msgstr ""
+
+msgid "6"
+msgstr ""
+
+msgid "Variable number of bytes, terminated by a NULL"
+msgstr ""
+
+msgid "RPM_BIN_TYPE"
+msgstr ""
+
+msgid "7"
+msgstr ""
+
+msgid "RPM_STRING_ARRAY_TYPE"
+msgstr ""
+
+msgid "8"
+msgstr ""
+
+msgid "Variable, vector of NULL-terminated strings"
+msgstr ""
+
+msgid "RPM_I18NSTRING_TYPE"
+msgstr ""
+
+msgid "9"
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Integer values are aligned on 2-byte (16-bit integers) or 4-byte (32-bit integers) boundaries."
+msgstr ""
+
+msgid "Header Tags"
+msgstr ""
+
+msgid "Table D-2 lists the tag identifiers."
+msgstr ""
+
+msgid "Table D-2 Header entry tag identifiers"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Required?"
+msgstr ""
+
+msgid "RPMTAG_NAME"
+msgstr ""
+
+msgid "1000"
+msgstr ""
+
+msgid "STRING"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "RPMTAG_VERSION"
+msgstr ""
+
+msgid "1001"
+msgstr ""
+
+msgid "RPMTAG_RELEASE"
+msgstr ""
+
+msgid "1002"
+msgstr ""
+
+msgid "RPMTAG_SUMMARY"
+msgstr ""
+
+msgid "1004"
+msgstr ""
+
+msgid "I18NSTRING"
+msgstr ""
+
+msgid "RPMTAG_DESCRIPTION"
+msgstr ""
+
+msgid "1005"
+msgstr ""
+
+msgid "RPMTAG_BUILDTIME"
+msgstr ""
+
+msgid "1006"
+msgstr ""
+
+msgid "INT32"
+msgstr ""
+
+msgid "Optional"
+msgstr ""
+
+msgid "RPMTAG_BUILDHOST"
+msgstr ""
+
+msgid "1007"
+msgstr ""
+
+msgid "RPMTAG_SIZE"
+msgstr ""
+
+msgid "1009"
+msgstr ""
+
+msgid "RPMTAG_LICENSE"
+msgstr ""
+
+msgid "1014"
+msgstr ""
+
+msgid "RPMTAG_GROUP"
+msgstr ""
+
+msgid "1016"
+msgstr ""
+
+msgid "RPMTAG_OS"
+msgstr ""
+
+msgid "1021"
+msgstr ""
+
+msgid "RPMTAG_ARCH"
+msgstr ""
+
+msgid "1022"
+msgstr ""
+
+msgid "RPMTAG_SOURCERPM"
+msgstr ""
+
+msgid "1044"
+msgstr ""
+
+msgid "RPMTAG_FILEVERIFYFLAGS"
+msgstr ""
+
+msgid "1045"
+msgstr ""
+
+msgid "RPMTAG_ARCHIVESIZE"
+msgstr ""
+
+msgid "1046"
+msgstr ""
+
+msgid "RPMTAG_RPMVERSION"
+msgstr ""
+
+msgid "1064"
+msgstr ""
+
+msgid "RPMTAG_CHANGELOGTIME"
+msgstr ""
+
+msgid "1080"
+msgstr ""
+
+msgid "RPMTAG_CHANGELOGNAME"
+msgstr ""
+
+msgid "1081"
+msgstr ""
+
+msgid "STRING_ARRAY"
+msgstr ""
+
+msgid "RPMTAG_CHANGELOGTEXT"
+msgstr ""
+
+msgid "1082"
+msgstr ""
+
+msgid "RPMTAG_COOKIE"
+msgstr ""
+
+msgid "1094"
+msgstr ""
+
+msgid "RPMTAG_OPTFLAGS"
+msgstr ""
+
+msgid "1122"
+msgstr ""
+
+msgid "RPMTAG_PAYLOADFORMAT"
+msgstr ""
+
+msgid "1124"
+msgstr ""
+
+msgid "RPMTAG_PAYLOADCOMPRESSOR"
+msgstr ""
+
+msgid "1125"
+msgstr ""
+
+msgid "RPMTAG_PAYLOADFLAGS"
+msgstr ""
+
+msgid "1126"
+msgstr ""
+
+msgid "RPMTAG_RHNPLATFORM"
+msgstr ""
+
+msgid "1131"
+msgstr ""
+
+msgid "Deprecated"
+msgstr ""
+
+msgid "RPMTAG_PLATFORM"
+msgstr ""
+
+msgid "1132"
+msgstr ""
+
+msgid "Most of these tags are self-explanatory; however, a few tags hold special meaning. The RPMTAG_SIZE tag holds the size of all the regular files in the payload. The RPMTAG_ARCHIVESIZE tag holds the uncompressed size of the payload section, including the necessary cpio headers. The RPMTAG_COOKIE tag holds an opaque string."
+msgstr ""
+
+msgid "According to the LSB standards, the RPMTAG_PAYLOADFORMAT must always be cpio. The RPMTAG_PAYLOADCOMPRESSOR must be gzip. The RPMTAG_PAYLOADFLAGS must always be 9."
+msgstr ""
+
+msgid "The RPMTAG_OPTFLAGS tag holds special compiler flags used to build the package. The RPMTAG_PLATFORM and RPMTAG_RHNPLATFORM tags hold opaque strings."
+msgstr ""
+
+msgid "Private Header Tags"
+msgstr ""
+
+msgid "Table D-3 lists header tags that are considered private."
+msgstr ""
+
+msgid "Table D-3 Private header tags"
+msgstr ""
+
+msgid "RPMTAG_HEADERSIGNATURES"
+msgstr ""
+
+msgid "62"
+msgstr ""
+
+msgid "BIN"
+msgstr ""
+
+msgid "RPMTAG_HEADERIMMUTABLE"
+msgstr ""
+
+msgid "63"
+msgstr ""
+
+msgid "RPMTAG_HEADERI18NTABLE"
+msgstr ""
+
+msgid "100"
+msgstr ""
+
+msgid "The RPMTAG_HEADERSIGNATURES tag indicates that this is a signature entry. The RPMTAG_HEADERIMMUTABLE tag indicates a header item that is used in the calculation of signatures. This data should be preserved."
+msgstr ""
+
+msgid "The RPMTAG_HEADERI18NTABLE tag holds a table of locales used for international text lookup."
+msgstr ""
+
+msgid "Signature Tags"
+msgstr ""
+
+msgid "The signature section is implemented as a header structure, but it is not considered part of the RPM header. Table D-4 lists special signature-related tags."
+msgstr ""
+
+msgid "Table D-4 Signature-related tags"
+msgstr ""
+
+msgid "SIGTAG_SIGSIZE"
+msgstr ""
+
+msgid "SIGTAG_PGP"
+msgstr ""
+
+msgid "SIGTAG_MD5"
+msgstr ""
+
+msgid "SIGTAG_GPG"
+msgstr ""
+
+msgid "SIGTAG_PAYLOADSIZE"
+msgstr ""
+
+msgid "SIGTAG_SHA1HEADER"
+msgstr ""
+
+msgid "1010"
+msgstr ""
+
+msgid "SIGTAG_DSAHEADER"
+msgstr ""
+
+msgid "1011"
+msgstr ""
+
+msgid "SIGTAG_RSAHEADER"
+msgstr ""
+
+msgid "1012"
+msgstr ""
+
+msgid "The SIGTAG_SIGSIZE tag specifies the size of the header and payload sections, while the SIGTAG_PAYLOADSIZE holds the uncompressed size of the payload."
+msgstr ""
+
+msgid "To verify the integrity of the package, the SIGTAG_MD5 tag holds a 128-bit MD5 checksum of the header and payload sections. The SIGTAG_SHA1HEADER holds an SHA1 checksum of the entire header section."
+msgstr ""
+
+msgid "To verify the authenticity of the package, the SIGTAG_PGP tag holds a Version 3 OpenPGP Signature Packet RSA signature of the header and payload areas. The SIGTAG_GPG tag holds a Version 3 OpenPGP Signature Packet DSA signature of the header and payload areas. The SIGTAG_DSAHEADER holds a DSA signature of just the header section. If the SIGTAG_DSAHEADER tag is included, the SIGTAG_GPG tag must also be present. The SIGTAG_ RSAHEADER holds an RSA signature of just the header section. If the SIGTAG_ RSAHEADER tag is included, the SIGTAG_PGP tag must also be present."
+msgstr ""
+
+msgid "Installation Tags"
+msgstr ""
+
+msgid "A set of installation-specific tags tells the rpm program how to run the pre- and post-installation scripts. Table D-5 lists these tags."
+msgstr ""
+
+msgid "Table D-5 Installation tags"
+msgstr ""
+
+msgid "RPMTAG_PREINPROG"
+msgstr ""
+
+msgid "1085"
+msgstr ""
+
+msgid "RPMTAG_POSTINPROG"
+msgstr ""
+
+msgid "1086"
+msgstr ""
+
+msgid "RPMTAG_PREUNPROG"
+msgstr ""
+
+msgid "1087"
+msgstr ""
+
+msgid "RPMTAG_POSTUNPROG"
+msgstr ""
+
+msgid "1088"
+msgstr ""
+
+msgid "The RPMTAG_PREINPROG tag holds the name of the interpreter, such as sh, to run the pre-install script. Similarly, the RPMTAG_POSTINPROG tag holds the name of the interpreter to run the post-install script. RPMTAG_PREUNPROG and RPMTAG_POSTUNPROG are the same for the uninstall scripts."
+msgstr ""
+
+msgid "File Information Tags"
+msgstr ""
+
+msgid "File information tags are placed in the header for convenient access. These tags describe the files in the payload. Table D-6 lists these tags."
+msgstr ""
+
+msgid "Table D-6 File information tags"
+msgstr ""
+
+msgid "RPMTAG_OLDFILENAMES"
+msgstr ""
+
+msgid "1027"
+msgstr ""
+
+msgid "RPMTAG_FILESIZES"
+msgstr ""
+
+msgid "1028"
+msgstr ""
+
+msgid "RPMTAG_FILEMODES"
+msgstr ""
+
+msgid "1030"
+msgstr ""
+
+msgid "INT16"
+msgstr ""
+
+msgid "RPMTAG_FILERDEVS"
+msgstr ""
+
+msgid "1033"
+msgstr ""
+
+msgid "RPMTAG_FILEMTIMES"
+msgstr ""
+
+msgid "1034"
+msgstr ""
+
+msgid "RPMTAG_FILEMD5S"
+msgstr ""
+
+msgid "1035"
+msgstr ""
+
+msgid "RPMTAG_FILELINKTOS"
+msgstr ""
+
+msgid "1036"
+msgstr ""
+
+msgid "RPMTAG_FILEFLAGS"
+msgstr ""
+
+msgid "1037"
+msgstr ""
+
+msgid "RPMTAG_FILEUSERNAME"
+msgstr ""
+
+msgid "1039"
+msgstr ""
+
+msgid "RPMTAG_FILEGROUPNAME"
+msgstr ""
+
+msgid "1040"
+msgstr ""
+
+msgid "RPMTAG_FILEDEVICES"
+msgstr ""
+
+msgid "1095"
+msgstr ""
+
+msgid "RPMTAG_FILEINODES"
+msgstr ""
+
+msgid "1096"
+msgstr ""
+
+msgid "RPMTAG_FILELANGS"
+msgstr ""
+
+msgid "1097"
+msgstr ""
+
+msgid "RPMTAG_DIRINDEXES"
+msgstr ""
+
+msgid "1116"
+msgstr ""
+
+msgid "RPMTAG_BASENAMES"
+msgstr ""
+
+msgid "1117"
+msgstr ""
+
+msgid "RPMTAG_DIRNAMES"
+msgstr ""
+
+msgid "1118"
+msgstr ""
+
+msgid "The RPMTAG_OLDFILENAMES tag is used when the files are not compressed, when the RPMTAG_REQUIRENAME tag does not indicate rpmlib(CompressedFileNames). The RPMTAG_FILESIZES tag specifies the size of each file in the payload, while the RPMTAG_FILEMODES tag specifies the file modes (permissions) and the RPMTAG_FILEMTIMES tag holds the last modification time for each file."
+msgstr ""
+
+msgid "The RPMTAG_BASENAMES tag holds an array of the base file names for the files in the payload. The RPMTAG_DIRNAMES tag holds an array of the directories for the files. The RPMTAG_DIRINDEXES tag contains an index into the RPMTAG_DIRNAMES for the directory. Each RPM must have either RPMTAG_OLDFILENAMES or the triple of RPMTAG_BASENAMES, RPMTAG_DIRNAMES, and RPMTAG_DIRINDEXES, but not both."
+msgstr ""
+
+msgid "Dependency Tags"
+msgstr ""
+
+msgid "The dependency tags provide one of the most useful features of the RPM system by allowing for automated dependency checks between packages. Table D-7 lists these tags."
+msgstr ""
+
+msgid "Table D-7 Dependency tags"
+msgstr ""
+
+msgid "RPMTAG_PROVIDENAME"
+msgstr ""
+
+msgid "1047"
+msgstr ""
+
+msgid "RPMTAG_REQUIREFLAGS"
+msgstr ""
+
+msgid "1048"
+msgstr ""
+
+msgid "RPMTAG_REQUIRENAME"
+msgstr ""
+
+msgid "1049"
+msgstr ""
+
+msgid "RPMTAG_REQUIREVERSION"
+msgstr ""
+
+msgid "1050"
+msgstr ""
+
+msgid "RPMTAG_CONFLICTFLAGS"
+msgstr ""
+
+msgid "1053"
+msgstr ""
+
+msgid "RPMTAG_CONFLICTNAME"
+msgstr ""
+
+msgid "1054"
+msgstr ""
+
+msgid "RPMTAG_CONFLICTVERSION"
+msgstr ""
+
+msgid "1055"
+msgstr ""
+
+msgid "RPMTAG_OBSOLETENAME"
+msgstr ""
+
+msgid "1090"
+msgstr ""
+
+msgid "RPMTAG_PROVIDEFLAGS"
+msgstr ""
+
+msgid "1112"
+msgstr ""
+
+msgid "RPMTAG_PROVIDEVERSION"
+msgstr ""
+
+msgid "1113"
+msgstr ""
+
+msgid "RPMTAG_OBSOLETEFLAGS"
+msgstr ""
+
+msgid "1114"
+msgstr ""
+
+msgid "RPMTAG_OBSOLETEVERSION"
+msgstr ""
+
+msgid "1115"
+msgstr ""
+
+msgid "Each of these tags comes in triples, which are formatted similarly. The RPMTAG_REQUIRENAME tag holds an array of required capabilities. The RPMTAG_REQUIREVERSION tag holds an array of the versions of the required capabilities. The RPMTAG_REQUIREFLAGS tag ties the two together with a set of bit flags that specify whether the requirement is for a version less than the given number, equal to the given number, greater than or equal to the given number, and so on. Table D-8 lists these flags."
+msgstr ""
+
+msgid "Table D-8 Bit flags for dependencies"
+msgstr ""
+
+msgid "Flag"
+msgstr ""
+
+msgid "RPMSENSE_LESS"
+msgstr ""
+
+msgid "0x02"
+msgstr ""
+
+msgid "RPMSENSE_GREATER"
+msgstr ""
+
+msgid "0x04"
+msgstr ""
+
+msgid "RPMSENSE_EQUAL"
+msgstr ""
+
+msgid "0x08"
+msgstr ""
+
+msgid "RPMSENSE_PREREQ"
+msgstr ""
+
+msgid "0x40"
+msgstr ""
+
+msgid "RPMSENSE_INTERP"
+msgstr ""
+
+msgid "0x100"
+msgstr ""
+
+msgid "RPMSENSE_SCRIPT_PRE"
+msgstr ""
+
+msgid "0x200"
+msgstr ""
+
+msgid "RPMSENSE_SCRIPT_POST"
+msgstr ""
+
+msgid "0x400"
+msgstr ""
+
+msgid "RPMSENSE_SCRIPT_PREUN"
+msgstr ""
+
+msgid "0x800"
+msgstr ""
+
+msgid "RPMSENSE_SCRIPT_POSTUN"
+msgstr ""
+
+msgid "0x1000"
+msgstr ""
+
+msgid "The RPMTAG_PROVIDENAME, RPMTAG_PROVIDEVERSION, and RPMTAG_PROVIDEFLAGS tags work similarly for the capabilities this package provides. The RPMTAG_CONFLICTNAME, RPMTAG_CONFLICTVERSION, and RPMTAG_CONFLICTFLAGS tags specify the conflicts. The RPMTAG_OBSOLETENAME, RPMTAG_OBSOLETEVERSION, and RPMTAG_OBSOLETEFLAGS tags specify the obsoleted dependencies."
+msgstr ""
+
+msgid "In addition, an RPM package can define some special requirements in the RPMTAG_REQUIRENAME and RPMTAG_REQUIREVERSION tags. Table D-9 lists these requirements."
+msgstr ""
+
+msgid "Table D-9 Special package requirement names and versions"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Version"
+msgstr ""
+
+msgid "Specifies"
+msgstr ""
+
+msgid "Lsb"
+msgstr ""
+
+msgid "1.3"
+msgstr ""
+
+msgid "The package conforms to the Linux Standards Base RPM format."
+msgstr ""
+
+msgid "rpmlib(VersionedDependencies)"
+msgstr ""
+
+msgid "3.0.3-1"
+msgstr ""
+
+msgid "The package holds dependencies or prerequisites that have versions associated with them."
+msgstr ""
+
+msgid "rpmlib(PayloadFilesHavePrefix)"
+msgstr ""
+
+msgid "4.0-1"
+msgstr ""
+
+msgid "File names in the archive have a “.” prepended on the names."
+msgstr ""
+
+msgid "rpmlib(CompressedFileNames)"
+msgstr ""
+
+msgid "3.0.4-1"
+msgstr ""
+
+msgid "The package uses the RPMTAG_DIRINDEXES, RPMTAG_DIRNAME and RPMTAG_BASENAMES tags for specifying file names."
+msgstr ""
+
+msgid "/bin/sh"
+msgstr ""
+
+msgid "NA"
+msgstr ""
+
+msgid "Indicates a requirement for the Bourne shell to run the installation scripts."
+msgstr ""
+
+msgid "The payload"
+msgstr ""
+
+msgid "The payload, or archive, section contains the actual files used in the package. These are the files that the rpm command installs when you install the package. To save space, data in the archive section is compressed in GNU gzip format."
+msgstr ""
+
+msgid "Once uncompressed, the data is in cpio format, which is how the rpm2cpio command can do its work. In cpio format, the payload is made up of records, one per file. Table D-10 lists the record structure."
+msgstr ""
+
+msgid "Table D-10 cpio file record structure"
+msgstr ""
+
+msgid "Element"
+msgstr ""
+
+msgid "Holds"
+msgstr ""
+
+msgid "cpio header"
+msgstr ""
+
+msgid "Information on the file, such as the file mode (permissions)"
+msgstr ""
+
+msgid "File name"
+msgstr ""
+
+msgid "NULL-terminated string"
+msgstr ""
+
+msgid "Padding"
+msgstr ""
+
+msgid "0 to 3 bytes, as needed, to align the next element on a 4-byte boundary"
+msgstr ""
+
+msgid "File data"
+msgstr ""
+
+msgid "The contents of the file"
+msgstr ""
+
+msgid "0 to 3 bytes, as needed, to align the next file record on a 4-byte boundary"
+msgstr ""
+
+msgid "The information in the cpio header duplicates that of the RPM file-information header elements."
+msgstr ""
+

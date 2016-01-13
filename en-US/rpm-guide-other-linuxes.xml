@@ -1,0 +1,905 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-other-linuxes">
+  <title>Using RPM on Non-Red Hat Linuxes</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Dealing with RPM issues on other versions of Linux
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        RPM standardization
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Working around RPM differences when installing RPMs
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Working around RPM differences when building RPMs
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Dealing with non-RPM-based Linux distributions
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    Although its name was originally the Red Hat Package Manager, RPM
+    has been adopted by most major Linux distributions. With this
+    adoption, RPM has moved from its Red Hat roots, and RPM now stands
+    for the RPM Package Manager.
+  </para>
+  <para>
+    In addition, the RPM package format is being adopted by the Linux
+    Standards Base (LSB). The LSB defines a set of standards to help
+    maintain compatibility for all Linux distributions.
+  </para>
+  <para>
+    Cross Reference
+  </para>
+  <para>
+    See www.linuxbase.org for more on the LSB.
+  </para>
+  <para>
+    This chapter covers differences in how Linux distributions use RPM,
+    ways to work around these differences, and also tools you can use
+    for non-RPM distributions.
+  </para>
+  <sect1>
+    <title>Troubleshooting RPM Installation Issues</title>
+    <para>
+      The main RPM issues when dealing with installing RPMs on other
+      versions of Linux are:
+    </para>
+    <para>
+      *Different versions of RPM itself
+    </para>
+    <para>
+      *Different divisions of software into packages
+    </para>
+    <para>
+      *Dealing with dependency issues
+    </para>
+    <para>
+      *Different install locations
+    </para>
+    <para>
+      The following sections expand on these issues.
+    </para>
+    <sect2>
+      <title>Dealing with RPM versions</title>
+      <para>
+        Red Hat Linux 8.0 ships with RPM version 4.1. Other
+        distributions of Linux ship with other versions of RPM. Thus,
+        one of the first commands you can run on another Linux
+        distribution is the rpm --version command, to see what RPM
+        version is in use and help identify any issues. For example:
+      </para>
+      <para>
+        $ rpm --version
+      </para>
+      <para>
+        RPM version 4.1
+      </para>
+      <para>
+        Once you know the RPM version, you can plan for any issues that
+        arise from installing RPMs made with a different RPM version.
+        For example, RPM 4.0 and higher inserts dependency information
+        automatically into RPMs. If your Linux distribution runs RPM
+        3.x, you may need to disable some of the dependency checks, for
+        example, if you want to install RPMs built under RPM 4.x onto an
+        RPM 3.x system.
+      </para>
+      <para>
+        On installing RPMs, you can disable the dependency checks with
+        the --nodeps option. If you do this, though, you should manually
+        check that the dependencies are really met by your Linux
+        installation.
+      </para>
+      <para>
+        On the other hand, if you want to install RPMs built on an RPM
+        3.x system onto an RPM 4.x system, you may need to deal with
+        package signatures. RPM 4.x versions also automatically check
+        for signatures. When installing packages on an RPM 4.x system,
+        you can disable this feature with the --nosignature option.
+      </para>
+      <para>
+        Using these techniques, you should be able to install packages
+        built with RPM 4.1 on systems that use RPM 3.x versions or vice
+        versa.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Dealing with divisions of software into packages</title>
+      <para>
+        There is no standardization as to how large applications are
+        divided into packages on different Linux distributions. This
+        means that dependencies between packages may differ.
+      </para>
+      <para>
+        If your dependencies are for packages provided with the Linux
+        distribution, which includes a huge number of packages, you must
+        address this issue. The package an RPM depends on may not exist
+        and may not even be needed, on a particular Linux distribution.
+      </para>
+      <para>
+        If instead the dependencies are for files, especially shared
+        libraries, you should be okay for the most part, unless the
+        files are located in different directories.
+      </para>
+      <para>
+        The only real solution to this problem is to turn off dependency
+        checks on installing, with the --nodeps option. Then you must
+        check manually that your system really does provide all the
+        necessary dependencies. Use the techniques shown in <xref linkend="ch-dependencies"/>  to
+        verify all the dependencies are met on your system.
+      </para>
+      <para>
+        Warning
+      </para>
+      <para>
+        Using the --nodeps option can lead to problems with your RPM
+        database, because you are installing packages by defeating the
+        RPM system's safeguards for dependencies. Only use the --nodeps
+        option if you are really sure the dependencies are met on your
+        system, even if from a different package than expected.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Dealing with dependency issues</title>
+      <para>
+        One of the toughest areas to deal with is the problem of
+        dependencies. This topic ranges from the very simple issue of
+        installing a necessary package to complex issues of shared
+        library versions or particular Perl modules.
+      </para>
+      <para>
+        Start with the simple case and make certain that you haven’t
+        failed to install a necessary RPM that provides the right
+        dependency. In most cases, you can download a vendor-specific
+        package from your Linux vendor, such as www.suse.com for SUSE
+        Linux. Most Linux vendors provide HTTP or FTP sites with a large
+        set of packages created for their distributions. If such a
+        distribution-specific package solves a dependency issue, this is
+        the easiest way around the problem.
+      </para>
+      <para>
+        After you verify that you haven't simply omitted a necessary
+        package, move on to other potential explanations. Another issue
+        involves shared libraries and ELF, or Extended Linking Format,
+        symbols. A package may require an older or newer version of a
+        shared library. Applications that are tied to a particular
+        version of a shared library can cause problems, since you may
+        not want to install incompatible versions of a shared library.
+      </para>
+      <para>
+        If the dependency is for a system-shared library, such as the
+        shared C library, you can often recompile the package (rebuild
+        from a source RPM) to get the package to use the newer or older
+        version of the system library. This is possible because most
+        Linux applications don’t call on version-specific features of
+        system shared libraries (some do, but most don’t). If the
+        dependency is for an application-shared library, this is more
+        serious, since there were likely API changes that could impact
+        the application. Install the package owning the
+        application-shared library and again, try to rebuild the package
+        from the source RPM.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        You can use the rpm -qf command to query which package owns a
+        given file. You can use the rpm -q --whatprovides command to
+        query for which package provides a given capability. <xref linkend="ch-dependencies"/> 
+        covers more on dependencies.
+      </para>
+      <para>
+        Some packages are considered developer packages. These usually
+        depend on some base package. For example, the rpm-devel package
+        depends on the rpm package. The rpm-python package depends on
+        both the rpm package and the python package (at particular
+        version numbers as well).
+      </para>
+      <para>
+        This naming scheme of a base package and base-devel is used for
+        Red Hat Linux packages, but may not be used for other vendor
+        packages. In any case, you can solve this type of dependency by
+        finding the relevant base packages that the package you are
+        trying to install depends on. Consult the manuals that come with
+        your Linux distribution or browse the online RPM repositories to
+        see what naming conventions are used for your Linux
+        distribution.
+      </para>
+      <para>
+        Many packages depend on scripting language interpreters, such as
+        Perl. Sometimes the dependency is based on scripts used in a
+        package, such as install or trigger scripts. You can have
+        problems arise with the locations of these scripting
+        interpreters. Perl, for example, is usually installed in
+        /usr/bin/perl on most Linux systems. Another common location is
+        /usr/local/bin/perl. In addition, packages may depend on
+        particular add-on modules, especially Perl modules. With most
+        versions of Linux released in the last few years, you should be
+        able to override a Perl dependency with the --nodeps option as
+        long as you have Perl installed.
+      </para>
+      <para>
+        File paths may also cause problems. For example, a file that a
+        package depends on may be in a different location or owned by a
+        different package. For this case, you can try to find the
+        package that owns the file and make sure that package is
+        installed. If your Linux vendor provides a pre-built RPM
+        database of all packages, such as the rpmdb-redhat package, you
+        can query this database to find out which package owns the file
+        for that version of Linux.
+      </para>
+      <para/>
+    </sect2>
+    <sect2>
+      <title>Dealing with install locations</title>
+      <para>
+        Linux vendors can install software anywhere. For example, some
+        distributions place a lot of software under /opt instead of the
+        more common /usr. From an RPM perspective, this is mostly an
+        issue with file dependencies and the install location for
+        packages. Evolving file system standards also help limit this
+        issue.
+      </para>
+      <para>
+        You can attempt to relocate any package using the --badreloc
+        option.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-using-rpm"/>  covers the --badreloc option.
+      </para>
+      <para>
+        But, while the --badreloc option will relocate the files in a
+        package, it will not modify the contents of those files. So, any
+        file inside a package that references files and directory
+        locations may not work properly, since it may have the old,
+        invalid, paths.
+      </para>
+      <para>
+        The only real way around this problem is to edit any script
+        files that come with the package and contain hard-coded paths.
+        If the paths reside inside binary executables, you need to get a
+        source RPM for the package, patch the sources and then create a
+        new RPM.
+      </para>
+    </sect2>
+    <sect2>
+      <title>When all else fails, rebuild from the source package</title>
+      <para>
+        When all of these techniques fail to install a package, you
+        still have a fallback option. If you have the source RPM for a
+        package, you can install the source RPM on the new system and
+        then edit the spec file until you can rebuild a package that
+        will install on your version of Linux.
+      </para>
+      <para>
+        For example, a set of Build Root Policy (brp) helper scripts are
+        run at the end of the %install section in an RPM. These scripts
+        perform tasks such as compressing man pages. The Mandrake brp
+        scripts use bzip2 compression. Red Hat brp scripts use gzip
+        compression. This is one case where rebuilding an RPM and then
+        installing may work best.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Handling Problems Building RPMs</title>
+    <para>
+      Given all these differences, how can you create RPMs while
+      avoiding problems? With some work setting things up, you can
+      create an RPM build environment that solves most vendor issues.
+      This depends on taking a methodical approach to building your
+      packages and using techniques to avoid vendor issues wherever
+      possible.
+    </para>
+    <para>
+      When building RPMs, you will face many of the same problems@@mdand
+      solutions@@mdas when installing RPMs. For example, due to the
+      different ways Linux vendors divide software into packages, your
+      RPMs will likely have issues defining the proper dependencies.
+      There are also a number of issues that apply only when building
+      RPMs.
+    </para>
+    <para>
+      The following sections cover the main issues when building RPMs.
+    </para>
+    <sect2>
+      <title>Writing distribution-specific packages</title>
+      <para>
+        One of the ways around all the differences between Linux
+        distributions in RPM usage is to define distribution-specific
+        packages. To do this, you create a separate package on each
+        Linux distribution you support.
+      </para>
+      <para>
+        That’s a lot of work. If possible, fit the differences into
+        macros and use a single spec file to reduce some of this work.
+        This technique works up to a point. Sometimes, your spec file
+        becomes too complicated and you may decide that it is easier to
+        create multiple spec files, one per Linux distribution.
+      </para>
+      <para>
+        One way to help make vendor-specific packages, or to see which
+        RPM macros are defined on a given Linux distribution, is to look
+        for an RPM that contains the distribution-specific RPM
+        configuration. For example, on Red Hat Linux systems, the Red
+        Hat RPM configuration is defined by the redhat-rpm-config
+        package.
+      </para>
+      <para>
+        You can list the files in this package to see where Red Hat
+        defines macros specific to their Linux distribution.
+      </para>
+      <para>
+        $ rpm -ql redhat-rpm-config
+      </para>
+      <para>
+        /usr/lib/rpm/redhat
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/brp-compress
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/brp-redhat
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/brp-sparc64-linux
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/brp-strip
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/brp-strip-comment-note
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/brp-strip-shared
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/find-lang.sh
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/find-provides
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/find-requires
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/macros
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/perl.prov
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/perl.req
+      </para>
+      <para>
+        /usr/lib/rpm/redhat/rpmrc
+      </para>
+      <para>
+        These files, such as /usr/lib/rpm/redhat/macros, show you what
+        is specific to a given Linux distribution. You can then look at
+        the macros defined in these files to identify settings for a
+        particular distribution, in this case, Red Hat. Armed with this
+        knowledge, you can better create portable RPM spec files.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Dealing with automatic dependency generation</title>
+      <para>
+        One of the features in RPM 4.x is the automatic generation of
+        dependencies. For a variety of reasons including different
+        package layouts, different directory structures, or different
+        versions of RPM, you may need to disable some or all of
+        automatic generation of dependencies.
+      </para>
+      <para>
+        You can disable the automatic generation of dependencies by
+        placing the following directive in your spec file:
+      </para>
+      <para>
+        Autoreq: 0
+      </para>
+      <para>
+        If you do so, you need to use the Requires: tag to manually
+        define all requirements. This is not a good solution to the
+        issue of automatic dependencies however. Most likely, you will
+        need to override the %{__find_requires} and %{__find_provides}
+        macros in order to filter out any unwanted dependencies.
+      </para>
+      <para>
+        These two macros resolve to shell scripts that perform the
+        automated dependency checks, as you can see with the rpm --eval
+        command:
+      </para>
+      <para>
+        $ rpm --eval "%__find_provides"
+      </para>
+      <para>
+        /usr/lib/rpm/find-provides
+      </para>
+      <para>
+        rpm --eval "%__find_requires"
+      </para>
+      <para>
+        /usr/lib/rpm/find-requires
+      </para>
+      <para>
+        You can override these scripts to filter out any dependencies
+        that cause problems for your packages.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Dealing with different macros</title>
+      <para>
+        Different Linux vendors define different macros in their RPM
+        setup. This may mean not only different values for the macros,
+        but different macro names as well. Because of this, it is best
+        to define your own local set of macros when building RPMs.
+      </para>
+      <para>
+        As much as possible, depend on your own RPM macros. You can
+        define your macros in terms of vendor-specific macros using
+        conditional statements in your spec files, a topic covered in
+        <xref linkend="ch-advanced-packaging"/> . You can also read examples in the “Build
+        Environment and Macros” section of this chapter.
+      </para>
+      <para>
+        This really boils down to creating a disciplined RPM build
+        environment.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Making relocatable packages</title>
+      <para>
+        You should aim to make your packages relocatable so that users
+        can install your packages into any directory. This makes it
+        easier to deal with the locations chosen by different Linux
+        distributions, such as /usr, /usr/local, or /opt, for installing
+        add-on software.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-specfiles"/>  covers the spec file format. <xref linkend="ch-advanced-packaging"/>  covers making
+        relocatable packages.
+      </para>
+      <para>
+        You can use the %{_bindir} macro in your spec files, which will
+        help create per-distribution packages using the right settings.
+      </para>
+      <para>
+        In addition, you can define macros in your spec files that
+        define the location for dependencies. You can then use the
+        --define option to the rpmbuild command to define values for
+        your macros that specify the locations for the dependencies.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        This technique of setting up Linux distribution-specific macros
+        can help solve a lot of problems with cross-platform RPMs.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Creating an RPM build environment</title>
+      <para>
+        If you start with the idea that you want to build RPMs for
+        multiple versions of Linux, you can set up an RPM build
+        environment that cleanly separates most vendor-specific issues.
+      </para>
+      <para>
+        The key issues with the build environment are:
+      </para>
+      <para>
+        *Detecting the vendors
+      </para>
+      <para>
+        *Using macros to define a clean build process
+      </para>
+      <para>
+        *Handling different dependencies
+      </para>
+      <sect3>
+        <title>Detecting Vendors</title>
+        <para>
+          To make a clean build environment, you need to be able to
+          detect the Linux vendor and make build settings based on this
+          vendor. To help with this, many Linux vendors install a
+          special file with the vendor name, or a special package with
+          the vendor name. You can query for either of these.
+        </para>
+        <para>
+          For files, the convention follows:
+        </para>
+        <para>
+          /etc/vendor-release
+        </para>
+        <para>
+          For example:
+        </para>
+        <para>
+          $ more /etc/redhat-release
+        </para>
+        <para>
+          Red Hat Linux release 8.0 (Psyche)
+        </para>
+        <para>
+          For packages, the convention is vendor-release for a package
+          name. For example:
+        </para>
+        <para>
+          $ rpm -q redhat-release
+        </para>
+        <para>
+          redhat-release-8.0-8
+        </para>
+        <para>
+          You can use either approach or simply define a macro for the
+          vendor and use the --define option to set the macro. For
+          example:
+        </para>
+        <para>
+          # rpmbuild –ba --define 'linuxVendor suse'
+        </para>
+        <para>
+          With this definition, you can use the macro %linuxVendor
+          inside your spec files. It is generally easier, though, if
+          your scripts can automatically detect the Linux vendor instead
+          of having to define it manually. The manual approach works,
+          though, if it becomes too much effort to detect the vendor
+          automatically.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Build environment and macros</title>
+        <para>
+          Once you can detect the Linux vendor, you can create macros
+          based on the differences between Linux distributions that
+          affect your applications.
+        </para>
+        <para>
+          Cross Reference
+        </para>
+        <para>
+          <xref linkend="ch-customizing-rpm"/>  covers RPM macros.
+        </para>
+        <para>
+          The macros that specifically help you with platform
+          differences include the %if .. %endif conditional. You can use
+          this in combination with special macros you define. In
+          addition, command-line options such as --with, --without, and
+          --target allow you to control features and the build target
+          within an RPM.
+        </para>
+        <para>
+          The %if macro allows you to specify a condition within your
+          spec file. For example:
+        </para>
+        <para>
+          %if %{old_5x} &amp;&amp; %{old_6x}
+        </para>
+        <para>
+          %{error: You cannot build for .5x and .6x at the same time}
+        </para>
+        <para>
+          %quit
+        </para>
+        <para>
+          %endif
+        </para>
+        <para/>
+        <para>
+          %if %{old_5x}
+        </para>
+        <para>
+          %define b5x 1
+        </para>
+        <para>
+          %undefine b6x
+        </para>
+        <para>
+          %endif
+        </para>
+        <para/>
+        <para>
+          %if %{old_6x}
+        </para>
+        <para>
+          %define b6x 1
+        </para>
+        <para>
+          %undefine b5x
+        </para>
+        <para>
+          %endif
+        </para>
+        <para>
+          You can also use %if to control settings such as the
+          Requires:, as shown in the following example:
+        </para>
+        <para>
+          %if %{build6x}
+        </para>
+        <para>
+          Requires: util-linux, pam &gt;= 0.66-5
+        </para>
+        <para>
+          %else
+        </para>
+        <para>
+          Requires: util-linux, pam &gt;= 0.75-37,
+          /etc/pam.d/system-auth
+        </para>
+        <para>
+          %endif
+        </para>
+        <para/>
+        <para>
+          The --with command-line option defines a special macro
+          starting with _with_. For example, the following command-line
+          option defines a feature to use:
+        </para>
+        <para>
+          $ rpmbuild –bc --with ssh filename.spec
+        </para>
+        <para>
+          This example defines the macro _with_ssh to --with-ssh. This
+          format was specially designed to work with GNU configure. You
+          can use this for conditional builds for platform-dependent
+          issues.
+        </para>
+        <para>
+          The --without command-line option similarly defines a macro
+          starting with _without_. The convention is that this option
+          defines a feature the code should not use.
+        </para>
+        <para>
+          You can combine --with and --without to turn on and off
+          features referenced in your spec files. For example:
+        </para>
+        <para>
+          ./configure %{?_with_ssh}
+        </para>
+        <para>
+          This will pass the following command line if the _with_ssh
+          macro is defined:
+        </para>
+        <para>
+          ./configure --with-ssh
+        </para>
+        <para>
+          If this option is not defined, the command will be:
+        </para>
+        <para>
+          ./configure
+        </para>
+        <para>
+          The --target option sets the spec file macros %_target,
+          %_target_arch, and %_target_os . For example:
+        </para>
+        <para>
+          $ rpmbuild -bc --target ppc-ibm-aix
+          /usr/src/redhat/SPECS/jikes.spec
+        </para>
+      </sect3>
+      <sect3>
+        <title>Compatibility and Glue Packages</title>
+        <para>
+          Not all Linux distributions are the same. Macros alone won’t
+          provide work-arounds for all the differences. You can, though,
+          get a lot of mileage from compatibility and glue packages.
+        </para>
+        <para>
+          A compatibility package provides a legacy API on newer systems
+          that no longer support the legacy API. By convention,
+          compatibility packages are named with a leading compat- to
+          signify their purpose.
+        </para>
+        <para>
+          For example:
+        </para>
+        <para>
+          $ rpm -q --qf "%{description}" compat-libstdc++
+        </para>
+        <para>
+          The compat-libstdc++ package contains compatibility Standard
+          C++
+        </para>
+        <para>
+          Using a compatibility package allows you to create programs
+          that use a least-common-denominator approach, programming to
+          the oldest but most common APIs. As some Linux distributions
+          eliminate the old APIs, compatibility packages can provide the
+          missing APIs.
+        </para>
+        <para>
+          Similarly, a glue package provides a dependency that exists on
+          some Linux distributions but not others. It glues together
+          your package with the Linux distribution that is missing an
+          essential capability.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          A key point in both of these approaches is to separate the
+          compatibility and glue packages from your main application
+          packages. The application packages should be as clean of
+          vendor issues as possible. Instruct your users to install the
+          compatibility or glue packages as needed (based on their Linux
+          distribution) along with the main application package or
+          packages.
+        </para>
+        <para>
+          With all this discussion of RPM and Linux differences, you
+          might think that Linux is one big mess. That’s not true.
+          Linux maintains a high degree of compatibility among Linux
+          distributions as well as among processor architectures. Most
+          programs originally created for Linux on Intel-based
+          architectures compile cleanly on Linux versions running on
+          other processor architectures such as MIPS, SPARC, and ARM.
+        </para>
+        <para>
+          The main differences lie in how Linux vendors split up the
+          huge number of files associated with Linux into RPM packages
+          as well as which versions of tools like C compilers the
+          vendors ship.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Dealing with Signatures</title>
+        <para>
+          With SUSE Linux, or any Linux based on UnitedLinux 1.0, the
+          RPM packages are signed with OpenPGP version 4, not 3, as used
+          in RPM 4.1. This means that you must use some other, non-RPM
+          means to extract the signatures from an RPM package, and then
+          verify these signatures with gpg.
+        </para>
+        <para/>
+      </sect3>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Dealing with Non-RPM-Based Linux Versions</title>
+    <para>
+      The main Linux distributions that don’t support RPM are the
+      Debian GNU/Linux family and Slackware Linux. To help with these
+      distributions, you can use a package-conversion tool called alien.
+    </para>
+    <sect2>
+      <title>Handling non-RPM packages with alien</title>
+      <para>
+        Alien is a package that supports conversions between RPM and
+        so-called alien package formats such as the dpkg (Debian
+        GNU/Linux), slp (Stampede Linux), and tgz (Slackware Linux)
+        formats.
+      </para>
+      <para>
+        You can use alien on your RPM-based Linux system to convert RPMs
+        to some other format, such as the Debian dpkg. You can also use
+        alien to convert other package formats into RPMs, depending on
+        which way you need to go.
+      </para>
+      <para/>
+      <para/>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Standardizing RPMs</title>
+    <para>
+      RPM is being considered as part of the Linux Standard Base, or
+      LSB, 1.3. This will define a standard packaging format for Linux
+      distributions, and over time reduce the RPM differences between
+      distributions.
+    </para>
+    <para>
+      In addition, other efforts are underway to help unify the diverse
+      Linux distributions, including the Filesystem Hierarchy Standard
+      and the adoption of RPM by many Linux vendors.
+    </para>
+    <sect2>
+      <title>Filesystem Hierarchy Standard</title>
+      <para>
+        The FHS, or Filesystem Hierarchy Standard, defines the purpose
+        of all the upper-level directories on Linux systems, such as
+        /var and /usr/bin. This standard, along with the Linux Standard
+        Base, or LSB, is driving Linux distributions to a greater degree
+        of similarity.
+      </para>
+      <para>
+        The FHS helps by specifying where applications should get
+        installed and which directories should be left to local
+        administrators to manage. The FHS also defines the purpose of
+        all Linux directories, giving vendors and application writers a
+        better idea of where they should install their packages.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See www.linuxbase.org for more on the LSB. See
+        www.pathname.com/fhs/ for more on the FHS.
+      </para>
+    </sect2>
+    <sect2>
+      <title>RPM adoption</title>
+      <para>
+        RPM has been adopted by a large number of Linux distributions.
+        In addition, standardization efforts, both for RPM and for
+        filesystem locations, are making Linux systems less varied.
+      </para>
+      <para>
+        This means that over time, many of the RPM-related differences
+        between Linux distributions will fade away, making it easier to
+        create cross-platform RPMs.
+      </para>
+      <para/>
+      <para/>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      This chapter covers differences in RPM versions between various
+      Linux distributions, and techniques you can use to get around
+      these differences. Each Linux vendor packages software
+      differently, even if the vendor uses RPM. This can cause problems
+      unless you write your spec files carefully.
+    </para>
+    <para>
+      Inside your RPM spec files, you can use conditional elements as
+      well as platform-based macro definitions to help create RPMs for
+      multiple packages.
+    </para>
+    <para>
+      Some of the best conventions are to split the software in your
+      applications from any compatibility or glue packages, separate
+      packages that provide missing features for various flavors of
+      Linux.
+    </para>
+    <para>
+      Standardization efforts such as the Linux Standard Base and
+      Filesystem Hierarchy Standard are bringing Linux vendors closer
+      and closer together. Widespread adoption of RPM by most Linux
+      distributions also helps.
+    </para>
+    <para>
+      While this chapter covers RPM on other Linux distributions, the
+      next chapter tackles RPM outside of Linux.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

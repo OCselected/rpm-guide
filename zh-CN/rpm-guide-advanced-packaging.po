@@ -1,0 +1,949 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Advanced RPM Packaging"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Defining package dependency information"
+msgstr ""
+
+msgid "Setting triggers"
+msgstr ""
+
+msgid "Writing verification scripts"
+msgstr ""
+
+msgid "Creating subpackages"
+msgstr ""
+
+msgid "Creating relocatable packages"
+msgstr ""
+
+msgid "Defining conditional builds"
+msgstr ""
+
+msgid "The previous chapter introduced the RPM spec file, which controls how RPM packages are built and installed. This chapter delves into advanced spec file topics such as using conditional commands and making relocatable packages, starting with how to specify package dependencies."
+msgstr ""
+
+msgid "Defining Package Dependencies"
+msgstr ""
+
+msgid "Dependencies are one of the most important parts of the RPM system. The RPM database tracks dependencies between packages to better allow you to manage your system. A dependency occurs when one package depends on another. The RPM system ensures that dependencies are honored when upgrading, installing, or removing packages. From that simple concept, RPM supports four types of dependencies:"
+msgstr ""
+
+msgid "*Requirements, where one package requires a capability provided by another"
+msgstr ""
+
+msgid "*Provides, a listing of the capabilities your package provides"
+msgstr ""
+
+msgid "*Conflicts, where one package conflicts with a capability provided by another"
+msgstr ""
+
+msgid "*Obsoletes, where one package obsoletes capabilities provided by another, usually used when a package changes name and the new package obsoletes the old name"
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "<xref linkend=\"ch-dependencies\" /> covers more on dependencies. The Obsoletes dependencies are usually only used when a package is renamed, such as the apache package becoming the httpd package, starting in Red Hat Linux 8.0. The httpd package obsoletes the apache package."
+msgstr ""
+
+msgid "You can list all of these dependencies in your spec file. The most commonly used dependency information, though, is what a package requires."
+msgstr ""
+
+msgid "Naming dependencies"
+msgstr ""
+
+msgid "In your spec files, you can name the dependencies for your package. The basic syntax is:"
+msgstr ""
+
+msgid "Requires: capability"
+msgstr ""
+
+msgid "In most cases, the capability should be the name of another package. This example sets up a requires dependency. This means that the package requires the given capability. Use a similar syntax for the other kinds of dependencies:"
+msgstr ""
+
+msgid "Provides: capability"
+msgstr ""
+
+msgid "Obsoletes: capability"
+msgstr ""
+
+msgid "Conflicts: capability"
+msgstr ""
+
+msgid "You can put more than one capability on the dependency line. For example:"
+msgstr ""
+
+msgid "Requires: bash perl"
+msgstr ""
+
+msgid "You can use spaces or commas to separate the capabilities. For example:"
+msgstr ""
+
+msgid "Requires: bash, perl"
+msgstr ""
+
+msgid "Specifying the Version of the Dependencies"
+msgstr ""
+
+msgid "You can also add version information, for example:"
+msgstr ""
+
+msgid "Requires: bash &gt;= 2.0"
+msgstr ""
+
+msgid "This states that the package requires the capability bash (a package) at version 2.0 or higher. The same logic applies to the other types of dependencies. For example:"
+msgstr ""
+
+msgid "Conflicts: bash &gt;= 2.0"
+msgstr ""
+
+msgid "This example states that the package conflicts with all versions of bash 2.0 or higher."
+msgstr ""
+
+msgid "Table 11-1 lists the version comparisons you can use."
+msgstr ""
+
+msgid "Table 11-1 Dependency version comparisons"
+msgstr ""
+
+msgid "Comparison"
+msgstr ""
+
+msgid "Meaning"
+msgstr ""
+
+msgid "package &lt; version"
+msgstr ""
+
+msgid "A package with a version number less than version"
+msgstr ""
+
+msgid "package &gt; version"
+msgstr ""
+
+msgid "A package with a version number greater than version"
+msgstr ""
+
+msgid "package &gt;= version"
+msgstr ""
+
+msgid "A package with a version number greater than or equal to version"
+msgstr ""
+
+msgid "package &lt;= version"
+msgstr ""
+
+msgid "A package with a version number less than or equal to version"
+msgstr ""
+
+msgid "package = version"
+msgstr ""
+
+msgid "A package with a version number equal to version"
+msgstr ""
+
+msgid "package"
+msgstr ""
+
+msgid "A package at any version number"
+msgstr ""
+
+msgid "RPM supports an extended version number syntax for comparisons. The full format follows:"
+msgstr ""
+
+msgid "Epoch:Version-Release"
+msgstr ""
+
+msgid "For example:"
+msgstr ""
+
+msgid "1:5.6.0-17"
+msgstr ""
+
+msgid "In this case, the epoch is 1, the version 5.6.0, and the release is 17. In most cases, you will need just the version number. The epoch allows for handling hard-to-compare version numbers. The release number is almost never used. This makes sense, in that it ties a dependency to a particular build of the RPM package, rather than a version of the software itself. This type of dependency would only be useful if you drastically changed the way you build a package."
+msgstr ""
+
+msgid "Creating Virtual CAPABILITIES"
+msgstr ""
+
+msgid "Dependencies are based on capabilities, most of which are packages. You can create virtual capabilities, which are just names you define. For example, the sendmail package provides a virtual capability named smtpdaemon. For example:"
+msgstr ""
+
+msgid "Provides: smtpdaemon"
+msgstr ""
+
+msgid "This capability refers to the general SMTP Internet service for sending e-mail messages. There is no file of this name. Instead, it is just a capability, arbitrary text. Other packages require this capability, such as the fetchmail mail-retrieval and forwarding application, and mutt, an e-mail client program."
+msgstr ""
+
+msgid "By using a virtual capability, other packages can provide the capability, and most importantly, client applications can require the capability without worrying which package provides the ability to send e-mail messages. For example, the exim and postfix packages, mail transport agents like sendmail, can provide the same capability."
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Of course, you want to ensure that these packages specify that they conflict with each other."
+msgstr ""
+
+msgid "Naming Dependencies on Script Engines and Modules"
+msgstr ""
+
+msgid "Scripting languages such as Perl and Tcl allow for add-on modules. Your package may require some of these add-on modules. RPM uses a special syntax with parenthesis to indicate script module dependencies. For example:"
+msgstr ""
+
+msgid "Requires: perl(Carp) &gt;= 3.2"
+msgstr ""
+
+msgid "This indicates a requirement for the Carp add-on module for Perl, greater than or equal to version 3.2."
+msgstr ""
+
+msgid "Setting prerequisites"
+msgstr ""
+
+msgid "A prerequisite is similar to a require dependency, except that a prerequisite must be installed prior to a given package. Specify a prerequisite as follows:"
+msgstr ""
+
+msgid "PreReq: capability"
+msgstr ""
+
+msgid "You can include version-number dependencies, such as:"
+msgstr ""
+
+msgid "PreReq: capability &gt;= version"
+msgstr ""
+
+msgid "In most usage, a PreReq: acts just like Requires:, in fact, the PreReq: directive exists just to allow for a manual order to dependencies. RPM guarantees that the PreReq: package will be installed prior to the package that names the PreReq: dependency."
+msgstr ""
+
+msgid "<xref linkend=\"ch-packaging-guidelines\" /> covers a common problem of handling circular dependencies using prerequisites."
+msgstr ""
+
+msgid "Naming build dependencies"
+msgstr ""
+
+msgid "Your package, once built, has a set of dependencies. These dependencies are important for anyone installing the package. But there are also dependency issues when trying to build packages. Build dependencies allow you to specify what is necessary to build the package. While you may think this would be the same as what is needed to install a package, this is normally not true. Linux distributions tend to divide up software into runtime and development packages. For example, the python package contains the runtime for executing scripts written in Python. The python-devel package provides the ability to write extensions to the Python language."
+msgstr ""
+
+msgid "RPM allows you to define build-time dependencies in your spec files using the following directives:"
+msgstr ""
+
+msgid "BuildRequires:"
+msgstr ""
+
+msgid "BuildConflicts:"
+msgstr ""
+
+msgid "BuildPreReq:"
+msgstr ""
+
+msgid "These directives act like Requires:, Conflicts:, and PreReq:, respectively, except that the dependencies are needed to build the package, not install it. For example, your package may require a C compiler to build, or may need a special build tool or developer library."
+msgstr ""
+
+msgid "Generating dependencies automatically"
+msgstr ""
+
+msgid "Because so many dependencies are related to shared libraries, the RPM system will automatically generate provide dependencies for any file in your packages that is a shared object, or .so, file. RPM will also automatically generate require dependencies for all files in the %files list that require shared libraries. To do this, RPM uses the ldd command, which determines the shared libraries used by an application."
+msgstr ""
+
+msgid "In addition, the find-requires and find-provides scripts in /usr/lib/rpm can determine Perl, Python and Tcl script dependencies and other dependencies, such as Java package dependencies, automatically. The find-requires script determines requires dependencies automatically, and the find-provides script determines provides dependencies."
+msgstr ""
+
+msgid "<xref linkend=\"ch-packaging-guidelines\" /> covers how to turn off the automatic generation of dependencies."
+msgstr ""
+
+msgid "Setting Triggers"
+msgstr ""
+
+msgid "Triggers provide a way for one package to take action when the installed status of another package changes. A trigger is a script you define in your package’s spec file that gets run by the RPM system when the status of another named package changes. If your package depends in some way on another package, a trigger can allow your package to deal with changes to the other package."
+msgstr ""
+
+msgid "Triggers are not a replacement for package dependencies. Instead, triggers are useful when you need to change a package’s installation based on other packages installed on the system. For example, if your package is a mail client program, your package will need to have a mail transfer agent, or MTA. Linux supports a number of different mail transfer agents, such as sendmail, vmail, exim, qmail, and postfix."
+msgstr ""
+
+msgid "Typically a system will have one mail transfer agent installed. In most cases, a mail client won’t care which MTA is installed, as long as one is installed. (In fact, most of these packages should be marked that they conflict with one another, ensuring that a given system can only have one.)"
+msgstr ""
+
+msgid "The %triggerin script is run when a given target package is installed or upgraded. The %triggerin script is also run when your package is installed or upgraded, should the target package be already installed. Similarly, the %triggerun script is run if the target package is removed. It is also run if your package is removed and the target package is installed. The %triggerpostun script is run after the target package has been removed. It is not run if your package is removed."
+msgstr ""
+
+msgid "To define one of these scripts, you need to list the name of the target package; for example:"
+msgstr ""
+
+msgid "%triggerin -- tcsh"
+msgstr ""
+
+msgid "script commands..."
+msgstr ""
+
+msgid "This example sets up a trigger for the tcsh package. If the tcsh package is installed or upgraded, RPM will run the script. If your package is installed or upgraded and the tcsh package is presently installed, RPM will also run the script."
+msgstr ""
+
+msgid "Define the %triggerun script similarly:"
+msgstr ""
+
+msgid "%triggerun -- tcsh"
+msgstr ""
+
+msgid "You can also use version numbers in the trigger script definition to only run the script in the case of a particular version. For example:"
+msgstr ""
+
+msgid "%triggerpostun -- vixie-cron &lt; 3.0.1-56"
+msgstr ""
+
+msgid "/sbin/chkconfig --del crond"
+msgstr ""
+
+msgid "/sbin/chkconfig --add crond"
+msgstr ""
+
+msgid "This example, from the vixie-cron scheduling package, runs a post-uninstall trigger for the same package, but for older versions. To define trigger scripts for particular versions, use the same syntax as for requires dependencies for naming the version number and comparisons."
+msgstr ""
+
+msgid "Triggers are run through /bin/sh, the most commonly used shell script engine. With the -p option, though, you can specify a different script interpreter. For example, to write a Perl script, define your trigger like the following:"
+msgstr ""
+
+msgid "%triggerpostun -p /usr/bin/perl -- vixie-cron &lt; 3.0.1-56"
+msgstr ""
+
+msgid "system(\"/sbin/chkconfig --del crond\");"
+msgstr ""
+
+msgid "system(\"/sbin/chkconfig --add crond\");"
+msgstr ""
+
+msgid "With subpackages, defined following, you can use a -n option to tie the trigger script to a subpackage. For example:"
+msgstr ""
+
+msgid "%triggerpostun -n subpackage_name -- vixie-cron &lt; 3.0.1-56"
+msgstr ""
+
+msgid "Inside your trigger scripts, $1, the first command-line argument, holds the number of instances of your package that will remain after the operation has completed. The second argument, $2, holds the number of instances of the target package that will remain after the operation. Thus, if $2 is 0, the target package will be removed."
+msgstr ""
+
+msgid "The anonftp package, mentioned in <xref linkend=\"ch-dependencies\" /> , has a lot of triggers. Many of these set up a number of commands to be locally available to the anonftp package. This networking package is also closely tied to the version of the C library, glibc, as shown in Listing 11-1"
+msgstr ""
+
+msgid "Listing 11-1: Anonftp package trigger scripts."
+msgstr ""
+
+msgid "%triggerin -- glibc"
+msgstr ""
+
+msgid "copy() { file=\"`ls --sort=time $1 |head -n 1`\"; ln -f \"$file\" \"$2\" 2&gt;/dev/null |"
+msgstr ""
+
+msgid "| cp -df \"$file\" \"$2\"; }"
+msgstr ""
+
+msgid "# Kill off old versions"
+msgstr ""
+
+msgid "rm -f /var/ftp/lib/ld-* /var/ftp/lib/libc* /var/ftp/lib/libnsl* /var/ftp/lib/lib"
+msgstr ""
+
+msgid "nss_files* &amp;&gt;/dev/null || :"
+msgstr ""
+
+msgid "# Copy parts of glibc, needed by various programs in bin."
+msgstr ""
+
+msgid "LIBCVER=`basename $(ls --sort=time /lib/libc-*.so |head -n 1) .so |cut -f2- -d-`"
+msgstr ""
+
+msgid "copy /lib/ld-${LIBCVER}.so /var/ftp/lib"
+msgstr ""
+
+msgid "copy /lib/libc-${LIBCVER}.so /var/ftp/lib"
+msgstr ""
+
+msgid "copy /lib/libnsl-${LIBCVER}.so /var/ftp/lib"
+msgstr ""
+
+msgid "copy /lib/libnss_files-${LIBCVER}.so /var/ftp/lib"
+msgstr ""
+
+msgid "md5sum /var/ftp/lib/lib*-*.so /var/ftp/lib/libtermcap.so.*.*.* 2&gt;/dev/null &gt;/var"
+msgstr ""
+
+msgid "/ftp/lib/libs.md5"
+msgstr ""
+
+msgid "chmod 0400 /var/ftp/lib/libs.md5"
+msgstr ""
+
+msgid "# Use ldconfig to build symlinks and whatnot."
+msgstr ""
+
+msgid "[ ! -e /var/ftp/etc/ld.so.conf ] &amp;&amp; touch /var/ftp/etc/ld.so.conf"
+msgstr ""
+
+msgid "/sbin/ldconfig -r /var/ftp"
+msgstr ""
+
+msgid "%triggerin -- fileutils"
+msgstr ""
+
+msgid "copy /bin/ls /var/ftp/bin"
+msgstr ""
+
+msgid "md5sum `ls /var/ftp/bin/* |grep -v bin.md5` &gt;/var/ftp/bin/bin.md5"
+msgstr ""
+
+msgid "chmod 0400 /var/ftp/bin/bin.md5"
+msgstr ""
+
+msgid "%triggerin -- cpio"
+msgstr ""
+
+msgid "copy /bin/cpio /var/ftp/bin"
+msgstr ""
+
+msgid "%triggerin -- tar"
+msgstr ""
+
+msgid "copy /bin/tar /var/ftp/bin"
+msgstr ""
+
+msgid "%triggerin -- gzip"
+msgstr ""
+
+msgid "copy /bin/gzip /var/ftp/bin"
+msgstr ""
+
+msgid "ln -sf gzip /var/ftp/bin/zcat"
+msgstr ""
+
+msgid "%triggerin -- libtermcap"
+msgstr ""
+
+msgid "rm -f /var/ftp/lib/libtermcap.so.*.*.* &amp;&gt;/dev/null || :"
+msgstr ""
+
+msgid "copy '/lib/libtermcap.so.*.*.*' /var/ftp/lib"
+msgstr ""
+
+msgid "%triggerin -- ncompress"
+msgstr ""
+
+msgid "copy /usr/bin/compress /var/ftp/bin"
+msgstr ""
+
+msgid "%triggerpostun -- anonftp 4.0"
+msgstr ""
+
+msgid "if [ \"$2\" != 1 ] ; then"
+msgstr ""
+
+msgid "# The user has multiple glibc packages installed. We can't read the"
+msgstr ""
+
+msgid "# user's mind, so don't do anything."
+msgstr ""
+
+msgid "exit 0"
+msgstr ""
+
+msgid "fi"
+msgstr ""
+
+msgid "LIBCVER=`basename /lib/libc-*.so .so | cut -f2- -d-`"
+msgstr ""
+
+msgid "# Generate md5sums for verifyscript"
+msgstr ""
+
+msgid "Writing Verification Scripts"
+msgstr ""
+
+msgid "RPM automatically handles package verification, checking to see that the proper files are installed, and testing the files themselves for the proper size and other attributes. You may need to do more in your package, though, to ensure everything is properly set up. With RPM, you can:"
+msgstr ""
+
+msgid "*Control the tests used to verify each file, as described in <xref linkend=\"ch-specfiles\" />"
+msgstr ""
+
+msgid "*Create a verify script that performs other tests"
+msgstr ""
+
+msgid "If you need to perform some other test to verify your package, such as check that a configuration file has a particular setting (and that the setting is valid), you can fill in the %verifyscript in the spec file. The %verifyscript acts much like the %pre or %post scripts, except that the %verifyscript gets executed during package verification. Fill in a %verifyscript as follows:"
+msgstr ""
+
+msgid "%verifyscript"
+msgstr ""
+
+msgid "your script commands ...."
+msgstr ""
+
+msgid "Common %verifyscript actions are to check for an entry in a system configuration file, such as an init-time startup script or /etc/shells (which lists the available shells). These are files owned by other packages that may need to be properly modified for a package to be properly installed. If your package has a similar circumstance, write a %verifyscript. In your script, send all error output to stderr."
+msgstr ""
+
+msgid "See <xref linkend=\"ch-using-rpm-db\" /> for more on package verification."
+msgstr ""
+
+msgid "Creating Subpackages"
+msgstr ""
+
+msgid "A spec file may define more than one package. This type of additional package is called a subpackage. Subpackages exist to handle cases where you don’t want to associate one spec file with one package. Instead, you can define multiple packages within the spec file, as needed. For example, you may want to build the runtime and developer packages together, or the client and server portions of an application using subpackages. Splitting large documentation sets into separate subpackages is also common."
+msgstr ""
+
+msgid "With subpackages, you get:"
+msgstr ""
+
+msgid "*One spec file"
+msgstr ""
+
+msgid "*One source RPM"
+msgstr ""
+
+msgid "*One set of build commands"
+msgstr ""
+
+msgid "*Multiple binary RPMs, one per package or subpackage"
+msgstr ""
+
+msgid "In most cases, subpackages are created just as a means to partition the files produced by a package into separate packages. For example, you will often see development libraries and header files split into a separate package from the main application package. Sometimes documentation is split out into a separate package, or client and server applications are divided into separate packages. In the end, though, this usually results in shifting files into subpackages and nothing more."
+msgstr ""
+
+msgid "To define a subpackage within a spec file, you start with the %package directive. For example:"
+msgstr ""
+
+msgid "%package sub_package_name"
+msgstr ""
+
+msgid "By default, the name of the subpackage will be the name of the package, a dash, and the subpackage name provided with the %package directive. For example:"
+msgstr ""
+
+msgid "%package server"
+msgstr ""
+
+msgid "This example names a subpackage server, which is a real subpackage inside the telnet package. In this case, the name for the server subpackage will be telnet-server, that is, the naming format is package-subpackage."
+msgstr ""
+
+msgid "If you don’t want this naming format, you can use the –n option to the %package directive to define an entirely new name, using the following syntax:"
+msgstr ""
+
+msgid "%package -n new_sub_package_name"
+msgstr ""
+
+msgid "%package –n my-telnet-server"
+msgstr ""
+
+msgid "With the –n option, you specify the full name for the subpackage. The RPM system will not prefix the name with the enclosing package name."
+msgstr ""
+
+msgid "Providing information for subpackages"
+msgstr ""
+
+msgid "When you define a subpackage, you need to provide as many of the package information directives as you need, including at the least Summary:, Group:, and %description directives. Anything not specified will use the parent package’s value, such as the version. Place these directives after the %package directive. For example:"
+msgstr ""
+
+msgid "Requires: xinetd"
+msgstr ""
+
+msgid "Group: System Environment/Daemons"
+msgstr ""
+
+msgid "Summary: The server program for the telnet remote login protocol."
+msgstr ""
+
+msgid "The %description directive for subpackages requires the name of the subpackage using the following syntax:"
+msgstr ""
+
+msgid "%description subpackage"
+msgstr ""
+
+msgid "%description server"
+msgstr ""
+
+msgid "Telnet is a popular protocol for logging into remote systems"
+msgstr ""
+
+msgid "over the Internet. The telnet-server package includes a telnet daemon that supports remote logins into the host machine. The"
+msgstr ""
+
+msgid "telnet daemon is enabled by default. You may disable the telnet"
+msgstr ""
+
+msgid "daemon by editing /etc/xinetd.d/telnet."
+msgstr ""
+
+msgid "If you used the –n option with the %package directive, you need to repeat the –n option with the %description directive. For example:"
+msgstr ""
+
+msgid "%description –n my-telnet-server"
+msgstr ""
+
+msgid "The same concept works for the %files section. You need a separate %files section for each subpackage. For example:"
+msgstr ""
+
+msgid "%files server"
+msgstr ""
+
+msgid "%defattr(-,root,root)"
+msgstr ""
+
+msgid "%{_sbindir}/in.telnetd"
+msgstr ""
+
+msgid "%{_mandir}/man5/issue.net.5*"
+msgstr ""
+
+msgid "%{_mandir}/man8/in.telnetd.8*"
+msgstr ""
+
+msgid "%{_mandir}/man8/telnetd.8*"
+msgstr ""
+
+msgid "Again, if you used the –n option with the %package directive, you need to repeat the –n option with the %files section. For example:"
+msgstr ""
+
+msgid "%files –n my-telnet-server"
+msgstr ""
+
+msgid "Defining scripts for subpackages"
+msgstr ""
+
+msgid "Much as you define separate %files and %description sections for subpackages, you can also define install and uninstall scripts for subpackages. The syntax is similar to that for the %files and %description sections:"
+msgstr ""
+
+msgid "%pre subpackage"
+msgstr ""
+
+msgid "For example, Listing 11-2 shows the scripts from the VNC package."
+msgstr ""
+
+msgid "Listing 11-2: VNC package install and uninstall scripts."
+msgstr ""
+
+msgid "%post server"
+msgstr ""
+
+msgid "if [ \"$1\" = 1 ]; then"
+msgstr ""
+
+msgid "/sbin/chkconfig --add vncserver"
+msgstr ""
+
+msgid "%preun server"
+msgstr ""
+
+msgid "if [ \"$1\" = 0 ]; then"
+msgstr ""
+
+msgid "/sbin/service vncserver stop &gt;/dev/null 2&gt;&amp;1"
+msgstr ""
+
+msgid "/sbin/chkconfig --del vncserver"
+msgstr ""
+
+msgid "%postun server"
+msgstr ""
+
+msgid "if [ \"$1\" -ge \"1\" ]; then"
+msgstr ""
+
+msgid "/sbin/service vncserver condrestart &gt;/dev/null 2&gt;&amp;1"
+msgstr ""
+
+msgid "Building subpackages"
+msgstr ""
+
+msgid "The build sections in the spec file serve double duty. These sections are used for building the main package as well as subpackages. This is one reason why there are so many options on the %setup macro."
+msgstr ""
+
+msgid "The %setup macro allows for selectively unpacking the sources, rather than the default option of unpacking all the sources. For example, the following %setup macro definition gives rpmbuild specific instructions for unpacking one source file:"
+msgstr ""
+
+msgid "%setup –D- T –a 1"
+msgstr ""
+
+msgid "In this example, the –D option disables the automatic deletion of the directory where the sources will be unpacked. This means any previous contents of this directory, perhaps for other subpackages, will be left alone. The –T option disables the automatic unpacking of the source files, and the –a 1 option specifies to only unpack the first source file. You may need to use options like these when working with subpackages. Though, in most cases, subpackages are just means to partition the package files into separate packages. In cases like this, you will likely not need any of these special %setup options."
+msgstr ""
+
+msgid "<xref linkend=\"ch-specfiles\" /> covers the %setup macro and lists the available options."
+msgstr ""
+
+msgid "Creating Relocatable Packages"
+msgstr ""
+
+msgid "A relocatable package allows a user to specify where to install the package. For example, if you build a package for Red Hat Linux, the normal directory for binary executable programs is /usr/bin. Other versions of Linux, though, may place executable programs into /opt/bin, for example. If your package forces the use of /usr/bin, then your package won’t work on these other systems."
+msgstr ""
+
+msgid "<xref linkend=\"ch-other-linuxes\" /> covers using RPM on other versions of Linux."
+msgstr ""
+
+msgid "With a relocatable package, though, you allow the user to redefine the top-level directories for your package, such as changing from /usr/bin to /opt/bin in the previous example. Making relocatable packages is generally considered a good thing, as you make the user’s life easier."
+msgstr ""
+
+msgid "To set up a relocatable package, you need to:"
+msgstr ""
+
+msgid "*Set up the prefix directives for the top-level directories"
+msgstr ""
+
+msgid "*Define the files under the prefix directories"
+msgstr ""
+
+msgid "Setting up the prefixes"
+msgstr ""
+
+msgid "The Prefix: directive names a top-level directory as a prefix you can relocate to another directory. For example:"
+msgstr ""
+
+msgid "Prefix: /usr"
+msgstr ""
+
+msgid "This states that all files under /usr can be relocated to other directories by simply mapping /usr to some other directory, such as /opt, on the rpm command line when installing or upgrading the package."
+msgstr ""
+
+msgid "You can define more than one Prefix: directive to list more than one top-level directory."
+msgstr ""
+
+msgid "Define the files section"
+msgstr ""
+
+msgid "When you use a Prefix: directive in your spec file, all files in the %files section must be under the directory named with the Prefix: directive. For example, from the jikes compiler package:"
+msgstr ""
+
+msgid "..."
+msgstr ""
+
+msgid "%files"
+msgstr ""
+
+msgid "/usr/bin/jikes"
+msgstr ""
+
+msgid "%doc /usr/doc/jikes-%{version}/license.htm"
+msgstr ""
+
+msgid "%doc /usr/man/man1/jikes.1*"
+msgstr ""
+
+msgid "In this example, all the files are under the /usr directory. All files in the %files section must be located under one of the Prefix: directories. If you have more than one top-level directory, such as /usr and /etc, define more than one Prefix: directive. For example:"
+msgstr ""
+
+msgid "Prefix: /etc"
+msgstr ""
+
+msgid "<xref linkend=\"ch-using-rpm\" /> covers how to install or upgrade packages into different directories using the --relocate and --prefix options."
+msgstr ""
+
+msgid "Problems creating relocatable packages"
+msgstr ""
+
+msgid "Not all packages work well as relocatable packages. Some packages have files that simply must go into a certain location and are therefore not relocatable. Some packages have programs that are hard-coded to look for files in a particular location and therefore cannot be relocated elsewhere. Other packages have symbolic links that also may not be relocatable. Furthermore, your package may provide software that is referenced by other packages, in the known directories. Relocating such a package will disable other software packages, packages you may not even know about."
+msgstr ""
+
+msgid "If your packages face any of these problems, chances are that making the package relocatable is not a good idea."
+msgstr ""
+
+msgid "In addition, if you use the %doc directive with local file names, remember that RPM will make a package-specific documentation directory, normally under /usr/doc. For example:"
+msgstr ""
+
+msgid "%doc README NEWS"
+msgstr ""
+
+msgid "This may defeat your attempts to create a relocatable package, unless you have a Prefix: directive with /usr, because the normal location is under /usr/doc, and all files in the %files section must start with one of the directories named with Prefix: directives."
+msgstr ""
+
+msgid "Defining Conditional Builds"
+msgstr ""
+
+msgid "With the ability to define macros inside spec files, and also to use macros defined elsewhere, you gain a lot of control over how your package gets built. You can go further, though, and use special directives to perform only certain commands based on certain conditions. This adds a powerful capability to your spec files, and also makes it much easier to do things like build for multiple versions of Linux or other operating systems, as well as handle various backwards-compatibility issues."
+msgstr ""
+
+msgid "To define conditional build commands, you need to create conditional constructs in your package’s spec file. In addition, you need to define macros that the conditional constructs use to determine whether or not to execute a set of spec file directives."
+msgstr ""
+
+msgid "See <xref linkend=\"ch-customizing-rpm\" /> for more on macro file locations, and <xref linkend=\"ch-other-linuxes\" /> and <xref linkend=\"ch-other-os\" /> for more on using RPM on other versions of Linux and other operating systems, respectively."
+msgstr ""
+
+msgid "RPM supports a number of ways to make parts of your spec file enabled or disabled based on certain conditions. These include conditional macros, conditional blocks, and special directives based on the system architecture."
+msgstr ""
+
+msgid "Defining conditional macros"
+msgstr ""
+
+msgid "You can use a special syntax to test for the existence of macros. For example:"
+msgstr ""
+
+msgid "%{?macro_to_test: expression}"
+msgstr ""
+
+msgid "This syntax tells RPM to expand the expression if the macro macro_to_test exists. If the macro macro_to_test does not exist, nothing will be output. You can also reverse this test. A leading exclamation point, !, tests for the non-existence of a macro:"
+msgstr ""
+
+msgid "%{!?macro_to_test: expression}"
+msgstr ""
+
+msgid "In this example, if the macro_to_test macro does not exist, RPM will expand the expression."
+msgstr ""
+
+msgid "If you want, you can omit the expression and just test for the existence of the macro. If it exists, RPM will use the value of the macro. If the macro does not exist, RPM will use nothing. For example:"
+msgstr ""
+
+msgid "%build"
+msgstr ""
+
+msgid "./configure %{?_with_ldap}"
+msgstr ""
+
+msgid "make"
+msgstr ""
+
+msgid "In this case, if the _with_ldap macro exists, the value of that macro will get passed on the command line to the configure script. If the _with_ldap macro does not exist, nothing extra will be passed on the command line to the configure script. This is very important when creating commands to build or install packages."
+msgstr ""
+
+msgid "Many of the macros you will test this way are set up with the --with command-line parameter. See <xref linkend=\"ch-other-linuxes\" /> for details."
+msgstr ""
+
+msgid "Using conditional blocks"
+msgstr ""
+
+msgid "The %if macro enables all the directives up to the %endif directive, if the condition is true. This is much like scripting languages. For example:"
+msgstr ""
+
+msgid "%if %{old_5x}"
+msgstr ""
+
+msgid "%define b5x 1"
+msgstr ""
+
+msgid "%undefine b6x"
+msgstr ""
+
+msgid "%endif"
+msgstr ""
+
+msgid "In this case, if the %old_5x macro has a value, the test will be true and all the directives inside the block will get executed."
+msgstr ""
+
+msgid "A %else allows you to specify what to do if the test is not successful. For example:"
+msgstr ""
+
+msgid "%else"
+msgstr ""
+
+msgid "%define b6x 1"
+msgstr ""
+
+msgid "%undefine b5x"
+msgstr ""
+
+msgid "In this case, if the %old_5x macro has a value, then all the directives up to the %else will get executed. Otherwise, if the %old_5x macro has no value, the directives from the %else to the %endif will get executed."
+msgstr ""
+
+msgid "Again, use an exclamation point to negate the test. For example:"
+msgstr ""
+
+msgid "%if ! %{old_5x}"
+msgstr ""
+
+msgid "You can use a &amp;&amp; for an AND test. For example:"
+msgstr ""
+
+msgid "%if %{old_5x} &amp;&amp; %{old_6x}"
+msgstr ""
+
+msgid "%{error: You cannot build for .5x and .6x at the same time}"
+msgstr ""
+
+msgid "%quit"
+msgstr ""
+
+msgid "Using architecture-based conditionals"
+msgstr ""
+
+msgid "In addition to the general-purpose %if conditional directive, you can use special directives that test for processor architecture and operating system."
+msgstr ""
+
+msgid "The %ifarch directive enables all the directives up to the %endif directive, if the processor architecture matches the values you pass to the %ifarch directive. For example:"
+msgstr ""
+
+msgid "%ifarch sparc"
+msgstr ""
+
+msgid "This block will only get executed if the processor architecture is SPARC."
+msgstr ""
+
+msgid "<xref linkend=\"ch-customizing-rpm\" /> covers RPM architecture and operating system names."
+msgstr ""
+
+msgid "You can pass more than one architecture name, separated by commas or spaces. For example:"
+msgstr ""
+
+msgid "%ifarch sparc alpha"
+msgstr ""
+
+msgid "This example tests if the processor architecture is SPARC or Alpha."
+msgstr ""
+
+msgid "As with the %if directive, you can also use an %else, to cover all cases where the test is not true. For example:"
+msgstr ""
+
+msgid "This example tests if the processor architecture is SPARC or Alpha. If so, the directives from the %ifarch to the %else are executed. If not, the directives from the %else to the %endif are executed."
+msgstr ""
+
+msgid "The %ifnarch directive reverses the %ifarch test. That is, %ifnarch tests if the architecture is not one of the values listed. The following example tests if the processor architecture is not an i386 or an Alpha."
+msgstr ""
+
+msgid "%ifnarch i386 alpha"
+msgstr ""
+
+msgid "The %ifos directive tests for the operating system. For example:"
+msgstr ""
+
+msgid "%ifos linux"
+msgstr ""
+
+msgid "This example tests if the operating system is Linux. You can reverse the test with the %ifnos directive. For example:"
+msgstr ""
+
+msgid "%ifnos irix"
+msgstr ""
+
+msgid "This example tests if the operating system is not Irix."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "This chapter covers advanced topics in creating packages. Dependencies are very important. You need to specify which packages or capabilities your package requires, so the RPM system can ensure that all requirements are met before allowing users to install the package. If you do not specify the dependencies properly, then you are defeating the integrity of the RPM system."
+msgstr ""
+
+msgid "In addition to specifying what your package requires, it is also important to specify other dependency information. For example, if your package conflicts with another package, you need to very clearly state this. E-mail and Web server packages often conflict with other servers of the same type."
+msgstr ""
+
+msgid "You can specify both package dependencies as well as build dependencies. For example, you may need certain developer libraries to build your package, but not to install it. These are build dependencies."
+msgstr ""
+
+msgid "To help manage dependencies between packages and system configuration issues, you can set up trigger scripts. A trigger is a script in your package that gets executed when another package is installed or removed. If your package, for example, is an e-mail client program, it may need to execute a script should the e-mail server package change. This is a great usage for triggers."
+msgstr ""
+
+msgid "If your package has a complicated installation, the normal RPM verification won’t be sufficient. To help the RPM system ensure the integrity of all the packages, you can write a verify script in your spec file to perform any extra commands necessary to verify your package has been properly installed."
+msgstr ""
+
+msgid "Relocatable packages allow users to install your packages in different locations than originally planned. This is very useful when working with more than one version of Linux, or with other operating systems. For example, most Linux commands are stored in /usr/bin, at least for Red Hat Linux. Other Linux distributions, or other operating systems may specify that programs added to the original set should be stored in /opt/bin and not /usr/bin, for example. Making your package relocatable helps users in these situations."
+msgstr ""
+
+msgid "Conditional directives in your spec file allow you to control the build on different processor architectures and operating systems. The %if directive tests if a value is set. If so, then all the directives up to the %endif directive are executed. If you need to execute a different set of directives, use %else. In this case, if the %if test is true, RPM executes the directives up to the %else. If the test is not true, RPM executes the directives up to the %endif."
+msgstr ""
+
+msgid "Once you have your spec file defined, the next step is to start building packages. The next chapter covers options for the rpmbuild command and how you can use rpmbuild to make your packages."
+msgstr ""
+

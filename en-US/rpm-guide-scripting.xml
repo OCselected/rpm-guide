@@ -1,0 +1,1181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-scripting">
+  <title>Automating RPM with Scripts</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Deciding when to program and when to script
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Examining RPM files with scripts
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Querying the RPM database with scripts
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    The rpm command provides a very high-level view of package
+    management. Most of the operations you need to perform require only
+    a single invocation. Some of the command-line options to the rpm
+    command tend to get very complex, however, especially for detailed
+    queries. That’s where scripting can help.
+  </para>
+  <para>
+    This chapter covers scripting, specifically shell scripting, with
+    the rpm command, especially for newcomers to Linux scripting
+  </para>
+  <sect1>
+    <title>Scripting</title>
+    <para>
+      Scripting allows you to quickly write new commands in a language,
+      called a scripting language, that can help automate your work.
+      Used heavily by system administrators and lightly by software
+      developers, scripts can help remove some of the tedium from your
+      day-to-day tasks. Scripts can also hold the complex query formats
+      used with the rpm command so you don’t have to remember them.
+    </para>
+    <para>
+      Scripts start out as text files. These text files hold commands in
+      the scripting language. Most of these script file commands run
+      commands installed on your system, such as rpm. To run a script,
+      invoke a command, called an interpreter, that reads in the script
+      file and executes the commands inside the script.
+    </para>
+    <para>
+      Programming is usually considered different from scripting, even
+      though there are many similarities. Programs start out as text
+      files. These text files hold commands in the programming language
+      and sometimes, not often, calls to commands installed on your
+      system. Programs generally involve more work than scripts and are
+      generally larger, containing more commands.
+    </para>
+    <para>
+      Furthermore, most programs need to be compiled. A separate command
+      parses the program text files and generates some form of machine
+      code. Multiple pieces of a program may be linked together to form
+      a command you can call from your shell prompt.
+    </para>
+    <para>
+      Some programming languages, such as Java or C#, are compiled to a
+      generic bytecode format. A compiled Java program, for example, is
+      the same no matter what the architecture. To run such a program,
+      you need a runtime engine such as the java command provides.
+      (Runtime engine is a fancy term for interpreter.)
+    </para>
+    <para>
+      Such differences between scripting and programming sometimes get
+      in the way of performing real work. For example, I once worked
+      with a group of people who were convinced that they were not
+      programmers. They felt that programming was an art that was far
+      beyond them. Yet, they wrote hundreds of kilobytes of scripts to
+      create a sophisticated graphical interface for a Computer-Aided
+      Design system. In my mind, they were programming (and doing quite
+      well at it). In their minds, though, there was a clear distinction
+      between scripting@mdwhat they could do@mdand programming, which
+      was beyond them, they thought.
+    </para>
+    <para>
+      Don’t get caught up in this. Use the right tool for the job.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Distinguishing Scripting Languages from Programming Languages</title>
+    <para>
+      Experts differ regarding what defines a scripting language and
+      what defines a programming language. It’s clear that languages
+      such as Python blur the old distinction between programming and
+      scripting.
+    </para>
+    <para>
+      Originally, scripting was writing small files of commands that
+      invoked other system commands. For example, you could write a
+      script that wraps the Linux file command. Scripts were executed by
+      scripting-language interpreters that parsed each command one at a
+      time and then executed the command.
+    </para>
+    <para>
+      Modern scripting languages, such as Tcl, are parsed at runtime and
+      compiled into an internal bytecode format. Once compiled, there is
+      no real difference from a language associated with programming
+      such as Java.
+    </para>
+    <para>
+      With a scripting language
+    </para>
+    <para>
+      *You generally don’t have to compile the script in advance. The
+      scripting language interpreter may compile the program, often to
+      an internal byte code, but you don’t have to invoke a compiler
+      as a separate step.
+    </para>
+    <para>
+      *The facilities of the language generally provide a higher level
+      and more abstract level of interaction with the system than with
+      programming languages. For example, writing socket-based
+      networking code in Tcl requires a lot less code than writing the
+      same code in a programming language such as C. Tcl provides a more
+      abstract view of networking; therefore, your code is a lot
+      simpler.
+    </para>
+    <para>
+      *The commands in the scripting language are mostly the commands
+      available to you on the command line. Scripting languages
+      introduce their own commands, too.
+    </para>
+    <para>
+      *The language is generally identified as a scripting language.
+      This is more consensus than anything else. Forth is considered an
+      interpreted programming language, while Perl is considered a
+      scripting language.
+    </para>
+    <para>
+      Table 15-1 lists some of the more common scripting and programming
+      languages. Note that these are the generally-accepted categories
+      for these languages, not hard and fast rules. This should not stop
+      you, for example, from writing programs in Perl or Python. The
+      distinctions between programming and scripting have blurred in
+      recent years.
+    </para>
+    <para>
+      Table 15-1 Common Scripting Languages and Common Programming
+      Languages
+    </para>
+    <informaltable frame="all">
+      <tgroup cols="2">
+        <tbody>
+          <row>
+            <entry>
+              <para>
+                Scripting Languages
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Programming Languages
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                Bash (Bourne Again shell) Csh (C shell) JavaScript Ksh
+                (Korn shell) Lua MS-DOS batch files Perl Python Ruby Sh
+                (Bourne shell) Tcl
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Assembler BASIC C C++ C# FORTRAN Forth Java LISP
+                Modula-2, Modula-3 Oberon Pascal
+              </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect1>
+  <sect1>
+    <title>Deciding When to Program and When to Script</title>
+    <para>
+      Just as the distinction between programming and scripting
+      languages has blurred in the last few years, so have the
+      guidelines for when you should program and when you should script.
+      The simplest rule remains, though: Use whatever techniques make
+      you productive. In the end, no one really cares if you call it a
+      program or a script.
+    </para>
+    <para>
+      Even so, these guidelines may help:
+    </para>
+    <para>
+      *If you have to perform a lot of operations on a lot of RPMs, a
+      program will likely perform much faster than a script that calls
+      the rpm command over and over.
+    </para>
+    <para>
+      *If the task is relatively simple, scripting generally works best.
+    </para>
+    <para>
+      *If you are more experienced with a particular language, use it.
+    </para>
+    <para>
+      *If you need to perform complex operations, perhaps involving
+      transactions, a program is probably the right way to go.
+    </para>
+    <para>
+      *In many cases, programming languages work better for creating
+      graphical user interfaces, although Python and Perl offer
+      graphical user interface toolkits, such as Perl/Tk or PyQt.
+    </para>
+    <para>
+      There isn’t one right way to do it. Pick what works best for
+      you.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      This chapter covers shell scripting. <xref linkend="ch-programming-c"/>  covers C
+      programming. <xref linkend="ch-rpm-programming-python"/>  covers Python scripting and programming,
+      and <xref linkend="ch-programming-perl"/>  covers Perl scripting.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Shell Scripting Basics</title>
+    <para>
+      For newcomers to scripting, don’t worry. A script, in this case
+      a shell script, is merely a text file with commands mostly the
+      same as the commands you can type at the keyboard. I’ll point
+      out the differences.
+    </para>
+    <para>
+      The following sections quickly introduce scripting for those new
+      to this venture.
+    </para>
+    <sect2>
+      <title>Writing a script</title>
+      <para>
+        For your first venture, enter the following script into a text
+        file:
+      </para>
+      <para>
+        rpm -qa | grep rpm
+      </para>
+      <para>
+        This script has a two-part command. The rpm –qa part queries
+        all RPM packages, as covered in <xref linkend="ch-using-rpm"/> . The grep rpm part
+        finds only packages with rpm in their names. This is a very
+        simple script, but it can serve to show how to work with
+        scripts.
+      </para>
+      <para>
+        Save this file under the name listrpmpkgs, since this script
+        lists RPM packages.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        If you’re new to Linux, you’ll notice there’s no program
+        named Notepad.exe. There are, though, a plethora of Linux text
+        editors to choose from. See <xref linkend="ch-development-tools"/>  for a listing of Linux
+        text-editing tools.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Running a script</title>
+      <para>
+        Once you’ve entered a script, you can run it with the sh
+        command, as shown following, passing the name of your script to
+        the sh command:
+      </para>
+      <para>
+        $ sh listrpmpkgs
+      </para>
+      <para>
+        librpm404-devel-4.0.4-8x.27
+      </para>
+      <para>
+        librpm404-4.0.4-8x.27
+      </para>
+      <para>
+        rpm404-python-4.0.4-8x.27
+      </para>
+      <para>
+        rpm-4.1-1.06
+      </para>
+      <para>
+        rpm-devel-4.1-1.06
+      </para>
+      <para>
+        gnorpm-0.9-1
+      </para>
+      <para>
+        rpm-python-4.1-1.06
+      </para>
+      <para>
+        redhat-rpm-config-8.0-1
+      </para>
+      <para>
+        rpm-build-4.1-1.06
+      </para>
+      <para>
+        rpmrebuild-1.0-0
+      </para>
+      <para>
+        Type the command you have placed in your script at the command
+        line. There should be no difference in the output. For example:
+      </para>
+      <para>
+        $ rpm -qa | grep rpm
+      </para>
+      <para>
+        librpm404-devel-4.0.4-8x.27
+      </para>
+      <para>
+        librpm404-4.0.4-8x.27
+      </para>
+      <para>
+        rpm404-python-4.0.4-8x.27
+      </para>
+      <para>
+        rpm-4.1-1.06
+      </para>
+      <para>
+        rpm-devel-4.1-1.06
+      </para>
+      <para>
+        gnorpm-0.9-1
+      </para>
+      <para>
+        rpm-python-4.1-1.06
+      </para>
+      <para>
+        redhat-rpm-config-8.0-1
+      </para>
+      <para>
+        rpm-build-4.1-1.06
+      </para>
+      <para>
+        rpmrebuild-1.0-0
+      </para>
+    </sect2>
+    <sect2>
+      <title>Problems running scripts</title>
+      <para>
+        The previous script example required the sh program, a Linux
+        shell, to run the script. You also had to have the script file,
+        such as listrpmpkgs, available. So, if you have stored the file
+        in /home2/bin, to run the script, use the following command:
+      </para>
+      <para>
+        $ sh /home2/bin/listrpmpkgs
+      </para>
+      <para>
+        That’s not very convenient. Furthermore, you always have to
+        remember where you stored the script file listrpmpkgs. To make
+        this command work better, you can turn your script into a
+        command.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Turning a script into a command</title>
+      <para>
+        To turn a script into a command, do three simple things:
+      </para>
+      <para>
+        1.Add a special magic comment to the start of the file so Linux
+        recognizes your text file as a command script.
+      </para>
+      <para>
+        2.Change the permissions on the file so that it is marked as
+        executable.
+      </para>
+      <para>
+        3.Copy the file to a directory located in your command path.
+      </para>
+      <para>
+        Shell scripts use a # to indicate a comment, text intended for
+        human readers that can help explain the purpose of the script.
+        By convention, Linux shells use a #! comment in the first line
+        of a script file as a special marker that indicates the file is
+        a shell script. The text that comes after the #! holds the name
+        of the command that should be used to run the script. In almost
+        all cases, that command should be /bin/sh for a shell script.
+      </para>
+      <para>
+        So edit the listrpmpkgs script again, and add the magic comment
+        so that the file reads as follows:
+      </para>
+      <para>
+        #!/bin/sh
+      </para>
+      <para>
+        rpm -qa | grep rpm
+      </para>
+      <para>
+        Make sure the #! comment starts at the beginning of the first
+        line.
+      </para>
+      <para>
+        Next, change the permissions on the script to mark it as an
+        executable program. Use the chmod command to do this. The chmod
+        command changes the file permissions. To see the permissions,
+        run the ls –l command before changing the permissions:
+      </para>
+      <para>
+        $ ls -l listrpmpkgs
+      </para>
+      <para>
+        -rw-rw-r-- 1 ericfj ericfj 31 Nov 7 20:02 listrpmpkgs
+      </para>
+      <para>
+        The first set of characters, the -rw-rw-r--, indicate the
+        permissions in three batches: permissions for the file owner,
+        the owner’s group of users, and world (everyone else). The rw
+        means read and write, and the r alone means read only for
+        everyone not the owner and not in the owner’s group.
+      </para>
+      <para>
+        To add the permission to execute the file for the file owner
+        only, use the following command:
+      </para>
+      <para>
+        $ chmod u+x listrpmpkgs
+      </para>
+      <para>
+        In this command, the u stands for the user who owns the file
+        (for historical reasons, an o stands for others, not owner). The
+        +x means add the x permission, short for execute permission.
+      </para>
+      <para>
+        After running this command, you can see the revised permissions.
+      </para>
+      <para>
+        $ ls -l listrpmpkgs
+      </para>
+      <para>
+        -rwxrw-r-- 1 ericfj ericfj 31 Nov 7 20:02 listrpmpkgs
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        Use the man chmod command to see more information on this
+        command.
+      </para>
+      <para>
+        You now have a command you can run locally. For example:
+      </para>
+      <para>
+        $ ./listrpmpkgs
+      </para>
+      <para>
+        librpm404-devel-4.0.4-8x.27
+      </para>
+      <para>
+        librpm404-4.0.4-8x.27
+      </para>
+      <para>
+        rpm404-python-4.0.4-8x.27
+      </para>
+      <para>
+        rpm-4.1-1.06
+      </para>
+      <para>
+        rpm-devel-4.1-1.06
+      </para>
+      <para>
+        gnorpm-0.9-1
+      </para>
+      <para>
+        rpm-python-4.1-1.06
+      </para>
+      <para>
+        redhat-rpm-config-8.0-1
+      </para>
+      <para>
+        rpm-build-4.1-1.06
+      </para>
+      <para>
+        rpmrebuild-1.0-0
+      </para>
+      <para>
+        The next step is to copy the file to a directory in your system
+        command path. To see which directories are in your path, run the
+        following command:
+      </para>
+      <para>
+        $ echo $PATH
+      </para>
+      <para>
+        /usr/local/bin:/usr/bin:/bin:/usr/X11R6/bin:/home/ericfj/bin:/usr/java/j2sdk1.4.0_01/bin
+      </para>
+      <para>
+        Pick one of these directories. The /usr/local/bin directory is a
+        common place to share locally created commands. If this is a
+        personal command for your own use only, a directory under your
+        home directory will be better. In this example, the
+        /home/ericfj/bin is one such directory.
+      </para>
+      <para>
+        Copy the script file to a directory in your command path, and
+        you are ready to go.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        If you use the C shell, csh, or the T C shell, tcsh, you need to
+        run the rehash command to tell the shell to look again at the
+        set of commands available in your command path.
+      </para>
+      <para>
+        Enter the following command:
+      </para>
+      <para>
+        $ listrpmpkgs
+      </para>
+      <para>
+        librpm404-devel-4.0.4-8x.27
+      </para>
+      <para>
+        librpm404-4.0.4-8x.27
+      </para>
+      <para>
+        rpm404-python-4.0.4-8x.27
+      </para>
+      <para>
+        rpm-4.1-1.06
+      </para>
+      <para>
+        rpm-devel-4.1-1.06
+      </para>
+      <para>
+        gnorpm-0.9-1
+      </para>
+      <para>
+        rpm-python-4.1-1.06
+      </para>
+      <para>
+        redhat-rpm-config-8.0-1
+      </para>
+      <para>
+        rpm-build-4.1-1.06
+      </para>
+      <para>
+        rpmrebuild-1.0-0
+      </para>
+      <para>
+        You have now extended the Linux command set with your own
+        command.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        Windows users may be used to the convention that program file
+        names end in .exe and scripts end in .bat or .cmd. When you run
+        these programs or scripts, you don’t include the extension,
+        exe, .bat, or .cmd. With Linux and UNIX, though, the full file
+        name is important, so if you name your script rpminfo.bat, you
+        must type rpminfo.bat each time you run the script. That’s why
+        most Linux programs and scripts have no filename extension.
+      </para>
+      <para>
+        If you want to share your script with others, you should give
+        them the right to execute it as well. You can do that with the
+        following command:
+      </para>
+      <para>
+        $ chmod a+x listrpmpkgs
+      </para>
+      <para>
+        In this case, the a stands for all users.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Passing command-line options to your script</title>
+      <para>
+        The listrpmpkgs script used so far isn’t very useful. It
+        performs one command and that’s it. We cannot customize it
+        without writing a new script.
+      </para>
+      <para>
+        One way to make a script more flexible is to allow it to use
+        command-line options. Just like the rpm command accepts a
+        zillion options, you can make your scripts accept options.
+      </para>
+      <para>
+        Shells define special variables for the command-line options
+        passed to the shell. Table 15-2 lists these options.
+      </para>
+      <para>
+        Table 15-2: Shell variables for command-line options
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Variable
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Holds
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $0
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The name of the script itself, from the command line
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $1
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The first option
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $2
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The second option
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $3
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The third option
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $4
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The fourth option
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $5
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The fifth option
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $6
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The sixth option
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $7
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The seventh option
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $8
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The eighth option
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $9
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The ninth option
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $*
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  All command-line options
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $#
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Holds the number of command-line options
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Note
+      </para>
+      <para>
+        Use $#argv in place of $# if you use the C shell to run your
+        scripts.
+      </para>
+      <para>
+        You can use these variables to allow the user to pass the text
+        to search for, instead of always searching for rpm. With this
+        addition, your new script, renamed rpmgrep, follows in Listing
+        15-1:
+      </para>
+      <para>
+        Listing 15-1: rpmgrep
+      </para>
+      <para>
+        #!/bin/sh
+      </para>
+      <para/>
+      <para>
+        rpm -qa | grep $*
+      </para>
+      <para>
+        This script now expects a command-line option that holds the
+        text to search for. Mark this script as an executable; then you
+        can run it as follows:
+      </para>
+      <para>
+        $ ./rpmgrep python
+      </para>
+      <para>
+        python-devel-2.2.1-17
+      </para>
+      <para>
+        gnome-python2-gtkhtml2-1.99.11-8
+      </para>
+      <para>
+        gnome-python2-canvas-1.99.11-8
+      </para>
+      <para>
+        gnome-python2-1.99.11-8
+      </para>
+      <para>
+        rpm404-python-4.0.4-8x.27
+      </para>
+      <para>
+        orbit-python-1.99.0-4
+      </para>
+      <para>
+        gnome-python2-bonobo-1.99.11-8
+      </para>
+      <para>
+        gnome-python2-gconf-1.99.11-8
+      </para>
+      <para>
+        libxslt-python-1.0.19-1
+      </para>
+      <para>
+        libxml2-python-2.4.23-1
+      </para>
+      <para>
+        python-optik-1.3-2
+      </para>
+      <para>
+        python-2.2.1-17
+      </para>
+      <para>
+        rpm-python-4.1-1.06
+      </para>
+      <para>
+        mod_python-3.0.0-10
+      </para>
+      <para>
+        python-tools-2.2.1-17
+      </para>
+      <para>
+        If you want to make this command available, copy it to a
+        directory in your command path as described in the preceding
+        section.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Examining RPM Files</title>
+    <para>
+      When you work with a lot of RPM files, you’ll find that you run
+      the same commands over and over again for each new package you
+      get. For example, you may want to see what capabilities a package
+      requires. You can type in the rpm command each time, or write a
+      short shell script with the necessary command-line options.
+      Listing 15-2 shows this script.
+    </para>
+    <para>
+      Listing 15-2: rpmdepend
+    </para>
+    <para>
+      #!/bin/sh
+    </para>
+    <para/>
+    <para>
+      rpm -qp --requires $*
+    </para>
+    <para>
+      This script expects the name of an RPM package file. Run the
+      command as follows:
+    </para>
+    <para>
+      $ rpmdepend vim-common-6.1-14.i386.rpm
+    </para>
+    <para>
+      rpmlib(PayloadFilesHavePrefix) &lt;= 4.0-1
+    </para>
+    <para>
+      rpmlib(CompressedFileNames) &lt;= 3.0.4-1
+    </para>
+    <para>
+      /bin/sh
+    </para>
+    <para>
+      /usr/bin/awk
+    </para>
+    <para>
+      libc.so.6
+    </para>
+    <para>
+      libc.so.6(GLIBC_2.0)
+    </para>
+    <para>
+      libc.so.6(GLIBC_2.1)
+    </para>
+    <para>
+      Another common task I perform involves listing all the files in an
+      RPM along with the descriptive information on the package. This
+      can really help, since so many Linux packages have nondescriptive
+      names such as dia and anaconda.
+    </para>
+    <para>
+      Listing 15-3 shows the rpminfo script.
+    </para>
+    <para>
+      Listing 15-3: rpminfo
+    </para>
+    <para>
+      #!/bin/sh
+    </para>
+    <para/>
+    <para>
+      rpm -qilp $* | less
+    </para>
+    <para>
+      This script lists a potentially long set of lines, so the script
+      pipes the output to the less command. For example:
+    </para>
+    <para>
+      $ ./rpminfo perl-XML-Dumper-0.4-22.noarch.rpm
+    </para>
+    <para>
+      Name : perl-XML-Dumper Relocations: /usr
+    </para>
+    <para>
+      Version : 0.4 Vendor: Red Hat, Inc.
+    </para>
+    <para>
+      Release : 22 Build Date: Tue 06 Aug 2002 01:53:30 PM CDT
+    </para>
+    <para>
+      Install date: (not installed) Build Host: vegeta.devel.redhat.com
+    </para>
+    <para>
+      Group : System Environment/Libraries Source RPM:
+      perl-XML-Dumper-0.4-22.src.rpm
+    </para>
+    <para>
+      Size : 10015 License: GPL
+    </para>
+    <para>
+      Signature : DSA/SHA1, Tue 06 Aug 2002 02:11:39 PM CDT, Key ID
+      fd372689897da07a
+    </para>
+    <para>
+      Packager : Red Hat, Inc.
+      &lt;http://bugzilla.redhat.com/bugzilla&gt;
+    </para>
+    <para>
+      URL : http://www.cpan.org
+    </para>
+    <para>
+      Summary : Perl module for dumping Perl objects from/to XML
+    </para>
+    <para>
+      Description :
+    </para>
+    <para>
+      XML::Dumper dumps Perl data to XML format. XML::Dumper can also
+      read
+    </para>
+    <para>
+      XML data that was previously dumped by the module and convert it
+      back
+    </para>
+    <para>
+      to Perl. Perl objects are blessed back to their original
+      packaging;
+    </para>
+    <para>
+      if the modules are installed on the system where the perl objects
+      are
+    </para>
+    <para>
+      reconstituted from xml, they will behave as expected. Intuitively,
+      if
+    </para>
+    <para>
+      the perl objects are converted and reconstituted in the same
+    </para>
+    <para>
+      environment, all should be well.
+    </para>
+    <para>
+      /usr/lib/perl5/vendor_perl/5.8.0/XML/Dumper.pm
+    </para>
+    <para>
+      /usr/share/man/man3/XML::Dumper.3pm.gz
+    </para>
+    <para>
+      I use this script so that I know what files a package wants to
+      install.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Querying the RPM Database</title>
+    <para>
+      In addition to querying RPM files, you can script the commands you
+      use to query the RPM database. This is most useful for the long
+      commands with query formats, especially if you have a hard time
+      remembering all the formats.
+    </para>
+    <sect2>
+      <title>Querying for all packages installed at the same time</title>
+      <para>
+        If you want to list all the packages that were installed with
+        the same transaction ID as a particular package, for example,
+        you can use a script like rpmtran, in Listing 15-4.
+      </para>
+      <para>
+        Listing 15-4: rpmtran
+      </para>
+      <para>
+        #!/bin/sh
+      </para>
+      <para/>
+      <para>
+        tid=`rpm -q --qf "%{INSTALLTID}\n" $*`
+      </para>
+      <para/>
+      <para>
+        rpm -q --tid $tid
+      </para>
+      <para>
+        This script uses the query format to get the transaction ID, or
+        tid, for a particular package. It then passes this transaction
+        ID to the rpm command to query for all packages installed with
+        the same transaction ID.
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        $ ./rpmtran tcl
+      </para>
+      <para>
+        itcl-3.2-74
+      </para>
+      <para>
+        tclx-8.3-74
+      </para>
+      <para>
+        tcl-8.3.3-74
+      </para>
+      <para>
+        tix-8.2.0b1-74
+      </para>
+      <para>
+        tkinter-2.2.1-17
+      </para>
+    </sect2>
+    <sect2>
+      <title>Reading HTML documentation for a package</title>
+      <para>
+        You can combine the rpm command with other commands as well. For
+        example, the rpm –qd command lists the documentation files
+        with a package. If this documentation is in HTML format, you can
+        display this documentation in a Web browser such as Mozilla.
+        Furthermore, by convention, the starting page for HTML
+        documentation should be a file named index.html. Listing 15-5
+        combines all these factors:
+      </para>
+      <para>
+        Listing 15-5: rpmmoz
+      </para>
+      <para>
+        #!/bin/sh
+      </para>
+      <para/>
+      <para>
+        html_file=`rpm -qd $* | grep index.html | head -n 1 `
+      </para>
+      <para/>
+      <para>
+        echo "Launching Web browser with $html_file"
+      </para>
+      <para/>
+      <para>
+        htmlview $html_file &amp;
+      </para>
+      <para>
+        This script searches for the documentation for a given package
+        name, finds the first file named index.html, and launches the
+        Web browser in the background to display this file, using the
+        htmlview command which will likely run mozilla or your
+        configured Web browser. When you run this command, you should
+        see output like the following; then the Web browser should
+        appear:
+      </para>
+      <para>
+        $ ./rpmmoz rpm-devel
+      </para>
+      <para>
+        Launching Web browser with
+        /usr/share/doc/rpm-devel-4.1/apidocs/html/index.html
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        This script does not check for errors. If there are no files
+        named index.html, the script launches the Web browser anyway.
+        You could fix this by changing the script to validate the
+        html_file variable prior to launching the Web browser.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Where to Go From Here</title>
+    <para>
+      This chapter just introduces the basics for shell scripting. There
+      are many more things you can do. The online manual pages for the
+      bash or tcsh commands provide a wealth of reference information on
+      these shells.
+    </para>
+    <para>
+      A number of Web sites provide tutorials on bash, including
+      http://pegasus.rutgers.edu/~elflord/unix/bash-tute.html and
+      www.linuxorbit.com/modules.php?op=modload&amp;name=Sections&amp;file=index&amp;req=viewarticle&amp;artid=459.
+      In addition, the Linux Documentation Project at
+      www.tldp.org/guides.html provides a bash scripting guide, along
+      with a number of bash- and shell-related how-to documents at
+      www.tldp.org/HOWTO/HOWTO-INDEX/howtos.html.
+    </para>
+    <para>
+      Teach Yourself Linux, by Steve Oualline and Eric Foster-Johnson
+      (John Wiley &amp; Sons, 2000), introduces a number of Linux
+      topics, including text editors and scripting, for those new to
+      Linux. And Graphical Applications with Tcl and Tk (Hungry Minds,
+      Inc., 1997) by Eric Foster-Johnson, covers another scripting
+      language, Tcl/Tk.
+    </para>
+    <para>
+      Use your imagination. Any command that you run often or that is
+      hard to type can be scripted. Furthermore, you can write complex
+      scripts that automate some of the more tedious tasks you need to
+      perform.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      Scripting is the art of writing a set of commands into text files
+      to speed up your work. Programming is the art of writing a set of
+      commands into text files, compiling the text files, and getting
+      paid more. Choosing when to program and when to script isn’t
+      always a clear-cut decision, but generally programs are move
+      involved and complex, while scripts are shorter tools that
+      automate your work. This chapter provides just a glimpse of all
+      you can do with scripts and the RPM system.
+    </para>
+    <para>
+      Scripts work very well for capturing obscure syntax options for
+      the rpm command, especially the query formats. You can figure out
+      a command once and then save the command as a script to save time
+      in the future.
+    </para>
+    <para>
+      Scripts aren’t the best choice for all tasks, though. In many
+      cases, you need to write a program to accomplish your goals. The
+      next chapter delves into the RPM C programming API, rpmlib.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

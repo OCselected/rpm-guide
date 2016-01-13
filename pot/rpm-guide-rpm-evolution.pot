@@ -1,0 +1,115 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "RPM Feature Evolution"
+msgstr ""
+
+msgid "Although RPM implementations are largely compatible from version to version, RPM packagers must remember that RPM is a still-evolving program and that its developers are adding features to it with each new version. When producing RPM package files, packagers must keep in mind the audience that will be using the final RPM package files. They must decide which versions of RPM they intend the package to be used with and must use only the lowest common denominator set of features implemented in the oldest of the RPM versions they are targeting. As a quick reference, keep in mind the RPM features noted here and the RPM version in which they are introduced. In considering these revisions of RPM, the main releases of interest are RPM 2.5, RPM 3.0.5, RPM 4.0.4, and RPM 4.1."
+msgstr ""
+
+msgid "RPM 2.5 is not widely used anymore; packages should target RPM 2.5 only if the intention is for the RPM package to install using absolutely all RPM versions."
+msgstr ""
+
+msgid "RPM 3.0.5 is the final release of the 3.x series of RPM. It was the release of RPM shipped with Red Hat Linux 6.2 and older releases. It is still in wide use by other vendors as well. Cobalt’s Linux distributions use an RPM implementation version based on RPM 3.0.5, for example. (Red Hat Linux was upgraded to RPM 4 via an errata.)"
+msgstr ""
+
+msgid "RPM 4.0.4 was used with the 7.x releases of Red Hat Linux, and RPM 4.1 first shipped with Red Hat Linux 8.0. Packages produced targeting RPM 3.0.5 should work with nearly all implementations of RPM still in use today. Packages produced targeting RPM 4.0.4 or RPM 4.1 will work only with recent RPM implementations."
+msgstr ""
+
+msgid "RPM 2.5 is the oldest version of RPM that can, by any stretch of the imagination, still be considered in use. With RPM 2.5, most of the basic RPM features were in place, as well as more advanced functions such as triggers and support for internationalization of Summary:, Description:, and Group: tags in the RPM file header. RPM 2.5 was also the first version of RPM to use the RPM version 3 RPM file format."
+msgstr ""
+
+msgid "RPM 2.5.3 added support for Epochs to the RPM header, implementing RPMTAG_EPOCH."
+msgstr ""
+
+msgid "RPM 2.5.4 introduced the %license and %readme file types, which can be used in the RPM spec file to indicate license and README files."
+msgstr ""
+
+msgid "RPM 2.5.6 added support for usage of the Epoch: keyword in the RPM spec file, allowing you to force an Epoch for your package. The Epoch: keyword replaced the older Serial: keyword, which semantically behaved similarly."
+msgstr ""
+
+msgid "RPM 2.5.7 enforced the previously implied standard that the \"-\" character should not be used within the Version or Release fields in the RPM spec file."
+msgstr ""
+
+msgid "RPM 2.90 introduced support for signing and verifying RPM package files using GPG, the GNU Privacy Guard."
+msgstr ""
+
+msgid "RPM 2.91 allowed the usage of Provides: directives that defined absolute paths to provided files. Prior to RPM 2.91, Provides: could be used only for listing provided capabilities, not for using statements like Provides: /path/to/file to indicate provided files."
+msgstr ""
+
+msgid "RPM 3.0.2 permitted usage of multiple Provides: lines for the first time, eliminating the need to combine all provided capabilities and files on the same line in the spec file."
+msgstr ""
+
+msgid "RPM 3.0.3 added support for versioned dependencies. Prior to RPM 3.0.3, spec files could indicate that a package required another package or provided a specific capability, but they could not indicate the acceptable versions of the required package or which version of the capability the package provided."
+msgstr ""
+
+msgid "RPM 3.0.4 introduced CompressedFileNames support to RPM. Prior to RPM 3.0.4, RPM packaged the absolute paths of all archived files within the package file. Package file headers contained statements such as"
+msgstr ""
+
+msgid "fileName #0: /usr/bin/ar"
+msgstr ""
+
+msgid "fileName #1: /usr/bin/as"
+msgstr ""
+
+msgid "fileName #2: /usr/bin/gasp"
+msgstr ""
+
+msgid "fileName #3: /usr/bin/gprof"
+msgstr ""
+
+msgid "With CompressedFileNames support, the RPM package file header instead stores the directory name, then just the base name of files within that directory. Package file headers now contain statements such as the following for a given directory with a number of files within that directory:"
+msgstr ""
+
+msgid "dirName #0: /usr/bin"
+msgstr ""
+
+msgid "baseName dirIndex"
+msgstr ""
+
+msgid "#0 ar 0"
+msgstr ""
+
+msgid "#1 as 0"
+msgstr ""
+
+msgid "#2 gasp 0"
+msgstr ""
+
+msgid "#3 gprof 0"
+msgstr ""
+
+msgid "Each file entry now holds the file's base name within the directory, as well as an index number that refers to the directory entry. Since packages typically contain lots of files within the same directory, CompressedFileNames support results in significant memory savings when processing packages for installation."
+msgstr ""
+
+msgid "RPM 3.0.5 added PayloadIsBzip2 support to RPM, allowing the data payload of RPM package files to be compressed using bzip2 instead of gzip. Even though RPM now supports bzip2 compression of package files, this feature is rarely used in practice, since significantly more memory and time is required to install bzip2-compressed RPM package files than to install gzip-compressed RPM package files. RPM 3.0.5 also added support to RPM for manipulating existing RPM version 4 file format packages; packages produced with RPM 3.0.5 can only be RPM version 3 file format, however."
+msgstr ""
+
+msgid "RPM 4.0 implemented several significant changes to RPM. RPM 4.0 created package files using RPM version 4 package file format. RPM 4.0 also switched from Berkeley db 1.85 to Berkeley db 3.1 as the database program used for creation and manipulation of the RPM database. The RPM package database file was renamed as well. The db3 package database file is /var/lib/rpm/Packages, and the older db1 package database file was /var/lib/rpm/packages.rpm. Changing the package database file name allowed old and new versions to co-exist if necessary, simplifying upgrades from older RPM releases to the new RPM 4.0 release. RPM 4.0 also introduced the PayloadFilesHavePrefix feature, changing the way archived files are named within the RPM package file. RPM package files contain a cpio archive of files. Prior to RPM 4.0, file names in the cpio archive were stored without a root prefix. With PayloadFilesHavePrefix, all file names within the cpio archive files now have a root prefix, such as ./usr/bin/ar. This modification made it possible for RPM package files to contain the root directory, “./”. Additional sanity-checking was added to the RPM 4.0 spec file parser; beginning with 4.0, RPM no longer allows dangling symbolic links that contain the BuildRoot. This change eliminates a class of common mistakes made when producing RPMs. Finally, RPM 4.0 implicitly generates Provides: directives; whenever a package header is read, the Provides: directive Provides: %{name} = %{epoch}:%{version}-%{release} is automatically generated, ensuring that all packages explicitly provide themselves as a capability and removing the need to provide self-capabilities within the package spec file."
+msgstr ""
+
+msgid "RPM 4.0.2 introduced the use of SHA-1 message digests to validate RPM header regions."
+msgstr ""
+
+msgid "RPM 4.0.3 added the %dev(type,major,minor) spec file directive, allowing creation of device nodes. In addition, the %configure spec file directive now supported --target and –host, simplifying cross compilation when using RPM. The %files directive was extended by adding the %exclude subdirective that could be used to exclude files from inclusion. Finally, RPM 4.0.3 switched back to creating package files in RPM version 3 package file format by default, although it still supports RPM version 4 package file format as well."
+msgstr ""
+
+msgid "RPM 4.0.4 provided PartialHardlinkSets support. RPM package files are sometimes created which contain multiple copies of the same file, stored as hard links to save space. Prior to RPM 4.0.4, RPM has always treated collections of hard links as an all-or-nothing proposition; all hard links were created, or else none were created. This behavior posed problems when some hard links in a set were tagged with attributes such as %doc or %lang, since rpm commands make it possible to install an RPM package file without installing any files with %doc attributes. Prior to RPM 4.0.4, doing so would break the hard link set, preventing creation of all hard links in the set. PartialHardlinkSet corrects this problem by allowing successful creation of subsets of the hard link set. RPM 4.0.4 also provided automatic generation of Perl module Requires: directives. find-requires now parses all packaged Perl scripts, generating any determined dependencies. In addition, RPM 4.0.4 provides transaction support for RPM."
+msgstr ""
+
+msgid "RPM 4.1 adds separate header DSA and RSA signatures, allowing verification of RPM package headers."
+msgstr ""
+
+msgid "Finally, when considering the RPM features required by your prepared package, remember that some required RPM features are specified manually within the package spec file, while others are automatically added by RPM during the RPM package file build process. For example, usage of versioned Requires: directives in a spec file will make the resulting RPM package file correctly installable only by RPM release 3.0.3 or later. Similarly, the preparation of any package using RPM release 4.0 or later will automatically produce RPM package files that can only be manipulated by releases of RPM that support the PayloadFilesHavePrefix feature. In the first case, you chose to produce packages that worked with RPM release 3.0.5 or later but not with RPM release 2.5 by including a new directive in the package spec file. In the second case, however, you did not explicitly produce packages that work only with recent RPM releases. The simple fact that you built your RPM package using RPM release 4.0 means that you automatically used features that only RPM 4.0 and later releases understand. These automatic internal requirements are quite common in the later versions; as a result, the best practice is to decide the oldest version of RPM that you wish to support, then to build all packages using that version of RPM, keeping its feature set in mind as you prepare and build the packages."
+msgstr ""
+

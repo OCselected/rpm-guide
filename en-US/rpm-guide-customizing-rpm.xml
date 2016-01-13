@@ -1,0 +1,975 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-customizing-rpm">
+  <title>Customizing RPM Behavior</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Defining RPM macros
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Configuring RPM settings
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Adding popt aliases
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    RPM provides a high degree of customization in the form of basic
+    settings, such as where your RPM database is located and the path to
+    common commands like setup or make, to the ability to define new
+    macros and command-line aliases. This chapter covers the three main
+    ways to customize RPM behavior: RPM macros, RPM rc settings, and
+    popt aliases.
+  </para>
+  <sect1>
+    <title>Customizing with RPM Macros</title>
+    <para>
+      Starting with RPM 3.0, RPM macros have replaced most RPM settings
+      from the rpmrc files.
+    </para>
+    <para>
+      An RPM macro defines a setting to the RPM system. A macro can be
+      defined as a static value, such as the directory where the RPM
+      database is installed. A macro can also be defined in terms of
+      other macros. Furthermore, a macro can be defined with parameters.
+    </para>
+    <para>
+      For example, the following defines two macros in a macro file:
+    </para>
+    <para>
+      %_usr /usr
+    </para>
+    <para>
+      %_usrsrc %{_usr}/src
+    </para>
+    <para>
+      In this case, the macro %_usr names the /usr directory. The macro
+      %_usrsrc names the /usr/src directory, showing how to set a macro
+      in terms of another macro.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      The macro syntax is used in the query formats introduced in
+      <xref linkend="ch-using-rpm-db"/> .
+    </para>
+    <sect2>
+      <title>Defining macros</title>
+      <para>
+        RPM provides a number of places you can define macros, including
+        inside spec files (probably the most common usage), in special
+        macro initialization files, and on the command line.
+      </para>
+      <para>
+        In each case, the syntax is slightly different.
+      </para>
+      <sect3>
+        <title>Defining Macros in Spec Files</title>
+        <para>
+          You can define macros in most places in a spec file. With spec
+          files, use the %define syntax to define a macro, which uses
+          the following syntax:
+        </para>
+        <para>
+          %define name(options) body
+        </para>
+        <para>
+          The options are optional and can include the special values
+          defined in Table 21-1.
+        </para>
+        <para>
+          Table 21-1 Special options for macros
+        </para>
+        <informaltable frame="all">
+          <tgroup cols="2">
+            <tbody>
+              <row>
+                <entry>
+                  <para>
+                    Option
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Holds
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    %0
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    The name of the macro
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    %1
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    The first argument, after processing with getopt
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    %2-%9
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Additional arguments
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    %*
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    All arguments, except for flags that have been
+                    processed
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    %#
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Number of arguments
+                  </para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <para>
+          These options are similar to those for shell scripting.
+        </para>
+        <para>
+          Cross Reference
+        </para>
+        <para>
+          <xref linkend="ch-specfiles"/>  covers spec files.
+        </para>
+        <para>
+          In addition to these options, you can use a syntax of %{-a} to
+          hold –a if an option of –a was passed. The syntax of
+          %{-a*} indicates the value passed after the –a option.
+        </para>
+        <para>
+          You can assign a macro to the value returned by a shell
+          command by using syntax like the following:
+        </para>
+        <para>
+          %(shell_command)
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          This is similar to the $(shell_command) syntax supported by
+          bash.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Defining Macros in Macro Initialization Files</title>
+        <para>
+          Inside a macro file, define macros with the following syntax:
+        </para>
+        <para>
+          %macro_name value
+        </para>
+        <para>
+          Macros defined for the RPM system start with an underscore.
+          Some older macros are left without the leading underscore.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          The macros defined with an underscore are not exported into
+          rpm headers.
+        </para>
+        <para>
+          The %expand built-in macro will expand the value of something
+          else, including executing a shell command. For example, the
+          following sets the user’s home directory to the %home macro:
+        </para>
+        <para>
+          %home %{expand:%%(cd; pwd)}
+        </para>
+        <para>
+          Note that it is probably easier to simply set the %home macro
+          in your per-user $HOME/.rpmmacros file to the name of your
+          home directory rather than try to figure this out
+          programmatically.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Defining Macros on the Command Line</title>
+        <para>
+          The rpm command also lets you define macros with the --define
+          option. The basic syntax is:
+        </para>
+        <para>
+          $ rpm --define 'macro_name value'
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          Do not place the leading percent sign, %, on the macro you
+          define with --define.
+        </para>
+        <para>
+          You can evaluate a macro or a macro expression with --eval.
+          For example:
+        </para>
+        <para>
+          $ rpm --eval %_usrsrc
+        </para>
+        <para>
+          /usr/src
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Customizing Macros</title>
+      <para>
+        You can add your own macro definitions, using the syntax shown
+        in the “Defining Macros in Macro Initialization Files”
+        section. These macros are read on each invocation of the rpm or
+        rpmbuild commands.
+      </para>
+      <para>
+        To add your custom macros, you must edit one of the macro
+        definition files. Table 21-2 lists the macro definition files
+        and their usage.
+      </para>
+      <para>
+        Table 21-2 RPM macro files
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  File
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  /usr/lib/rpm/macros
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Official RPM macros
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  /etc/rpm/macros
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Per-system customizations
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $HOME/.rpmmacros
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Per-user customizations
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Note
+      </para>
+      <para>
+        Do not edit the /usr/lib/rpm/macros file, as this file gets
+        overwritten when you upgrade to a new version of rpm.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Configuring RPM Settings</title>
+    <para>
+      RPM includes hundreds of settings based on your current system
+      architecture, environment, and which version of the RPM system you
+      have installed. The old settings, called rc or rpmrc settings, are
+      gradually being phased out by the newer, more consistent and more
+      powerful macros.
+    </para>
+    <para>
+      You can still edit the rc settings, but in most cases you should
+      edit macros instead.
+    </para>
+    <sect2>
+      <title>Viewing the current settings</title>
+      <para>
+        To view the current settings, use the --showrc command-line
+        option:
+      </para>
+      <para>
+        $ rpm –showrc
+      </para>
+      <para>
+        ARCHITECTURE AND OS:
+      </para>
+      <para>
+        build arch : i386
+      </para>
+      <para>
+        compatible build archs: i686 i586 i486 i386 noarch
+      </para>
+      <para>
+        build os : Linux
+      </para>
+      <para>
+        compatible build os's : Linux
+      </para>
+      <para>
+        install arch : i686
+      </para>
+      <para>
+        install os : Linux
+      </para>
+      <para>
+        compatible archs : i686 i586 i486 i386 noarch
+      </para>
+      <para>
+        compatible os's : Linux
+      </para>
+      <para/>
+      <para>
+        RPMRC VALUES:
+      </para>
+      <para>
+        macrofiles :
+        /usr/lib/rpm/macros:/usr/lib/rpm/i686-linux/macros:/etc/
+      </para>
+      <para>
+        rpm/macros.specspo:/etc/rpm/macros.db1:/etc/rpm/macros.cdb:/etc/rpm/macros:/etc/
+      </para>
+      <para>
+        rpm/i686-linux/macros:~/.rpmmacros
+      </para>
+      <para>
+        optflags : -O2 -march=i686
+      </para>
+      <para>
+        This command displays the architecture and operating system
+        information first, and then lists all the rpmrc values, shown
+        here truncated for space.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Locating the rpmrc files</title>
+      <para>
+        The --showrc option reads in all the rpmrc files from the
+        various locations. By default, this is /usr/lib/rpm/rpmrc,
+        /etc/rpm/rpmrc, and a file named .rpmrc (with a leading period)
+        in your home directory.
+      </para>
+      <para>
+        These files are read in the order given, so that the later files
+        can override settings in the earlier files.
+      </para>
+      <para>
+        The uses for these files are listed in Table 21-3.
+      </para>
+      <para>
+        Table 21-3 Uses for the rpmrc files
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  File
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Holds
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  /usr/lib/rpm/rpmrc
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  RPM standard settings
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  /etc/rpm/rpmrc
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Per-system configuration
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  $HOME/.rpmrc
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Per-user configuration
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Note
+      </para>
+      <para>
+        The file /usr/lib/rpm/rpmrc gets overwritten each time you
+        upgrade RPM. Do not customize this file.
+      </para>
+      <para>
+        You can override this list of files by calling the rpm or
+        rpmbuild commands with the --rcfile option. This option expects
+        a semicolon@nddelimited list of files to read in, in order. For
+        example, if you are working on a 686-architecture Intel
+        platform, you can create a file with the following setting:
+      </para>
+      <para>
+        optflags: i686 -g
+      </para>
+      <para>
+        Note that this disables optimization, so it is not a good
+        setting. (The use of this value will make the result more
+        visible.)
+      </para>
+      <para>
+        If you name this file .rpmnew and place it in your home
+        directory, you can configure an alternate set of files with the
+        --rcfile option and then evaluate the new optflags setting. For
+        example:
+      </para>
+      <para>
+        $ rpm --eval "%{optflags}"
+      </para>
+      <para>
+        -O2 -march=i386 -mcpu=i686
+      </para>
+      <para>
+        $ rpm --rcfile $HOME/.rpmnew --eval "%{optflags}"
+      </para>
+      <para>
+        -g
+      </para>
+      <para>
+        This example shows the value before and after changing the
+        configuration files.
+      </para>
+      <para>
+        When you use the --rcfile option, only the first file listed
+        must exist. The rest of the files are optional. When you use the
+        --rcfile option, however, the file /usr/lib/rpm/rpmrc is read
+        first, and then the list of files you provide with the --rcfile
+        option. The file /usr/lib/rpm/rpmrc is always used.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Changing settings</title>
+      <para>
+        You can edit the per-user or per-system rc files to change the
+        settings. The format of the rpmrc files is fairly simple but
+        contains a few exceptions. The most basic format is:
+      </para>
+      <para>
+        setting: value
+      </para>
+      <para>
+        The settings get more complicated as the rpmrc syntax supports
+        defining settings for multiple architectures at once. In that
+        case, the typical format is:
+      </para>
+      <para>
+        setting: uname: value
+      </para>
+      <para>
+        The uname portion is replaced by a value that comes from the
+        uname(2) system call, for example, i686 on a 686-class Intel
+        architecture machine.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        In most cases, your best bet is to copy an existing setting and
+        modify it, rather than remembering all the exceptions.
+      </para>
+      <sect3>
+        <title>Setting the optflags</title>
+        <para>
+          One exception to the rule is the optflags setting, which
+          controls C compiler options for optimization. The format for
+          the optflags setting is:
+        </para>
+        <para>
+          setting: arch value
+        </para>
+        <para>
+          There is no colon after the architecture. For example:
+        </para>
+        <para>
+          optflags: i686 -O2 -march=i686
+        </para>
+        <para>
+          optflags: alphaev5 -O2 -mieee -mcpu=ev5
+        </para>
+        <para>
+          This example sets the optimization flags for an i686 system to
+          -O2 -march=i686 and an alphaev5 system to -O2 -mieee
+          -mcpu=ev5. If your system is running on a 686-class processor,
+          you will get one set of optimization flags. If your system is
+          running on a V5 Alpha processor, you will get a different set.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Setting the Architecture Values</title>
+        <para>
+          The arch_canon setting builds up a table of mappings between
+          architecture names and the numbers used internally. The
+          following example shows the Intel and SPARC architecture
+          settings to 1 and 3 internally.
+        </para>
+        <para>
+          arch_canon: athlon: athlon 1
+        </para>
+        <para>
+          arch_canon: i686: i686 1
+        </para>
+        <para>
+          arch_canon: i586: i586 1
+        </para>
+        <para>
+          arch_canon: i486: i486 1
+        </para>
+        <para>
+          arch_canon: i386: i386 1
+        </para>
+        <para/>
+        <para>
+          arch_canon: sparc: sparc 3
+        </para>
+        <para>
+          arch_canon: sun4: sparc 3
+        </para>
+        <para>
+          arch_canon: sun4m: sparc 3
+        </para>
+        <para>
+          arch_canon: sun4c: sparc 3
+        </para>
+        <para>
+          arch_canon: sun4d: sparc 3
+        </para>
+        <para>
+          arch_canon: sparcv9: sparcv9 3
+        </para>
+        <para>
+          The arch_compat setting builds a table of compatible
+          architectures. The format is:
+        </para>
+        <para>
+          arch_compat: arch: compatible_with
+        </para>
+        <para>
+          This sets the given architecture arch as being compatible with
+          another architecture.
+        </para>
+        <para>
+          For example:
+        </para>
+        <para>
+          arch_compat: athlon: i686
+        </para>
+        <para>
+          This setting indicates that an athlon architecture is
+          compatible with an i686. The table gets built up further with
+          the following Intel-architecture compatibilities:
+        </para>
+        <para>
+          arch_compat: i686: i586
+        </para>
+        <para>
+          arch_compat: i586: i486
+        </para>
+        <para>
+          arch_compat: i486: i386
+        </para>
+        <para>
+          arch_compat: i386: noarch
+        </para>
+        <para>
+          The os_canon setting defines a table of operating system
+          labels and internal numeric values. The basic syntax is:
+        </para>
+        <para>
+          os_canon: arch: name value
+        </para>
+        <para>
+          The arch comes from the uname(2) call. The name provides an
+          RPM name for that operating system, and the value defines an
+          internal numeric ID for that OS, for example:
+        </para>
+        <para>
+          os_canon: Linux: Linux 1
+        </para>
+        <para>
+          os_canon: HP-UX: hpux10 6
+        </para>
+        <para>
+          The buildarchtranslate setting defines the operating system
+          settings to use as the build architecture. This value
+          translates information from the uname(2) call to a value used
+          by the arch_canon setting. For example:
+        </para>
+        <para>
+          buildarchtranslate: athlon: i386
+        </para>
+        <para>
+          buildarchtranslate: i686: i386
+        </para>
+        <para>
+          buildarchtranslate: i586: i386
+        </para>
+        <para>
+          buildarchtranslate: i486: i386
+        </para>
+        <para>
+          buildarchtranslate: i386: i386
+        </para>
+        <para/>
+        <para>
+          buildarchtranslate: sun4c: sparc
+        </para>
+        <para>
+          buildarchtranslate: sun4d: sparc
+        </para>
+        <para>
+          buildarchtranslate: sun4m: sparc
+        </para>
+        <para>
+          buildarchtranslate: sparcv9: sparc
+        </para>
+        <para>
+          buildarchtranslate: sun4u: sparc64
+        </para>
+      </sect3>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Adding Popt Aliases</title>
+    <para>
+      Popt provides a powerful library and RPM subsystem for handling
+      the very complex RPM command-line options. You can customize your
+      RPM usage by defining popt aliases for complex command-line
+      arguments to the rpm or rpmbuild commands. A popt alias is a
+      command-line option that expands to other command-line options.
+    </para>
+    <para>
+      This technique is used internally to define quite a few
+      command-line options to the rpm and rpmbuild commands in terms of
+      other, more complex options. Many of these aliases define simple
+      command-line options in place of more complex query format
+      options.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      <xref linkend="ch-using-rpm-db"/>  covers the query format.
+    </para>
+    <para>
+      For example, the following entry defines the --requires and –R
+      command-line options to the rpm command:
+    </para>
+    <para>
+      rpm alias --requires --qf \
+    </para>
+    <para>
+      "[%{REQUIRENAME} %{REQUIREFLAGS:depflags} %{REQUIREVERSION}\n]" \
+    </para>
+    <para>
+      --POPTdesc=$"list capabilities required by package(s)"
+    </para>
+    <para>
+      rpm alias -R --requires
+    </para>
+    <para>
+      These options are set in the file /usr/lib/rpm/rpmpopt-4.1.
+    </para>
+    <para>
+      Note
+    </para>
+    <para>
+      This is specific to RPM 4.1. Other releases of RPM use the same
+      naming format but with the current RPM version number, such as 4.2
+      and so on.
+    </para>
+    <sect2>
+      <title>Defining aliases</title>
+      <para>
+        Defining aliases is pretty easy. The basic syntax is:
+      </para>
+      <para>
+        command_name alias option expansion
+      </para>
+      <para>
+        To create an alias for the rpm command, you use rpm for the
+        command_name.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        The command_name must be the name passed to the C poptGetContext
+        function, covered in <xref linkend="ch-programming-c"/> .
+      </para>
+      <para>
+        Follow this with alias and then the option. You will need
+        separate aliases for the long and short options. The expansion
+        defines the alias in terms of other already-defined command-line
+        parameters.
+      </para>
+      <para>
+        You can define some complex aliases, such as the following one
+        to display information about a package:
+      </para>
+      <para>
+        rpm alias --info --qf 'Name : %-27{NAME} Relocations:
+        %|PREFIXES?{[%{PREFIXES} ]}:{(not relocateable)}|\n\
+      </para>
+      <para>
+        Version : %-27{VERSION} Vendor: %{VENDOR}\n\
+      </para>
+      <para>
+        Release : %-27{RELEASE} Build Date: %{BUILDTIME:date}\n\
+      </para>
+      <para>
+        Install date: %|INSTALLTIME?{%-27{INSTALLTIME:date}}:{(not
+        installed) }| Build Host: %{BUILDHOST}\n\
+      </para>
+      <para>
+        Group : %-27{GROUP} Source RPM: %{SOURCERPM}\n\
+      </para>
+      <para>
+        Size : %-27{SIZE}%|LICENSE?{ License: %{LICENSE}}|\n\
+      </para>
+      <para>
+        Signature :
+        %|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|\n\
+      </para>
+      <para>
+        %|PACKAGER?{Packager : %{PACKAGER}\n}|\
+      </para>
+      <para>
+        %|URL?{URL : %{URL}\n}|\
+      </para>
+      <para>
+        Summary : %{SUMMARY}\n\
+      </para>
+      <para>
+        Description :\n%{DESCRIPTION}\n' \
+      </para>
+      <para>
+        --POPTdesc=$"list descriptive information from package(s)"
+      </para>
+      <para>
+        Popt aliases get evaluated into Linux commands, so you can use
+        pipes and other aspects of Linux shells in your aliases.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        Look closely at the examples in the /usr/lib/rpm/rpmpopt-4.1
+        file. This is the most complete set of popt alias examples for
+        RPM commands.
+      </para>
+      <para>
+        You can also define aliases that can set RPM macros, such as the
+        following alias for setting the path to the RPM database:
+      </para>
+      <para>
+        rpm alias --dbpath --define '_dbpath !#:+'
+      </para>
+      <para>
+        In this example, !#:+ was defined to behave like a shell
+        history-editing command. With popt, this means to grab the next
+        command-line parameter and place it into the command defined for
+        the alias.
+      </para>
+      <para>
+        To support the --help and --usage options, you can define the
+        --POPTdesc and --POPTargs options to the alias as shown in the
+        previous examples. These options also support
+        internationalization.
+      </para>
+      <para>
+        All together, the popt alias setting is very close to the popt
+        option table entries used with the C programming API.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-programming-c"/>  shows how to program with the popt library.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Customizing popt aliases</title>
+      <para>
+        Like RPM macros and settings, popt aliases are defined in a
+        cascading set of files. The official RPM aliases are defined in
+        /usr/lib/rpm/rpmpopt-4.1 for rpm 4.1.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        Do not modify this file! The RPM system depends on this file for
+        proper functioning. Incorrect changes might disable many options
+        to the rpm command.
+      </para>
+      <para>
+        Store per-system popt aliases in /etc/popt. Store per-user
+        aliases in $HOME/.popt (with a leading period).
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        These files are shared by all applications that use popt.
+      </para>
+      <para>
+        For example, you can define an alias for rpm -qa that executes
+        faster than the normal query all packages command, by turning
+        off the tests for digest signature verification. To do so, add
+        the following line to a file named .popt in your home directory:
+      </para>
+      <para>
+        rpm alias --qall -qa --nodigest --nosignature
+      </para>
+      <para>
+        Once you set up this alias, you can run the following command in
+        place of rpm -qa:
+      </para>
+      <para>
+        $ rpm --qall
+      </para>
+      <para>
+        This should execute about one-third to one-half faster than the
+        normal rpm -qa command.
+      </para>
+      <para>
+        Warning
+      </para>
+      <para>
+        Turning off the signature and digest tests means you are
+        ignoring important information that pertains to the integrity of
+        your system. That is why the alias shown here does not override
+        the normal -qa option, and instead defines a new --qall option
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      This chapter shows the many ways you can customize RPM usage for
+      your system or your own personal environment. You can define RPM
+      macros, which is the preferred way to make RPM settings. Or you
+      can set RPM values in the older rpmrc files, which are now mostly
+      replaced by RPM macros.
+    </para>
+    <para>
+      Using popt, the powerful command-line option parser, you can
+      define aliases to add simple options that popt expands into
+      whatever you define. Many of the rpm command-line options are
+      defined this way.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

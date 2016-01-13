@@ -1,0 +1,448 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Transactions"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Understanding transactions"
+msgstr ""
+
+msgid "Querying for packages based on transactions"
+msgstr ""
+
+msgid "Rolling back transactions"
+msgstr ""
+
+msgid "Saving old packages when upgrading"
+msgstr ""
+
+msgid "When packages depend on other packages, you may have to install multiple packages to add a single application. Some of the packages may install cleanly; others may not. But you have to install all of the packages to get the complete application. The designers of the RPM system understood this problem and added the concept of transactions to RPM."
+msgstr ""
+
+msgid "This chapter covers transactions and how they can help you cleanly install a set of dependent packages. But transactions won’t solve all your problems. You still have to resolve conflicts and dependencies by using the techniques provided in the last three chapters."
+msgstr ""
+
+msgid "Understanding Transactions"
+msgstr ""
+
+msgid "A transaction is a way to delimit a set of operations. All the operations can be undone, often called rolled back. Once rolled back, the system is back in the same state it was prior to the transaction. If all the operations succeed, though, the system will be in a new state. The key issue is that all of the operations must complete successfully, or you can roll back the entire transaction. The assumption is that if any of the operations fail, the system will be in an inconsistent or erroneous state. Transactions are a way to prevent that."
+msgstr ""
+
+msgid "Transactions are common when working with databases, but they are just as important when working with packages."
+msgstr ""
+
+msgid "Starting with RPM version 4.0.4, transactions and rollbacks became a workable part of any administrator's toolkit. With RPM, the rpm command sets up a transaction any time you attempt to install, remove, or upgrade more than one package. The rpm command automatically makes a transaction."
+msgstr ""
+
+msgid "When do you need transactions?"
+msgstr ""
+
+msgid "Whenever you install or remove packages, the RPM system assigns a transaction and a transaction ID to the set of packages. You can then perform operations on the packages that share the same ID, including rolling back the transaction."
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Rollbacks work only for package upgrades with the 4.1 version of the RPM system, not package installs"
+msgstr ""
+
+msgid "The RPM system saves an image of the RPM package header for each package installed or removed. You can use this image, along with RPM transaction IDs, to back out of transactions should something go wrong when setting up your system."
+msgstr ""
+
+msgid "The main advantage of transactions with RPM, though, is the fact that the rpm command automatically sets up a transaction for all the packages on each command line and does not perform the operation if any package fails. This ability to automatically set up transactions for each call to the rpm command eliminates many errors when working with packages."
+msgstr ""
+
+msgid "Use a transaction when you need to be sure that a set of packages install properly."
+msgstr ""
+
+msgid "Backing out of transactions"
+msgstr ""
+
+msgid "With RPM, backing out of a transaction involves two operations: rolling back the transaction and reinstalling the former packages to restore the previous system state. In the simplest case, the rpm command handles all the tasks for you. If you try to install, upgrade, or remove multiple packages and any package fails, the rpm command will restore the system state for you."
+msgstr ""
+
+msgid "This automatic support for transactions is a great help to system administrators, but it only applies when you first install, upgrade, or remove the packages. If you have upgraded your system and later discover problems, then you can also use the --rollback option to roll the system back from a set of upgrades, in a limited set of circumstances."
+msgstr ""
+
+msgid "Transactions with the rpm Command"
+msgstr ""
+
+msgid "To set up an RPM transaction, you don't have to do much. All you need to do is pass more than one RPM package on the rpm command line. For example, to set up a transaction for installing three packages, use a command like the following:"
+msgstr ""
+
+msgid "rpm -ihv package1.rpm package2.rpm package3.rpm"
+msgstr ""
+
+msgid "If any of the packages fail to install, the rpm command will not install any packages. All of the packages will be installed, or none."
+msgstr ""
+
+msgid "This way, if you have a number of packages that together perform some function, such as an Integrated Development Environment (IDE), along with program-language compilers and other software-development tools, you can ensure that all get installed."
+msgstr ""
+
+msgid "As an example, say you need to install the gnorpm package, which provides a graphical front end for the rpm command, and the rpmrebuild package, which allows you to create RPMs from already-installed packages."
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "The gnorpm command is covered in <xref linkend=\"ch-management-software\" /> . The rpmrebuild package is covered in the \"Saving Old Packages\" section in this chapter."
+msgstr ""
+
+msgid "You can install these packages with a transaction by using the following command:"
+msgstr ""
+
+msgid "# rpm -ihv gnorpm-0.9-1.i386.rpm rpmrebuild-1.0-0.noarch.rpm"
+msgstr ""
+
+msgid "Preparing... ########################################### [100%]"
+msgstr ""
+
+msgid "package gnorpm-0.9-1 is already installed"
+msgstr ""
+
+msgid "The rpmrebuild package can be installed. (We know this since the rpm command did not issue an error about this package.) But because it was on the same command line as the gnorpm package, the transaction failed. No packages were installed."
+msgstr ""
+
+msgid "To check that the rpmrebuild package was not installed (that is, to check that the transaction worked as expected), you can use the rpm –q command to see if the rpmrebuild package was installed or not. To do so, use a command like the following:"
+msgstr ""
+
+msgid "# rpm -q rpmrebuild"
+msgstr ""
+
+msgid "package rpmrebuild is not installed"
+msgstr ""
+
+msgid "This shows that the rpmrebuild package was not installed, even though the package could be installed on its own. To check that the package could be installed, you can use the --test option, as shown following:"
+msgstr ""
+
+msgid "# rpm -i --test rpmrebuild-1.0-0.noarch.rpm"
+msgstr ""
+
+msgid "#"
+msgstr ""
+
+msgid "This command shows that the rpmrebuild package would install successfully on its own. If there were problems, the rpm command would have issued an error message."
+msgstr ""
+
+msgid "This example shows that when you try to install multiple packages with the rpm command, should any fail, the rpm command will not install any."
+msgstr ""
+
+msgid "The rpm command works similarly for removing packages and upgrading packages. When removing packages, you’ll see an error like the following if any of the packages on the command line cannot be removed:"
+msgstr ""
+
+msgid "# rpm -e setup jikes-1.17"
+msgstr ""
+
+msgid "error: Failed dependencies:"
+msgstr ""
+
+msgid "setup is needed by (installed) basesystem-8.0-1"
+msgstr ""
+
+msgid "setup &gt;= 2.0.3 is needed by (installed) initscripts-6.95-1"
+msgstr ""
+
+msgid "setup &gt;= 2.5.4-1 is needed by (installed) filesystem-2.1.6-5"
+msgstr ""
+
+msgid "setup is needed by (installed) xinetd-2.3.7-2"
+msgstr ""
+
+msgid "setup is needed by (installed) dump-0.4b28-4"
+msgstr ""
+
+msgid "The setup package could not be removed because it had several capabilities needed by other packages. You can check that the jikes package was not removed by using the rpm –q command, even though it had no failed dependencies:"
+msgstr ""
+
+msgid "# rpm -q jikes"
+msgstr ""
+
+msgid "jikes-1.17-1"
+msgstr ""
+
+msgid "This package was not removed because it appeared as part of the same command that failed, so none of the operations were performed."
+msgstr ""
+
+msgid "When upgrading, you will also see an error message if any of the package upgrades fail. For example:"
+msgstr ""
+
+msgid "# rpm -Uhv jikes-1.14-1.i386.rpm autoupdate-3.1.5-1.noarch.rpm"
+msgstr ""
+
+msgid "error: jikes-1.14-1.i386.rpm cannot be installed"
+msgstr ""
+
+msgid "You can then check that the jikes package, in this example, was not downgraded to the earlier version with the rpm –q command:"
+msgstr ""
+
+msgid "Transaction IDs"
+msgstr ""
+
+msgid "The rpm command gives every package installed a transaction ID. The transaction ID is a Unix time stamp (number of seconds since January 1, 1970). You can then perform some operations on packages based on the transaction ID."
+msgstr ""
+
+msgid "The fact that a transaction ID uses a Unix timestamp may change in the future."
+msgstr ""
+
+msgid "All the packages installed at the same time are given the same transaction ID. This means that you can perform operations on a set of packages, the packages that were installed together."
+msgstr ""
+
+msgid "But there’s also a downside to this. All the packages installed when you first installed or upgraded your Linux system are given the same transaction ID. This means you cannot selectively act on these packages using the transaction ID, because you will likely get far more packages than you want to work on."
+msgstr ""
+
+msgid "Viewing RPM Transaction IDs"
+msgstr ""
+
+msgid "To view the install transaction ID (a date code) for a given package, you can use a command like the following:"
+msgstr ""
+
+msgid "$ rpm -q --qf \"%-20{NAME} %-20{INSTALLTID}\\n\" jikes"
+msgstr ""
+
+msgid "jikes 1035589778"
+msgstr ""
+
+msgid "This command uses the --qf or --queryformat option to specify the data to return from the RPM query command. In this case, the command requests the name of the package as well as the transaction ID (TID) for installation."
+msgstr ""
+
+msgid "<xref linkend=\"ch-using-rpm-db\" /> describes the --queryformat option."
+msgstr ""
+
+msgid "There is also a transaction ID for removal, the REMOVETID. You can also query for this ID. For example, if a package hasn't been removed, you'll see an entry like the following:"
+msgstr ""
+
+msgid "$ rpm -qa --qf \"%-20{NAME} %-20{REMOVETID}\\n\" termcap"
+msgstr ""
+
+msgid "termcap (none)"
+msgstr ""
+
+msgid "Viewing the Packages Associated with a Transaction ID"
+msgstr ""
+
+msgid "Once you have a transaction ID, you can use the --tid option, short for transaction ID, to query for the package associated with a given transaction, using a command like the following:"
+msgstr ""
+
+msgid "$ rpm -q --tid 1035589778"
+msgstr ""
+
+msgid "This example uses the transaction ID that the earlier query example returned. If you installed more than one package at the same time, you will see a listing of all the packages that share the transaction ID."
+msgstr ""
+
+msgid "For example, to see many packages with one transaction ID, you can query for packages installed when you installed or upgraded your version of Linux. First, query for the transaction ID of a package you know was installed with the Linux distribution, such as setup on a Red Hat system:"
+msgstr ""
+
+msgid "$ rpm -q --qf \"%-20{NAME} %-20{INSTALLTID}\\n\" setup"
+msgstr ""
+
+msgid "setup 1033838323"
+msgstr ""
+
+msgid "Second, use this transaction ID and query for all packages with this ID, using code like the following:"
+msgstr ""
+
+msgid "$ rpm -q --tid 1033838323 | more"
+msgstr ""
+
+msgid "redhat-menus-0.26-1"
+msgstr ""
+
+msgid "glibc-2.2.93-5"
+msgstr ""
+
+msgid "cracklib-2.7-18"
+msgstr ""
+
+msgid "gdbm-1.8.0-18"
+msgstr ""
+
+msgid "gmp-4.1-4"
+msgstr ""
+
+msgid "libacl-2.0.11-2"
+msgstr ""
+
+msgid "libjpeg-6b-21"
+msgstr ""
+
+msgid "linc-0.5.2-2"
+msgstr ""
+
+msgid "pcre-3.9-5"
+msgstr ""
+
+msgid "shadow-utils-20000902-12"
+msgstr ""
+
+msgid "libtermcap-2.0.8-31"
+msgstr ""
+
+msgid "freetype-2.1.2-7"
+msgstr ""
+
+msgid "info-4.2-5"
+msgstr ""
+
+msgid "fileutils-4.1.9-11"
+msgstr ""
+
+msgid "psmisc-20.2-6"
+msgstr ""
+
+msgid "ntp-4.1.1a-9"
+msgstr ""
+
+msgid "mount-2.11r-10"
+msgstr ""
+
+msgid "cracklib-dicts-2.7-18"
+msgstr ""
+
+msgid "krb5-libs-1.2.5-6"
+msgstr ""
+
+msgid "cyrus-sasl-2.1.7-2"
+msgstr ""
+
+msgid "usermode-1.63-1"
+msgstr ""
+
+msgid "Xft-2.0-1"
+msgstr ""
+
+msgid "Be sure to replace the transaction ID shown here with the transaction ID obtained by querying your system."
+msgstr ""
+
+msgid "This example shows just a few of the packages installed when the Red Hat Linux was installed."
+msgstr ""
+
+msgid "With these options, you can find the transaction IDs for given packages and can use the rpm command to install, remove, or otherwise modify the packages that share a transaction ID."
+msgstr ""
+
+msgid "Rolling Back Transactions"
+msgstr ""
+
+msgid "The --rollback option to the rpm command allows you to roll back upgrades based on a time. Use a command like the following:"
+msgstr ""
+
+msgid "# rpm –U --rollback \"3 months ago\""
+msgstr ""
+
+msgid "The --rollback option is very limited in what it can do. The --rollback option works only for packages that have been upgraded. You cannot rollback the initial installation of a package. This is to prevent you from accidentally rolling back all packages."
+msgstr ""
+
+msgid "The --rollback option works best if you want to restore the system to a previous state, prior to performing any other RPM operations. That is, soon after you upgraded a package and decide that it isn’t working right. If you have modified the RPM system after performing the transaction you want to rollback, there may be unintended consequences if any new package depends on the packages you want to roll back. In addition, the --rollback option only works in limited situations but does not always report when these conditions are not met. The rpm command may simply do nothing, or it may remove packages you do not expect."
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "Before running the --rollback option, backup your RPM database as described in <xref linkend=\"ch-using-rpm-db\" /> ."
+msgstr ""
+
+msgid "Because of all these limitations, rollbacks do not work in all situations. In place of the --rollback option, you can use the query shortcuts introduced in <xref linkend=\"ch-using-rpm-db\" /> and find the packages you have installed recently (if that is what you want to roll back). In this case, you can use the rpm command to remove the packages you want to get rid of and reinstall the packages you want to restore."
+msgstr ""
+
+msgid "In many cases, this manual approach is safest, and you will have a clearer understanding about what was installed or upgraded on your system."
+msgstr ""
+
+msgid "Saving Old Packages"
+msgstr ""
+
+msgid "When installing, removing, or upgrading, you can use the --repackage command-line option to save a version of something like the old package to a file, making a backup of the older package contents."
+msgstr ""
+
+msgid "The package created by the --repackage option is not a complete RPM package. You can use the rpmbuild command to make it into a complete package, but by itself, it will not be a complete package. See <xref linkend=\"ch-specfiles\" />, <xref linkend=\"ch-advanced-packaging\" />, and <xref linkend=\"ch-rpmbuild\" /> for more on building packages."
+msgstr ""
+
+msgid "You can later reinstall the old files, once they have been made into a complete package. This can be quite useful if something goes wrong or the upgraded package has bugs. You can fall back to the old package if needed."
+msgstr ""
+
+msgid "By default, the --repackage option puts the old package in the /var/spool/repackage directory. Other common directories are /var/spool/up2date or /var/tmp. Your RPM configuration determines the directory used by this option."
+msgstr ""
+
+msgid "The up2date name comes from the Red Hat service for keeping a system up to date with regard to package versions."
+msgstr ""
+
+msgid "For example, say you have a package, jikes (a Java programming language compiler used in previous examples) that you want to upgrade. But you are worried that the new version may not work properly."
+msgstr ""
+
+msgid "First, check the version you have. For example:"
+msgstr ""
+
+msgid "jikes-1.14-1"
+msgstr ""
+
+msgid "This shows you are at version 1.14 of the jikes Java compiler. You can then upgrade to version 1.17 while repackaging the old version, as shown following:"
+msgstr ""
+
+msgid "# rpm -Uhv --repackage jikes-1.17-glibc2.2-1.i386.rpm"
+msgstr ""
+
+msgid "Repackaging..."
+msgstr ""
+
+msgid "1:jikes ########################################### [100%]"
+msgstr ""
+
+msgid "Upgrading..."
+msgstr ""
+
+msgid "This upgrade has kept a copy of the old package in the /var/spool/repackage directory. You can verify this with the following command:"
+msgstr ""
+
+msgid "$ ls -l /var/spool/repackage/"
+msgstr ""
+
+msgid "total 692"
+msgstr ""
+
+msgid "-rw-r--r-- 1 root root 703037 Oct 25 18:49 jikes-1.14-1.i386.rpm"
+msgstr ""
+
+msgid "You can see a version of the old package, with the old version number."
+msgstr ""
+
+msgid "This is not the same as the original package. This is not a complete package."
+msgstr ""
+
+msgid "The repackaged RPM contains a snapshot of the package’s files as they were on your hard disk, not as they were when you originally installed the package. Thus, the contents may differ if the files have changed on your hard disk. In addition, the --repackage option may not properly sign the package as the original was."
+msgstr ""
+
+msgid "In addition to the --repackage option with the rpm command, you can use a free tool called rpmrebuild to make snapshots of any installed packages."
+msgstr ""
+
+msgid "Written by Eric Gerbier, rpmrebuild allows you to create an RPM from the installed, and perhaps modified, version of a package. You don’t have to upgrade, remove, or install a new package, as you do with the --repackage option."
+msgstr ""
+
+msgid "Download rpmrebuild from http://rpmrebuild.sourceforge.net/."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Transactions allow you to install multiple packages as a group and know that either all the packages will succeed in installing or none of them will. This is very important if you have a set of interlocking packages that you need to install."
+msgstr ""
+
+msgid "All the packages you install, remove, or upgrade on the same command line are automatically made part of a transaction. The rpm command will ensure that all packages can be installed, removed, or upgraded, and will not perform the operation unless all will succeed."
+msgstr ""
+
+msgid "All packages installed or removed are given a transaction ID, which uses a Unix timestamp (the number of seconds since January 1, 1970). All packages installed or removed at the same time are given the same transaction ID. You can then query by transaction IDs to perform operations on all the packages installed together."
+msgstr ""
+
+msgid "The --repackage option tells the rpm command to make a backup RPM of the current package when you are installing or upgrading a more recent version or removing the package. By default, the backup RPM is placed in the /var/spool/repackage directory. Note that a package created this way is not exactly the same as the original package. Files may have changed on disk. In addition, packages created with the --repackage option are not real valid RPM packages. You cannot install these packages without performing extra operations to create a real RPM package from the repackaged data."
+msgstr ""
+

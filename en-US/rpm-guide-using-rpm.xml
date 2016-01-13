@@ -1,0 +1,2145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-using-rpm">
+  <title>Using RPM</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Installing and upgrading software
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Removing software
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    This chapter covers the most common uses for RPM: installing,
+    removing, and upgrading software. These are the most frequently used
+    RPM commands.
+  </para>
+  <para>
+    The RPM system includes the options you might expect, such as
+    installing a package, but there’s a lot more you can do. For
+    example, you can install packages from remote sites using HTTP or
+    FTP to download the package to install. There are quite a few other
+    <command>rpm</command> options you can use to get information and
+    feedback on installation, for example.
+  </para>
+  <sect1>
+    <title>The <command>rpm</command> Command</title>
+    <para>
+      Just about everything you do with RPM requires the
+      <command>rpm</command> command. As a nice added benefit, just
+      about everything you do with RPM requires a single invocation of
+      the <command>rpm</command> command. That means common tasks such
+      as installing and removing software can be done quickly and
+      efficiently. The basics of the <command>rpm</command> command are
+      not very hard, and you can perform the basic tasks within a few
+      minutes of reading this chapter.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Upgrading and Installing Software</title>
+    <para>
+      To install software, you need something to install. Typically,
+      this is a file packaged as RPM, using a file-name extension of
+      <filename>rpm</filename>. Of course, this isn’t required, but
+      just about every RPM package is stored in a file with a
+      <filename>rpm</filename> extension. For example, the following
+      file holds an RPM package, ready to be installed:
+    </para>
+    <para>
+      <filename>jikes-1.16-1.i386.rpm</filename>
+    </para>
+    <para>
+      This package holds an application named <command>jikes</command>
+      (a Java language compiler application). From the discussion in the
+      last two chapters, you should be able to determine the version of
+      the program this RPM holds and which release of the RPM package
+      this represents.
+    </para>
+    <para>
+      Other RPMs hold sources, the program source codes used to create
+      an application or programming library. For example, the following
+      file holds a source RPM:
+    </para>
+    <para>
+      <filename>jikes-1.16-1.src.rpm</filename>
+    </para>
+    <para>
+      The <filename>src</filename> in the package name is short for
+      source. This file-naming convention is not required, but is used
+      by just about all source code packages. (Following conventions
+      helps other administrators know what to expect.)
+    </para>
+    <note>
+      <title>Building Packages from Source RPMs</title>
+
+      <para>
+        Refer to <xref linkend="ch-creating-rpms"/> and
+        <xref linkend="ch-rpmbuild"/> for information on building RPMs
+        from source RPMs.
+      </para>
+    </note>
+    <para>
+      The <command>rpm</command> command provides three main operations
+      for upgrading and installing packages:
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term>Upgrade</term>
+        <listitem>
+          <para>
+            An upgrade operation means installing a new version of a
+            package and removing all previous versions of the same
+            package. If you have not installed a package previously, the
+            upgrade operation will install the package.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Freshen</term>
+        <listitem>
+          <para>
+            A freshen operation means to install a new version of a
+            package only if you have already installed another version
+            of the package.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Install</term>
+        <listitem>
+          <para>
+            An install operation installs a package for the first time.
+            It also, through special command-line parameters, allows you
+            to install multiple versions of a package, usually not what
+            you want. So, in the vast majority of cases, you want to run
+            the upgrade operation for all package installations.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <para>
+      The following sections cover the command-line options that apply
+      to these operations.
+    </para>
+    <sect2>
+      <title>Upgrading with the <command>rpm</command> command</title>
+      <para/>
+      <para>
+        Almost all installation steps use the <command>rpm</command>
+        command with the <option>–U</option> option, short for
+        upgrade, as introduced in <xref linkend="ch-rpm-overview"/> .
+        The basic syntax is:
+      </para>
+      <para>
+        <command>rpm</command> <option>-U</option>
+        <replaceable>package_name</replaceable>
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+<screen>
+<userinput>rpm –U jikes-1.16-1.i386.rpm</userinput>
+</screen>
+      </para>
+      <para>
+        You can also use the <option>--upgrade</option> long option in
+        place of <option>-U</option>.
+      </para>
+      <para>
+        Unless something goes wrong, you won’t see any response except
+        for the shell prompt ready for your next command. Options for
+        the <command>rpm</command> command, covered shortly, present
+        positive feedback that the package has been installed.
+      </para>
+      <para>
+        The <command>rpm</command> command may print out warnings, such
+        as the one following:
+      </para>
+<screen>
+<computeroutput>warning: pyxf86config-0.3.1-2.i386.rpm: Header V3 DSA
+signature: NOKEY, key ID 897da07a</computeroutput>
+</screen>
+      <para>
+        This warning comes from the fact that the package was signed,
+        but the key was not found. <xref linkend="ch-rpmbuild"/> covers
+        signing packages. In most cases, warnings such as this one are
+        not that serious. Errors, though, should be treated seriously.
+      </para>
+      <note>
+        <title><systemitem class="username">root</systemitem> Permissions</title>
+
+        <para>
+          Just about every package you want to upgrade or install
+          requires <systemitem class="username">root</systemitem>, or
+          super user, permissions. That’s because most Linux
+          application RPMs hold files that must be installed in a
+          protected directory such as <filename>/usr/bin/</filename>. In
+          addition, RPM requires root access to modify the RPM database.
+          Even if you could modify the system directories like
+          <filename>/usr/bin/</filename>, you must also be able to
+          modify the RPM database to successfully install or remove
+          packages.
+        </para>
+      </note>
+      <sect3>
+        <title>Checking That the Package Is Installed</title>
+        <para>
+          Use the <command>rpm –q</command> command to quickly verify
+          a package has been installed. To verify, you need to use the
+          name of the installed package, not the name of the RPM file.
+          You can also use a partial package name, such as
+          <filename>jikes</filename> in this case. For example:
+        </para>
+<screen>
+<userinput>rpm –q <replaceable>jikes</replaceable></userinput>
+</screen>
+        <para>
+          When you run this command, you should see a response like the
+          following:
+        </para>
+<screen>
+<computeroutput>jikes-1.16-1</computeroutput>
+</screen>
+        <para>
+          The response shows that the package named
+          <filename>jikes-1.16-1</filename> has been installed. This
+          package name corresponds to the RPM file used in the preceding
+          installation example.
+        </para>
+        <para/>
+        <para>
+          The <command>rpm -q</command> command just asks the RPM
+          database if the package has been installed. There may be other
+          issues with the package that this command won’t show. For
+          now, though, the <command>rpm –q</command> command verifies
+          that package has been installed.
+        </para>
+        <para>
+          If the package has been not installed, you will see a message
+          similar to the following:
+        </para>
+<screen>
+<computeroutput>package jikes is not installed</computeroutput>
+</screen>
+      </sect3>
+      <sect3>
+        <title>Getting Feedback During Installation and upgrades</title>
+        <para>
+          The <option>-h</option> option to the <command>rpm</command>
+          command prints out # signs, also called hash marks (hence the
+          <option>-h</option>). These hash marks provide some
+          confirmation that the <command>rpm</command> command is still
+          running. This is important, since large packages may take a
+          long time to install or upgrade. Run this command like the
+          following:
+        </para>
+<screen>
+<userinput>rpm -Uh jikes-1.16-1.i386.rpm</userinput>
+</screen>
+        <para>
+          You'll see this output:
+        </para>
+<screen>
+<computeroutput>########################################### [100%]
+########################################### [100%]</computeroutput>
+</screen>
+        <para>
+          The hash marks are printed one at a time as the command does
+          its work. If the package was not created properly, you may see
+          warnings like the following:
+        </para>
+<screen>
+<computeroutput>########################################### [100%]     
+warning: user cabbey does not exist - using root
+warning: user cabbey does not exist - using root
+warning: user cabbey does not exist - using root
+########################################### [100%]</computeroutput>
+</screen>
+        <note>
+          <title>Reinstalling Packages</title>
+
+          <para>
+            You can install a package more than once. The
+            <command>rpm</command> command won't complain. The upgrade
+            operation, though, will remove all other versions of a
+            package. This is one more reason to use the
+            <option>–U</option> upgrade option.
+          </para>
+        </note>
+        <para>
+          In addition to hash marks, you can get more verbose output
+          from the tight-lipped <command>rpm</command> command. The
+          <option>-v</option> option to the <command>rpm</command>
+          command tells the command to print out verbose information as
+          the command runs. Remember, though, that verbose is used in
+          the traditional Unix and Linux meaning, which is normally not
+          all that verbose. In the Unix/Linux context, verbose usually
+          means slightly more than nothing. The syntax for the command
+          follows:
+        </para>
+<screen>
+<userinput>rpm -Uhv jikes-1.16-1.i386.rpm</userinput>
+</screen>
+        <para>
+          With the <option>-v</option> command-line option, you will see
+          output more like the following:
+        </para>
+<screen>
+<computeroutput>Preparing... ########################################### [100%]
+1:jikes ########################################### [100%]</computeroutput>
+</screen>
+        <note>
+          <title>Standard Command for Package Installation</title>
+
+          <para>
+            The most common command to install a package is <command>rpm
+            -Uhv <replaceable>package_file.rpm</replaceable></command>.
+            That is, upgrade with verbose output and hashes.
+          </para>
+        </note>
+        <para>
+          To get extra verbose information, use the <option>-vv</option>
+          command-line option. Think of this as doubly verbose. Usually,
+          though, this extra information has no meaning unless you are
+          debugging an RPM package that you are building. See the
+          chapters in Part II on Creating RPMs for more on how to build
+          RPM packages.
+        </para>
+        <para>
+          A double-verbose command uses much the same syntax as shown
+          previously:
+        </para>
+<screen>
+<userinput>rpm -Uhvv jikes-1.16-1.i386.rpm</userinput>
+</screen>
+        <para>
+          With the double-verbose option, the output appears as follows:
+        </para>
+<screen>
+<computeroutput>D: ============== jikes-1.16-1.i386.rpm
+D: Expected size: 702988 = lead(96)+sigs(100)+pad(4)+data(702788)
+D: Actual size: 702988
+D: jikes-1.16-1.i386.rpm: MD5 digest: OK (2dba32192eca23eb480d1d02a9b6c022)
+D: added binary package [0]
+D: found 0 source and 1 binary packages
+D: opening db environment /var/lib/rpm/Packages joinenv
+D: opening db index /var/lib/rpm/Packages rdonly mode=0x0
+D: locked db index /var/lib/rpm/Packages
+D: ========== +++ jikes-1.16-1
+D: opening db index /var/lib/rpm/Depends create mode=0x0
+D: Requires: <command>rpm</command>lib(PayloadFilesHavePrefix) &lt;= 4.0-1 YES (rpmlib provides)
+D: opening db index /var/lib/rpm/Providename rdonly mode=0x0
+D: opening db index /var/lib/rpm/Pubkeys rdonly mode=0x0
+D: read h# 9 Header V3 DSA signature: NOKEY, key ID 897da07a
+D: Requires: ld-linux.so.2 YES (db provides)
+D: read h# 9 Header V3 DSA signature: NOKEY, key ID 897da07a
+D: Requires: libc.so.6 YES (db provides)
+D: read h# 9 Header V3 DSA signature: NOKEY, key ID 897da07a
+D: Requires: libm.so.6 YES (db provides)
+D: read h# 633 Header V3 DSA signature: NOKEY, key ID 897da07a
+D: Requires: libstdc++-libc6.2-2.so.3 YES (db provides)
+D: read h# 9 Header V3 DSA signature: NOKEY, key ID 897da07a
+D: Requires: libc.so.6(GLIBC_2.0) YES (db provides)
+D: read h# 9 Header V3 DSA signature: NOKEY, key ID 897da07a
+D: Requires: libc.so.6(GLIBC_2.1) YES (db provides)
+D: read h# 9 Header V3 DSA signature: NOKEY, key ID 897da07a
+D: Requires: libc.so.6(GLIBC_2.1.3) YES (db provides)
+D: Requires: <command>rpm</command>lib(CompressedFileNames) &lt;= 3.0.4-1 YES (rpmlib provides)
+D: closed db index /var/lib/rpm/Pubkeys
+D: closed db index /var/lib/rpm/Depends
+D: closed db index /var/lib/rpm/Providename
+D: closed db index /var/lib/rpm/Packages
+D: closed db environment /var/lib/rpm/Packages
+D: ========== recording tsort relations
+D: ========== tsorting packages (order, #predecessors, #succesors, tree, depth)D: 0 0 0 0 0 +jikes-1.16-1
+D: installing binary packages
+D: opening db environment /var/lib/rpm/Packages joinenv
+D: opening db index /var/lib/rpm/Packages create mode=0x42
+D: getting list of mounted filesystems
+D: sanity checking 1 elements
+D: opening db index /var/lib/rpm/Name create mode=0x42
+D: read h# 707 Header sanity check: OK
+D: computing 3 file fingerprints
+Preparing... D: computing file dispositions
+D: opening db index /var/lib/rpm/Basenames create mode=0x42
+########################################### [100%]
+package jikes-1.16-1 is already installed
+D: closed db index /var/lib/rpm/Basenames
+D: closed db index /var/lib/rpm/Name
+D: closed db index /var/lib/rpm/Packages
+D: closed db environment /var/lib/rpm/Packages</computeroutput>
+</screen>
+        <note>
+          <title>Short and Long Options</title>
+
+          <para>
+            Although most Unix and Linux applications use a single minus
+            sign for command-line options, such as
+            <command>rpm</command> <option>-U</option>, many programs
+            use two minus signs to indicate longer option names. For
+            example, with the <command>rpm</command> command,
+            <option>-U</option> and <option>--upgrade</option> are
+            treated the same. You can use the short option,
+            <option>-U</option>, or the long option,
+            <option>--upgrade</option>.
+          </para>
+
+          <para>
+            There are long options for virtually every short option.
+            There are also long options that are rarely used, for which
+            there are no short options.
+          </para>
+        </note>
+        <para>
+          One rarely used feedback option is <option>--percent</option>.
+          The <option>--percent</option> option prints out decimal
+          numbers that show the percentage completed as the
+          <command>rpm</command> command executes. This option is most
+          useful if you wrap the <command>rpm</command> command within
+          some other command, such as a graphical user interface created
+          from a Perl, Python, or Tcl/Tk script.
+        </para>
+        <para>
+          The basic syntax is:
+        </para>
+<screen>
+<userinput>rpm -U --percent jikes-1.16-1.i386.rpm</userinput>
+</screen>
+        <para>
+          When you run this command, you see output like the following:
+        </para>
+<screen>
+<computeroutput>%% 0.000000
+%% 2.661902
+%% 5.318614
+%% 10.632039
+%% 15.945465
+%% 18.602177
+%% 23.915603
+%% 29.229028
+%% 34.542453
+%% 39.855879
+%% 45.169304
+%% 50.482729
+%% 53.139442
+%% 55.796154
+%% 61.109580
+%% 66.423005
+%% 71.736430
+%% 74.393143
+%% 79.706568
+%% 82.363281
+%% 87.676706
+%% 90.333419
+%% 95.646844
+%% 98.303557
+%% 99.422736
+%% 99.910411
+%% 99.994892
+%% 100.000000</computeroutput>
+</screen>
+        <para>
+          These decimal numbers output by the <option>--percent</option>
+          option are really meant to be input into another program,
+          perhaps a program that shows a graphical progress meter. Each
+          number output then updates the meter.
+        </para>
+        <note>
+          <title>Percentages may be Approximate</title>
+
+          <para>
+            Don't trust the numbers too much. Claiming the package is
+            53.139442 percent installed just asks the user to be
+            skeptical that it is exactly that far.
+          </para>
+        </note>
+      </sect3>
+      <sect3>
+        <title>The Installation Task In Detail</title>
+        <para>
+          You can use the <command>rpm –U</command> command or the
+          <command>rpm –i</command> command to install a package. When
+          the <command>rpm</command> command installs a package, it goes
+          through a number of steps:
+        </para>
+        <orderedlist>
+          <listitem>
+            <para>
+              Checking the package and the files it wants to install
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              Performing preinstallation tasks
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              Uncompressing the files and placing them in the proper
+              locations
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              Performing post-processing tasks
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              Updating the RPM Database
+            </para>
+          </listitem>
+        </orderedlist>
+        <para>
+          When checking the package, <command>rpm</command> checks that
+          all the dependencies are installed. Dependencies are packages
+          required by the RPM package you want to install. For example,
+          a database-administration package for a particular database
+          may require that the database itself was already installed.
+        </para>
+        <para>
+          In addition to checking for dependencies, the
+          <command>rpm</command> command checks for conflicting
+          packages. For example, when you are trying to install an older
+          version of a package on top of a newer version, running the
+          <command>rpm</command> command alerts you to that conflict.
+          This conflict-checking goes deeper than packages, though.
+          Individual files may conflict if you are trying to install a
+          package that has an older version of a particular file.
+        </para>
+        <para>
+          After the checks, the <command>rpm</command> command executes
+          the preinstallation tasks (covered in depth in Part II). After
+          all this preparatory work, the <command>rpm</command> command
+          finally gets down to business and installs the files in the
+          package. These files are stored in compressed format
+          (compressed with <command>gzip</command> compression) inside
+          the RPM file.
+        </para>
+        <para>
+          After installing the files, there may be some post-processing
+          tasks (also covered in Part II). At the end of its run, the
+          <command>rpm</command> command updates the RPM database to
+          reflect the new package information. This update is very
+          important and allows you to track packages.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Taking a Test Drive</title>
+        <para>
+          The <option>--test</option> command-line option tells the
+          <command>rpm</command> command to test the installation or
+          upgrade process but not to install the file. For example, the
+          following command performs an upgrade or install of the
+          <filename>jikes</filename> package, but in test mode only. No
+          files will actually be installed.
+        </para>
+<screen>
+<userinput>rpm -U --test jikes-1.16-1.i386.rpm</userinput>
+</screen>
+        <para>
+          This command will print nothing if the tested installation or
+          upgrade runs smoothly. If, on the other hand, a problem
+          results from the tested installation, you will receive an
+          error message. If the package is already installed, you will
+          see a message like the following:
+        </para>
+<screen>
+<computeroutput>package jikes-1.16-1 is already installed</computeroutput>
+</screen>
+        <para>
+          If the file is corrupted, you will see output like the
+          following:
+        </para>
+<screen>
+<computeroutput>chap4.txt: not an <command>rpm</command> package (or package manifest):</computeroutput>
+</screen>
+        <para>
+          This example was run against a file that was clearly not an
+          RPM package.
+        </para>
+        <para>
+          The test option can help you determine package dependencies,
+          too.
+        </para>
+        <para>
+          You can often determine dependencies at a glance--if you know
+          something about the software you are installing. For example,
+          if you know that Ruby is a scripting language, you can guess
+          that packages starting with <filename>eruby</filename>, such
+          as <filename>eruby-devel-0.9.8-2.i386.rpm</filename>, will
+          depend on a base <filename>ruby</filename> package.
+        </para>
+        <para>
+          To show this, query for any <filename>ruby</filename> packages
+          by using a command like the following:
+        </para>
+<screen>
+<userinput>rpm -q ruby</userinput>
+</screen>
+        <para>
+          If you have not installed a <filename>ruby</filename> package,
+          you'll see a message like the following:
+        </para>
+<screen>
+<computeroutput>package ruby is not installed</computeroutput>
+</screen>
+        <note>
+          <title>Package Names</title>
+
+          <para>
+            Most packages use all lowercase names. Thus, you can expect
+            packages for the Ruby scripting language to start with
+            <filename>ruby</filename>.
+          </para>
+        </note>
+        <para>
+          Package dependencies can quickly devolve into a nightmare in
+          which one package depends upon another and that package in
+          turn depends on yet another.
+        </para>
+        <para>
+          This is where the <option>--test</option> option comes in
+          handy, since you can check that the dependencies are resolved
+          prior to trying to install. (Note that the
+          <command>rpm</command> command will check dependencies on real
+          installs as well. The <option>--test</option> option just
+          allows you to check that the installation will succeed prior
+          to trying it.) For example, if you try to install a package
+          named <filename>eruby-devel-0.9.8-2.i386.rpm</filename>, you
+          may want to run a <option>--test</option> option first:
+        </para>
+<screen>
+<userinput>rpm -U --test eruby-devel-0.9.8-2.i386.rpm</userinput>
+</screen>
+        <para>
+          You'll then see a response like the following, presuming you
+          have no <filename>ruby</filename> packages installed:
+        </para>
+<screen>
+<computeroutput>error: Failed dependencies:
+eruby-libs = 0.9.8 is needed by eruby-devel-0.9.8-2</computeroutput>
+</screen>
+        <para>
+          Now you can see that the package in the file
+          <filename>eruby-devel-0.9.8-2.i386.rpm</filename> depends on
+          another package, <filename>eruby-libs</filename> in this case.
+          In fact, this package depends on the
+          <filename>eruby-libs</filename> package having a version
+          number of 0.9.8. These packages are obviously interrelated.
+          From the name <filename>eruby-libs</filename>, you can guess
+          that the package will be in a file with a name like
+          <filename>eruby-libs-0.9.8-2.i386.rpm</filename>. (I cheated
+          and used the actual package on the Red Hat installation CDs.)
+        </para>
+        <para>
+          But you can see how the version numbers of the two files, and
+          the RPM revision levels, match up, as follows:
+        </para>
+        <para>
+          <filename>eruby-devel-0.9.8-2.i386.rpm</filename>
+        </para>
+        <para>
+          <filename>eruby-libs-0.9.8-2.i386.rpm</filename>
+        </para>
+        <para>
+          So, now you think your problems are over. You have the package
+          that <filename>eruby-devel-0.9.8-2.i386.rpm</filename> depends
+          on: <filename>eruby-libs-0.9.8-2.i386.rpm</filename>. Just to
+          be careful, though, you can test that package as well, with a
+          command like the following:
+        </para>
+<screen>
+<userinput>rpm -U --test eruby-libs-0.9.8-2.i386.rpm</userinput>
+</screen>
+        <para>
+          Alas, this output leads you farther down into dependency
+          nightmare:
+        </para>
+<screen>
+<computeroutput>error: Failed dependencies:
+ruby-libs &gt;= 1.6.4 is needed by eruby-libs-0.9.8-2
+libruby.so.1.6 is needed by eruby-libs-0.9.8-2</computeroutput>
+</screen>
+        <para>
+          This short example shows why it makes sense to test packages
+          prior to installing or upgrading them.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Installing or upgrading More Than One Package At A Time</title>
+        <para>
+          Up to now, all the examples shown have used the
+          <command>rpm</command> command to install or upgrade one
+          package at a time. You can optionally choose to install or
+          upgrade a number of packages at the same time. Just list each
+          file name on the <command>rpm</command> command line. The
+          basic syntax follows:
+        </para>
+<screen>
+<userinput>rpm -U package1.rpm <replaceable>package2.rpm .. package100.rpm</replaceable></userinput>
+</screen>
+        <para>
+          Simply list all the packages one after another. For example:
+        </para>
+<screen>
+<userinput>rpm -U aspell-en-ca-0.33.7.1-16.i386.rpm aspell-en-gb-0.33.7.1-16.i386.rpm</userinput>
+</screen>
+        <para>
+          This command installs two packages, the
+          <filename>aspell</filename> packages for Canadian and British
+          English, respectively.
+        </para>
+        <para>
+          The <option>--noorder</option> option tells the
+          <command>rpm</command> command not to reorder the packages you
+          are trying to install. Usually, the <command>rpm</command>
+          command will reorder the list of packages in the best order
+          for handling the dependencies. This option really only comes
+          into play when you are installing more than one package where
+          the packages depend on each other. In most cases, you do not
+          want to use this option, since this may mean that packages
+          fail to properly install because necessary packages are not
+          already installed.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Installing in Different Directories</title>
+        <para>
+          The <option>--prefix</option> and <option>--relocate</option>
+          options should make the <command>rpm</command> command
+          relocate a package to a new location. Not all packages allow
+          relocations, though. The basic format of the command with the
+          <option>--prefix</option> option is:
+        </para>
+<screen>
+<userinput>rpm -U --prefix <replaceable>/new/directory package.rpm</replaceable></userinput>
+</screen>
+        <para>
+          With the <option>--relocate</option> option, the command
+          format is:
+        </para>
+<screen>
+<userinput>rpm -i --relocate <replaceable>/old/directory=/new/directory package.rpm</replaceable></userinput>
+</screen>
+        <para>
+          You can also use the <option>--root</option> option to specify
+          a different directory for the <command>rpm</command> command
+          to assume is the system's root, or <filename>/</filename>,
+          directory. This causes the <command>rpm</command> command to
+          install files under the new root, instead of in system
+          locations under <filename>/</filename>. This option is most
+          useful for testing the installation of a complete system under
+          a test directory. The command should use the following format:
+        </para>
+<screen>
+<userinput>rpm -U --root /tmp --dbpath /var/lib/rpm jikes-1.16-1.i386.rpm</userinput>
+</screen>
+        <para>
+          The <option>--root</option> option tells the
+          <command>rpm</command> command that the root for this install
+          is in <filename>/tmp/</filename>. Installs with the
+          <option>--root</option> option take place within a
+          <command>chroot()</command> environment. This is often useful
+          for setting up a test environment.
+        </para>
+        <para>
+          The <option>--dbpath</option> option tells the
+          <command>rpm</command> command that the RPM database is
+          located in the normal location,
+          <filename>/var/lib/rpm/</filename>.
+        </para>
+        <para>
+          Using the <option>--dbpath</option> and
+          <option>--root</option> options will give you problems unless
+          you have installed all the dependencies in the same virtual
+          root directory. This includes all the standard Linux C
+          libraries. For example, if you just run the example command,
+          you'll see error output like the following:
+        </para>
+<screen>
+<computeroutput>error: Failed dependencies:
+ld-linux.so.2 is needed by jikes-1.16-1
+libc.so.6 is needed by jikes-1.16-1
+libm.so.6 is needed by jikes-1.16-1
+libstdc++-libc6.2-2.so.3 is needed by jikes-1.16-1
+libc.so.6(GLIBC_2.0) is needed by jikes-1.16-1
+libc.so.6(GLIBC_2.1) is needed by jikes-1.16-1
+libc.so.6(GLIBC_2.1.3) is needed by jikes-1.16-1</computeroutput>
+</screen>
+        <para>
+          You can use the <option>--badreloc</option> option with the
+          <option>--relocate</option> option to permit relocations on
+          all files in the package. Usually, only those paths to files
+          that are listed as relocatable are supported by the
+          <option>--relocate</option> option.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Forcing the Issue</title>
+        <para>
+          A number of <command>rpm</command> options cause the
+          <command>rpm</command> command to complain about problems and,
+          in general, fail to install your package. You can use a number
+          of options to run roughshod over the RPM and get it to do what
+          you want.
+        </para>
+        <para>
+          The <option>--replacepkgs</option> option tells the
+          <command>rpm</command> command to replace, or reinstall,
+          packages it may have already installed.
+        </para>
+        <para>
+          The <option>--replacefiles</option> option tells the
+          <command>rpm</command> command to overwrite files owned by a
+          another package.
+        </para>
+        <para>
+          The <option>--justdb</option> option tells the
+          <command>rpm</command> command to update the RPM database, not
+          to install the files. You will need to be logged in as the
+          root user to modify the RPM database.
+        </para>
+        <para>
+          The <option>--nosuggest</option> option tells the
+          <command>rpm</command> command to skip any suggestions for
+          packages that may fill in missing dependencies. You almost
+          never want to use this option.
+        </para>
+        <para>
+          The <option>--excludepath</option> option tells the
+          <command>rpm</command> command to exclude all files that start
+          with the given path. For example:
+        </para>
+<screen>
+<userinput>rpm -U --excludepath /usr/lib eruby-devel-0.9.8-2.i386.rpm</userinput>
+</screen>
+        <para>
+          This command installs or upgrades all the files in the
+          package, except for those files that would be placed in a
+          directory starting with <filename>/usr/lib/</filename>.
+        </para>
+        <para>
+          The <option>--allfiles</option> option tells the
+          <command>rpm</command> command to install or upgrade all files
+          in the package, regardless of whether the files exist or not
+          on your hard disk.
+        </para>
+        <para>
+          The <option>--oldpackage</option> tells the
+          <command>rpm</command> command to allow you to install an
+          older version of a package on top of a more recent one. You
+          don't usually want to do this, but you may need to under the
+          following circumstances:
+        </para>
+        <orderedlist>
+          <listitem>
+            <para>
+              If the more recent package has some bug or security
+              vulnerability and you need to downgrade to a former
+              version.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              If the more recent package won't work with some other
+              package that depends on a particular former version of a
+              package.
+            </para>
+          </listitem>
+        </orderedlist>
+        <para>
+          The latter case is very common if you upgrade your system in a
+          piecemeal fashion. If a low-level library changes, it may take
+          a while for all the packages that depend on the low-level
+          library to get updated to use the latest version.
+        </para>
+        <para>
+          Note that when you purchase an upgraded version of Linux, such
+          as Red Hat Linux, all the packages with the product should be properly
+          aligned with each other as to versions. This alignment problem
+          is an issue that the Linux vendors, such as Red Hat, need to take
+          care of. The main problems occur when you need packages beyond
+          those offered with your Linux distribution.
+        </para>
+        <para>
+          To combine some of these options, you can use
+          <option>--force</option>, which tells the
+          <command>rpm</command> command to turn on the
+          <option>--replacepkgs</option>,
+          <option>--replacefiles</option>, and
+          <option>--oldpackage</option> modes.
+        </para>
+        <para>
+          The <option>--nodeps</option> command-line option tells the
+          <command>rpm</command> command to skip the dependencies check
+          and install anyway.
+        </para>
+        <warning>
+          <title>Avoid Forcing Package Operations</title>
+
+          <para>
+            The <command>rpm</command> command complains with good
+            reason. Unless you really, really know what you are doing,
+            don't force the issue by using these command-line options.
+          </para>
+        </warning>
+        <para>
+          Consider the <filename>eruby-devel-0.9.8-2.i386.rpm</filename>
+          from the previous example. You can force the
+          <command>rpm</command> command to install this package, even
+          though it depends on another package that in turn depends on
+          yet another. The following command will force the installation
+          of the package in the
+          <filename>eruby-devel-0.9.8-2.i386.rpm</filename> file:
+        </para>
+<screen>
+<userinput>rpm -U --nodeps eruby-devel-0.9.8-2.i386.rpm</userinput>
+</screen>
+        <para>
+          Just to be sure, you can query for the package using a command
+          like the following.
+        </para>
+<screen>
+<userinput>rpm -q eruby-devel</userinput>
+</screen>
+        <para>
+          The response should be:
+        </para>
+<screen>
+<computeroutput>eruby-devel-0.9.8-2</computeroutput>
+</screen>
+        <para>
+          The package is installed, but it likely won't work, since it
+          really does depend on other packages. These package
+          dependencies aren’t for show. You may have a valid reason to
+          force a package to get installed, but you should go back later
+          to try to resolve all the dependencies.
+        </para>
+        <para>
+          In addition to forcing the <command>rpm</command> command not
+          to do certain things, you can use the <option>--aid</option>
+          option to have the <command>rpm</command> command do something
+          nice for you. The <option>--aid</option> option tells the
+          <command>rpm</command> command to add all the packages it
+          would suggest into the set of packages to install. The
+          <command>rpm</command> command has enough information to
+          suggest a package or packages that ought to contain the
+          dependent files.
+        </para>
+        <para>
+          The <option>--aid</option> option depends on a separate
+          package that contains an RPM database with all packages
+          installed. For Red Hat Linux, this package is
+          <filename>rpmdb-redhat</filename>. This separate database,
+          built as if all packages were installed (all packages that
+          come with Red Hat Linux in this case), allows the
+          <command>rpm</command> command to search for which packages
+          would solve dependencies.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Skipping the Scripts</title>
+        <para>
+          As part of the package installation, as well as removal, the
+          RPM package may have scripts that the <command>rpm</command>
+          command should run. These include pre- and post-installation
+          scripts, as well as pre- and post-uninstallation scripts.
+          These scripts can perform options such as automatically
+          configuring the application based on the target environment.
+          For example, an installation script may try to detect whether
+          a site uses Postfix or Sendmail for transferring mail messages
+          and configure the newly-installed package accordingly.
+        </para>
+        <para>
+          In most cases, the <command>rpm</command> command will execute
+          these scripts at the proper time, unless you explicitly turn
+          the command to skip the scripts. The
+          <option>--noscripts</option> option tells the
+          <command>rpm</command> command to skip running the pre- and
+          post-installation scripts.
+        </para>
+        <para>
+          If you want, you can exercise a finer grain of control. The
+          <option>--nopre</option> option tells the
+          <command>rpm</command> command to skip any pre-installation
+          scripts. The <option>--nopost</option> option tells the
+          <command>rpm</command> command to skip any post-installation
+          scripts.
+        </para>
+        <para>
+          Similarly, the <option>--nopreun</option> option tells the
+          <command>rpm</command> command to skip any pre-uninstallation
+          scripts, and the <option>--nopostun</option> option tells the
+          <command>rpm</command> command to skip any post-uninstallation
+          scripts.
+        </para>
+        <para>
+          The <option>--noscripts</option> option is the same as turning
+          on all these options.
+        </para>
+        <para>
+          The table below summarizes these options.
+        </para>
+        <table id="tb-skipping-scripts">
+          <title>Skipping scripts</title>
+          <tgroup cols="2">
+            <colspec colnum="1" colname="Option"/>
+            <colspec colnum="2" colname="Usage"/>
+            <thead>
+              <row>
+                <entry>Option</entry>
+                <entry>Usage</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>
+                  <para>
+                    <option>--nopre</option>
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Skip pre-installation scripts.
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    <option>--nopost</option>
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Skip post-installation scripts.
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    <option>--nopreun</option>
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Skip pre-uninstallation scripts.
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    <option>--nopostun</option>
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Skip post-uninstallation scripts.
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    <option>--noscripts</option>
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Skip all the scripts; same as
+                    <option>--nopre</option>, <option>--nopost</option>,
+                    <option>--nopreun</option>, and
+                    <option>--nopostun</option>.
+                  </para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+        <para>
+          In most cases, you never want to disable these scripts. Many
+          RPMs uses these scripts to perform the final steps of the
+          installation, especially the post-installation scripts. For
+          example, the Mozilla Web browser and most network services
+          require some kind of post-processing (using a
+          post-installation script) or the packages will not be properly
+          installed.
+        </para>
+        <para>
+          In addition to pre- and post-installation scripts, the RPM
+          system supports triggers, a topic covered in detail in
+          <xref linkend="ch-advanced-packaging"/>.
+        </para>
+        <para>
+          During installation, you can tell the <command>rpm</command>
+          command not to execute all the triggers or not to execute
+          certain triggers. The <option>--notriggers</option> option
+          tells the <command>rpm</command> command to skip all triggers.
+        </para>
+        <para>
+          You can gain more fine-grained control with a further set of
+          options in place of <option>--notriggers</option>. The
+          <option>--notriggerin</option> option turns off triggers
+          during installation. The <option>--notriggerun</option> option
+          turns off uninstallation triggers, and the
+          <option>--notriggerpostun</option> option turns off the
+          post-uninstallation triggers.
+        </para>
+        <para>
+          The <option>--notriggers</option> option is the same as all
+          three, <option>--notriggerin</option>,
+          <option>--notriggerun</option>, and
+          <option>--notriggerpostun</option>.
+        </para>
+        <para>
+          The table below summarizes these options.
+        </para>
+        <table id="tb-skipping-triggers">
+          <title>Skipping Triggers</title>
+          <tgroup cols="2">
+            <colspec colnum="1" colname="Option"/>
+            <colspec colnum="2" colname="Usage"/>
+            <thead>
+              <row>
+                <entry>Option</entry>
+                <entry>Usage</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>
+                  <para>
+                    <option>--notriggerin</option>
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Skip installation triggers.
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    <option>--notriggerun</option>
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Skip uninstallation triggers.
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    <option>--notriggerpostun</option>
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Skip post-uninstallation triggers.
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    <option>--notriggers</option>
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Skip all the triggers; same as
+                    <option>--notriggerin</option>,
+                    <option>--notriggerun</option>, and
+                    <option>--notriggerpostun</option>.
+                  </para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </sect3>
+      <sect3>
+        <title>Ignorance Is Bliss</title>
+        <para>
+          The <command>rpm</command> command supports several ignore
+          options that tell the command to ignore some aspect of a
+          package it would normally complain about.
+        </para>
+        <para>
+          The <option>--ignorearch</option> option tells the
+          <command>rpm</command> command to ignore the architecture of
+          the package and install the package, even if the architecture
+          of the package and the architecture of your system do not
+          match. This is a very dangerous option. Linux runs on
+          everything from tiny wristwatches, PDAs such as the Sharp
+          Zaurus, PCs, Macintosh PCs, RISC servers, and all the way up
+          to huge supercomputers and mainframes. If you try to install a
+          binary package compiled for the ARM or PowerPC processor on an
+          Intel-architecture Linux system, the package will at best
+          fail. At worst, it may damage parts of your system.
+        </para>
+        <para>
+          Similarly, the <option>--ignoreos</option> command-line option
+          tells the <command>rpm</command> command to ignore the
+          operating system. Again, this is likely not a good idea in
+          most situations. Applications compiled for Windows generally
+          won’t run on Linux. SCO Unix systems, however, can run some
+          Linux applications, so you may have a valid reason to ignore
+          the operating system. Again, use only with extreme care.
+        </para>
+        <para>
+          The <option>--ignoresize</option> option tells the
+          <command>rpm</command> command to ignore or skip a check of
+          your hard disk to ensure it has enough space to install the
+          package.
+        </para>
+        <warning>
+          <title>Ignoring Storage Limits</title>
+
+          <para>
+            Don't use the <option>--ignoresize</option> option if you
+            have a nearly full hard disk, especially for a root, or
+            <filename>/</filename>, partition.
+          </para>
+        </warning>
+        <para>
+          The <option>--nodigest</option> option tells the
+          <command>rpm</command> command to skip the test of the digest,
+          the special value that helps verify the package correctness.
+        </para>
+        <para>
+          The <option>--nosignature</option> option tells the
+          <command>rpm</command> command to skip the test of the digest,
+          the encrypted key, that helps also verify the package
+          correctness.
+        </para>
+        <warning>
+          <title>Unsafe Options</title>
+
+          <para>
+            Use these <command>rpm</command> command-line options with
+            extreme care and only after carefully considering the
+            circumstances. Wrongful use of these options may damage your
+            operating system.
+          </para>
+        </warning>
+      </sect3>
+      <sect3>
+        <title>Documentation? What Documentation?</title>
+        <para>
+          The <option>--excludedocs</option> command-line option tells
+          the <command>rpm</command> command to ignore any files in the
+          RPM package that are marked as documentation. Considering the
+          general lack of documentation for many Linux applications, you
+          are really asking for trouble by invoking this option. If the
+          documentation takes up a lot of disk space, however, you may
+          want to avoid installing documentation files. This is about
+          the only situation in which this option makes sense.
+        </para>
+        <para>
+          In reverse of <option>--excludedocs</option>, the
+          <option>--includedocs</option> command-line parameter tells
+          the <command>rpm</command> command to install documentation.
+          This is usually the default, so you rarely need this option.
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Upgrading packages</title>
+      <para>
+        The <command>rpm</command> <option>–U</option> command works
+        for both installation of new packages and for upgrading. When
+        you get beyond simple installations, you begin to see the power
+        of the RPM system where most operations require just one
+        command. The <command>rpm -U</command> command is a very
+        powerful tool and performs some complex operations with just one
+        command. For example, the following commands show the sequence
+        for upgrading the <filename>jpilot</filename> package, which is
+        used for Palm PDA synchronization.
+      </para>
+<screen>
+<userinput># rpm -q jpilot</userinput>
+</screen>
+<screen>
+<computeroutput>jpilot-0.97-1</computeroutput>
+</screen>
+<screen>
+<userinput># rpm -U jpilot-0.99.2-8.i386.rpm
+# rpm -q jpilot</userinput>
+</screen>
+<screen>
+<computeroutput>jpilot-0.99.2-8</computeroutput>
+</screen>
+      <para>
+        Note that the old version of the <filename>jpilot</filename>
+        package is no longer installed. The <command>rpm -U</command>
+        command removed that package.
+      </para>
+      <sect3>
+        <title>Options When Upgrading</title>
+        <para>
+          You can pass more than one package name on the command line
+          when upgrading. In addition, you can use the installation and
+          upgrade options discussed previously when upgrading.
+        </para>
+        <note>
+          <title>Uninstallation Scripts</title>
+
+          <para>
+            When upgrading, the <option>--noscripts</option> option only
+            turns off the scripts from the new package. If an old
+            package is removed, the uninstallation scripts for the old
+            package still get executed.
+          </para>
+        </note>
+        <para>
+          When upgrading, you can also use the
+          <option>--repackage</option> option, which works the same as
+          when removing packages. The <option>--repackage</option>
+          option tells the <command>rpm</command> command to create a
+          package, an RPM file, from any packages it would erase. Note
+          that this option will not create a complete package. You will
+          not be able to reinstall a package created by the
+          <option>--repackage</option> option. At best, the
+          <option>--repackage</option> option provides a backup of the
+          old package, from which you could create a working package. Be
+          careful with the <option>--repackage</option> option.
+        </para>
+        <para>
+          For example, the following command shows how to upgrade a
+          package with the <option>--repackage</option> option.
+        </para>
+<screen>
+<userinput>rpm -U --repackage jpilot-0.99.2-8.i386.rpm</userinput>
+</screen>
+        <note>
+          <title>Consistent Package Names</title>
+
+          <para>
+            Upgrading and freshening depend on versions of a particular
+            package keeping the same base package name between versions.
+            For most packages this is true, but some packages violate
+            this convention. For example, the Java programming
+            developer's kit (JDK) uses the name
+            <filename>jdk-1.3.1_01.i386.rpm</filename> for the 1.3.1
+            version but changes to
+            <filename>j2sdk-1_4_0_01-fcs-linux-i386.rpm</filename> for
+            the 1.4.0 version.
+          </para>
+        </note>
+        <para>
+          Watch out for package-name changes like this.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Smart Upgrades</title>
+        <para>
+          The <command>rpm</command> command really shines in the
+          upgrade process. Not only can you upgrade a package with one
+          simple command, but the <command>rpm</command> command has
+          some built-in smarts that really help.
+        </para>
+        <para>
+          When upgrading, the <command>rpm</command> command checks each
+          file in the package. It actually compares checksums of the
+          files. An MD5 checksum is a small value computed from the data
+          in a file. Any change to a file results in a different
+          checksum value.
+        </para>
+        <para>
+          The <command>rpm</command> command compares the checksums of
+          three versions of each file: the version of the file from the
+          old package, the version of the file in the new package, and
+          the version of the file on disk.
+        </para>
+        <para>
+          The <command>rpm</command> command looks at all three versions
+          of the files to handle the common case where you may have
+          edited a configuration file on disk. This is where the
+          <command>rpm</command> command starts working with some
+          upgrade rules. Note that this special processing only applies
+          to files marked as configuration files within the RPM.
+          <xref linkend="ch-specfiles"/> covers how to mark files as
+          configuration files.
+        </para>
+        <para>
+          If the file on disk is identical to the file in the original
+          package, meaning you have not changed the file, the
+          <command>rpm</command> command simply installs the file from
+          the new version of the package on top of the old file.
+        </para>
+        <para>
+          If the original package configuration file and the new package
+          file are the same, that is, the file has not changed between
+          the package versions, but the configuration file has been
+          changed on disk, the <command>rpm</command> command leaves
+          that file alone. The <command>rpm</command> command makes the
+          assumption that if the file hasn’t changed between versions
+          of the package, and you have modified the file, chances are
+          your file will work with the new package. This takes care of
+          the common case where you have edited an application’s
+          configuration files.
+        </para>
+        <para>
+          But if the file on disk is different from the original version
+          of the file, and the file on disk is different from the new
+          version of the file, the <command>rpm</command> command
+          installs the new version of the file on top of your changed
+          version. This is because the new version of the file is known
+          to work with the new package. The <command>rpm</command>
+          command saves your work by backing up your modified
+          configuration file, renaming the file with a new
+          <filename>.rpmsave</filename> extension. The
+          <command>rpm</command> command also warns you that it is
+          backing up your modified file with a message that tells you
+          the old file name and the new file name.
+        </para>
+        <para>
+          If the RPM package uses the option
+          <command>%config(noreplace)</command> with the file, then the
+          <command>rpm</command> command will store the new file with a
+          <filename>rpm</filename>new extension if you have modified the
+          file on disk.
+        </para>
+        <para/>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Freshening up</title>
+      <para>
+        A freshen operation means to install a new version of a package
+        only if you have already installed another version of the
+        package. Thus, a freshen operation is very similar to the
+        upgrade operation except that a freshen requires you to have
+        previously installed the package, while an upgrade can install a
+        package for the first time. The basic syntax for freshening a
+        package is to use the <option>-F</option> option.
+      </para>
+<screen>
+<userinput>rpm -F <replaceable>package_name</replaceable></userinput>
+</screen>
+      <para>
+        You can also use the <option>--freshen</option> long option in
+        place of <option>-F</option>.
+      </para>
+      <para>
+        As with upgrading, the options to the <command>rpm</command>
+        command are the same, except for the <option>-F</option> or
+        <option>--freshen</option> option that indicates the operation.
+        These are the options discussed in the sections on upgrading and
+        installing software.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Installing Packages</title>
+      <para>
+        The <option>–i</option> or <option>--install</option> option
+        tells the <command>rpm</command> command to run an installation
+        operation, which, as you’d suspect, installs packages. The
+        basic syntax is:
+      </para>
+<screen>
+<userinput>rpm –i <replaceable>filename.rpm</replaceable></userinput>
+</screen>
+      <para>
+        For example:
+      </para>
+<screen>
+<userinput>rpm –i jikes-1.16-1.i386.rpm</userinput>
+</screen>
+      <warning>
+        <title>Use Upgrade, Rather Than Install</title>
+
+        <para>
+          You should normally install packages with
+          <command>rpm</command> <option>-U</option>, not
+          <command>rpm</command> <option>-i</option>. One of the main
+          reasons is that <command>rpm</command> <option>-i</option>
+          allows you to install multiple instances of the same
+          (identical) package. This is usually not what you want.
+        </para>
+      </warning>
+      <para>
+        The <command>rpm –i</command> command works with the
+        installation options discussed previously. The
+        <option>–U</option>, <option>-F</option> and
+        <option>–i</option> options all accept mostly the same
+        options, except as discussed previously.
+      </para>
+      <para/>
+    </sect2>
+    <sect2>
+      <title>Installing Over the Internet</title>
+      <para>
+        All the commands to install packages covered so far assume that
+        you have a local RPM file that you want to install. This is by
+        far the most common case, but you can also use the
+        <command>rpm</command> command to install packages available on
+        a network. With the <command>rpm</command> command, you can get
+        the packages to install by using the FTP or HTTP network
+        protocols.
+      </para>
+      <para>
+        With the File Transfer Protocol (FTP), the
+        <command>rpm</command> command connects to an FTP file server,
+        downloads the named package, and installs that package. With the
+        HyperText Transfer Protocol (HTTP) used for Web pages, the
+        <command>rpm</command> command connects to a Web server,
+        downloads the named package, and installs that package.
+      </para>
+      <warning>
+        <title>Name Spoofing</title>
+
+        <para>
+          When using either FTP or HTTP, you need to provide the name of
+          the remote server. An attack on your system can compromise the
+          system of converting server host names into network addresses,
+          thus spoofing the <command>rpm</command> command into
+          installing a malicious package from the wrong host.
+        </para>
+      </warning>
+      <sect3>
+        <title>Installing Using FTP</title>
+        <para>
+          The key to making the network protocols work with the
+          <command>rpm</command> command is that you need to create a
+          URL for the remote file name. The basic format of the command
+          follows:
+        </para>
+<screen>
+<userinput>rpm -i <replaceable>ftp://hostname/path/to/file/filename.rpm</replaceable></userinput>
+</screen>
+        <para>
+          Note the use of ftp: in the URL for the file.
+        </para>
+        <para>
+          For example, the following downloads a package from an IBM FTP
+          server.
+        </para>
+<screen>
+<userinput>rpm -i ftp://www-126.ibm.com/pub/jikes/jikes-1.16-1.src.rpm</userinput>
+</screen>
+        <para>
+          Many FTP servers require users to log in. If you do not pass a
+          user name and password on the <command>rpm</command> command
+          line, the <command>rpm</command> command will prompt you for
+          the missing data.
+        </para>
+        <para>
+          You can add a user name prior to the host name, separating the
+          user name from the host name with an at sign, @. For example:
+        </para>
+<screen>
+<userinput>rpm -i ftp://unclejoe@www-126.ibm.com/pub/jikes/jikes-1.16-1.src.rpm</userinput>
+</screen>
+        <para>
+          In this case, the user name is unclejoe.
+        </para>
+        <note>
+          <title>Credentials are Examples</title>
+
+          <para>
+            These examples do not show valid user names or passwords.
+          </para>
+        </note>
+        <para>
+          With just a user name, the <command>rpm</command> command will
+          prompt you for the password. You can also include the password
+          on the <command>rpm</command> command line. Separate the user
+          name from the password with a colon (:).
+        </para>
+        <para>
+          For example:
+        </para>
+<screen>
+<userinput>rpm -i ftp://unclejoe:workers@www-126.ibm.com/pub/jikes/jikes-1.16-1.src.rpm</userinput>
+</screen>
+        <para>
+          In this case, the user name is unclejoe and the password is
+          workers.
+        </para>
+        <para/>
+      </sect3>
+      <sect3>
+        <title>Installing Using HTTP</title>
+        <para>
+          The <command>rpm</command> command supports the HTTP protocol,
+          used by most Web servers, as well as FTP. Similar to accessing
+          a file via FTP, you need to pass the <command>rpm</command>
+          command a URL identifying the file. For example:
+        </para>
+<screen>
+<userinput>rpm –i http://ftp.redhat.com/pub/contrib/noarch/SRPMS/Squeak-sources-3-1.src.rpm</userinput>
+</screen>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Installing source RPMs</title>
+      <para>
+        Source RPMs contain the source code used to build an application
+        or programming library and the scripts used to build the
+        software into the application or library. These scripts are
+        called the recipes for building the software.
+      </para>
+      <para>
+        Source RPMs usually contain program source code. They may also
+        contain patches to program sources, scripts to build the
+        program, special files used by desktop environments, icons, and
+        other files considered to be part of the source code, such as
+        programming guides.
+      </para>
+      <note>
+        <title>Patch Files</title>
+
+        <para>
+          A patch is a file that contains just the differences between
+          one version of a file and another. The differences include the
+          actual text that has changed and enough contextual information
+          that a program can locate where the changes are to take place.
+          Usually, a patch is created with the <command>diff</command>
+          command, and the source code is patched with the
+          <command>patch</command> command.
+        </para>
+      </note>
+      <para>
+        In most cases, each binary RPM will have a corresponding source
+        RPM. This is not always true, however.
+      </para>
+      <para>
+        One source RPM may contain enough shared program code to build
+        multiple application RPMs. Furthermore, the source code is not
+        available for all packages. Commercial applications, for
+        example, rarely come with source code. In this case, obviously,
+        no source RPMs are available. Or, a source RPM for a commercial
+        application may provide no source code, but still provide a way
+        to build the resulting application. See
+        <xref linkend="ch-specfiles"/> for more on the source files and
+        options for not including the sources in a source RPM.
+      </para>
+      <sect3>
+        <title>Open-source Software</title>
+        <para>
+          Linux, and thousands of applications that run on Linux, are
+          called open-source software. That’s because the program
+          source code for Linux and these applications are available.
+        </para>
+        <para>
+          Many users feel having access to the source code is vital,
+          especially because:
+        </para>
+        <itemizedlist>
+          <listitem>
+            <para>
+              Vendors may stop supporting a package. With the sources,
+              you can conceivably maintain the packages yourself, or
+              more likely, others can take up the task and maintain
+              these crucial packages.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              Having the source code makes it easier to track down and
+              fix security vulnerabilities, although malicious users
+              also have access to the same source code.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              You can enhance and extend packages for which the program
+              sources are available.
+            </para>
+          </listitem>
+        </itemizedlist>
+        <para>
+          Linux applications are available under a variety of
+          open-source licenses. (In fact, it may seem that there are as
+          many licenses as packages.) See the site
+          <ulink url="http://www.opensource.org/licenses/"/> for
+          details.
+        </para>
+      </sect3>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Removing Software</title>
+    <para>
+      The <command>rpm</command> command is good for more than just
+      installing and upgrading software packages. Many times, you will
+      need to remove packages as well.
+    </para>
+    <para>
+      To remove a package, use the <option>-e</option> option to the
+      <command>rpm</command> command, short for erase. The basic syntax
+      follows:
+    </para>
+<screen>
+<userinput>rpm -e <replaceable>package_name</replaceable></userinput>
+</screen>
+    <note>
+      <title>Use Package Names, Not File Names</title>
+
+      <para>
+        When erasing or removing packages, use the package name, not the
+        RPM file name. If you think about this, it makes sense. You
+        don't always have the original RPM files when the time comes to
+        remove a package.
+      </para>
+    </note>
+    <para>
+      For example:
+    </para>
+<screen>
+<userinput>rpm -e jikes-1.16-1</userinput>
+</screen>
+    <para>
+      This example removes the <filename>jikes-1.16-1</filename> package
+      used in previous examples.
+    </para>
+    <note>
+      <title><systemitem class="username">root</systemitem> Access is Required</title>
+
+      <para>
+        You will need to use the
+        <systemitem class="username">root</systemitem> account, or super
+        user, to remove most packages. This is because the package files
+        themselves are protected. In addition, the RPM database is
+        protected.
+      </para>
+    </note>
+    <para>
+      This is only natural, since most RPMs are used to install
+      system-level commands and applications.
+    </para>
+    <para>
+      When removing a package, the <command>rpm</command> command first
+      checks that no other packages depend on the package you intend to
+      remove. This is very important, since you otherwise can damage
+      your Linux system by inadvertently removing packages needed by the
+      rest of the system.
+    </para>
+    <para>
+      The <command>rpm</command> command supports the
+      <option>--test</option> option for removing packages as well as
+      when installing. As with installing, the <option>--test</option>
+      option tells the <command>rpm</command> command to test to see
+      whether it can remove the given package but not to force the
+      removal.
+    </para>
+    <para>
+      For example, if you try to remove the very important-looking
+      <filename>syslinux-1.75-3</filename> package, you can use the
+      <option>--test</option> option to see if this works.
+    </para>
+    <para>
+      For example:
+    </para>
+<screen>
+<userinput>rpm -e --test syslinux-1.75-3</userinput>
+</screen>
+    <para>
+      This command will issue an error such as the following:
+    </para>
+<screen>
+<computeroutput>error: Failed dependencies:
+syslinux is needed by (installed) mkbootdisk-1.4.8-1</computeroutput>
+</screen>
+    <note>
+      <title>Alternative Option Name</title>
+
+      <para>
+        When removing packages, you can use the long option name,
+        <option>--erase</option>, in place of <option>–e</option>.
+      </para>
+    </note>
+    <sect2>
+      <title>Checking that the package has been removed</title>
+      <para>
+        As before, you can use the <command>rpm</command>
+        <option>–q</option> command to query whether a package is
+        installed. After running the <command>rpm</command>
+        <option>–e</option> command, you can run the
+        <command>rpm</command> <option>–q</option> command to check
+        whether the package has been removed. If the
+        <command>rpm</command> <option>–q</option> command shows that
+        the package is not installed, that tells you the erase operation
+        has worked.
+      </para>
+      <para>
+        For example:
+      </para>
+<screen>
+<userinput># rpm -q jikes</userinput>
+</screen>
+<screen>
+<computeroutput>jikes-1.16-1</computeroutput>
+</screen>
+<screen>
+<userinput># rpm -e jikes-1.16-1
+# rpm -q jikes</userinput>
+</screen>
+<screen>
+<userinput>package jikes is not installed</userinput>
+</screen>
+    </sect2>
+    <sect2>
+      <title>Removing multiple packages at a time</title>
+      <para>
+        You can remove multiple packages at once by listing each package
+        consecutively on the command line. For example:
+      </para>
+<screen>
+<userinput>rpm -e aspell-en-ca-0.33.7.1-16 aspell-en-gb-0.33.7.1-16</userinput>
+</screen>
+      <para>
+        This command removes the
+        <filename>aspell-en-ca-0.33.7.1-16</filename> and
+        <filename>aspell-en-gb-0.33.7.1-16</filename> packages.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Options when removing packages</title>
+      <para>
+        The <option>--allmatches</option> option tells the
+        <command>rpm</command> command to remove all packages with names
+        that match the names you pass on the command line. If you do not
+        use the <option>--allmatches</option> option, the
+        <command>rpm</command> command will issue an error if more than
+        one package matches the name or names you pass on the command
+        line.
+      </para>
+      <para>
+        The <option>--nodeps</option> option tells the
+        <command>rpm</command> command to skip the test of dependencies.
+        Use this option when you really, really, want to uninstall a
+        package.
+      </para>
+      <warning>
+        <title>Unsafe Commands</title>
+
+        <para>
+          Using any option that does not perform the full removal of the
+          package, or skips some of the checks built into the
+          <command>rpm</command> command, can result in damage to your
+          Linux system. Use these options with care.
+        </para>
+      </warning>
+      <para>
+        The <option>--repackage</option> option, described previously,
+        tells the <command>rpm</command> command to create a package, an
+        RPM file, from any packages it would erase. These packages will
+        appear in the default repackage directory, which is normally
+        <filename>/var/spool/repackage/</filename>. Check your RPM
+        settings to be sure of the directory configured on your system.
+      </para>
+      <note>
+        <title>Repackaged Files</title>
+
+        <para>
+          Packages created with the <option>--repackage</option> option
+          are not full packages. You cannot install these packages.
+        </para>
+      </note>
+      <para>
+        Similar to the options when installing or upgrading packages,
+        you can use the <option>--noscripts</option> and
+        <option>--notriggers</option> options when removing packages.
+        The <option>--noscripts</option> option tells the
+        <command>rpm</command> command not to run any uninstallation
+        scripts. You can refine this by using either
+        <option>--nopreun</option> or <option>--nopostun</option> in
+        place of the <option>--noscripts</option> option.
+      </para>
+      <para>
+        The <option>--nopreun</option> option tells the
+        <command>rpm</command> command not to run the pre-uninstallation
+        scripts. The <option>--nopostun</option> option tells the
+        <command>rpm</command> command not to run the
+        post-uninstallation scripts.
+      </para>
+      <para>
+        The <option>--notriggers</option> option works in a similar
+        fashion. The <option>--notriggers</option> option tells the
+        <command>rpm</command> command not to execute any triggers. For
+        a finer grain of control, use <option>--notriggerun</option> to
+        prevent any uninstallation triggers and
+        <option>--notriggerpostun</option> to prevent any
+        post-uninstallation triggers.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Other <command>rpm</command> Command Options</title>
+    <para>
+      Options such as <option>-v</option> (for more verbose output) work
+      with the <command>rpm</command> command for installing, removing,
+      and upgrading packages, as well as most other uses of the
+      <command>rpm</command> command.
+    </para>
+    <para>
+      Other <command>rpm</command> command options, which work with most
+      RPM actions, include <option>--quiet</option> to turn off most
+      output except for errors, and <option>--root</option>, covered
+      previously.
+    </para>
+    <para>
+      The <option>--rcfile</option> option tells the
+      <command>rpm</command> command to use one or more other files to
+      initialize the RPM system. These files tell the
+      <command>rpm</command> command the system architecture, operating
+      system, and default location of the RPM database, among a host of
+      other settings.
+    </para>
+    <note>
+      <title><filename>rc</filename> Files</title>
+
+      <para>
+        The term <filename>rc</filename> comes from Unix shells, with
+        initialization files such as <filename>.cshrc</filename> for the
+        C shell, <command>csh</command>. The term
+        <filename>rc</filename> was originally a shorthand for run
+        commands. An <filename>rc</filename> is a file of commands that
+        run when the application starts up. For example, the C shell,
+        <command>csh</command>, runs the commands in file named
+        <filename>.cshrc</filename> when the shell starts.
+      </para>
+    </note>
+    <para>
+      In most cases, the application looks in the user home directory
+      for a specific file tied to the application. For the
+      <command>rpm</command> command, this file is
+      <filename>.rpmrc</filename>. The leading period makes the file
+      hidden for most directory listings.
+    </para>
+    <para>
+      In addition to the user-level file of commands, most applications
+      supporting this mechanism have a way for site administrators to
+      customize the command for all users. For example, your system may
+      have a file named <filename>/etc/rpmrc</filename> (with no leading
+      period) that customizes the <command>rpm</command> command for all
+      users on your system. See <xref linkend="ch-customizing-rpm"/> for
+      a more in-depth look at the chain of these files.
+    </para>
+    <para>
+      The syntax for the <option>--rcfile</option> option is
+    </para>
+    <para>
+      <option>--rcfile</option> <replaceable>filename</replaceable>
+    </para>
+    <para>
+      You can also supply more than one file name. This syntax follows:
+    </para>
+    <para>
+      <option>--rcfile</option>
+      <replaceable>filename1:filename2:filename3</replaceable>
+    </para>
+    <para>
+      Separate each file name with a colon.
+    </para>
+    <para>
+      With Red Hat Linux, the default set of initialization files are:
+    </para>
+<screen>
+<computeroutput>/usr/lib/rpm/rpmrc:/usr/lib/rpm/redhat/rpmrc:/etc/rpmrc:~/.rpmrc</computeroutput>
+</screen>
+    <note>
+      <title>Tilde (~) Denotes Home Directory</title>
+
+      <para>
+        The <filename>~/.rpmrc</filename> means to look in the user's
+        home directory for a file named <filename>rpmrc</filename>.
+      </para>
+
+      <para>
+        You can use the <option>--showrc</option> option to list all the
+        <filename>rc</filename> settings.
+      </para>
+    </note>
+    <note>
+      <title>The <option>--showrc</option> Option</title>
+
+      <para>
+        See <xref linkend="ch-customizing-rpm"/> for more on the
+        <option>--showrc</option> option.
+      </para>
+    </note>
+    <para>
+      The <option>--version</option> option tells the
+      <command>rpm</command> command to print out the version number of
+      the command and then exit. For example:
+    </para>
+<screen>
+<userinput>rpm --version</userinput>
+</screen>
+    <para>
+      This command prints out a version number, like the following:
+    </para>
+<screen>
+<computeroutput>RPM version 4.1</computeroutput>
+</screen>
+    <para>
+      The <option>--dbpath</option> option, mentioned previously, tells
+      the <command>rpm</command> command to use a different RPM
+      database. This is useful when testing a complete system install,
+      where you want to change the RPM database but don't want that to
+      affect your running Linux system. In this case, you can use a
+      different RPM database and test out your changes. The basic syntax
+      for this option is:
+    </para>
+    <para>
+      <option>--dbpath</option>
+      <replaceable>directory_name</replaceable>
+    </para>
+    <para>
+      The <option>--pipe</option> option tells the
+      <command>rpm</command> command to send, or pipe, its output to
+      another program. The syntax for this option is:
+    </para>
+    <para>
+      <option>--pipe</option>
+      <replaceable>command_to_send_out_to</replaceable>
+    </para>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      This chapter covered the easy part of managing packages, the
+      common actions of installing, removing, and upgrading software.
+    </para>
+    <para>
+      The <command>rpm</command> <option>–e</option> command removes
+      packages. The <command>rpm</command> <option>–U</option> command
+      upgrades packages by installing new packages and removing old
+      versions of all the packages upgraded. RPM upgrades also work for
+      installing new packages. The <command>rpm</command>
+      <option>–F</option> command freshens packages. This command only
+      upgrades a package if an older version of the package has already
+      been installed. The <command>rpm</command> <option>–i</option>
+      command installs packages.
+    </para>
+    <para>
+      The table below summarizes the <command>rpm</command> command-line
+      options for installing, removing, and upgrading packages.
+    </para>
+    <table id="tb-rpm-command-options">
+      <title>Installing, Removing, and Upgrading with the <command>rpm</command>
+        command</title>
+      <tgroup cols="2">
+      <colspec colnum="1" colname="Command"/>
+      <colspec colnum="2" colname="Usage"/>
+        <thead>
+          <row>
+            <entry>Command</entry>
+            <entry>Usage</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>
+              <para>
+                <command>rpm –i <replaceable>install_options
+                package_files</replaceable></command>
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Install packages.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                <command>rpm –e <replaceable>remove_options
+                packages</replaceable></command>
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Erase, remove, packages.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                <command>rpm –U <replaceable>install_options
+                package_files</replaceable></command>
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Upgrade or install packages. Use this option for
+                installations.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                <command>rpm –Uvh <replaceable>install_options
+                package_files</replaceable></command>
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Upgrade or install packages with extra output. This is
+                the recommended command to install packages.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                <command>rpm –F <replaceable>install_options
+                package_files</replaceable></command>
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Freshen packages.
+              </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <para>
+      Unfortunately, modern system management gets more complex than
+      that. The next chapter delves into package dependencies and the
+      nightmare you can get into when one package depends on another
+      that then depends on another, ad infinitum.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

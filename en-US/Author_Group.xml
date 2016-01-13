@@ -1,0 +1,20 @@
+<?xml version='1.0'?>
+<!DOCTYPE authorgroup PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+
+<authorgroup>
+	<author>
+		<firstname>Eric</firstname>
+		<surname>Foster-Johnson</surname>
+	</author>
+	<author>
+		<firstname>Stuart</firstname>
+		<surname>Ellis</surname>
+		<email>stuart@elsn.org</email>
+	</author>
+	<author>
+		<firstname>Ben</firstname>
+		<surname>Cotton</surname>
+		<email>bcotton@fedoraproject.org</email>
+	</author>
+</authorgroup>

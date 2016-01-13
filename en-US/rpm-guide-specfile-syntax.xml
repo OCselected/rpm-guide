@@ -1,0 +1,887 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-specfile-syntax">
+  <title>Spec File Syntax</title>
+  <para>
+    This appendix covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        The package information tags
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Build sections
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    The RPM spec file is divided into two main parts: the package
+    information tags, such as the name of the package, and the build
+    sections, such as the commands to compile the software.
+  </para>
+  <para>
+    The following sections summarize the spec file syntax.
+  </para>
+  <sect1>
+    <title>Package Information Tags</title>
+    <para>
+      The package information tags contain most of the header tags that
+      you can query with the rpm command. First and foremost, this
+      includes a name.
+    </para>
+    <para>
+      The name-epoch-version-release tags, which form the NEVR used to
+      identify packages, should all appear in your spec file, although
+      you can skip the Epoch tag.
+    </para>
+    <para>
+      Name: name
+    </para>
+    <para>
+      # Epoch: 1
+    </para>
+    <para>
+      Version: version_number
+    </para>
+    <para>
+      Release: package_release_number
+    </para>
+    <para>
+      The optional Epoch tag provides an ordering for the version
+      numbers (replacing the deprecated Serial tag). Use this tag if RPM
+      cannot figure out the ordering of which release comes after
+      another.
+    </para>
+    <para>
+      Epoch: 42
+    </para>
+    <para>
+      A number of tags allow you to define who made the package and
+      under what conditions has the package been released:
+    </para>
+    <para>
+      Vendor: name_of_vendor
+    </para>
+    <para>
+      URL: URL_to_package_home
+    </para>
+    <para>
+      Copyright: package_copyright_message
+    </para>
+    <para>
+      Distribution: Linux_or_product_distribution
+    </para>
+    <para>
+      Packager: John Q. Smith &lt;john.smith@somecompany.yow&gt;
+    </para>
+    <para>
+      Group: group_for_categorizing_package
+    </para>
+    <para>
+      Use the Group tag to help users categorize your package.
+    </para>
+    <para>
+      The Icon tag allows you to provide a desktop icon for the package:
+    </para>
+    <para>
+      Icon: filename.xpm
+    </para>
+    <para>
+      A one-line summary is essential to tell users what your package is
+      for:
+    </para>
+    <para>
+      Summary: one_line_description_of_package
+    </para>
+    <para>
+      You should also include a longer description section, marked by
+      %description:
+    </para>
+    <para>
+      %description
+    </para>
+    <para>
+      Tcsh is an enhanced but completely compatible version of csh, the
+      C
+    </para>
+    <para>
+      shell. Tcsh is a command language interpreter which can be used
+      both
+    </para>
+    <para>
+      as an interactive login shell and as a shell script command
+      processor.
+    </para>
+    <para>
+      Tcsh includes a command line editor, programmable word completion,
+    </para>
+    <para>
+      spelling correction, a history mechanism, job control and a C
+      language
+    </para>
+    <para>
+      like syntax.
+    </para>
+    <para>
+      In the description section, blank lines indicate paragraphs. Lines
+      that start with a space are not formatted.
+    </para>
+    <sect2>
+      <title>Comments</title>
+      <para>
+        To help document your work, you can include comments (to
+        yourself and others reading the spec file). Any line starting
+        with a hash character, #, holds a comment. RPM will ignore
+        comments.
+      </para>
+      <para>
+        # This is a comment.
+      </para>
+      <para>
+        In spec files, comments are used mostly to help explain your
+        syntax choices to yourself should you view the spec file later.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        Avoid percent signs, %, in comments, which may get interpreted
+        as RPM macros. See <xref linkend="ch-specfiles"/>  for details.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Build settings</title>
+      <para>
+        The BuildArchitectures tag names the architectures that a binary
+        RPM will run on. See <xref linkend="ch-customizing-rpm"/>  for a description of the
+        architecture settings. A special value of noarch indicates a
+        package that is not dependent on a particular architecture, such
+        as a Perl or Python script.
+      </para>
+      <para>
+        The BuildPreReq tag lists any prerequisites for building. For
+        example:
+      </para>
+      <para>
+        BuildPreReq: ncurses-devel
+      </para>
+      <para>
+        The Buildroot tag names the temporary directory in which to
+        build the package. For example:
+      </para>
+      <para>
+        Buildroot: %{_tmppath}/%{name}-root
+      </para>
+    </sect2>
+    <sect2>
+      <title>Dependency tags</title>
+      <para>
+        Dependency tags define all the dependencies for the package, as
+        described in <xref linkend="ch-dependencies"/> .
+      </para>
+      <para>
+        For each dependency, you can specify a capability name alone.
+        For example:
+      </para>
+      <para>
+        Provides: capability_name
+      </para>
+      <para>
+        You can also provide a particular version number or indicate
+        that your package has a dependency on a version larger or
+        smaller than a given number. For example:
+      </para>
+      <para>
+        Requires: capability_name &gt;= version_number
+      </para>
+      <para>
+        Requires: capability_name &lt;= version_number
+      </para>
+      <para>
+        Requires: capability_name &gt; version_number
+      </para>
+      <para>
+        Requires: capability_name &lt; version_number
+      </para>
+      <para>
+        Requires: capability_name == version_number
+      </para>
+      <para>
+        Requires: capability_name = version_number
+      </para>
+      <para>
+        The == and = act the same for dependencies. Both check for a
+        version equal to the given number. You can provide multiple
+        items, separated by commas. For example:
+      </para>
+      <para>
+        Requires: python &gt;= 1.3, perl
+      </para>
+      <para>
+        For add-on modules for interpreters, especially Perl, you can
+        use the following syntax to define capabilities:
+      </para>
+      <para>
+        Provides: perl(MIME-Base64)
+      </para>
+      <para>
+        This example provides the MIME-Base64 add-on Perl module.
+      </para>
+      <para>
+        You can also use or to specify more than one possibility. For
+        example:
+      </para>
+      <para>
+        perl(IO-Wrap) == 4.5 or perl(IO-Wrap)-4.5
+      </para>
+      <para>
+        The Provides, Requires, Obsoletes, and Conflicts dependency tags
+        all work the same for capability names and version numbers.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        You can also specify BuildRequires tags for capabilities
+        necessary to build the package, not to install it. A
+        BuildConflicts tag names capabilities that conflict for
+        building, such as a particular version of the gcc C compiler.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Source files</title>
+      <para>
+        The source and patch tags identify the source files used to
+        build the binary package. The patch tags identify any patches
+        used to modify the sources.
+      </para>
+      <para>
+        If you have more than one of a particular kind of tag, append a
+        number. For example:
+      </para>
+      <para>
+        Source0:
+        ftp://ftp.uk.linux.org/pub/linux/telnet-%{telnet_version}.tar.gz
+      </para>
+      <para>
+        Source2: telnet-client.tar.gz
+      </para>
+      <para>
+        Source3: telnet-xinetd
+      </para>
+      <para>
+        Source4: telnet.wmconfig
+      </para>
+      <para>
+        Patch1: telnet-client-cvs.patch
+      </para>
+      <para>
+        Patch5: telnetd-0.17.diff
+      </para>
+      <para>
+        Patch6: telnet-0.17-env.patch
+      </para>
+      <para>
+        Patch7: telnet-0.17-issue.patch
+      </para>
+      <para>
+        Patch8: telnet-0.17-sa-01-49.patch
+      </para>
+      <para>
+        Patch9: telnet-0.17-env-5x.patch
+      </para>
+      <para>
+        Patch10: telnet-0.17-pek.patch
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Macros</title>
+    <para>
+      You can define macros in your spec files to help control how the
+      package gets built. The following section describes these macros.
+    </para>
+    <sect2>
+      <title>Variable definition macros</title>
+      <para>
+        The %define macro allows you to define new macros from within
+        your spec file. A common usage is to define top-level
+        directories with %define macros at the top of a spec file and
+        then reference these directories throughout the file. For
+        example:
+      </para>
+      <para>
+        %define_bindir/bin
+      </para>
+      <para>
+        This allows you to change the setting in one place, which is
+        very handy for directory paths used throughout your spec files.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See the section on Defining Macros in Spec Files in <xref linkend="ch-specfile-syntax"/> 
+        for more on this subject.
+      </para>
+      <para>
+        You can use this syntax for other things that may commonly
+        change, such as version numbers. For example:
+      </para>
+      <para>
+        %define major 2
+      </para>
+      <para>
+        %define minor 2
+      </para>
+      <para>
+        %define patchlevel 7
+      </para>
+      <para>
+        Version: %{major}.%{minor}.%{patchlevel}
+      </para>
+      <para>
+        Table B-1 lists more special macros used within spec files.
+      </para>
+      <para>
+        Table B-1 Special spec file macros
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Macro
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %dump
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Prints out macro values
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{echo:message}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Prints message to stderr
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{error:message}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Prints message to stderr and returns BADSPEC
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{expand:expression}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Like eval, expands expression
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{F:file_exp}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Expands file_exp to a file name
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %global name value
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Defines a global macro
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{P:patch_exp}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Expands patch_exp to a patch file name
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{S:source_exp}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Expands source_exp to a source file name
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %trace
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Toggles the printing of debugging information
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{uncompress:filename}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Tests if file filename is compressed. If so,
+                  uncompresses and includes in the given context. If not
+                  compressed, calls cat to include file in given
+                  context.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %undefine macro
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Undefines the given macro
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  %{warn:message}
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Prints message to stderr
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </sect2>
+    <sect2>
+      <title>Conditional macros</title>
+      <para>
+        You can use a special syntax to test for the existence of
+        macros. For example:
+      </para>
+      <para>
+        %{?macro_to_test: expression}
+      </para>
+      <para>
+        This syntax tells RPM to expand the expression if macro_to_test
+        exists, otherwise ignore. A leading exclamation point, !, tests
+        for the non-existence of a macro:
+      </para>
+      <para>
+        %{!?macro_to_test: expression}
+      </para>
+      <para>
+        In this example, if the macro_to_test macro does not exist, then
+        expand the expression.
+      </para>
+      <para>
+        The %if macro performs an if test much like scripting languages.
+        For example:
+      </para>
+      <para>
+        %if %{old_5x}
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para>
+        A %else allows you to specify what to do if the test is not
+        successful. For example:
+      </para>
+      <para>
+        %if %{old_5x}
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %else
+      </para>
+      <para>
+        %define b6x 1
+      </para>
+      <para>
+        %undefine b5x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para>
+        Again, use an exclamation point to negate the test. For example:
+      </para>
+      <para>
+        %if ! %{old_5x}
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para>
+        You can use a &amp;&amp; for an and test. For example:
+      </para>
+      <para>
+        %if %{old_5x} &amp;&amp; %{old_6x}
+      </para>
+      <para>
+        %{error: You cannot build for .5x and .6x at the same time}
+      </para>
+      <para>
+        %quit
+      </para>
+      <para>
+        %endif
+      </para>
+    </sect2>
+    <sect2>
+      <title>Built-in macros</title>
+      <para>
+        The following macros are built into RPM and can help allow you
+        to place your files in the right locations:
+      </para>
+      <para>
+        %_prefix /usr
+      </para>
+      <para>
+        %_exec_prefix %{_prefix}
+      </para>
+      <para>
+        %_bindir %{_exec_prefix}/bin
+      </para>
+      <para>
+        %_sbindir %{_exec_prefix}/sbin
+      </para>
+      <para>
+        %_libexecdir %{_exec_prefix}/libexec
+      </para>
+      <para>
+        %_datadir %{_prefix}/share
+      </para>
+      <para>
+        %_sysconfdir %{_prefix}/etc
+      </para>
+      <para>
+        %_sharedstatedir %{_prefix}/com
+      </para>
+      <para>
+        %_localstatedir %{_prefix}/var
+      </para>
+      <para>
+        %_libdir %{_exec_prefix}/lib
+      </para>
+      <para>
+        %_includedir %{_prefix}/include
+      </para>
+      <para>
+        %_oldincludedir /usr/include
+      </para>
+      <para>
+        %_infodir %{_prefix}/info
+      </para>
+      <para>
+        %_mandir %{_prefix}/man
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Build Sections</title>
+    <para>
+      After providing information about the package, you need to define
+      the build stages, as described in <xref linkend="ch-specfiles"/> and <xref linkend="ch-rpmbuild"/>.
+    </para>
+    <sect2>
+      <title>Build preparation</title>
+      <para>
+        The build preparation section sets the stage for the build.
+        Usually this section has a %setup command. For example:
+      </para>
+      <para>
+        %prep
+      </para>
+      <para>
+        %setup -q
+      </para>
+    </sect2>
+    <sect2>
+      <title>Build</title>
+      <para>
+        The build section describes how to build the library or
+        application. In most cases, the majority of the instructions are
+        in the Makefile created by the prep section, leaving a build
+        section something like the following:
+      </para>
+      <para>
+        %build
+      </para>
+      <para>
+        %configure
+      </para>
+      <para>
+        make
+      </para>
+    </sect2>
+    <sect2>
+      <title>Installation</title>
+      <para>
+        After building, the installation section holds the commands to
+        install the library or application. For example:
+      </para>
+      <para>
+        %install
+      </para>
+      <para>
+        rm -rf %{buildroot}
+      </para>
+      <para>
+        %makeinstall
+      </para>
+    </sect2>
+    <sect2>
+      <title>Clean up</title>
+      <para>
+        The clean up section usually calls the make clean command to
+        clean up the built files. For example:
+      </para>
+      <para>
+        %clean
+      </para>
+      <para>
+        rm -rf %{buildroot}
+      </para>
+    </sect2>
+    <sect2>
+      <title>Install and uninstall scripts</title>
+      <para>
+        RPM packages can run scripts prior to installation with %pre,
+        and after installation with %post. You can also run scripts
+        prior to an uninstall with %preun and after an uninstall with
+        %postun. For example:
+      </para>
+      <para>
+        %post
+      </para>
+      <para>
+        /sbin/chkconfig --add ypbind
+      </para>
+      <para/>
+      <para>
+        %preun
+      </para>
+      <para>
+        if [ "$1" = 0 ] ; then
+      </para>
+      <para>
+        /sbin/service ypbind stop &gt; /dev/null 2&gt;&amp;1
+      </para>
+      <para>
+        /sbin/chkconfig --del ypbind
+      </para>
+      <para>
+        fi
+      </para>
+      <para>
+        exit 0
+      </para>
+      <para/>
+      <para>
+        %postun
+      </para>
+      <para>
+        if [ "$1" -ge 1 ]; then
+      </para>
+      <para>
+        /sbin/service ypbind condrestart &gt; /dev/null 2&gt;&amp;1
+      </para>
+      <para>
+        fi
+      </para>
+      <para>
+        exit 0
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>File Tags</title>
+    <para>
+      The %files tag lists the files your package should install. For
+      example:
+    </para>
+    <para>
+      %files
+    </para>
+    <para>
+      %defattr(-,root,root)
+    </para>
+    <para>
+      /usr/X11R6/bin/xtoolwait
+    </para>
+    <para>
+      /usr/X11R6/man/man1/xtoolwait.*
+    </para>
+    <para>
+      You should mark configuration and documentation files with %config
+      and %doc, respectively. For example:
+    </para>
+    <para>
+      %files
+    </para>
+    <para>
+      %defattr(-,root,root)
+    </para>
+    <para>
+      /sbin/ypbind
+    </para>
+    <para>
+      %{_mandir}/*/*
+    </para>
+    <para>
+      %config /etc/rc.d/init.d/*
+    </para>
+    <para>
+      %config /etc/yp.conf
+    </para>
+    <para>
+      %dir /var/yp
+    </para>
+    <para>
+      %dir /var/yp/binding
+    </para>
+    <para>
+      %doc README NEWS
+    </para>
+    <sect2>
+      <title>Making relocatable packages</title>
+      <para>
+        You can make a relocatable package by setting up one or more
+        Prefix tags. For example:
+      </para>
+      <para>
+        Prefix: /usr
+      </para>
+      <para>
+        Prefix: /etc
+      </para>
+      <para>
+        Each file in the %files section must then start with one of the
+        prefixes you provided. With this, installers can easily relocate
+        the package with a command like the following:
+      </para>
+      <para>
+        # rpm --relocate /etc=/usr/etc file_name.rpm
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>The Change Log</title>
+    <para>
+      The change log usually appears at the end of a spec file. It holds
+      messages for each significant change. For example:
+    </para>
+    <para>
+      %changelog
+    </para>
+    <para>
+      * Fri Jun 21 2002 Bob Marley &lt;marley@redhat.com&gt;
+    </para>
+    <para>
+      - automated rebuild
+    </para>
+    <para/>
+    <para>
+      * Tue May 08 2001 Peter Tosh &lt;tosh@redhat.com&gt; 1.3-1
+    </para>
+    <para>
+      - updated to 1.3
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

@@ -1,0 +1,1727 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-advanced-packaging">
+  <title>Advanced RPM Packaging</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Defining package dependency information
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Setting triggers
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Writing verification scripts
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Creating subpackages
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Creating relocatable packages
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Defining conditional builds
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    The previous chapter introduced the RPM spec file, which controls
+    how RPM packages are built and installed. This chapter delves into
+    advanced spec file topics such as using conditional commands and
+    making relocatable packages, starting with how to specify package
+    dependencies.
+  </para>
+  <sect1>
+    <title>Defining Package Dependencies</title>
+    <para>
+      Dependencies are one of the most important parts of the RPM
+      system. The RPM database tracks dependencies between packages to
+      better allow you to manage your system. A dependency occurs when
+      one package depends on another. The RPM system ensures that
+      dependencies are honored when upgrading, installing, or removing
+      packages. From that simple concept, RPM supports four types of
+      dependencies:
+    </para>
+    <para>
+      *Requirements, where one package requires a capability provided by
+      another
+    </para>
+    <para>
+      *Provides, a listing of the capabilities your package provides
+    </para>
+    <para>
+      *Conflicts, where one package conflicts with a capability provided
+      by another
+    </para>
+    <para>
+      *Obsoletes, where one package obsoletes capabilities provided by
+      another, usually used when a package changes name and the new
+      package obsoletes the old name
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      <xref linkend="ch-dependencies"/>  covers more on dependencies. The Obsoletes dependencies
+      are usually only used when a package is renamed, such as the
+      apache package becoming the httpd package, starting in Red Hat
+      Linux 8.0. The httpd package obsoletes the apache package.
+    </para>
+    <para>
+      You can list all of these dependencies in your spec file. The most
+      commonly used dependency information, though, is what a package
+      requires.
+    </para>
+    <sect2>
+      <title>Naming dependencies</title>
+      <para>
+        In your spec files, you can name the dependencies for your
+        package. The basic syntax is:
+      </para>
+      <para>
+        Requires: capability
+      </para>
+      <para>
+        In most cases, the capability should be the name of another
+        package. This example sets up a requires dependency. This means
+        that the package requires the given capability. Use a similar
+        syntax for the other kinds of dependencies:
+      </para>
+      <para>
+        Provides: capability
+      </para>
+      <para>
+        Obsoletes: capability
+      </para>
+      <para>
+        Conflicts: capability
+      </para>
+      <para>
+        You can put more than one capability on the dependency line. For
+        example:
+      </para>
+      <para>
+        Requires: bash perl
+      </para>
+      <para>
+        You can use spaces or commas to separate the capabilities. For
+        example:
+      </para>
+      <para>
+        Requires: bash, perl
+      </para>
+      <sect3>
+        <title>Specifying the Version of the Dependencies</title>
+        <para>
+          You can also add version information, for example:
+        </para>
+        <para>
+          Requires: bash &gt;= 2.0
+        </para>
+        <para>
+          This states that the package requires the capability bash (a
+          package) at version 2.0 or higher. The same logic applies to
+          the other types of dependencies. For example:
+        </para>
+        <para>
+          Conflicts: bash &gt;= 2.0
+        </para>
+        <para>
+          This example states that the package conflicts with all
+          versions of bash 2.0 or higher.
+        </para>
+        <para>
+          Table 11-1 lists the version comparisons you can use.
+        </para>
+        <para>
+          Table 11-1 Dependency version comparisons
+        </para>
+        <informaltable frame="all">
+          <tgroup cols="2">
+            <tbody>
+              <row>
+                <entry>
+                  <para>
+                    Comparison
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Meaning
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    package &lt; version
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    A package with a version number less than version
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    package &gt; version
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    A package with a version number greater than version
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    package &gt;= version
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    A package with a version number greater than or
+                    equal to version
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    package &lt;= version
+                  </para>
+                  <para/>
+                </entry>
+                <entry>
+                  <para>
+                    A package with a version number less than or equal
+                    to version
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    package = version
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    A package with a version number equal to version
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    package
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    A package at any version number
+                  </para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <para>
+          RPM supports an extended version number syntax for
+          comparisons. The full format follows:
+        </para>
+        <para>
+          Epoch:Version-Release
+        </para>
+        <para>
+          For example:
+        </para>
+        <para>
+          1:5.6.0-17
+        </para>
+        <para>
+          In this case, the epoch is 1, the version 5.6.0, and the
+          release is 17. In most cases, you will need just the version
+          number. The epoch allows for handling hard-to-compare version
+          numbers. The release number is almost never used. This makes
+          sense, in that it ties a dependency to a particular build of
+          the RPM package, rather than a version of the software itself.
+          This type of dependency would only be useful if you
+          drastically changed the way you build a package.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Creating Virtual CAPABILITIES</title>
+        <para>
+          Dependencies are based on capabilities, most of which are
+          packages. You can create virtual capabilities, which are just
+          names you define. For example, the sendmail package provides a
+          virtual capability named smtpdaemon. For example:
+        </para>
+        <para>
+          Provides: smtpdaemon
+        </para>
+        <para>
+          This capability refers to the general SMTP Internet service
+          for sending e-mail messages. There is no file of this name.
+          Instead, it is just a capability, arbitrary text. Other
+          packages require this capability, such as the fetchmail
+          mail-retrieval and forwarding application, and mutt, an e-mail
+          client program.
+        </para>
+        <para>
+          By using a virtual capability, other packages can provide the
+          capability, and most importantly, client applications can
+          require the capability without worrying which package provides
+          the ability to send e-mail messages. For example, the exim and
+          postfix packages, mail transport agents like sendmail, can
+          provide the same capability.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          Of course, you want to ensure that these packages specify that
+          they conflict with each other.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Naming Dependencies on Script Engines and Modules</title>
+        <para>
+          Scripting languages such as Perl and Tcl allow for add-on
+          modules. Your package may require some of these add-on
+          modules. RPM uses a special syntax with parenthesis to
+          indicate script module dependencies. For example:
+        </para>
+        <para>
+          Requires: perl(Carp) &gt;= 3.2
+        </para>
+        <para>
+          This indicates a requirement for the Carp add-on module for
+          Perl, greater than or equal to version 3.2.
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Setting prerequisites</title>
+      <para>
+        A prerequisite is similar to a require dependency, except that a
+        prerequisite must be installed prior to a given package. Specify
+        a prerequisite as follows:
+      </para>
+      <para>
+        PreReq: capability
+      </para>
+      <para>
+        You can include version-number dependencies, such as:
+      </para>
+      <para>
+        PreReq: capability &gt;= version
+      </para>
+      <para>
+        In most usage, a PreReq: acts just like Requires:, in fact, the
+        PreReq: directive exists just to allow for a manual order to
+        dependencies. RPM guarantees that the PreReq: package will be
+        installed prior to the package that names the PreReq:
+        dependency.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-packaging-guidelines"/>  covers a common problem of handling circular
+        dependencies using prerequisites.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Naming build dependencies</title>
+      <para>
+        Your package, once built, has a set of dependencies. These
+        dependencies are important for anyone installing the package.
+        But there are also dependency issues when trying to build
+        packages. Build dependencies allow you to specify what is
+        necessary to build the package. While you may think this would
+        be the same as what is needed to install a package, this is
+        normally not true. Linux distributions tend to divide up
+        software into runtime and development packages. For example, the
+        python package contains the runtime for executing scripts
+        written in Python. The python-devel package provides the ability
+        to write extensions to the Python language.
+      </para>
+      <para>
+        RPM allows you to define build-time dependencies in your spec
+        files using the following directives:
+      </para>
+      <para>
+        BuildRequires:
+      </para>
+      <para>
+        BuildConflicts:
+      </para>
+      <para>
+        BuildPreReq:
+      </para>
+      <para>
+        These directives act like Requires:, Conflicts:, and PreReq:,
+        respectively, except that the dependencies are needed to build
+        the package, not install it. For example, your package may
+        require a C compiler to build, or may need a special build tool
+        or developer library.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Generating dependencies automatically</title>
+      <para>
+        Because so many dependencies are related to shared libraries,
+        the RPM system will automatically generate provide dependencies
+        for any file in your packages that is a shared object, or .so,
+        file. RPM will also automatically generate require dependencies
+        for all files in the %files list that require shared libraries.
+        To do this, RPM uses the ldd command, which determines the
+        shared libraries used by an application.
+      </para>
+      <para>
+        In addition, the find-requires and find-provides scripts in
+        /usr/lib/rpm can determine Perl, Python and Tcl script
+        dependencies and other dependencies, such as Java package
+        dependencies, automatically. The find-requires script determines
+        requires dependencies automatically, and the find-provides
+        script determines provides dependencies.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-packaging-guidelines"/>  covers how to turn off the automatic generation of
+        dependencies.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Setting Triggers</title>
+    <para>
+      Triggers provide a way for one package to take action when the
+      installed status of another package changes. A trigger is a script
+      you define in your package’s spec file that gets run by the RPM
+      system when the status of another named package changes. If your
+      package depends in some way on another package, a trigger can
+      allow your package to deal with changes to the other package.
+    </para>
+    <para>
+      Triggers are not a replacement for package dependencies. Instead,
+      triggers are useful when you need to change a package’s
+      installation based on other packages installed on the system. For
+      example, if your package is a mail client program, your package
+      will need to have a mail transfer agent, or MTA. Linux supports a
+      number of different mail transfer agents, such as sendmail, vmail,
+      exim, qmail, and postfix.
+    </para>
+    <para>
+      Typically a system will have one mail transfer agent installed. In
+      most cases, a mail client won’t care which MTA is installed, as
+      long as one is installed. (In fact, most of these packages should
+      be marked that they conflict with one another, ensuring that a
+      given system can only have one.)
+    </para>
+    <para>
+      The %triggerin script is run when a given target package is
+      installed or upgraded. The %triggerin script is also run when your
+      package is installed or upgraded, should the target package be
+      already installed. Similarly, the %triggerun script is run if the
+      target package is removed. It is also run if your package is
+      removed and the target package is installed. The %triggerpostun
+      script is run after the target package has been removed. It is not
+      run if your package is removed.
+    </para>
+    <para>
+      To define one of these scripts, you need to list the name of the
+      target package; for example:
+    </para>
+    <para>
+      %triggerin -- tcsh
+    </para>
+    <para>
+      script commands...
+    </para>
+    <para>
+      This example sets up a trigger for the tcsh package. If the tcsh
+      package is installed or upgraded, RPM will run the script. If your
+      package is installed or upgraded and the tcsh package is presently
+      installed, RPM will also run the script.
+    </para>
+    <para>
+      Define the %triggerun script similarly:
+    </para>
+    <para>
+      %triggerun -- tcsh
+    </para>
+    <para>
+      script commands...
+    </para>
+    <para>
+      You can also use version numbers in the trigger script definition
+      to only run the script in the case of a particular version. For
+      example:
+    </para>
+    <para>
+      %triggerpostun -- vixie-cron &lt; 3.0.1-56
+    </para>
+    <para>
+      /sbin/chkconfig --del crond
+    </para>
+    <para>
+      /sbin/chkconfig --add crond
+    </para>
+    <para>
+      This example, from the vixie-cron scheduling package, runs a
+      post-uninstall trigger for the same package, but for older
+      versions. To define trigger scripts for particular versions, use
+      the same syntax as for requires dependencies for naming the
+      version number and comparisons.
+    </para>
+    <para>
+      Triggers are run through /bin/sh, the most commonly used shell
+      script engine. With the -p option, though, you can specify a
+      different script interpreter. For example, to write a Perl script,
+      define your trigger like the following:
+    </para>
+    <para>
+      %triggerpostun -p /usr/bin/perl -- vixie-cron &lt; 3.0.1-56
+    </para>
+    <para>
+      system("/sbin/chkconfig --del crond");
+    </para>
+    <para>
+      system("/sbin/chkconfig --add crond");
+    </para>
+    <para>
+      With subpackages, defined following, you can use a -n option to
+      tie the trigger script to a subpackage. For example:
+    </para>
+    <para>
+      %triggerpostun -n subpackage_name -- vixie-cron &lt; 3.0.1-56
+    </para>
+    <para>
+      /sbin/chkconfig --del crond
+    </para>
+    <para>
+      /sbin/chkconfig --add crond
+    </para>
+    <para>
+      Inside your trigger scripts, $1, the first command-line argument,
+      holds the number of instances of your package that will remain
+      after the operation has completed. The second argument, $2, holds
+      the number of instances of the target package that will remain
+      after the operation. Thus, if $2 is 0, the target package will be
+      removed.
+    </para>
+    <para>
+      The anonftp package, mentioned in <xref linkend="ch-dependencies"/> , has a lot of
+      triggers. Many of these set up a number of commands to be locally
+      available to the anonftp package. This networking package is also
+      closely tied to the version of the C library, glibc, as shown in
+      Listing 11-1
+    </para>
+    <para>
+      Listing 11-1: Anonftp package trigger scripts.
+    </para>
+    <para>
+      %triggerin -- glibc
+    </para>
+    <para>
+      copy() { file="`ls --sort=time $1 |head -n 1`"; ln -f "$file" "$2"
+      2&gt;/dev/null |
+    </para>
+    <para>
+      | cp -df "$file" "$2"; }
+    </para>
+    <para>
+      # Kill off old versions
+    </para>
+    <para>
+      rm -f /var/ftp/lib/ld-* /var/ftp/lib/libc* /var/ftp/lib/libnsl*
+      /var/ftp/lib/lib
+    </para>
+    <para>
+      nss_files* &amp;&gt;/dev/null || :
+    </para>
+    <para>
+      # Copy parts of glibc, needed by various programs in bin.
+    </para>
+    <para>
+      LIBCVER=`basename $(ls --sort=time /lib/libc-*.so |head -n 1) .so
+      |cut -f2- -d-`
+    </para>
+    <para>
+      copy /lib/ld-${LIBCVER}.so /var/ftp/lib
+    </para>
+    <para>
+      copy /lib/libc-${LIBCVER}.so /var/ftp/lib
+    </para>
+    <para>
+      copy /lib/libnsl-${LIBCVER}.so /var/ftp/lib
+    </para>
+    <para>
+      copy /lib/libnss_files-${LIBCVER}.so /var/ftp/lib
+    </para>
+    <para>
+      md5sum /var/ftp/lib/lib*-*.so /var/ftp/lib/libtermcap.so.*.*.*
+      2&gt;/dev/null &gt;/var
+    </para>
+    <para>
+      /ftp/lib/libs.md5
+    </para>
+    <para>
+      chmod 0400 /var/ftp/lib/libs.md5
+    </para>
+    <para>
+      # Use ldconfig to build symlinks and whatnot.
+    </para>
+    <para>
+      [ ! -e /var/ftp/etc/ld.so.conf ] &amp;&amp; touch
+      /var/ftp/etc/ld.so.conf
+    </para>
+    <para>
+      /sbin/ldconfig -r /var/ftp
+    </para>
+    <para/>
+    <para>
+      %triggerin -- fileutils
+    </para>
+    <para>
+      copy() { file="`ls --sort=time $1 |head -n 1`"; ln -f "$file" "$2"
+      2&gt;/dev/null |
+    </para>
+    <para>
+      | cp -df "$file" "$2"; }
+    </para>
+    <para>
+      copy /bin/ls /var/ftp/bin
+    </para>
+    <para>
+      md5sum `ls /var/ftp/bin/* |grep -v bin.md5`
+      &gt;/var/ftp/bin/bin.md5
+    </para>
+    <para>
+      chmod 0400 /var/ftp/bin/bin.md5
+    </para>
+    <para/>
+    <para>
+      %triggerin -- cpio
+    </para>
+    <para>
+      copy() { file="`ls --sort=time $1 |head -n 1`"; ln -f "$file" "$2"
+      2&gt;/dev/null |
+    </para>
+    <para>
+      | cp -df "$file" "$2"; }
+    </para>
+    <para>
+      copy /bin/cpio /var/ftp/bin
+    </para>
+    <para>
+      md5sum `ls /var/ftp/bin/* |grep -v bin.md5`
+      &gt;/var/ftp/bin/bin.md5
+    </para>
+    <para>
+      chmod 0400 /var/ftp/bin/bin.md5
+    </para>
+    <para/>
+    <para>
+      %triggerin -- tar
+    </para>
+    <para>
+      copy() { file="`ls --sort=time $1 |head -n 1`"; ln -f "$file" "$2"
+      2&gt;/dev/null |
+    </para>
+    <para>
+      | cp -df "$file" "$2"; }
+    </para>
+    <para>
+      copy /bin/tar /var/ftp/bin
+    </para>
+    <para>
+      md5sum `ls /var/ftp/bin/* |grep -v bin.md5`
+      &gt;/var/ftp/bin/bin.md5
+    </para>
+    <para>
+      chmod 0400 /var/ftp/bin/bin.md5
+    </para>
+    <para/>
+    <para>
+      %triggerin -- gzip
+    </para>
+    <para>
+      copy() { file="`ls --sort=time $1 |head -n 1`"; ln -f "$file" "$2"
+      2&gt;/dev/null |
+    </para>
+    <para>
+      | cp -df "$file" "$2"; }
+    </para>
+    <para>
+      copy /bin/gzip /var/ftp/bin
+    </para>
+    <para>
+      ln -sf gzip /var/ftp/bin/zcat
+    </para>
+    <para>
+      md5sum `ls /var/ftp/bin/* |grep -v bin.md5`
+      &gt;/var/ftp/bin/bin.md5
+    </para>
+    <para>
+      chmod 0400 /var/ftp/bin/bin.md5
+    </para>
+    <para/>
+    <para>
+      %triggerin -- libtermcap
+    </para>
+    <para>
+      copy() { file="`ls --sort=time $1 |head -n 1`"; ln -f "$file" "$2"
+      2&gt;/dev/null |
+    </para>
+    <para>
+      | cp -df "$file" "$2"; }
+    </para>
+    <para>
+      rm -f /var/ftp/lib/libtermcap.so.*.*.* &amp;&gt;/dev/null || :
+    </para>
+    <para>
+      copy '/lib/libtermcap.so.*.*.*' /var/ftp/lib
+    </para>
+    <para>
+      md5sum /var/ftp/lib/lib*-*.so /var/ftp/lib/libtermcap.so.*.*.*
+      2&gt;/dev/null &gt;/var
+    </para>
+    <para>
+      /ftp/lib/libs.md5
+    </para>
+    <para>
+      chmod 0400 /var/ftp/lib/libs.md5
+    </para>
+    <para>
+      # Use ldconfig to build symlinks and whatnot.
+    </para>
+    <para>
+      [ ! -e /var/ftp/etc/ld.so.conf ] &amp;&amp; touch
+      /var/ftp/etc/ld.so.conf
+    </para>
+    <para>
+      /sbin/ldconfig -r /var/ftp
+    </para>
+    <para/>
+    <para>
+      %triggerin -- ncompress
+    </para>
+    <para>
+      copy() { file="`ls --sort=time $1 |head -n 1`"; ln -f "$file" "$2"
+      2&gt;/dev/null |
+    </para>
+    <para>
+      | cp -df "$file" "$2"; }
+    </para>
+    <para>
+      copy /usr/bin/compress /var/ftp/bin
+    </para>
+    <para>
+      md5sum `ls /var/ftp/bin/* |grep -v bin.md5`
+      &gt;/var/ftp/bin/bin.md5
+    </para>
+    <para>
+      chmod 0400 /var/ftp/bin/bin.md5
+    </para>
+    <para/>
+    <para>
+      %triggerpostun -- anonftp 4.0
+    </para>
+    <para>
+      if [ "$2" != 1 ] ; then
+    </para>
+    <para>
+      # The user has multiple glibc packages installed. We can't read
+      the
+    </para>
+    <para>
+      # user's mind, so don't do anything.
+    </para>
+    <para>
+      exit 0
+    </para>
+    <para>
+      fi
+    </para>
+    <para>
+      copy() { file="`ls --sort=time $1 |head -n 1`"; ln -f "$file" "$2"
+      2&gt;/dev/null |
+    </para>
+    <para>
+      | cp -df "$file" "$2"; }
+    </para>
+    <para>
+      # Kill off old versions
+    </para>
+    <para>
+      rm -f /var/ftp/lib/ld-* /var/ftp/lib/libc* /var/ftp/lib/libnsl*
+      /var/ftp/lib/lib
+    </para>
+    <para>
+      nss_files* &amp;&gt;/dev/null || :
+    </para>
+    <para>
+      # Copy parts of glibc, needed by various programs in bin.
+    </para>
+    <para>
+      LIBCVER=`basename /lib/libc-*.so .so | cut -f2- -d-`
+    </para>
+    <para>
+      copy /lib/ld-${LIBCVER}.so /var/ftp/lib
+    </para>
+    <para>
+      copy /lib/libc-${LIBCVER}.so /var/ftp/lib
+    </para>
+    <para>
+      copy /lib/libnsl-${LIBCVER}.so /var/ftp/lib
+    </para>
+    <para>
+      copy /lib/libnss_files-${LIBCVER}.so /var/ftp/lib
+    </para>
+    <para>
+      copy /bin/ls /var/ftp/bin
+    </para>
+    <para>
+      copy /bin/cpio /var/ftp/bin
+    </para>
+    <para>
+      copy /bin/tar /var/ftp/bin
+    </para>
+    <para>
+      copy /bin/gzip /var/ftp/bin
+    </para>
+    <para>
+      ln -sf gzip /var/ftp/bin/zcat
+    </para>
+    <para>
+      copy /usr/bin/compress /var/ftp/bin
+    </para>
+    <para>
+      rm -f /var/ftp/lib/libtermcap.so.*.*.* &amp;&gt;/dev/null || :
+    </para>
+    <para>
+      copy '/lib/libtermcap.so.*.*.*' /var/ftp/lib
+    </para>
+    <para>
+      # Use ldconfig to build symlinks and whatnot.
+    </para>
+    <para>
+      [ ! -e /var/ftp/etc/ld.so.conf ] &amp;&amp; touch
+      /var/ftp/etc/ld.so.conf
+    </para>
+    <para>
+      /sbin/ldconfig -r /var/ftp
+    </para>
+    <para>
+      # Generate md5sums for verifyscript
+    </para>
+    <para>
+      md5sum /var/ftp/lib/lib*-*.so /var/ftp/lib/libtermcap.so.*.*.*
+      2&gt;/dev/null &gt;/var
+    </para>
+    <para>
+      /ftp/lib/libs.md5
+    </para>
+    <para>
+      chmod 0400 /var/ftp/lib/libs.md5
+    </para>
+    <para>
+      md5sum `ls /var/ftp/bin/* |grep -v bin.md5`
+      &gt;/var/ftp/bin/bin.md5
+    </para>
+    <para>
+      chmod 0400 /var/ftp/bin/bin.md5
+    </para>
+  </sect1>
+  <sect1>
+    <title>Writing Verification Scripts</title>
+    <para>
+      RPM automatically handles package verification, checking to see
+      that the proper files are installed, and testing the files
+      themselves for the proper size and other attributes. You may need
+      to do more in your package, though, to ensure everything is
+      properly set up. With RPM, you can:
+    </para>
+    <para>
+      *Control the tests used to verify each file, as described in
+      <xref linkend="ch-specfiles"/> 
+    </para>
+    <para>
+      *Create a verify script that performs other tests
+    </para>
+    <para>
+      If you need to perform some other test to verify your package,
+      such as check that a configuration file has a particular setting
+      (and that the setting is valid), you can fill in the %verifyscript
+      in the spec file. The %verifyscript acts much like the %pre or
+      %post scripts, except that the %verifyscript gets executed during
+      package verification. Fill in a %verifyscript as follows:
+    </para>
+    <para>
+      %verifyscript
+    </para>
+    <para>
+      your script commands ....
+    </para>
+    <para>
+      Common %verifyscript actions are to check for an entry in a system
+      configuration file, such as an init-time startup script or
+      /etc/shells (which lists the available shells). These are files
+      owned by other packages that may need to be properly modified for
+      a package to be properly installed. If your package has a similar
+      circumstance, write a %verifyscript. In your script, send all
+      error output to stderr.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      See <xref linkend="ch-using-rpm-db"/>  for more on package verification.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Creating Subpackages</title>
+    <para>
+      A spec file may define more than one package. This type of
+      additional package is called a subpackage. Subpackages exist to
+      handle cases where you don’t want to associate one spec file
+      with one package. Instead, you can define multiple packages within
+      the spec file, as needed. For example, you may want to build the
+      runtime and developer packages together, or the client and server
+      portions of an application using subpackages. Splitting large
+      documentation sets into separate subpackages is also common.
+    </para>
+    <para>
+      With subpackages, you get:
+    </para>
+    <para>
+      *One spec file
+    </para>
+    <para>
+      *One source RPM
+    </para>
+    <para>
+      *One set of build commands
+    </para>
+    <para>
+      *Multiple binary RPMs, one per package or subpackage
+    </para>
+    <para>
+      In most cases, subpackages are created just as a means to
+      partition the files produced by a package into separate packages.
+      For example, you will often see development libraries and header
+      files split into a separate package from the main application
+      package. Sometimes documentation is split out into a separate
+      package, or client and server applications are divided into
+      separate packages. In the end, though, this usually results in
+      shifting files into subpackages and nothing more.
+    </para>
+    <para>
+      To define a subpackage within a spec file, you start with the
+      %package directive. For example:
+    </para>
+    <para>
+      %package sub_package_name
+    </para>
+    <para>
+      By default, the name of the subpackage will be the name of the
+      package, a dash, and the subpackage name provided with the
+      %package directive. For example:
+    </para>
+    <para>
+      %package server
+    </para>
+    <para>
+      This example names a subpackage server, which is a real subpackage
+      inside the telnet package. In this case, the name for the server
+      subpackage will be telnet-server, that is, the naming format is
+      package-subpackage.
+    </para>
+    <para>
+      If you don’t want this naming format, you can use the –n
+      option to the %package directive to define an entirely new name,
+      using the following syntax:
+    </para>
+    <para>
+      %package -n new_sub_package_name
+    </para>
+    <para>
+      For example:
+    </para>
+    <para>
+      %package –n my-telnet-server
+    </para>
+    <para>
+      With the –n option, you specify the full name for the
+      subpackage. The RPM system will not prefix the name with the
+      enclosing package name.
+    </para>
+    <sect2>
+      <title>Providing information for subpackages</title>
+      <para>
+        When you define a subpackage, you need to provide as many of the
+        package information directives as you need, including at the
+        least Summary:, Group:, and %description directives. Anything
+        not specified will use the parent package’s value, such as the
+        version. Place these directives after the %package directive.
+        For example:
+      </para>
+      <para>
+        %package server
+      </para>
+      <para>
+        Requires: xinetd
+      </para>
+      <para>
+        Group: System Environment/Daemons
+      </para>
+      <para>
+        Summary: The server program for the telnet remote login
+        protocol.
+      </para>
+      <para>
+        The %description directive for subpackages requires the name of
+        the subpackage using the following syntax:
+      </para>
+      <para>
+        %description subpackage
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        %description server
+      </para>
+      <para>
+        Telnet is a popular protocol for logging into remote systems
+      </para>
+      <para>
+        over the Internet. The telnet-server package includes a telnet
+        daemon that supports remote logins into the host machine. The
+      </para>
+      <para>
+        telnet daemon is enabled by default. You may disable the telnet
+      </para>
+      <para>
+        daemon by editing /etc/xinetd.d/telnet.
+      </para>
+      <para>
+        If you used the –n option with the %package directive, you
+        need to repeat the –n option with the %description directive.
+        For example:
+      </para>
+      <para>
+        %description –n my-telnet-server
+      </para>
+      <para>
+        Telnet is a popular protocol for logging into remote systems
+      </para>
+      <para>
+        over the Internet. The telnet-server package includes a telnet
+        daemon that supports remote logins into the host machine. The
+      </para>
+      <para>
+        telnet daemon is enabled by default. You may disable the telnet
+      </para>
+      <para>
+        daemon by editing /etc/xinetd.d/telnet.
+      </para>
+      <para>
+        The same concept works for the %files section. You need a
+        separate %files section for each subpackage. For example:
+      </para>
+      <para>
+        %files server
+      </para>
+      <para>
+        %defattr(-,root,root)
+      </para>
+      <para>
+        %{_sbindir}/in.telnetd
+      </para>
+      <para>
+        %{_mandir}/man5/issue.net.5*
+      </para>
+      <para>
+        %{_mandir}/man8/in.telnetd.8*
+      </para>
+      <para>
+        %{_mandir}/man8/telnetd.8*
+      </para>
+      <para>
+        Again, if you used the –n option with the %package directive,
+        you need to repeat the –n option with the %files section. For
+        example:
+      </para>
+      <para>
+        %files –n my-telnet-server
+      </para>
+      <para>
+        %defattr(-,root,root)
+      </para>
+      <para>
+        %{_sbindir}/in.telnetd
+      </para>
+      <para>
+        %{_mandir}/man5/issue.net.5*
+      </para>
+      <para>
+        %{_mandir}/man8/in.telnetd.8*
+      </para>
+      <para>
+        %{_mandir}/man8/telnetd.8*
+      </para>
+    </sect2>
+    <sect2>
+      <title>Defining scripts for subpackages</title>
+      <para>
+        Much as you define separate %files and %description sections for
+        subpackages, you can also define install and uninstall scripts
+        for subpackages. The syntax is similar to that for the %files
+        and %description sections:
+      </para>
+      <para>
+        %pre subpackage
+      </para>
+      <para>
+        For example, Listing 11-2 shows the scripts from the VNC
+        package.
+      </para>
+      <para>
+        Listing 11-2: VNC package install and uninstall scripts.
+      </para>
+      <para>
+        %post server
+      </para>
+      <para>
+        if [ "$1" = 1 ]; then
+      </para>
+      <para>
+        /sbin/chkconfig --add vncserver
+      </para>
+      <para>
+        fi
+      </para>
+      <para/>
+      <para>
+        %preun server
+      </para>
+      <para>
+        if [ "$1" = 0 ]; then
+      </para>
+      <para>
+        /sbin/service vncserver stop &gt;/dev/null 2&gt;&amp;1
+      </para>
+      <para>
+        /sbin/chkconfig --del vncserver
+      </para>
+      <para>
+        fi
+      </para>
+      <para/>
+      <para>
+        %postun server
+      </para>
+      <para>
+        if [ "$1" -ge "1" ]; then
+      </para>
+      <para>
+        /sbin/service vncserver condrestart &gt;/dev/null 2&gt;&amp;1
+      </para>
+      <para>
+        fi
+      </para>
+    </sect2>
+    <sect2>
+      <title>Building subpackages</title>
+      <para>
+        The build sections in the spec file serve double duty. These
+        sections are used for building the main package as well as
+        subpackages. This is one reason why there are so many options on
+        the %setup macro.
+      </para>
+      <para>
+        The %setup macro allows for selectively unpacking the sources,
+        rather than the default option of unpacking all the sources. For
+        example, the following %setup macro definition gives rpmbuild
+        specific instructions for unpacking one source file:
+      </para>
+      <para>
+        %setup –D- T –a 1
+      </para>
+      <para>
+        In this example, the –D option disables the automatic deletion
+        of the directory where the sources will be unpacked. This means
+        any previous contents of this directory, perhaps for other
+        subpackages, will be left alone. The –T option disables the
+        automatic unpacking of the source files, and the –a 1 option
+        specifies to only unpack the first source file. You may need to
+        use options like these when working with subpackages. Though, in
+        most cases, subpackages are just means to partition the package
+        files into separate packages. In cases like this, you will
+        likely not need any of these special %setup options.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-specfiles"/>  covers the %setup macro and lists the available
+        options.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Creating Relocatable Packages</title>
+    <para>
+      A relocatable package allows a user to specify where to install
+      the package. For example, if you build a package for Red Hat
+      Linux, the normal directory for binary executable programs is
+      /usr/bin. Other versions of Linux, though, may place executable
+      programs into /opt/bin, for example. If your package forces the
+      use of /usr/bin, then your package won’t work on these other
+      systems.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      <xref linkend="ch-other-linuxes"/>  covers using RPM on other versions of Linux.
+    </para>
+    <para>
+      With a relocatable package, though, you allow the user to redefine
+      the top-level directories for your package, such as changing from
+      /usr/bin to /opt/bin in the previous example. Making relocatable
+      packages is generally considered a good thing, as you make the
+      user’s life easier.
+    </para>
+    <para>
+      To set up a relocatable package, you need to:
+    </para>
+    <para>
+      *Set up the prefix directives for the top-level directories
+    </para>
+    <para>
+      *Define the files under the prefix directories
+    </para>
+    <sect2>
+      <title>Setting up the prefixes</title>
+      <para>
+        The Prefix: directive names a top-level directory as a prefix
+        you can relocate to another directory. For example:
+      </para>
+      <para>
+        Prefix: /usr
+      </para>
+      <para>
+        This states that all files under /usr can be relocated to other
+        directories by simply mapping /usr to some other directory, such
+        as /opt, on the rpm command line when installing or upgrading
+        the package.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        You can define more than one Prefix: directive to list more than
+        one top-level directory.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Define the files section</title>
+      <para>
+        When you use a Prefix: directive in your spec file, all files in
+        the %files section must be under the directory named with the
+        Prefix: directive. For example, from the jikes compiler package:
+      </para>
+      <para>
+        Prefix: /usr
+      </para>
+      <para/>
+      <para>
+        ...
+      </para>
+      <para/>
+      <para>
+        %files
+      </para>
+      <para>
+        %defattr(-,root,root)
+      </para>
+      <para>
+        /usr/bin/jikes
+      </para>
+      <para>
+        %doc /usr/doc/jikes-%{version}/license.htm
+      </para>
+      <para>
+        %doc /usr/man/man1/jikes.1*
+      </para>
+      <para>
+        In this example, all the files are under the /usr directory. All
+        files in the %files section must be located under one of the
+        Prefix: directories. If you have more than one top-level
+        directory, such as /usr and /etc, define more than one Prefix:
+        directive. For example:
+      </para>
+      <para>
+        Prefix: /usr
+      </para>
+      <para>
+        Prefix: /etc
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-using-rpm"/>  covers how to install or upgrade packages into
+        different directories using the --relocate and --prefix options.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Problems creating relocatable packages</title>
+      <para>
+        Not all packages work well as relocatable packages. Some
+        packages have files that simply must go into a certain location
+        and are therefore not relocatable. Some packages have programs
+        that are hard-coded to look for files in a particular location
+        and therefore cannot be relocated elsewhere. Other packages have
+        symbolic links that also may not be relocatable. Furthermore,
+        your package may provide software that is referenced by other
+        packages, in the known directories. Relocating such a package
+        will disable other software packages, packages you may not even
+        know about.
+      </para>
+      <para>
+        If your packages face any of these problems, chances are that
+        making the package relocatable is not a good idea.
+      </para>
+      <para>
+        In addition, if you use the %doc directive with local file
+        names, remember that RPM will make a package-specific
+        documentation directory, normally under /usr/doc. For example:
+      </para>
+      <para>
+        %doc README NEWS
+      </para>
+      <para>
+        This may defeat your attempts to create a relocatable package,
+        unless you have a Prefix: directive with /usr, because the
+        normal location is under /usr/doc, and all files in the %files
+        section must start with one of the directories named with
+        Prefix: directives.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Defining Conditional Builds</title>
+    <para>
+      With the ability to define macros inside spec files, and also to
+      use macros defined elsewhere, you gain a lot of control over how
+      your package gets built. You can go further, though, and use
+      special directives to perform only certain commands based on
+      certain conditions. This adds a powerful capability to your spec
+      files, and also makes it much easier to do things like build for
+      multiple versions of Linux or other operating systems, as well as
+      handle various backwards-compatibility issues.
+    </para>
+    <para>
+      To define conditional build commands, you need to create
+      conditional constructs in your package’s spec file. In addition,
+      you need to define macros that the conditional constructs use to
+      determine whether or not to execute a set of spec file directives.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      See <xref linkend="ch-customizing-rpm"/> for more on macro file locations, and <xref linkend="ch-other-linuxes"/> and <xref linkend="ch-other-os"/> for more on using RPM on other versions of Linux and other operating systems, respectively.
+    </para>
+    <para>
+      RPM supports a number of ways to make parts of your spec file
+      enabled or disabled based on certain conditions. These include
+      conditional macros, conditional blocks, and special directives
+      based on the system architecture.
+    </para>
+    <sect2>
+      <title>Defining conditional macros</title>
+      <para>
+        You can use a special syntax to test for the existence of
+        macros. For example:
+      </para>
+      <para>
+        %{?macro_to_test: expression}
+      </para>
+      <para>
+        This syntax tells RPM to expand the expression if the macro
+        macro_to_test exists. If the macro macro_to_test does not exist,
+        nothing will be output. You can also reverse this test. A
+        leading exclamation point, !, tests for the non-existence of a
+        macro:
+      </para>
+      <para>
+        %{!?macro_to_test: expression}
+      </para>
+      <para>
+        In this example, if the macro_to_test macro does not exist, RPM
+        will expand the expression.
+      </para>
+      <para>
+        If you want, you can omit the expression and just test for the
+        existence of the macro. If it exists, RPM will use the value of
+        the macro. If the macro does not exist, RPM will use nothing.
+        For example:
+      </para>
+      <para>
+        %build
+      </para>
+      <para>
+        ./configure %{?_with_ldap}
+      </para>
+      <para>
+        make
+      </para>
+      <para>
+        In this case, if the _with_ldap macro exists, the value of that
+        macro will get passed on the command line to the configure
+        script. If the _with_ldap macro does not exist, nothing extra
+        will be passed on the command line to the configure script. This
+        is very important when creating commands to build or install
+        packages.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        Many of the macros you will test this way are set up with the
+        --with command-line parameter. See <xref linkend="ch-other-linuxes"/>  for details.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Using conditional blocks</title>
+      <para>
+        The %if macro enables all the directives up to the %endif
+        directive, if the condition is true. This is much like scripting
+        languages. For example:
+      </para>
+      <para>
+        %if %{old_5x}
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para>
+        In this case, if the %old_5x macro has a value, the test will be
+        true and all the directives inside the block will get executed.
+      </para>
+      <para>
+        A %else allows you to specify what to do if the test is not
+        successful. For example:
+      </para>
+      <para>
+        %if %{old_5x}
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %else
+      </para>
+      <para>
+        %define b6x 1
+      </para>
+      <para>
+        %undefine b5x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para>
+        In this case, if the %old_5x macro has a value, then all the
+        directives up to the %else will get executed. Otherwise, if the
+        %old_5x macro has no value, the directives from the %else to the
+        %endif will get executed.
+      </para>
+      <para>
+        Again, use an exclamation point to negate the test. For example:
+      </para>
+      <para>
+        %if ! %{old_5x}
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para>
+        You can use a &amp;&amp; for an AND test. For example:
+      </para>
+      <para>
+        %if %{old_5x} &amp;&amp; %{old_6x}
+      </para>
+      <para>
+        %{error: You cannot build for .5x and .6x at the same time}
+      </para>
+      <para>
+        %quit
+      </para>
+      <para>
+        %endif
+      </para>
+    </sect2>
+    <sect2>
+      <title>Using architecture-based conditionals</title>
+      <para>
+        In addition to the general-purpose %if conditional directive,
+        you can use special directives that test for processor
+        architecture and operating system.
+      </para>
+      <para>
+        The %ifarch directive enables all the directives up to the
+        %endif directive, if the processor architecture matches the
+        values you pass to the %ifarch directive. For example:
+      </para>
+      <para>
+        %ifarch sparc
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para>
+        This block will only get executed if the processor architecture
+        is SPARC.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-customizing-rpm"/>  covers RPM architecture and operating system names.
+      </para>
+      <para>
+        You can pass more than one architecture name, separated by
+        commas or spaces. For example:
+      </para>
+      <para>
+        %ifarch sparc alpha
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para>
+        This example tests if the processor architecture is SPARC or
+        Alpha.
+      </para>
+      <para>
+        As with the %if directive, you can also use an %else, to cover
+        all cases where the test is not true. For example:
+      </para>
+      <para>
+        %ifarch sparc alpha
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %else
+      </para>
+      <para>
+        %define b6x 1
+      </para>
+      <para>
+        %undefine b5x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para>
+        This example tests if the processor architecture is SPARC or
+        Alpha. If so, the directives from the %ifarch to the %else are
+        executed. If not, the directives from the %else to the %endif
+        are executed.
+      </para>
+      <para>
+        The %ifnarch directive reverses the %ifarch test. That is,
+        %ifnarch tests if the architecture is not one of the values
+        listed. The following example tests if the processor
+        architecture is not an i386 or an Alpha.
+      </para>
+      <para>
+        %ifnarch i386 alpha
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para/>
+      <para>
+        The %ifos directive tests for the operating system. For example:
+      </para>
+      <para>
+        %ifos linux
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para>
+        This example tests if the operating system is Linux. You can
+        reverse the test with the %ifnos directive. For example:
+      </para>
+      <para>
+        %ifnos irix
+      </para>
+      <para>
+        %define b5x 1
+      </para>
+      <para>
+        %undefine b6x
+      </para>
+      <para>
+        %endif
+      </para>
+      <para>
+        This example tests if the operating system is not Irix.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      This chapter covers advanced topics in creating packages.
+      Dependencies are very important. You need to specify which
+      packages or capabilities your package requires, so the RPM system
+      can ensure that all requirements are met before allowing users to
+      install the package. If you do not specify the dependencies
+      properly, then you are defeating the integrity of the RPM system.
+    </para>
+    <para>
+      In addition to specifying what your package requires, it is also
+      important to specify other dependency information. For example, if
+      your package conflicts with another package, you need to very
+      clearly state this. E-mail and Web server packages often conflict
+      with other servers of the same type.
+    </para>
+    <para>
+      You can specify both package dependencies as well as build
+      dependencies. For example, you may need certain developer
+      libraries to build your package, but not to install it. These are
+      build dependencies.
+    </para>
+    <para>
+      To help manage dependencies between packages and system
+      configuration issues, you can set up trigger scripts. A trigger is
+      a script in your package that gets executed when another package
+      is installed or removed. If your package, for example, is an
+      e-mail client program, it may need to execute a script should the
+      e-mail server package change. This is a great usage for triggers.
+    </para>
+    <para>
+      If your package has a complicated installation, the normal RPM
+      verification won’t be sufficient. To help the RPM system ensure
+      the integrity of all the packages, you can write a verify script
+      in your spec file to perform any extra commands necessary to
+      verify your package has been properly installed.
+    </para>
+    <para>
+      Relocatable packages allow users to install your packages in
+      different locations than originally planned. This is very useful
+      when working with more than one version of Linux, or with other
+      operating systems. For example, most Linux commands are stored in
+      /usr/bin, at least for Red Hat Linux. Other Linux distributions,
+      or other operating systems may specify that programs added to the
+      original set should be stored in /opt/bin and not /usr/bin, for
+      example. Making your package relocatable helps users in these
+      situations.
+    </para>
+    <para>
+      Conditional directives in your spec file allow you to control the
+      build on different processor architectures and operating systems.
+      The %if directive tests if a value is set. If so, then all the
+      directives up to the %endif directive are executed. If you need to
+      execute a different set of directives, use %else. In this case, if
+      the %if test is true, RPM executes the directives up to the %else.
+      If the test is not true, RPM executes the directives up to the
+      %endif.
+    </para>
+    <para>
+      Once you have your spec file defined, the next step is to start
+      building packages. The next chapter covers options for the
+      rpmbuild command and how you can use rpmbuild to make your
+      packages.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

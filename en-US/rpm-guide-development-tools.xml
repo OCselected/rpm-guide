@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-development-tools">
+  <title>Linux Text Editors and Development Tools</title>
+  <para>
+    This appendix covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        General text editors
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        C-specific tools and integrated development environments
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Python-specific development tools
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    Linux includes a number of text editors and integrated development
+    environments (IDEs), going from plain old text editors all the way
+    up to sophisticated tools. These tools are suitable for shell
+    scripting, C, Python, and Perl programming, along with a plethora of
+    other uses. Linux makes extensive use of text files, especially for
+    configuration data, so Linux has always included a number of text
+    editors.
+  </para>
+  <para>
+    This appendix lists a number of tools for those who have not yet set
+    up an RPM development environment on Linux. Note that choosing an
+    editor or IDE is mostly a matter of personal taste. Programmers will
+    often engage in raging battles over the superiority of text editors
+    and other programming tools. Before searching around too far, try
+    out what you have installed on your system and see if that works for
+    you.
+  </para>
+  <para>
+    Note that Internet sites may change or disappear, so you may have to
+    search to find these tools.
+  </para>
+  <sect1>
+    <title>General Text Editors</title>
+    <para>
+      Linux distributions include a number of text editors with varying
+      sets of features. The two most common editors are vi and emacs,
+      which come with virtually all Linux distributions. These editors
+      are good for UNIX- or Linux-savvy developers, but generally have a
+      steep learning curve for developers used only to Windows.
+    </para>
+    <para>
+      If you come from Windows, try gedit, kedit, or kate. These text
+      editors open a graphical window on your desktop, making them
+      appear more or less like the Windows Notepad.exe. All three offer
+      more features than Notepad.exe, however.
+    </para>
+    <para>
+      You may not have installed any of these editors, but all are
+      available as part of Red Hat Linux. You can install vi, emacs,
+      gedit, kedit, or kate from the packages that come with your Linux
+      distribution.
+    </para>
+    <para>
+      To start one of the editors, enter a command like the following:
+    </para>
+    <para>
+      $ gedit listrpmpkgs &amp;
+    </para>
+    <para>
+      The ampersand, &amp;, launches the program in the background.
+      Replace gedit with the editor you choose.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Programming Text Editors</title>
+    <para>
+      In addition to general-purpose text editors, Linux sports a large
+      number of text editors with special features for programming, such
+      as syntax highlighting. The extended version of vi, called vim,
+      includes a number of add-ons that can help you with C programming
+      tasks. Emacs also includes a wide array of features to help
+      programming. Both of these editors can act as development
+      environments with a bit of configuration. As mentioned previously,
+      both come with most Linux distributions.
+    </para>
+    <para>
+      I also like an editor called nedit and another one called jedit.
+      The jedit editor is written in Java, so that it runs the same on
+      Windows and Linux, a big win if you must work on multiple
+      platforms. (Emacs and vim have versions that work on Windows, too,
+      along with Linux.) If you use jedit, you must have a Java runtime
+      environment installed.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      Download nedit from www.nedit.org. Download jedit from
+      www.jedit.org. Download Java runtime environments from Sun at
+      http://java.sun.com/j2se/downloads.html or IBM at
+      www.ibm.com/java/jdk/ and select the IBM Developer Kit for Linux.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Integrated Development Environments for C Programming</title>
+    <para>
+      If you want more of a graphical environment, Red Hat Linux ships
+      with KDevelop, an IDE for C and C++ programming.
+    </para>
+    <para>
+      Anjuta provides a GTK/GNOME-based IDE, an alternative to the
+      KDE-based KDevelop. KDevelop, however, supports KDE, GNOME, Qt,
+      and text-mode C and C++ applications.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      Download Anjuta from www.anjuta.org.
+    </para>
+    <para>
+      The Eclipse IDE, while mostly used for Java development, has a C
+      and C++ mode called CDT, for C/C++ Development Tools. Eclipse is
+      important because Red Hat provides an RPM-building plug-in to
+      Eclipse.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      Download Anjuta from www.anjuta.org. Download Eclipse from
+      www.eclipse.org and the Eclipse CDT from
+      www.eclipse.org/tools/downloads.html.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Integrated Development Environments for Python Programming</title>
+    <para>
+      As with C programs, Python scripts are made up of text files
+      holding Python commands, so you need a text editor or some sort of
+      development environment for creating Python programs. Any of the
+      tools listed so far will work fine for developing Python
+      applications. The key requirement is the ability to control tabs
+      and indenting, since this is crucial to Python syntax.
+    </para>
+    <para>
+      IDLE, a graphical console and editor, supports creating Python
+      applications. This is considered part of Python. IDLE requires the
+      Python-tools package.
+    </para>
+    <para>
+      In addition, you can choose from Python-focused tools such as
+      Bicycle Repair Man, a refactoring tool, or Boa Constructor and
+      Black Adder, two Python IDEs.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      Boa Constructor is available from
+      http://boa-constructor.sourceforge.net. Black Adder is a
+      commercial tool available at www.thekompany.com.
+    </para>
+    <para>
+      The Eclipse IDE, mentioned previously, supports a number of Python
+      add-ons. Combined with the C and C++ tools, and plug-ins for
+      building RPMs, Eclipse brings together most everything you need
+      for Python development on Linux.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      Eclipse is available at www.eclipse.org, and Python add-ons at
+      http://sourceforge.net/projects/pyeclipse,
+      http://sourceforge.net/projects/pe4eclipse, or
+      http://www.kalab.com/freeware/pythoneclipse/pythoneclipse.htm.
+    </para>
+    <para>
+      This is really just the tip of the iceberg when it comes to Python
+      tools. You can find many more available on the Internet.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      A large listing of Python editing tools appears at
+      http://www.python.org/cgi-bin/moinmoin/PythonEditors.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

@@ -1,0 +1,1497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-extra-packaging-tools">
+  <title>Supplemental Packaging Software</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Understanding packaging aids
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Manipulating packages
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    RPM is intended to make system management easier, both for system
+    administrators and other users who do all the day-to-day work of
+    installing and removing applications and for developers and other
+    users who do all the work of preparing applications for
+    installation. For RPM packagers, the work involved in preparing an
+    application for installation has two phases: first, the software
+    must be compiled (if it is not written in an interpreted language
+    such as Perl) and otherwise configured for the system on which it
+    will be installed; then the RPM package of the software must be
+    prepared by creating a spec file that properly packages it into an
+    RPM. In contrast, packagers who choose to package applications in a
+    simpler format, such as gzipped tarballs (compressed tar archives),
+    have less work ahead of them, since they need only concern
+    themselves with the first step.
+  </para>
+  <para>
+    After a packager has prepared an RPM package once, RPM makes the
+    first step (compilation and configuration) easier when the packager
+    has to package an updated version of the same software; RPM does a
+    lot of work to track compilation commands, any needed patches, and
+    any configuration modifications discovered to be necessary to
+    prepare the software. Similarly, once an RPM spec file has been
+    produced for an application, updating that spec file to support a
+    newer version of that application is usually trivial. For these
+    reasons, using RPM instead of a simpler, less end-user-friendly
+    package format (such as gzipped tarballs) is a bit of a tradeoff for
+    the packager; preparing an RPM of an application requires a little
+    more initial time and work than preparing a gzipped tarball of that
+    same application, but once created, the RPM package takes less time
+    and effort to keep current than the gzipped tarball requires.
+  </para>
+  <sect1>
+    <title>Packaging Aids</title>
+    <para>
+      However, several helper tools are also available for RPM
+      packagers. These tools can be used at various stages in the
+      process of producing a high-quality RPM package to simplify the
+      tasks that an RPM packager must perform. These tools include
+      syntax-highlighting modes for various text editors, making
+      production and maintenance of spec files easier; macro packages
+      for popular text editors, simplifying the generation and
+      maintenance of spec files; tools that generate spec files,
+      simplifying initial spec file creation; and debuggers that
+      validate produced binary RPMs, helping ensure that the spec file
+      used to create the packages is accurate and high quality.
+    </para>
+    <sect2>
+      <title>Using VIM spec plugins to improve spec file editing</title>
+      <para>
+        Unix systems have traditionally shipped the legendary (or
+        notorious, depending upon your point of view) vi editor
+        (pronounced vee eye) as their default text editor. Vi was
+        initially developed by Bill Joy in 1976 for BSD Unix. It
+        eventually was incorporated in AT&amp; T System V Unix as well
+        and later was mandated by the POSIX 1003 standards (which define
+        what an OS must have to be Unix-compatible), thereby conquering
+        all facets of the Unix world.
+      </para>
+      <para>
+        The original vi source code is no longer freely available, but
+        several clones of the vi program have been created over the
+        years. The most popular of these vi clones is probably Vi
+        IMproved, or VIM (www.vim.org). VIM is the standard vi
+        implementation (meaning that when you type vi at the command
+        prompt, the program you really are running is vim) on many Linux
+        distributions, including Red Hat Linux. It is also freely
+        available for most other Unixes and even for non-Unix systems
+        such as Microsoft Windows.
+      </para>
+      <para>
+        VIM is a fully backwards-compatible implementation of the
+        original vi editor, although it also offers many additional
+        features that vi did not support. One VIM feature that can be
+        extremely useful when preparing spec files is colorized syntax
+        highlighting. VIM has an extensible interface through which it
+        can be told about the syntax used for files of various types.
+        Once it understands a filetype's syntax, it can color the
+        various syntactic structures of that file in different ways. For
+        example, when editing a Bourne shell script using VIM, comments
+        are typically blue, control statements (if, for, do, and so on)
+        are yellow, variables are purple, and so forth. Many people find
+        this feature very useful, since a single glance reveals the
+        entire logical structure of the file. Furthermore, errors in the
+        file (such as a missing done statement failing to close a do
+        loop in a Bourne shell script) are often immediately obvious
+        when using such a colorizing editor.
+      </para>
+      <para>
+        Usually, VIM does not understand the structure of RPM spec
+        files. When preparing a spec file, VIM displays all text in the
+        same color. A spec.vim syntax file is available for VIM that
+        makes VIM aware of the syntax used for RPM spec files. When this
+        file is used, the various structural components (%define,
+        preamble statements, %build, and so forth) are all colorized,
+        making the logic of the spec file readily apparent.
+      </para>
+      <para>
+        The spec.vim file that provides VIM with an understanding of
+        spec-file syntax is bundled with newer versions of VIM, or it
+        can be downloaded from the Internet. Most RPM-based Linux
+        distributions, including Red Hat Linux, ship this file with VIM
+        as part of their distribution and even automatically configure
+        VIM to load this syntax file any time an RPM spec file is being
+        edited. When using VIM on a system that does not automatically
+        load spec.vim whenever spec files are edited, you should
+        download the spec.vim file (I tend to save such personal
+        extensions in ~/etc/vim, but you can save it any place you
+        prefer).
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        Download the spec.vim syntax file for VIM from
+        <ulink type="http" url="http://www.panix.com/~elflord/vim/syntax/spec.vim" />
+      </para>
+      <para>
+        Once downloaded, configure VIM to load your new syntax file. You
+        can do this by putting the following in your ~/.vimrc file
+        (assuming you have saved the file as ~/etc/vim/spec.vim; adjust
+        the path as necessary if you saved it elsewhere):
+      </para>
+      <para>
+        augroup syntax
+      </para>
+      <para>
+        au! BufNewFile,BufReadPost *.spec so ~/etc/vim/spec.vim
+      </para>
+      <para>
+        au BufNewFile,BufReadPost *.spec so ~/etc/vim/spec.vim
+      </para>
+      <para>
+        augroup END
+      </para>
+      <para>
+        This statement will instruct VIM to load the syntax file
+        whenever a file named with a .spec extension is edited. You can
+        now even customize the colors which VIM uses, if you like, by
+        editing ~/etc/vim/spec.vim!
+      </para>
+      <para>
+        The VIM editor has hundreds of built-in commands for formatting
+        text. If necessary, it can even be extended with new commands.
+        Furthermore, these commands can be defined in FileType plugins,
+        so that different commands are loaded depending upon the type of
+        file being edited (just as different syntax matching can be used
+        depending upon the type of file being edited). Gustavo Niemeyer
+        has written a spec plugin, pi_spec, which defines various
+        commands that can be used when working with RPM spec files.
+        Currently, this plugin can be used to automate maintenance of
+        the %changelog section of RPM spec files.
+      </para>
+      <para>
+        By default, the spec plugin provides a macro, spec_chglog, which
+        is mapped to the &lt;LocalLeader&gt;-c key. Normally, the
+        LocalLeader key in VIM is mapped to "\", a backslash character.
+        This means you press \c to load the spec_chglog macro. If
+        desired, you can instead map spec_chglog to a different key by
+        putting a statement like the following in your ~/.vimrc file.
+      </para>
+      <para>
+        au FileType spec map &lt;buffer&gt; C &lt;Plug&gt;SpecChangelog
+      </para>
+      <para>
+        In this case, that statement would map the macro to the "C" key,
+        but you can map it to a different key by replacing the "C" in
+        the statement with whichever key or key combination you prefer.
+      </para>
+      <para>
+        The spec_chglog macro checks the %changelog in the spec file
+        currently being edited and makes sure that the last entry in
+        this %changelog was written today and was written by you. If it
+        was, the macro adds a new item to the entry. If it was not
+        written today, or was written today, but not by you, the macro
+        adds an entirely new entry. Optionally, the macro also checks
+        that the name, version, and release of the package are correct
+        and will update the release if it is incorrect. In addition, the
+        macro maps the percent key, %, making it usable in command mode
+        in VIM to move quickly between sections within a spec file.
+      </para>
+      <para>
+        To help spec_chglog, you can define a few variables in your
+        ~/.vimrc file to customize its behavior. The variable
+        spec_chglog_format defines what the macro uses for new
+        %changelog entries. If you do not define this variable, the
+        macro will ask you for an e-mail address and construct it for
+        you the first time you use the macro. Alternatively, you can
+        customize it yourself by adding an entry like the following to
+        your ~/.vimrc file.
+      </para>
+      <para>
+        let spec_chglog_format = "%a %b %d %Y Your Name
+        &lt;your@email.address&gt;"
+      </para>
+      <para>
+        The preceding format is what Red Hat's developers use for Red
+        Hat Linux spec files and results in a %changelog entry that
+        looks like the following, with the user name and e-mail address
+        changed to protect the innocent:
+      </para>
+      <para>
+        * Mon Apr 15 2002 Bob Marley &lt;bob@marley.yow&gt;
+      </para>
+      <para>
+        The variables in the spec_chglog_format control the time format
+        that is used. If you want different time formats in your
+        %changelog entry, you can replace the variables (using %A
+        instead of %a would cause the full weekday name, such as
+        "Monday", to be printed) using the documentation in the
+        strftime(3) man page as a guideline.
+      </para>
+      <para>
+        By default, the macro will insert new entry items after existing
+        items. For example, if I already have a %changelog entry for
+        today that reads as follows:
+      </para>
+      <para>
+        * Mon May 6 2002 Bob Marley &lt;bob@marley.yow&gt;
+      </para>
+      <para>
+        - Updated to newest release
+      </para>
+      <para>
+        Then, using the macro to add a new entry for an additional patch
+        I added will, by default, result in an entry that reads:
+      </para>
+      <para>
+        * Mon May 6 2002 Bob Marley &lt;bob@marley.yow&gt;
+      </para>
+      <para>
+        - Updated to newest release
+      </para>
+      <para>
+        - Added Solaris compile patch
+      </para>
+      <para>
+        If I want, I can instead have new items inserted before existing
+        items, so that my second entry instead looks like
+      </para>
+      <para>
+        * Mon May 6 2002 Bob Marley &lt;bob@marley.yow&gt;
+      </para>
+      <para>
+        - Added Solaris compile patch
+      </para>
+      <para>
+        - Updated to newest release
+      </para>
+      <para>
+        To have new items inserted before existing items, simply add the
+        following line to your ~/.vimrc file:
+      </para>
+      <para>
+        let spec_chglog_prepend = 1
+      </para>
+      <para>
+        Optionally, the macro can track version and release numbers in
+        the %changelog entries automatically. Adding the line
+      </para>
+      <para>
+        let spec_chglog_release_info = 1
+      </para>
+      <para>
+        results in the first item in every changelog entry automatically
+        reflecting the version and release, so that my %changelog entry
+        might instead look like the following:
+      </para>
+      <para>
+        * Mon May 6 2002 Bob Marley &lt;bob@marley.yow&gt;
+      </para>
+      <para>
+        + httpd-2.0.36-2
+      </para>
+      <para>
+        - Updated to newest release
+      </para>
+      <para>
+        - Added Solaris compile patch
+      </para>
+      <para>
+        If this feature is enabled, the macro automatically checks the
+        version and release information to make sure that they have
+        increased. If they haven't, it will offer to update them for
+        you. Add the following line to your ~/.vimrc file to disable
+        this feature, if necessary.
+      </para>
+      <para>
+        let spec_chglog_never_increase_release = 1
+      </para>
+      <para>
+        This spec plugin ships with newer versions of VIM. Both it and
+        the VIM spec syntax highlighting extensions can be very useful
+        for speeding spec file editing and debugging, and are well worth
+        trying out if you are a VIM user.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        You can find out more about vim at www.vim.org.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Adding functions with emacs rpm-spec-mode</title>
+      <para>
+        Of course, not everyone in the world uses VIM. Another commonly
+        used editor is the emacs editor originally developed by Richard
+        M. Stallman. Unlike vi, emacs is not considered an essential
+        Unix component and is not always found installed on a Unix
+        system, although it is bundled with just about every Linux
+        distribution.
+      </para>
+      <para>
+        Over the years, two major emacs variants have emerged. GNU Emacs
+        is produced by the Free Software Foundation and can be
+        downloaded from www.gnu.org/software/emacs/emacs.html. XEmacs is
+        based on GNU Emacs and is available from www.xemacs.org.
+        Historically, the two differed in their user interfaces (XEmacs,
+        as the name suggests, had an X Window interface, though GNU
+        Emacs has one as well these days) and in some technical details
+        of how they operated. Both are freely available under the terms
+        of the GNU GPL, so you can download and try either or both if
+        they are not already on your system.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See <xref linkend="ch-licensing"/>  for more on the GNU GPL, or General Public
+        License.
+      </para>
+      <para>
+        Red Hat Linux includes RPMs of both GNU Emacs and XEmacs as part
+        of the distribution, and most other Linux distributions will
+        include one or both as well.
+      </para>
+      <para>
+        Like VIM, both GNU Emacs and XEmacs support syntax highlighting.
+        They are also both extensible, having the ability to load mode
+        files that add new commands and functions. Stig Bjørlykke has
+        written a mode, rpm-spec-mode.el, which works with both GNU
+        Emacs and with XEmacs to add many functions, making it easier to
+        use when editing RPM spec files. Red Hat Linux includes and
+        enables this mode in both GNU Emacs and XEmacs, as do many other
+        Linux distributions.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        You can download this emacs mode from
+        http://tihlde.org/~stigb/rpm-spec-mode.el.
+      </para>
+      <para>
+        After downloading, you will need to put the following lines in
+        your ~/.emacs init files (for GNU Emacs) or ~/.xemacs init files
+        (for XEmacs) to instruct emacs to load rpm-spec-mode whenever a
+        file with a .spec extension is being edited:
+      </para>
+      <para>
+        (autoload 'rpm-spec-mode "rpm-spec-mode.el" "RPM spec mode." t)
+      </para>
+      <para>
+        (setq auto-mode-alist (append '(("\\.spec" . rpm-spec-mode))
+        auto-mode-alist))
+      </para>
+      <para/>
+      <para>
+        Once installed, rpm-spec-mode will provide emacs with additional
+        support for editing RPM spec files. Figure 13-1 shows this mode
+        in GNU Emacs.
+      </para>
+      <para>
+        54965-0 Fg1301.tiff here; needs to be cropped to just the
+        central window
+      </para>
+      <para>
+        Figure 13-1: Gnu Emacs using rpm-spec-mode
+      </para>
+      <para>
+        Figure 13-2 shows this mode in XEmacs.
+      </para>
+      <para>
+        54965-0 Fg1302.tiff here; needs to be cropped to just the
+        central window
+      </para>
+      <para>
+        Figure 13-2: XEmacs using rpm-spec-mode
+      </para>
+      <para>
+        With this mode, emacs can do syntax highlighting of spec files,
+        just like VIM. The mode file rpm-spec-mode.el contains the emacs
+        instructions that specify what should be highlighted and what
+        colors should be used for highlighting.
+      </para>
+      <para>
+        Tip
+      </para>
+      <para>
+        If you do not see syntax highlighting when you edit a spec file,
+        your emacs session may or may not be currently configured to do
+        syntax highlighting. First, make sure that the status bar at the
+        bottom of your emacs window says (RPM-SPEC), indicating that
+        rpm-spec-mode is being used. If it doesn't, double-check the
+        rpm-spec-mode installation instructions. If the status bar does
+        indicate that you are using rpm-spec-mode, also double-check
+        that syntax highlighting (which, in emacs, is a global
+        configuration option) has been enabled. In both GNU Emacs and
+        XEmacs, the Options menu has a Syntax Highlighting option that
+        must be enabled before emacs will colorize spec file syntactic
+        structures.
+      </para>
+      <para>
+        In addition to providing syntax colorization, rpm-spec-mode adds
+        a variety of new functions to emacs that can be used to speed
+        the process of creating or editing RPM spec files. These new
+        functions appear on the RPM-Spec menu that is added to emacs by
+        rpm-spec-mode. Many of the functions are similar to the
+        functions added to VIM by the spec_chglog macro. Navigation
+        functions to move quickly through a spec file are provided, so
+        that Ctrl+C, Ctrl+N (press Ctrl+C followed by Ctrl+N) will move
+        the cursor to the next major section of the spec file, while
+        Ctrl+C, Ctrl+P will move the cursor to the prior major section
+        of the spec file. Similarly, macros are also defined to
+        increment the release tag (Ctrl+C, R) and the very handy option
+        to add new %changelog entries (Ctrl+C, E). Like the VIM macros
+        for adding %changelog entries, the rpm-spec-mode command checks
+        to see if an entry already exists for today. If not, it adds a
+        new entry, but if so, it just adds a new item to the existing
+        entry. For %changelog entries to have the correct e-mail
+        address, the emacs variable user-mail-address must be set
+        correctly. If it is not set on your system, you can add the
+        following line to your emacs initialization files:
+      </para>
+      <para>
+        (setq user-mail-address "your@email.address")
+      </para>
+      <para>
+        In addition to these basic functions, rpm-spec-mode offers more
+        advanced spec file creation support. Opening a new buffer in
+        emacs for a spec file that does not already exist automatically
+        generates a skeleton spec file.
+      </para>
+      <para>
+        To further speed things up, emacs offers a number of macros for
+        the main tasks in writing an RPM spec file. Table 13-1 lists
+        these macros.
+      </para>
+      <para>
+        Table 13-1Macro commands for The RPM SPEC MODE IN EMacs
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Command
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Function
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Ctrl+C Tab
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Adds a new tag to the spec file
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Ctrl+C Ctrl+F F
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Adds a new file to the %files section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Ctrl+C Ctrl+F C
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Adds a new configuration file to the %files section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Ctrl+C Ctrl+F D
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Adds a new documentation file to the %files section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Ctrl+C Ctrl+F G
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Adds a new ghost file to the %files section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Ctrl+C Ctrl+D D
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Adds a new directory to the %files section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Ctrl+C Ctrl+D O
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Adds a new documentation directory to the %files
+                  section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Ctrl+C Ctrl+C U
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Changes the umask in %defattr entries in %files
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Ctrl+C Ctrl+C O
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Changes the owner in %defattr entries in %files
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  Ctrl+C Ctrl+C G
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Changes the group in %defattr entries in %files
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Furthermore, rpm-spec-mode even adds macros to emacs that can be
+        used to build RPMs from spec files without even having to exit
+        emacs! Since the process of constructing spec files is often
+        iterative (make new spec, build RPM from spec, find mistake,
+        edit spec, build RPM from spec, find mistake, and so on), this
+        capability of emacs to be used as an IDE for RPM package
+        generation is extremely useful. Basic macros exist to do
+        complete builds (Ctrl+C B to build a binary package, Ctrl+C S to
+        build a source package, and Ctrl+C A to build both). Macros can
+        also be used to execute various intermediate steps, such as the
+        %prep stage (Ctrl+C P), the %build stage (Ctrl+C C), or the
+        %install stage (Ctrl+C I). Various options of the build process
+        can also be controlled, such as GPG-signing of generated
+        packages.
+      </para>
+      <para>
+        If you are a user of GNU Emacs or XEmacs, you should definitely
+        take the time to learn to use rpm-spec-mode. Being able to build
+        packages from within the editor where you are editing the spec
+        file that builds those packages is a great productivity gain for
+        many people.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Validating and debugging spec files with rpmlint</title>
+      <para>
+        Both VIM and emacs extensions help with the process of initially
+        creating spec files and with the maintenance of existing RPM
+        spec files. After a spec file has been created, and RPMs have
+        been created using that spec, the binary RPMs generated from the
+        spec can be validated using the rpmlint command. The name
+        rpmlint comes from lint, the traditional Unix utility that can
+        "sanity-check" C source code, looking for certain classes of
+        common C coding mistakes. The idea behind rpmlint is similar; it
+        processes binary RPMs, checking for certain common mistakes made
+        by RPM packagers.
+      </para>
+      <para>
+        The rpmlint command currently ships with a wide variety of
+        checks and is written using a modular interface so that
+        additional checks can easily be added if needed. Currently,
+        rpmlint can check that all binary files in the package are
+        correct (making sure that a .noarch.rpm package does not contain
+        binary files, that no binaries are being installed in /etc, that
+        the binary file types in the package are appropriate for the
+        package architecture, that shared libraries are configured
+        correctly, and that all executables are stripped). It can also
+        check the validity of files marked as configuration files in the
+        RPM (ensuring that configuration files are only being installed
+        in /etc, not in /usr) and that the package file complies with
+        the distribution's policies for packages (checking things such
+        as the compression of man pages and Info pages and the
+        correctness of vendor and distribution fields in the package
+        header).
+      </para>
+      <para>
+        In addition, rpmlint performs a variety of checks to ensure that
+        the package complies with the Filesystem Hierarchy Standard
+        (verifying that files are installed in their standard locations
+        on the system), the Linux Standards Base (verifying that
+        package-file naming is LSB-compliant) and that files have
+        correct ownerships and permissions. Init scripts are
+        double-checked (for packages that have init scripts) to ensure
+        that the basic structure of the init script is correct and that
+        appropriate %post and %preun configuration directives are being
+        run to configure the init script on the system. %post, %pre, and
+        %preun scripts are also double-checked (ensuring that only valid
+        interpreters are specified for scripts and that scripts are
+        written in valid syntax). The validity of the package itself is
+        also checked in various ways (ensuring that the package is
+        GPG-signed, that the package's source RPM is correctly prepared,
+        that the package spec file uses correct syntax, and that all
+        tags used in the package header are valid).
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        To find out more about the Filesystem Hierarchy Standard, see
+        www.pathname.com/fhs/. To find out more about the Linux
+        Standards Base, see www.linuxbase.org.
+      </para>
+      <para>
+        Download rpmlint from www.lepied.com/rpmlint. It is written
+        entirely in Python, so a Python interpreter is necessary to run
+        it.
+      </para>
+      <para>
+        Once installed, rpmlint can be configured on a system-wide
+        basis, using the /etc/rpmlint/config file, or on a per-user
+        basis, using the $HOME/.rpmlintrc file. This file can specify
+        checks to perform, check output that should be ignored, and
+        configuration options. Configuration options can be specified,
+        listing what entries are valid for various fields in the RPM
+        header, such as the Vendor and Packager fields. By default, Red
+        Hat Linux ships with this configuration file set to validate
+        packages to make sure they are suitable for Red Hat Linux; if
+        packaging for a different distribution, this file might need to
+        be modified.
+      </para>
+      <para>
+        Once rpmlint has been installed and configured, it can be run
+        against RPMs. For example, rpmlint helps with creating packages,
+        such as tin (a popular Usenet client) for Red Hat Linux, since
+        it is not included with the distribution. After preparing a tin
+        spec file, then building RPMs from that file, you can typically
+        double-check them using rpmlint.
+      </para>
+      <para>
+        For example, when running rpmlint on a source RPM, you’ll see
+        output like the following:
+      </para>
+      <para>
+        $ rpmlint tin-1.5.12-1.src.rpm
+      </para>
+      <para>
+        E: tin no-packager-tag
+      </para>
+      <para>
+        W: tin invalid-license distributable
+      </para>
+      <para>
+        W: tin no-url-tag
+      </para>
+      <para>
+        W: tin strange-permission tin-1.5.12.tar.bz2 0664
+      </para>
+      <para>
+        W: tin obsolete-tag Copyright
+      </para>
+      <para>
+        $
+      </para>
+      <para>
+        For the most part, this package looks fine according to the
+        rpmlint output. The permissions on the tin source code can be
+        changed (0644 is the "preferred" permissions), and you might
+        want to change my spec file to use the License tag instead of
+        the now-obsolete Copyright tag. Similarly, you might want to add
+        a URL tag to the package to point to the URL for the software.
+      </para>
+      <para>
+        When running rpmlint on a binary RPM, you’ll see output like
+        the following:
+      </para>
+      <para>
+        $ rpmlint tin-1.5.12-1.i386.rpm
+      </para>
+      <para>
+        W: tin invalid-vendor None
+      </para>
+      <para>
+        W: tin invalid-distribution None
+      </para>
+      <para>
+        E: tin no-packager-tag
+      </para>
+      <para>
+        W: tin invalid-license distributable
+      </para>
+      <para>
+        W: tin no-url-tag
+      </para>
+      <para>
+        $
+      </para>
+      <para>
+        With this output, the binary package looks fine. You should set
+        a I don’t bother setting a vendor, distribution, and packager
+        but you can ignore those warnings. Similarly, rpmlint warns
+        because it does not recognize the license type used,
+        "distributable". You can fix this, you can ignore this, or you
+        can modify /etc/rpmlint/config so that rpmlint recognizes
+        "distributable" as a valid license.
+      </para>
+      <para>
+        The sorts of validity checks that rpmlint can do make it
+        valuable for ensuring the quality and consistency of RPMs. Most
+        RPM-based Linux distributions validate their entire distribution
+        using rpmlint. Using it for packages you prepare is a good idea
+        as well.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Generating the %files section with RUST</title>
+      <para>
+        For the most part, maintaining RPM spec files is relatively
+        straightforward. Creating spec files from scratch, however, can
+        be a little bit more challenging. Tools like rpm-spec-mode for
+        emacs can help with the process, generating skeleton spec file
+        templates that can be filled in, but these sorts of tools do not
+        address the step that most new RPM packagers seem to find most
+        difficult: generating the %files section. Creating a complete,
+        accurate list of all needed files supplied by an application can
+        be difficult, particularly when it is an application with which
+        you are unfamiliar. Most software supports installation to a
+        temporary location; if the software you are packaging allows
+        this, generation of %files is (almost) as simple as using
+        BuildRoot to install the application to a temporary directory,
+        then running an ls -lR command in that subdirectory to see all
+        the installed files and directories. Even then, though, the
+        output from ls -lR must be cleaned up and converted into %files
+        format for adding to the spec file. All of this takes time.
+      </para>
+      <para>
+        A couple of tools exist to reduce the amount of work needed for
+        this stage of the process, automating the generation of the
+        %files section of spec files. The most sophisticated of these
+        toolsets is RUST.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        Download RUST from www.rusthq.com.
+      </para>
+      <para>
+        RUST consists of two tools: crust and rust. The crust command
+        provides a command-line tool that can create a chroot() jail, in
+        which software can be built and installed, and then
+        automatically generate a spec file that documents the files that
+        were installed. This not only eliminates the need to generate a
+        %files section for a spec file manually but also removes the
+        need to modify software to support installation to a temporary
+        location using BuildRoot, a sometimes difficult task.
+      </para>
+      <para>
+        The rust command provides a graphical front end to the crust
+        command, as shown in Figure 13-3.
+      </para>
+      <para>
+        54965-0 Fg1303.tiff here
+      </para>
+      <para>
+        Figure 13-3: rust, a drag-and-drop spec file generator
+      </para>
+      <para>
+        The rust command provides a graphical interface that can be used
+        to control crust and supports drag-and-drop creation of spec
+        files. In the rust interface, two file trees are displayed. The
+        left-hand tree displays the local file system, while the
+        right-hand tree displays the file tree inside the crust chroot()
+        jail. Files that should be packaged together can just be dragged
+        from their current locations on the system (displayed in the
+        left-hand tree) to their final destinations in the right-hand
+        tree. You can then click the makeRPM choice to generate an RPM
+        containing those files. Although not terribly useful for
+        packages being generated from source code, this feature can
+        greatly simplify creation of RPMs of applications that are only
+        supplied in binary format (such as the Linux Adobe Acrobat
+        reader).
+      </para>
+      <para>
+        RUST's rust application can be useful in some circumstances
+        (providing new developers a graphical tool that can be used to
+        generate binary RPMs), and crust is more generally useful for
+        packaging difficult-to-package software that needs to be built
+        and installed in a chroot() jail. Unfortunately, development of
+        RUST appears to have stopped, so extension of RUST to become a
+        more generally useful IDE for RPM generation is not likely to
+        happen. However, the project is licensed under the GNU GPL
+        (<xref linkend="ch-licensing"/> ), so it might be resumed by another developer or
+        team of developers.
+      </para>
+    </sect2>
+    <sect2>
+      <title>setup.sh and MakeRPM.pl</title>
+      <para>
+        Other tools that have been developed to simplify the process of
+        creating an RPM spec file take an entirely different approach.
+        Tools such as setup.sh, available from
+        www.mmedia.is/~bre/programs/setup.sh, are intended to function
+        as wrappers around the existing build commands (./configure and
+        make) for software. These types of tools take the approach of
+        using the standard build tools for software (since those tools
+        must always be used to build the software, whether using RPM or
+        compiling the software from a source tarball) and capturing the
+        output to generate an RPM spec file automatically.
+      </para>
+      <para>
+        The MakeRPM.pl Perl script, available from
+        www.perl.com/CPAN/modules/by-authors/id/JWIED, is another
+        example of such an approach. MakeRPM.pl is a more specialized
+        tool than setup.sh, as MakeRPM.pl is intended only for producing
+        RPMs from Perl modules packaged in CPAN (www.cpan.org). It is
+        implemented as a wrapper around the standard commands (perl
+        Makefile.PL ; make ; make test ; make install) used to install
+        Perl CPAN software.
+      </para>
+      <para>
+        MakeRPM.pl actually works quite well for its intended
+        purpose@mdproducing packages of CPAN modules. The setup.sh
+        script is currently viewable mainly as a proof of concept,
+        rather than being a generally universal automatic spec file
+        generator. In the future, when spec files are likely to be
+        representable using a formal closed-syntax grammar, it is
+        possible that more generalized spec file generation tools will
+        be developed. Until that time, however, some of the previously
+        mentioned tools, particularly the VIM and emacs extensions, can
+        provide assistance when manually generating spec files.
+      </para>
+      <para>
+        Cross-reference
+      </para>
+      <para>
+        For more discussion of the future of RPM, you can turn to
+        <xref linkend="ch-rpm-evolution"/> .
+      </para>
+    </sect2>
+    <sect2>
+      <title>Manipulating Package Files with rpm2cpio</title>
+      <para>
+        Normally, RPM packagers are concerned with taking source code or
+        binary files, and producing an RPM that contains those files and
+        can be used to install them on end-users' systems. Sometimes,
+        packagers and end users find themselves in the opposite
+        position, that of having a source or binary RPM package file and
+        needing to extract its contents. An RPM can always be installed
+        to access its contents (either source code, patches, and a spec
+        file which get put under %_topdir for a source RPM, or software
+        which gets put in system directories for a binary RPM), but that
+        is often overkill. I frequently want to extract a single patch
+        file, or the spec file, from a source RPM, but I don't really
+        need to install the entire source RPM. Similarly, people often
+        want to extract the contents of RPMs on systems that do not come
+        with RPM, such as Solaris.
+      </para>
+      <para>
+        Fortunately, tools are available that can process RPM package
+        files into a format from which their content can be extracted.
+        Structurally speaking, RPM package files are compressed cpio
+        archives that have additional binary data added to the beginning
+        containing various meta-data about the package (specifying its
+        architecture and OS, for example), a GPG signature if the
+        package is signed, and so forth. If this binary data is removed
+        from the beginning of the RPM package file, the remainder is a
+        System V Release 4-style cpio file that can be manipulated using
+        any reasonably complete cpio command. Several different tools,
+        each sporting the name rpm2cpio, are available which can do this
+        binary data removal, converting an RPM package file into a
+        standard cpio archive.
+      </para>
+      <para>
+        RPM ships with an rpm2cpio utility that can be used to convert
+        RPM package files to cpio files. (<xref linkend="ch-rpm-overview"/>  introduces the
+        rpm2cpio utility.) For example, if you have a source RPM package
+        file and want to extract its files without having to install it,
+        you can process it through rpm2cpio. The rpm2cpio command takes
+        as input an RPM package file, and produces a cpio file on
+        standard output. For example, to redirect the output to a file,
+        use a command like the following:
+      </para>
+      <para>
+        $ rpm2cpio fluxbox-0.1.8-2.src.rpm &gt; fluxbox-0.1.8-2.cpio
+      </para>
+      <para>
+        $
+      </para>
+      <para>
+        This command creates a cpio archive from the package. You can
+        later use cpio commands on the output file. You can also pipe
+        the output of rpm2cpio through the cpio command:
+      </para>
+      <para>
+        $ rpm2cpio fluxbox-0.1.8-2.src.rpm | cpio -i -d
+      </para>
+      <para>
+        656 blocks
+      </para>
+      <para>
+        $
+      </para>
+      <para>
+        This command extracts the contents of the package.
+      </para>
+      <para>
+        This rpm2cpio command is bundled with RPM and is installed on
+        most RPM-based Linux distributions, including Red Hat Linux.
+        However, it is less useful on systems that do not come with RPM,
+        such as Solaris. This "standard" implementation of rpm2cpio is
+        written in C, and so must be compiled before it can be used.
+        Since most commercial Unix systems do not come with a C compiler
+        by default (unlike Linux and other free Unixes, such as the BSD
+        operating systems), compiling this rpm2cpio code can be a major
+        undertaking.
+      </para>
+      <para>
+        Fortunately, rpm2cpio implementations are also available in a
+        couple of other languages, in more easy-to-install formats for
+        other operating sytsems, including as a Bourne shell script or a
+        Perl script. The Bourne shell syntax should work on any
+        reasonably modern Unix system (and even a few non-Unix systems;
+        it also works on Microsoft Windows under cygwin, for example).
+        The script in Listing 13-1should be saved to a file named
+        rpm2cpio.sh, marked executable, and copied to a directory in
+        your path.
+      </para>
+      <para>
+        Listing 13-1: rpm2cpio as a Bourne Shell script
+      </para>
+      <para>
+        #!/bin/sh
+      </para>
+      <para/>
+      <para>
+        pkg=$1
+      </para>
+      <para>
+        if [ "$pkg" = "" -o ! -e "$pkg" ]; then
+      </para>
+      <para>
+        echo "no package supplied" 1&gt;&amp;2
+      </para>
+      <para>
+        exit 1
+      </para>
+      <para>
+        fi
+      </para>
+      <para/>
+      <para>
+        leadsize=96
+      </para>
+      <para>
+        o=`expr $leadsize + 8`
+      </para>
+      <para>
+        set `od -j $o -N 8 -t u1 $pkg`
+      </para>
+      <para>
+        il=`expr 256 \* \( 256 \* \( 256 \* $2 + $3 \) + $4 \) + $5`
+      </para>
+      <para>
+        dl=`expr 256 \* \( 256 \* \( 256 \* $6 + $7 \) + $8 \) + $9`
+      </para>
+      <para>
+        # echo "sig il: $il dl: $dl"
+      </para>
+      <para/>
+      <para>
+        sigsize=`expr 8 + 16 \* $il + $dl`
+      </para>
+      <para>
+        o=`expr $o + $sigsize + \( 8 - \( $sigsize \% 8 \) \) \% 8 + 8`
+      </para>
+      <para>
+        set `od -j $o -N 8 -t u1 $pkg`
+      </para>
+      <para>
+        il=`expr 256 \* \( 256 \* \( 256 \* $2 + $3 \) + $4 \) + $5`
+      </para>
+      <para>
+        dl=`expr 256 \* \( 256 \* \( 256 \* $6 + $7 \) + $8 \) + $9`
+      </para>
+      <para>
+        # echo "hdr il: $il dl: $dl"
+      </para>
+      <para/>
+      <para>
+        hdrsize=`expr 8 + 16 \* $il + $dl`
+      </para>
+      <para>
+        o=`expr $o + $hdrsize`
+      </para>
+      <para/>
+      <para>
+        dd if=$pkg ibs=$o skip=1 2&gt;/dev/null | gunzip
+      </para>
+      <para>
+        After you have marked this file as executable and placed it in
+        your command path, you can use the script just like the C
+        language implementation of rpm2cpio. This script also takes an
+        RPM package file as input and produces a cpio file on standard
+        output, and so should be used in conjunction with redirection or
+        a pipe:
+      </para>
+      <para>
+        $ rpm2cpio.sh fluxbox-0.1.8-2.src.rpm | cpio -i -d
+      </para>
+      <para>
+        656 blocks
+      </para>
+      <para>
+        $
+      </para>
+      <para>
+        In this case, I piped the output to cpio, directly extracting
+        it. I could have redirected the output of rpm2cpio.sh to a file
+        instead.
+      </para>
+      <para>
+        In addition to the Bourne shell implementation of rpm2cpio, a
+        version has been written in Perl by Roger Espel Llima. The Perl
+        rpm2cpio implementation should work on any system that has a
+        reasonably modern Perl interpreter. To use this version of
+        rpm2cpio, the script in Listing 13-2 should be saved to a file
+        named rpm2cpio.pl, marked executable, and copied to a directory
+        in your path.
+      </para>
+      <para>
+        Listing 13-2:The Perl version of rpm2cpio, rpm2cpio.pl
+      </para>
+      <para>
+        #!/usr/bin/perl
+      </para>
+      <para/>
+      <para>
+        # Copyright (C) 1997,1998,1999, Roger Espel Llima
+      </para>
+      <para>
+        #
+      </para>
+      <para>
+        # Permission is hereby granted, free of charge, to any person
+        obtaining a copy
+      </para>
+      <para>
+        # of this software and any associated documentation files (the
+        "Software"), to
+      </para>
+      <para>
+        # deal in the Software without restriction, including without
+        limitation the
+      </para>
+      <para>
+        # rights to use, copy, modify, merge, publish, distribute,
+        sublicense,
+      </para>
+      <para>
+        # and/or sell copies of the Software, and to permit persons to
+        whom the
+      </para>
+      <para>
+        # Software is furnished to do so, subject to the following
+        conditions:
+      </para>
+      <para>
+        #
+      </para>
+      <para>
+        # The above copyright notice and this permission notice shall be
+        included in
+      </para>
+      <para>
+        # all copies or substantial portions of the Software.
+      </para>
+      <para>
+        #
+      </para>
+      <para>
+        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+        KIND, EXPRESS OR
+      </para>
+      <para>
+        # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        MERCHANTABILITY,
+      </para>
+      <para>
+        # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
+        EVENT SHALL THE
+      </para>
+      <para>
+        # SOFTWARE'S COPYRIGHT HOLDER(S) BE LIABLE FOR ANY CLAIM,
+        DAMAGES OR OTHER
+      </para>
+      <para>
+        # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+        OTHERWISE, ARISING FROM,
+      </para>
+      <para>
+        # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+        DEALINGS IN
+      </para>
+      <para>
+        # THE SOFTWARE
+      </para>
+      <para/>
+      <para>
+        # (whew, that's done!)
+      </para>
+      <para/>
+      <para>
+        # why does the world need another rpm2cpio? because the existing
+        one
+      </para>
+      <para>
+        # won't build unless you have half a ton of things that aren't
+        really
+      </para>
+      <para>
+        # required for it, since it uses the same library used to
+        extract RPM's.
+      </para>
+      <para>
+        # in particular, it won't build on the HPsUX box i'm on.
+      </para>
+      <para/>
+      <para>
+        # sw 2002-Mar-6 Don't slurp the whole file
+      </para>
+      <para/>
+      <para>
+        # add a path if desired
+      </para>
+      <para>
+        $gzip = "gzip";
+      </para>
+      <para/>
+      <para>
+        sub printhelp {
+      </para>
+      <para>
+        print &lt;&lt;HERE;
+      </para>
+      <para>
+        rpm2cpio, perl version by orabidoo &lt;odar\@pobox.com&gt; +sw
+      </para>
+      <para>
+        dumps the contents to stdout as a cpio archive
+      </para>
+      <para/>
+      <para>
+        use: rpm2cpio [file.rpm] &gt; file.cpio
+      </para>
+      <para/>
+      <para>
+        Here's how to use cpio:
+      </para>
+      <para>
+        list of contents: cpio -t -i &lt; /file/name
+      </para>
+      <para>
+        extract files: cpio -d -i &lt; /file/name
+      </para>
+      <para>
+        HERE
+      </para>
+      <para/>
+      <para>
+        exit 0;
+      </para>
+      <para>
+        }
+      </para>
+      <para/>
+      <para>
+        if ($#ARGV == -1) {
+      </para>
+      <para>
+        printhelp if -t STDIN;
+      </para>
+      <para>
+        $f = "STDIN";
+      </para>
+      <para>
+        } elsif ($#ARGV == 0) {
+      </para>
+      <para>
+        open(F, "&lt; $ARGV[0]") or die "Can't read file $ARGV[0]\n";
+      </para>
+      <para>
+        $f = 'F';
+      </para>
+      <para>
+        } else {
+      </para>
+      <para>
+        printhelp;
+      </para>
+      <para>
+        }
+      </para>
+      <para/>
+      <para>
+        printhelp if -t STDOUT;
+      </para>
+      <para/>
+      <para>
+        # gobble the file up
+      </para>
+      <para>
+        ##undef $/;
+      </para>
+      <para>
+        ##$|=1;
+      </para>
+      <para>
+        ##$rpm = &lt;$f&gt;;
+      </para>
+      <para>
+        ##close ($f);
+      </para>
+      <para/>
+      <para>
+        read $f,$rpm,96;
+      </para>
+      <para/>
+      <para>
+        ($magic, $major, $minor, $crap) = unpack("NCC C90", $rpm);
+      </para>
+      <para/>
+      <para>
+        die "Not an RPM\n" if $magic != 0xedabeedb;
+      </para>
+      <para>
+        die "Not a version 3 or 4 RPM\n" if $major != 3 &amp;&amp;
+        $major != 4;
+      </para>
+      <para/>
+      <para>
+        ##$rpm = substr($rpm, 96);
+      </para>
+      <para/>
+      <para>
+        while (!eof($f)) {
+      </para>
+      <para>
+        $pos = tell($f);
+      </para>
+      <para>
+        read $f,$rpm,16;
+      </para>
+      <para>
+        $smagic = unpack("n", $rpm);
+      </para>
+      <para>
+        last if $smagic eq 0x1f8b;
+      </para>
+      <para>
+        # Turns out that every header except the start of the gzip one
+        is
+      </para>
+      <para>
+        # padded to an 8 bytes boundary.
+      </para>
+      <para>
+        if ($pos &amp; 0x7) {
+      </para>
+      <para>
+        $pos += 7;
+      </para>
+      <para>
+        $pos &amp;= ~0x7;# Round to 8 byte boundary
+      </para>
+      <para>
+        seek $f, $pos, 0;
+      </para>
+      <para>
+        read $f,$rpm,16;
+      </para>
+      <para>
+        }
+      </para>
+      <para>
+        ($magic, $crap, $sections, $bytes) = unpack("N4", $rpm);
+      </para>
+      <para>
+        die "Error: header not recognized\n" if $magic != 0x8eade801;
+      </para>
+      <para>
+        $pos += 16;# for header
+      </para>
+      <para>
+        $pos += 16 * $sections;
+      </para>
+      <para>
+        $pos += $bytes;
+      </para>
+      <para>
+        seek $f, $pos, 0;
+      </para>
+      <para>
+        }
+      </para>
+      <para/>
+      <para>
+        if (eof($f)) {
+      </para>
+      <para>
+        die "bogus RPM\n";
+      </para>
+      <para>
+        }
+      </para>
+      <para/>
+      <para>
+        open(ZCAT, "|gzip -cd") || die "can't pipe to gzip\n";
+      </para>
+      <para>
+        print STDERR "CPIO archive found!\n";
+      </para>
+      <para/>
+      <para>
+        print ZCAT $rpm;
+      </para>
+      <para/>
+      <para>
+        while (read($f, ($_=''), 16384) &gt; 0) {
+      </para>
+      <para>
+        print ZCAT;
+      </para>
+      <para>
+        }
+      </para>
+      <para/>
+      <para>
+        close ZCAT;
+      </para>
+      <para>
+        After set up, rpm2cpio.pl works much like the C and Bourne shell
+        versions, so the following command can be used to generate a
+        cpio archive from an RPM package file:
+      </para>
+      <para>
+        $ rpm2cpio.pl fluxbox-0.1.8-2.src.rpm | cpio -i -d
+      </para>
+      <para>
+        CPIO archive found!
+      </para>
+      <para>
+        656 blocks
+      </para>
+      <para>
+        $
+      </para>
+      <para/>
+      <para>
+        Depending upon the system you are on, one or more of these three
+        rpm2cpio programs should work. All three are useful any time you
+        want to extract a file or files from an RPM package file but do
+        not actually need to install the RPM.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      Creating RPM spec files and maintaining those files can be a
+      difficult chore. A number of tools and add-ons for text editors
+      have sprung up to help make this less of a chore.
+    </para>
+    <para>
+      Users of the two most common Linux text editors, vi and emacs, can
+      use add-ons that understand the RPM spec file syntax. These
+      add-ons help reduce errors and, though the use of macros, can
+      speed development of spec files by automating some of the tasks.
+    </para>
+    <para>
+      The RUST tool provides a graphical interface for creating spec
+      files that can simplify a lot of the work normally required.
+    </para>
+    <para>
+      Once you’ve created an RPM package, you can use the rpmlint
+      command to flag missing, incomplete, or incorrect elements in your
+      RPMs.
+    </para>
+    <para>
+      Another tool, called rpm2cpio in its various incarnations, allows
+      you to extract files from an RPM package by taking advantage of
+      the fact that RPM files use the cpio format internally. The
+      rpm2cpio tools can output RPM data into the cpio format directly;
+      you can then pipe the output to the cpio command to extract.
+    </para>
+    <para>
+      After all this help in making RPMs and spec files, the next
+      chapter covers a set of best-practice guidelines to help avoid
+      problems when making your RPMs.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

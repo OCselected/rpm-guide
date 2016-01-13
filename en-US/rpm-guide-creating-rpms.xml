@@ -1,0 +1,1682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+<chapter id="ch-creating-rpms">
+  <title>Creating RPMs: An Overview</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Preparing to build RPMs
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Planning for RPMs
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Explaining the build process
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Using build files
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Seeing the results
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Verifying your RPMs
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    Thus far in this book, all the commands presented have been used to
+    manage or query packages. With this chapter, though, you start
+    creating RPMs of your own. Even if you do not produce applications
+    on your own, you may want to create RPM packages out of software you
+    use, if only for the ease of management that the RPM system
+    provides.
+  </para>
+  <para>
+    Creating RPMs allows you to create a consistent set of applications
+    for use on all systems in your organization and easily manage those
+    applications. You may create RPMs of applications developed in house
+    or RPMs of applications developed elsewhere that you need to
+    customize for your environment. Making RPMs of the customized
+    applications reduces work and makes the customizations consistent.
+  </para>
+  <para>
+    This chapter introduces the RPM system from the point of view of
+    creating RPMs and demonstrates the steps and planning necessary to
+    make your own packages. As such, this chapter introduces the
+    RPM-building topics covered in depth in the remaining chapters in
+    this part.
+  </para>
+  <sect1>
+    <title>Preparing to Build RPMs</title>
+    <para>
+      The RPM-building task starts with gathering all the material you
+      want to bundle into an RPM package and then defining the RPM
+      directives to make your package. The final steps are to build and
+      test an RPM. This sounds easy, and for the most part it is fairly
+      straightforward.
+    </para>
+    <para>
+      The main problems arise when you try to define the many RPM
+      directives for your package. In addition, some of the elements in
+      an RPM can be complex, such as upgrade scripts.
+    </para>
+    <para>
+      The main tasks in building RPMs are:
+    </para>
+    <para>
+      1.Planning what you want to build
+    </para>
+    <para>
+      2.Gathering the software to package
+    </para>
+    <para>
+      3.Patching the software as needed
+    </para>
+    <para>
+      4.Creating a reproducible build of the software
+    </para>
+    <para>
+      5.Planning for upgrades
+    </para>
+    <para>
+      6.Outlining any dependencies
+    </para>
+    <para>
+      7.Building the RPMs
+    </para>
+    <para>
+      8.Testing the RPMs
+    </para>
+    <para>
+      The sections in this chapter cover the initial planning stages and
+      provide an overview of the process of building RPMs. The remaining
+      chapters in Part II go in depth into the process of building RPMs.
+    </para>
+    <sect2>
+      <title>Planning what you want to build</title>
+      <para>
+        The first step in the entire RPM-building process is simply to
+        decide exactly what you want to make into an RPM. Is this an
+        application, a programming library, a set of system
+        configuration files, or a documentation package? If this is an
+        application, is it customized or patched? Think these issues
+        over and decide what you want to package as an RPM.
+      </para>
+      <para>
+        In most cases, you want to create both a source package and a
+        binary package containing the built sources. You need a binary
+        package because that holds the RPM you want to install on other
+        systems. You need the source package so you can recreate the
+        binary package at any time. And, if the sources get updated, you
+        can quickly make a new binary RPM from the updated sources if
+        you have already defined a source RPM.
+      </para>
+      <para>
+        Most packages start with a source RPM, although you have the
+        option to skip making a source RPM. It is a good idea to make
+        the source RPM, however, because it makes it easier to reproduce
+        the final binary RPM. Once of the key goals of the RPM system is
+        to allow for reproducible builds, and making source RPMs is just
+        one step to help towards this goal.
+      </para>
+      <para>
+        Creating a source RPM also allows you to transfer the entire set
+        of sources for a package to another system, since the source RPM
+        is just one file and it contains all the program sources along
+        with the instructions, called a spec file, for building the
+        binary RPM. Furthermore, creating a source RPM makes it easier
+        to create binary RPMs on different processor architectures or
+        different versions of Linux.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        Not all programs are portable to multiple-processor
+        architectures. But many Linux programs can simply be recompiled
+        on another architecture to make a binary program for that
+        architecture. That's because there are a lot of common APIs for
+        Linux applications and because most programs are not processor
+        dependent. This is not true of all programs, so your mileage may
+        vary.
+      </para>
+      <para>
+        Source packages are not that hard to make, and they provide a
+        single package, and single file, that holds all the sources
+        necessary to build your binary package. In addition, once you
+        have a source RPM, it is very easy to build a binary RPM.
+      </para>
+      <para>
+        Binary packages are likely the real reason you want to make an
+        RPM. You can package an application, a programming library, or
+        almost anything you want. Armed with a binary RPM, you can
+        transfer one file to another machine and install the application
+        there, taking full advantage of the RPM system.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Gathering the software to package</title>
+      <para>
+        Whether you are writing your own software or merely packaging
+        software found elsewhere, the next step is to gather the
+        software you want to bundle into an RPM. This includes the
+        applications or libraries you want to package, as well as the
+        program source code.
+      </para>
+      <para>
+        In general, you’ll be doing one of three things:
+      </para>
+      <para>
+        *Packaging your own software
+      </para>
+      <para>
+        *Packaging someone else’s software
+      </para>
+      <para>
+        *Packaging someone else’s stuff after first customizing or
+        patching the software
+      </para>
+      <para>
+        In all cases, you need to gather the software together and
+        decide whether you want everything to go into one bundle or a
+        number of bundles.
+      </para>
+      <para>
+        As covered in <xref linkend="ch-intro-rpm"/> , a major tenet of the philosophy behind
+        RPM is to start with pristine—unmodified--sources. You may
+        need to patch or customize the sources for your environment, but
+        you can always go back to the original sources.
+      </para>
+      <para>
+        Starting with pristine sources provides a number of advantages,
+        including the following:
+      </para>
+      <para>
+        *You clearly separate any changes you have made to the software
+        from the original software.
+      </para>
+      <para>
+        *You make it easier to get an upgrade of the original sources,
+        since your changes are cleanly separated from the original
+        sources. With each new release of the software, you can
+        determine which of your changes, if any, are still needed. This
+        is especially important if you are packaging an application
+        created by another organization into an RPM.
+      </para>
+      <para>
+        *You have a reproducible way to recreate everything in the
+        package. Since you start with unmodified sources, you can always
+        go back to the beginning of the process and start again. Thus,
+        your RPMs don’t depend on any actions taken beforehand, such
+        as patching, that you may later forget to do because the steps
+        are not automated as part of the RPM-building process.
+      </para>
+      <para>
+        Start with pristine sources; then patch as needed. A patch is an
+        automated set of modifications to the source code. Use the diff
+        command to build a patch and the patch command to apply the
+        patch (that is, to modify the source code). Keep the original
+        sources separate from any patches you need to make the software
+        work in your environment.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See the online manual pages for the patch and diff commands for
+        more information on how to create and apply a patch.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Creating a reproducible build of the software</title>
+      <para>
+        The RPM system will automate the steps to create an application,
+        as long as you configure the RPM with the proper steps, such as
+        which make targets to run. Unfortunately, configuring the proper
+        steps is not always easy. So before trying to make an RPM, you
+        need to figure out how to build the application or library you
+        plan to package into an RPM. Once you have figured out how to
+        build the application or library, you can set up a reproducible
+        build. The RPM system can then automate this build.
+      </para>
+      <para>
+        To build the software, you’ll need to use a variety of Linux
+        tools. The specific tools you need depend largely on where the
+        original software came from. The following sections outline some
+        of the more common techniques for preparing and building Linux
+        software.
+      </para>
+      <sect3>
+        <title>Unpacking Software</title>
+        <para>
+          Many applications are downloaded in compressed tar format,
+          often called a tarball. A tarball is merely an archive file
+          built by the tar command that has been compressed, usually
+          using the gzip command.
+        </para>
+        <para>
+          In most cases, these files have a name such as the following:
+        </para>
+        <para>
+          filename.tar.gz
+        </para>
+        <para>
+          filename.tgz
+        </para>
+        <para>
+          filename.tar.Z
+        </para>
+        <para>
+          For the first two cases, use the gunzip command to unzip the
+          file; then use the tar command to extract the file, for
+          example:
+        </para>
+        <para>
+          $ gunzip filename.tgz
+        </para>
+        <para>
+          $ tar xf filename.tar
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          In the case of a file name ending in .Z, use the uncompress
+          program instead of gunzip.
+        </para>
+        <para>
+          Once you have unpacked the sources, start looking around at
+          the files.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Reading the README</title>
+        <para>
+          Many applications come with a very handy file named README, or
+          something similar, such as README.txt. As the name implies,
+          you should read this file. The README file answers some of the
+          most common questions about a particular application.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          You really should read any file named README or any variant of
+          README.
+        </para>
+        <para>
+          Other useful files include those named INSTALL or some close
+          variant. Read these files, too. Usually, the README or the
+          INSTALL file will tell you what you need to do to build the
+          software.
+        </para>
+        <para>
+          Once you have extracted the source code files and read all the
+          available documentation, the next step is to build, usually
+          compile, the application or library.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Building Programs with Linux Build Tools</title>
+        <para>
+          Most applications or libraries need to be built into
+          executable programs or compiled archived libraries. This
+          process of building can be as simple as just compiling, but is
+          usually more involved. Most Linux applications and libraries
+          use a build tool called make to manage the building of the
+          source code and creation of the executable programs. The make
+          command uses a file, normally named Makefile, that contains
+          the rules for building the software. You will usually find a
+          Makefile in each directory in the source code
+        </para>
+        <para>
+          Each Makefile contains a set of targets that define things
+          that make can build. Each target defines the commands to run
+          to build a particular thing (make targets are purely
+          arbitrary, although some conventions are usually followed).
+          Some combination of the targets results in a built
+          application. The make program runs the targets that you
+          specify on the command line, or the Makefile rules indicate it
+          needs to run based on the targets you specify on the command
+          line.
+        </para>
+        <para>
+          You need to tell make the target to build the application or
+          library you want to package into an RPM. Each target is
+          defined within the Makefile. The conventional make targets to
+          build and install a program are:
+        </para>
+        <para>
+          make
+        </para>
+        <para>
+          make install
+        </para>
+        <para>
+          When you call the make command without the name of a target,
+          make builds the default target, named all. This target usually
+          compiles the program or library. The install target should
+          install the program.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          The names of these make targets are conventions shared by many
+          but not all programs. Other common targets include clean,
+          which should clean up any files built.
+        </para>
+        <para/>
+        <para>
+          The commands in the Makefile may be specific to a given
+          system. For example, the traditional command for compiling C
+          programs is cc, short for C Compiler. You may have the gcc
+          command (GNU C Compiler) instead. The options passed to the C
+          compiler may differ depending on the architecture of the
+          system. Other commands may exist but be located in different
+          locations. SUSE Linux, for example, puts a lot of programs in
+          /opt.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          These system-dependent issues mostly apply to various versions
+          of Unix. Most modern Linux systems are fairly similar. Because
+          many packages, such as sendmail, have a long UNIX history,
+          you’ll find all sorts of complications in the Makefiles or
+          many Makefiles provided with many applications. If we could
+          just convince everyone to give up all non-Linux operating
+          systems, this task would be much simpler.
+        </para>
+        <para>
+          Because the Makefiles are platform specific, a number of tools
+          have been developed to create the proper Makefile, usually by
+          running a program that knows about your system's architecture.
+          The simplest of these tools is the manual approach. You may
+          download a program and find files such as Makefile.amiga,
+          Makefile.solaris, and Makefile.linux. You need to copy the
+          file for your system architecture to the name Makefile.
+        </para>
+        <para>
+          The following sections discuss other tools for creating
+          Makefiles.
+        </para>
+        <para/>
+        <sect4>
+          <title>imake</title>
+          <para>
+            A program called imake is used mostly for X Window graphical
+            applications, and typically older X Window applications. The
+            imake command uses a file named Imakefile that contains
+            rules used to build a platform-specific Makefile. This
+            allows X Window applications, which run on many
+            architectures and operating systems, to come with fairly
+            generic build scripts.
+          </para>
+          <para>
+            When you see an Imakefile, use the following general set of
+            commands to compileand install an application:
+          </para>
+          <para>
+            $ xmkmf
+          </para>
+          <para>
+            $ make
+          </para>
+          <para>
+            $ make install
+          </para>
+          <para>
+            These commands work for most X Window applications. The
+            xmkmf command is a script that runs the imake command to
+            create a Makefile. If the xmkmf command is not available or
+            if this command does not work, you may need to run a command
+            such as the following:
+          </para>
+          <para>
+            make Makefile
+          </para>
+          <para>
+            Or, if there are multiple directories of source code, try
+            the following command:
+          </para>
+          <para>
+            make Makefiles
+          </para>
+          <para>
+            Cross Reference
+          </para>
+          <para>
+            For more on imake, see www.dubois.ws/software/imake-stuff/.
+          </para>
+        </sect4>
+        <sect4>
+          <title>The configure script</title>
+          <para>
+            Most Linux programs, especially server-side or command-line
+            programs, use a script called configure. The configure
+            script outputs a platform-specific Makefile.
+          </para>
+          <para>
+            If you see a script named configure in the source files, try
+            the following commands to build and install the program:
+          </para>
+          <para>
+            $ ./configure
+          </para>
+          <para>
+            $ make
+          </para>
+          <para>
+            $ make install
+          </para>
+          <para>
+            The ./configure command runs the script in the local
+            directory, which outputs a Makefile configured for your
+            system. The make command builds the program and the make
+            install command installs the program.
+          </para>
+          <para>
+            The configure script is created by a set of tools including
+            automake and autoconf, which use generic files usually named
+            configure.in and makefile.am, among other files, to create
+            the generic configure script.
+          </para>
+          <para>
+            In many cases, you’ll need to pass parameters to the
+            configure script. One of the most common parameters is
+            --prefix, which tells the configure script the name of the
+            starting directory from which to base all other paths. This
+            is the root directory for building the application.
+          </para>
+          <para>
+            Cross Reference
+          </para>
+          <para>
+            For more on the configure system, autoconf, and automake,
+            see www.airs.com/ian/configure/.
+          </para>
+        </sect4>
+        <sect4>
+          <title>Building Perl modules</title>
+          <para>
+            Perl is a scripting language used heavily on Linux systems,
+            especially by administrators. Most Perl modules and packages
+            use the following set of commands to create a
+            system-specific Makefile and to build the module:
+          </para>
+          <para>
+            $ perl Makefile.PL
+          </para>
+          <para>
+            $ make
+          </para>
+          <para>
+            $ make test
+          </para>
+          <para>
+            $ make install
+          </para>
+          <para>
+            If you see a file named Makefile.PL, chances are these are
+            the commands to run to build the application or module.
+          </para>
+          <para>
+            The goal of all these steps is to figure out how to make a
+            reproducible build of the application or library you want to
+            package in RPM format. Once you have a build, the next step
+            is to plan for upgrades.
+          </para>
+        </sect4>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Planning for Upgrades</title>
+      <para>
+        Any application or library you package in RPM format is likely
+        to get upgraded sometime. When this happens, you’ll need to
+        make a new RPM. This new RPM must handle not only installing the
+        package, but also handling any upgrade issues. You need to think
+        about the following issues:
+      </para>
+      <para>
+        *How to install the RPM for the new version of the software. Are
+        there any necessary install scripts?
+      </para>
+      <para>
+        *How to remove the previous RPM package. If your package has an
+        install script, then you may need an uninstall script to cleanly
+        remove any changes made to the system by the install script. The
+        RPM system handles the removal of the files in the package. You
+        need to handle the task of undoing any changes made to the
+        system during installation.
+      </para>
+      <para>
+        At this point in time, the main effort is to keep these issues
+        in mind and plan ahead, since these issues will come up with any
+        upgrade.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Outlining Any Dependencies</title>
+      <para>
+        Often, the hardest task is getting make to build a program
+        properly. One potential problem is assuring that all the
+        dependencies are included. As you work with make, keep track of
+        any other libraries that the program you are trying to build
+        requires. These libraries will become dependencies when you get
+        to the stage of making the RPM.
+      </para>
+      <para>
+        In most cases you do not want to include the dependencies in
+        your RPM. Instead, each dependency should have its own RPM for
+        each necessary library. In many cases, you should be able to
+        find RPMs for these dependencies. Keep track of the packages
+        that provide the dependencies.
+      </para>
+      <para>
+        After you have built the application, planned for upgrades and
+        outlined dependencies, you can make an RPM.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Building RPMs</title>
+    <para>
+      In previous chapters, just about everything you want to do with
+      RPMs is accomplished with the rpm command. Building RPMs is one
+      exception. Just about everything you want to do to build an RPM is
+      done by the rpmbuild command, often with a single command.
+    </para>
+    <para>
+      Warning
+    </para>
+    <para>
+      Older RPM manuals refer to using the –b option to the rpm
+      command to create RPMs. Don’t use that option. Instead, always
+      use the rpmbuild command. The reason for this change is that
+      starting with version 4.1, RPM no longer maps the rpm -b command
+      to the real command, rpmbuild.
+    </para>
+    <para>
+      When building RPMs, go through the following steps:
+    </para>
+    <para>
+      1.Set up the directory structure.
+    </para>
+    <para>
+      2.Place the sources in the right directory.
+    </para>
+    <para>
+      3.Create a spec file that tells the rpmbuild command what to do.
+    </para>
+    <para>
+      4.Build the source and binary RPMs.
+    </para>
+    <para>
+      The following sections provide details for these steps.
+    </para>
+    <sect2>
+      <title>Setting up the directory structure</title>
+      <para>
+        The RPM system expects five directories, as listed in Table 9-1.
+      </para>
+      <para>
+        Table 9-1 RPM directories
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Directory
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  BUILD
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The rpmbuild command builds software in this
+                  directory.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  RPMS
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The rpmbuild command stores binary RPMs it creates in
+                  this directory.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  SOURCES
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  You should put the sources for the application in this
+                  directory.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  SPECS
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  You should place the spec file for each RPM you plan
+                  to make in this directory.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  SRPMS
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  The rpmbuild command places source RPMs in this
+                  directory.
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        The RPMS directory usually has a number of architecture-specific
+        subdirectories, such as the following (on an Intel architecture
+        system):
+      </para>
+      <para>
+        $ ls RPMS
+      </para>
+      <para>
+        athlon
+      </para>
+      <para>
+        i386
+      </para>
+      <para>
+        i486
+      </para>
+      <para>
+        i586
+      </para>
+      <para>
+        i686
+      </para>
+      <para>
+        noarch
+      </para>
+      <para>
+        By default, Red Hat Linux systems expect RPMs to be built in the
+        /usr/src/redhat directory.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        This directory is obviously specific to Red Hat Linux. On other
+        Linux distributions, you'll likely see other directories.
+      </para>
+      <para>
+        Within the /usr/src/redhat directory, you’ll see the
+        subdirectories listed in Table 9-1, as follows:
+      </para>
+      <para>
+        $ ls /usr/src/redhat
+      </para>
+      <para>
+        BUILD
+      </para>
+      <para>
+        RPMS
+      </para>
+      <para>
+        SOURCES
+      </para>
+      <para>
+        SPECS
+      </para>
+      <para>
+        SRPMS
+      </para>
+      <para>
+        At first, it seems rather odd to be using a system directory to
+        build RPMs. But remember that the RPM system was originally
+        built to create Linux distributions. You can also change the
+        default directories by modifying your rpmrc settings.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        See <xref linkend="ch-customizing-rpm"/>  for more on the use of the rpmrc settings.
+      </para>
+      <para>
+        For now, it is easiest to just change to the /usr/src/redhat
+        directory and work from this location. To start, you will need
+        to change ownership or permissions on these files so you can
+        build RPMs while logged in as a normal user.
+      </para>
+      <para>
+        Warning
+      </para>
+      <para>
+        Do not build RPMs while logged in as root. Mistakes in building
+        packages can have serious consequences if you are logged in as
+        root.
+      </para>
+      <para>
+        To build RPMs, you really need only two things:
+      </para>
+      <para>
+        *Your sources in the SOURCES directory
+      </para>
+      <para>
+        *Your spec file in the SPECS directory
+      </para>
+    </sect2>
+    <sect2>
+      <title>Placing your sources into the directory structure</title>
+      <para>
+        You can place all the source files directly in the
+        /usr/src/redhat/SOURCES directory. In most cases, however, it is
+        easier to create a tarball of the sources you want to build and
+        place the tarball file in the /usr/src/redhat/SOURCES directory.
+        The RPM specifications for commands necessary to extract the
+        sources from such a file are trivial. Furthermore, the tarball,
+        when extracted, should create a subdirectory specific to your
+        package. This keeps your source code separate from other
+        packages that also have source code in the SOURCES directory.
+      </para>
+      <para>
+        The best strategy is to start in a directory of your own making,
+        create the tarball file from the sources, and then copy the
+        tarball file to the /usr/src/redhat/SOURCES directory.
+      </para>
+      <para>
+        The convention for these tarball files is
+        package-version.tar.gz. For example:
+      </para>
+      <para>
+        jikes-1.17.tar.gz
+      </para>
+      <para>
+        Place a file like this into the /usr/src/redhat/SOURCES
+        directory. This file should include all the sources, all the
+        build scripts, and any documentation you want to install as part
+        of the package.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Creating the spec file</title>
+      <para>
+        The spec file, short for specification file, defines all the
+        actions the rpmbuild command should take to build your
+        application, as well as all the actions necessary for the rpm
+        command to install and remove the application. Each source RPM
+        should have the necessary spec file for building a binary RPM.
+      </para>
+      <para>
+        The spec file is a text file. The normal naming convention is to
+        name the file with the package name and a .spec filename
+        extension. For example, the jikes package spec file would be
+        named jikes.spec.
+      </para>
+      <para>
+        Inside the spec file, format the information on the package
+        using a special syntax. This syntax defines how to build the
+        package, version numbers, dependency information, and everything
+        else you can query about a package. This syntax differs slightly
+        depending on the sections in the spec file. The following
+        sections describe these spec file sections and the necessary
+        syntax in each section.
+      </para>
+      <sect3>
+        <title>The introduction section</title>
+        <para>
+          The introduction section contains information about the
+          package, the type of information shown with the rpm -qi
+          command. For example:
+        </para>
+        <para>
+          Summary: java source to bytecode compiler
+        </para>
+        <para>
+          %define version 1.17
+        </para>
+        <para>
+          Copyright: IBM Public License,
+          http://ibm.com/developerworks/oss/license10.html
+        </para>
+        <para>
+          Group: Development/Languages
+        </para>
+        <para>
+          Name: jikes
+        </para>
+        <para>
+          Prefix: /usr
+        </para>
+        <para>
+          Provides: jikes
+        </para>
+        <para>
+          Release: 1
+        </para>
+        <para>
+          Source: jikes-%{version}.tar.gz
+        </para>
+        <para>
+          URL: http://ibm.com/developerworks/opensource/jikes
+        </para>
+        <para>
+          Version: %{version}
+        </para>
+        <para>
+          Buildroot: /tmp/jikesrpm
+        </para>
+        <para/>
+        <para>
+          %description
+        </para>
+        <para>
+          The IBM Jikes compiler translates Java source files to
+          bytecode. It
+        </para>
+        <para>
+          also supports incremental compilation and automatic makefile
+          generation,
+        </para>
+        <para>
+          and is maintained by the Jikes Project:
+        </para>
+        <para>
+          http://ibm.com/developerworks/opensource/jikes/
+        </para>
+        <para>
+          In this example, you can see the Source: definition of a
+          compressed tar archive associated with a particular version
+          number. This also names a Buildroot: setting that defines
+          where the files will get built into a working program. You can
+          see the description of the package that will get printed with
+          the rpm –qi command.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          You can further divide this first section into the preamble
+          and other areas. For simplicity, I grouped all introductary
+          parts of a spec file into one introduction section.
+        </para>
+        <para>
+          This example comes from a real-world RPM spec file. It does
+          not follow all the rules for creating RPMs. This example:
+        </para>
+        <para>
+          *Should not explicitly provide jikes, the name of the package.
+        </para>
+        <para>
+          *Should not include a Copyright tag, as this tag is
+          deprecated.
+        </para>
+        <para>
+          *Uses a %define for the version when the rpmbuild command can
+          create a version macro for you.
+        </para>
+      </sect3>
+      <sect3>
+        <title>The prep section</title>
+        <para>
+          The prep section, short for prepare, defines the commands
+          necessary to prepare for the build. If you are starting with a
+          compressed tar archive (a tarball) of the sources, the prep
+          section needs to extract the sources.
+        </para>
+        <para>
+          For example:
+        </para>
+        <para>
+          %prep
+        </para>
+        <para>
+          %setup -q
+        </para>
+        <para>
+          The prep section starts with a %prep statement.
+        </para>
+        <para>
+          This example uses the %setup RPM macro, which knows about tar
+          archives, to extract the files. In most cases, this will be
+          all you need in your spec file prep section.
+        </para>
+      </sect3>
+      <sect3>
+        <title>The build section</title>
+        <para>
+          The spec file build section contains the commands to build the
+          software. Usually, this will include just a few commands,
+          since most of the real instructions appear in the Makefile.
+          For example:
+        </para>
+        <para>
+          %build
+        </para>
+        <para>
+          ./configure CXXFLAGS=-O3 --prefix=$RPM_BUILD_ROOT/usr
+        </para>
+        <para>
+          make
+        </para>
+        <para>
+          The build section starts with a %build statement.
+        </para>
+        <para>
+          The commands shown for this build section run the configure
+          script, covered in the previous section on Linux build tools,
+          and then run the make command with the default maketarget. If
+          things unfold as they should, this procedure builds the
+          software.
+        </para>
+      </sect3>
+      <sect3>
+        <title>The install section</title>
+        <para>
+          The spec file install section holds the commands necessary to
+          install the newly built application or library. In most cases,
+          your install section should clean out the Buildroot directory
+          and run the make install command. For example:
+        </para>
+        <para>
+          %install
+        </para>
+        <para>
+          rm -fr $RPM_BUILD_ROOT
+        </para>
+        <para>
+          make install
+        </para>
+        <para>
+          The install section starts with an %install statement.
+        </para>
+      </sect3>
+      <sect3>
+        <title>The clean section</title>
+        <para>
+          The clean section cleans up the files that the commands in the
+          other sections create:
+        </para>
+        <para>
+          %clean
+        </para>
+        <para>
+          rm -rf $RPM_BUILD_ROOT
+        </para>
+        <para>
+          The clean section starts with a %clean statement
+        </para>
+      </sect3>
+      <sect3>
+        <title>The files section</title>
+        <para>
+          Finally, the files section lists the files to go into the
+          binary RPM, along with the defined file attributes. For
+          example:
+        </para>
+        <para>
+          %files
+        </para>
+        <para>
+          %defattr(-,root,root)
+        </para>
+        <para>
+          /usr/bin/jikes
+        </para>
+        <para>
+          %doc /usr/doc/jikes-%{version}/license.htm
+        </para>
+        <para>
+          %doc /usr/man/man1/jikes.1*
+        </para>
+        <para>
+          The files section starts with a %files statement
+        </para>
+        <para>
+          The %doc macro marks certain files as documentation. This
+          allows the RPM to distinguish the files holding documentation
+          from the other files in the RPM.
+        </para>
+        <para>
+          Cross Reference
+        </para>
+        <para>
+          This example skips the install and uninstall script sections,
+          as well as a verification section. There are also no triggers
+          defined in this RPM spec file. All of these topics are covered
+          in <xref linkend="ch-specfiles"/> and <xref linkend="ch-advanced-packaging"/>.
+        </para>
+        <para>
+          Once you have written your spec file, and placed the files in
+          the SOURCES and SPECS directories under /usr/src/redhat,
+          you’ll see files like the following:
+        </para>
+        <para>
+          $ ls –CF /usr/src/redhat/*
+        </para>
+        <para>
+          /usr/src/redhat/BUILD:
+        </para>
+        <para/>
+        <para>
+          /usr/src/redhat/RPMS:
+        </para>
+        <para>
+          athlon/ i386/ i486/ i586/ i686/ noarch/
+        </para>
+        <para/>
+        <para>
+          /usr/src/redhat/SOURCES:
+        </para>
+        <para>
+          jikes-1.17.tar.gz
+        </para>
+        <para/>
+        <para>
+          /usr/src/redhat/SPECS:
+        </para>
+        <para>
+          jikes.spec
+        </para>
+        <para/>
+        <para>
+          /usr/src/redhat/SRPMS:
+        </para>
+        <para>
+          That is, with a clean system and no other RPMs being built,
+          you'll see a spec file in /usr/src/redhat/SPECS and the
+          sources in /usr/src/redhat/SOURCES. In this example, the
+          sources are in a compressed tar archive. (For this, the RPM
+          spec file, jikes.spec needs to have a command in the prep
+          section to extract the files.)
+        </para>
+        <para>
+          You should now be ready to build an RPM.
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Building RPMs with the rpmbuild command</title>
+      <para>
+        To build RPMs with the rpmbuild command, use the following basic
+        syntax:
+      </para>
+      <para>
+        rpmbuild -bBuildStage spec_file
+      </para>
+      <para>
+        The -b option tells rpmbuild to build an RPM. The extra
+        BuildStage option is a special code that tells the rpmbuild
+        command how far to go when building. Table 9-2 lists these
+        options:
+      </para>
+      <para>
+        Table 9-2 Options for building with rpmbuild
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Option
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Usage
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -ba
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build all, both a binary and source RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bb
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build a binary RPM
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bc
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build (compile) the program but do not make the full
+                  RPM, stopping just after the %build section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bp
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Prepare for building a binary RPM, and stop just after
+                  the %prep section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bi
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Create a binary RPM and stop just after the %install
+                  section
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bl
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Check the listing of files for the RPM and generate
+                  errors if the buildroot is missing any of the files to
+                  be installed
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  -bs
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Build a source RPM only
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Note
+      </para>
+      <para>
+        See chapter 12 for advanced options you can use with rpmbuild.
+      </para>
+      <para>
+        For example, to set up all the necessary files and prepare for
+        building, run the following command:
+      </para>
+      <para>
+        rpmbuild –bp specfile
+      </para>
+      <para>
+        This example runs through the %prep section, and stops
+        immediately after this section. With the jikes package, for
+        example, you’ll see a result like the following:
+      </para>
+      <para>
+        $ rpmbuild -bp /usr/src/redhat/SPECS/jikes.spec
+      </para>
+      <para>
+        Executing(%prep): /bin/sh -e /var/tmp/rpm-tmp.72435
+      </para>
+      <para>
+        + umask 022
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + LANG=C
+      </para>
+      <para>
+        + export LANG
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + rm -rf jikes-1.17
+      </para>
+      <para>
+        + /usr/bin/gzip -dc /usr/src/redhat/SOURCES/jikes-1.17.tar.gz
+      </para>
+      <para>
+        + tar -xf -
+      </para>
+      <para>
+        + STATUS=0
+      </para>
+      <para>
+        + '[' 0 -ne 0 ']'
+      </para>
+      <para>
+        + cd jikes-1.17
+      </para>
+      <para>
+        ++ /usr/bin/id -u
+      </para>
+      <para>
+        + '[' 500 = 0 ']'
+      </para>
+      <para>
+        ++ /usr/bin/id -u
+      </para>
+      <para>
+        + '[' 500 = 0 ']'
+      </para>
+      <para>
+        + /bin/chmod -Rf a+rX,g-w,o-w .
+      </para>
+      <para>
+        + exit 0
+      </para>
+      <para>
+        After running this command, the source files are extracted into
+        the /usr/src/redhat/BUILD directory, under the jikes-1.17
+        subdirectory. Using a subdirectory keeps the sources for this
+        package from intermixing with the sources for other packages.
+      </para>
+      <para>
+        Running a directory listing on the
+        /usr/src/redhat/BUILD/jikes-1.17 subdirectory shows what the
+        spec file %prep section commands have done. For example:
+      </para>
+      <para>
+        $ ls -1 /usr/src/redhat/BUILD/jikes-1.17
+      </para>
+      <para>
+        acinclude.m4
+      </para>
+      <para>
+        aclocal.m4
+      </para>
+      <para>
+        AUTHORS
+      </para>
+      <para>
+        ChangeLog
+      </para>
+      <para>
+        config.guess
+      </para>
+      <para>
+        config.sub
+      </para>
+      <para>
+        configure
+      </para>
+      <para>
+        configure.in
+      </para>
+      <para>
+        COPYING
+      </para>
+      <para>
+        depcomp
+      </para>
+      <para>
+        doc
+      </para>
+      <para>
+        INSTALL
+      </para>
+      <para>
+        install-sh
+      </para>
+      <para>
+        jikes.spec
+      </para>
+      <para>
+        Makefile.am
+      </para>
+      <para>
+        Makefile.in
+      </para>
+      <para>
+        missing
+      </para>
+      <para>
+        mkinstalldirs
+      </para>
+      <para>
+        NEWS
+      </para>
+      <para>
+        README
+      </para>
+      <para>
+        src
+      </para>
+      <para>
+        TODO
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        From these sources, you see a configure script. The configure
+        script gives a good indication of how the software needs to be
+        built. This example also shows a README file. You know what to
+        do with these files.
+      </para>
+      <para>
+        The actual source code is in the
+        /usr/src/redhat/BUILD/jikes-1.17/src directory. The user
+        documentation is stored in the
+        /usr/src/redhat/BUILD/jikes-1.17/doc directory.
+      </para>
+      <para>
+        To build a binary RPM, use the –bb option to the rpmbuild
+        command. For example:
+      </para>
+      <para>
+        $ rpmbuild -bb /usr/src/redhat/SPECS/jikes.spec
+      </para>
+      <para>
+        Warning
+      </para>
+      <para>
+        Don’t build packages when you are logged in as the root user.
+        Log in as a normal user instead. This is to limit the damage
+        caused to your system if the spec file or the Makefile contains
+        errors that delete system files, for example. If you are logged
+        in as the root user, you will have permission to perform these
+        destructive acts. If you are logged in as a normal user, though,
+        these RPM spec file and Makefile errors will fail to run,
+        because you don’t have permission to modify system files.
+      </para>
+      <para>
+        This command results in a lot of output, most coming from the
+        configure script. (This script examines the C programming
+        environment on your system.) When the rpmbuild command
+        completes, you’ll see the binary RPM in the proper
+        subdirectory of the RPMS directory. You can see the RPM with a
+        directory listing, for example:
+      </para>
+      <para>
+        $ls /usr/src/redhat/RPMS/i386:
+      </para>
+      <para>
+        jikes-1.17-1.i386.rpm
+      </para>
+      <para>
+        To stop execution just after the %install section, use a command
+        like the following:
+      </para>
+      <para>
+        rpmbuild –bi specfile
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        # rpmbuild -bi /usr/src/redhat/SPECS/jikes.spec
+      </para>
+      <para>
+        To build a source RPM out of the files you have (in this case a
+        tar archive of the sources and the spec file), use a command
+        like the following:
+      </para>
+      <para>
+        rpmbuild –bs specfile
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        $ rpmbuild -bs /usr/src/redhat/SPECS/jikes.spec
+      </para>
+      <para>
+        When done, you’ll see the source RPM in the
+        /usr/src/redhat/SRPMS directory:
+      </para>
+      <para>
+        $ ls /usr/src/redhat/SRPMS
+      </para>
+      <para>
+        jikes-1.17-1.src.rpm
+      </para>
+      <para>
+        To clean out the files created by building these RPMs, use the
+        --clean option to the rpmbuild command:
+      </para>
+      <para>
+        rpmbuild --clean specfile
+      </para>
+      <para>
+        For example:
+      </para>
+      <para>
+        $ rpmbuild --clean /usr/src/redhat/SPECS/jikes.spec
+      </para>
+      <para>
+        Executing(--clean): /bin/sh -e /var/tmp/rpm-tmp.21908
+      </para>
+      <para>
+        + umask 022
+      </para>
+      <para>
+        + cd /usr/src/redhat/BUILD
+      </para>
+      <para>
+        + rm -rf jikes-1.17
+      </para>
+      <para>
+        + exit 0
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-rpmbuild"/>  covers a number of addition options for the rpmbuild
+        command that you can use to customize the build.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Verifying Your RPMS</title>
+    <para>
+      After you've built an RPM, you can use the techniques from <xref linkend="ch-using-rpm-db"/> to verify the RPM. You can also use the –bl option to the
+      rpmbuild command to verify the list of files in the RPM. Use a
+      command like the following:
+    </para>
+    <para>
+      rpmbuild –bl spec_file
+    </para>
+    <para>
+      For example:
+    </para>
+    <para>
+      $ rpmbuild -bl /usr/src/redhat/SPECS/jikes.spec
+    </para>
+    <para>
+      Processing files: jikes-1.17-1
+    </para>
+    <para>
+      error: File not found: /tmp/jikesrpm/usr/bin/jikes
+    </para>
+    <para>
+      error: File not found:
+      /tmp/jikesrpm/usr/doc/jikes-1.17/license.htm
+    </para>
+    <para>
+      error: File not found by glob: /tmp/jikesrpm/usr/man/man1/jikes.1*
+    </para>
+    <para>
+      Provides: jikes
+    </para>
+    <para/>
+    <para/>
+    <para>
+      RPM build errors:
+    </para>
+    <para>
+      File not found: /tmp/jikesrpm/usr/bin/jikes
+    </para>
+    <para>
+      File not found: /tmp/jikesrpm/usr/doc/jikes-1.17/license.htm
+    </para>
+    <para>
+      File not found by glob: /tmp/jikesrpm/usr/man/man1/jikes.1*
+    </para>
+    <para>
+      This example shows a number of errors. The -bl option checks that
+      all the necessary files are located within the buildroot
+      directory. The buildroot directory is a location that acts like
+      the final installed root directory. From the previous example,
+      this package was not properly built yet.
+    </para>
+    <para>
+      In a situation like this, you can start over, or use the
+      --short-circuit option to restart the build from a given section
+      in the spec file. As you create an RPM, you will need to go back
+      and forth restarting the build as you detect and fix errors.
+    </para>
+    <para/>
+    <para>
+      You can also use the rpm command with options such as –V for
+      verification on a fully-built package. For example:
+    </para>
+    <para>
+      $ rpm -Vp /usr/src/redhat/RPMS/i386/jikes-1.17-1.i386.rpm
+    </para>
+    <para>
+      S.5....T /usr/bin/jikes
+    </para>
+    <para>
+      .......T d /usr/doc/jikes-1.17/license.htm
+    </para>
+    <para>
+      ..5....T d /usr/man/man1/jikes.1.gz
+    </para>
+    <para>
+      In this case, you see some file sizes and times differ. These
+      differences can be explained by the fact that the original package
+      was compiled on a different system and older version of Red Hat
+      Linux than the version compiled locally.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      See the on "Verifying Installed RPM Packages" section in <xref linkend="ch-using-rpm-db"/> 
+      for more on the -V option.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      This chapter introduced the task of building RPMs, whether
+      building RPMs from your own applications or from software you have
+      gathered elsewhere. In both cases, the steps for building the RPMs
+      are the same.
+    </para>
+    <para>
+      In most cases, you should build an RPM of the sources for your
+      application, an RPM that can be used to reproduce the build of the
+      application. Create a second RPM that holds the binary
+      application. Once you set up the commands and define the spec file
+      for the binary RPM, making a source RPM is trivial.
+    </para>
+    <para>
+      Use the rpmbuild command to create RPMs. This command uses an RPM
+      spec file to define the commands and settings for creating the
+      RPM.
+    </para>
+    <para>
+      The next chapter delves into the spec files that define the RPM
+      directives for your packages.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

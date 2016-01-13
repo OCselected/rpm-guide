@@ -1,0 +1,883 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Programming RPM with Perl"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Using the RPM2 module to access information on package files"
+msgstr ""
+
+msgid "Querying the RPM database from Perl"
+msgstr ""
+
+msgid "Cross-referencing capabilities by the packages that provide and require capabilities"
+msgstr ""
+
+msgid "Extracting information on packages"
+msgstr ""
+
+msgid "Perl is one of the most popular scripting languages. Used by system administrators, software developers, and a host of other users, Perl runs on many operating systems including Linux, UNIX, and Windows. Perl stands for Practical Extraction and Report Language, or sometimes Pathologically Eclectic Rubbish Lister."
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "In the same vein, LISP stands for Lots of Irritating Single Parenthesis and COBOL for Completely Obnoxious Business Oriented Language."
+msgstr ""
+
+msgid "I began my book Cross-Platform Perl (John Wiley &amp; Sons, 2000) by mentioning that when I first started learning Perl, I thought it was an evil plot. I still do. But it is a very practical evil plot. You can get a lot of work done with Perl, and quickly."
+msgstr ""
+
+msgid "Because of a long history of text processing, Perl is especially popular among system administrators. Perl also supports add-on packages, called modules. You can find thousands of add-on modules for text processing, networking, and a plethora of other tasks. There are so many modules available that some people who don’t like the Perl syntax script with Perl anyway, because the available modules save a lot of time."
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "See search.cpan.org, the Comprehensive Perl Archive Network, for a listing of many Perl modules."
+msgstr ""
+
+msgid "This chapter covers working with RPM files and the RPM database using Perl. You can combine RPM usage with other Perl usage, such as generating HTML files or downloading RPMs over a network link."
+msgstr ""
+
+msgid "Many of the RPM tools covered in <xref linkend=\"ch-management-software\" /> are written in Perl."
+msgstr ""
+
+msgid "Getting and Using the Perl RPM Modules"
+msgstr ""
+
+msgid "A number of Perl RPM modules are available. No one module provides all the features you need, although with time, the Perl modules will consolidate into a few modules that most everyone uses. As of this writing, the RPM2 module, by Chip Turner of Red Hat, provides the most recent approach to working with the RPM system from Perl. This chapter covers the RPM2 module."
+msgstr ""
+
+msgid "Red Hat Linux 8.0 comes with a perl-RPM2 package, which you need to install to use this module. Otherwise, you can download the module from www.cpan.org. Install this module, as well as the perl module, which provides the Perl language interpreter. Once you have this module installed and the perl package installed, you are ready to go."
+msgstr ""
+
+msgid "The version of the perl-RPM2 package that ships with Red Hat Linux 8.0 has a bug in that it will not open package files that were created with the version of rpm that ships with Red Hat Linux 8.0. That is, the Perl module cannot read package files that ship with Red Hat Linux. You can read older package files, though. This problem only affects attempts to read .rpm files, not installed packages. The bug is related to reading signed packages but not having the GPG keys in the keyring. The latest version on search.cpan.org fixes this problem."
+msgstr ""
+
+msgid "The RPM2 module contains Perl methods to work on two types of RPM objects: RPM files and installed packages."
+msgstr ""
+
+msgid "Working with RPM Files"
+msgstr ""
+
+msgid "The RPM2 module provides a top-level object, RPM2, that acts as an entry point into the module. From the RPM2 object, you either open the RPM database, covered in the \"Programming with the RPM Database\" section, or open an RPM package file, covered here."
+msgstr ""
+
+msgid "The first step in working with an RPM file is to open the file inside a Perl script."
+msgstr ""
+
+msgid "Opening package files"
+msgstr ""
+
+msgid "The open_package subroutine opens an RPM package file and returns a header object (an RPM2::Header). The basic syntax follows:"
+msgstr ""
+
+msgid "my $header = RPM2-&gt;open_package( $filename );"
+msgstr ""
+
+msgid "For example:"
+msgstr ""
+
+msgid "my $header = RPM2-&gt;open_package(\"jikes-1.14-1-glibc-2.2.i386.rpm\");"
+msgstr ""
+
+msgid "After you’ve opened a package, you can perform a number of query operations on the header object returned by the open_package subroutine."
+msgstr ""
+
+msgid "Listing tags from the package"
+msgstr ""
+
+msgid "Each RPM package has information stored under a variety of tags, such as the package name under the NAME tag and the package long description under the DESCRIPTION tag."
+msgstr ""
+
+msgid "These are the same tags introduced with the --queryformat option to the rpm command discussed in <xref linkend=\"ch-using-rpm-db\" /> ."
+msgstr ""
+
+msgid "The tag subroutine returns the value of a given tag. For example, to get the name of the package, use the NAME tag:"
+msgstr ""
+
+msgid "use RPM2;"
+msgstr ""
+
+msgid "my $header = RPM2-&gt;open_package(\"jikes-1.14-1-glibc-2.2.i386.rpm\" );"
+msgstr ""
+
+msgid "print $header-&gt;tag(\"NAME\"), \"\\n\";"
+msgstr ""
+
+msgid "Pulling this together, Listing 18-1 shows example script that lists the name and one-line short summary of a package file."
+msgstr ""
+
+msgid "Listing 18-1: rpmsum.pl"
+msgstr ""
+
+msgid "#!/usr/bin/perl"
+msgstr ""
+
+msgid "#"
+msgstr ""
+
+msgid "# Lists summary from an RPM package file"
+msgstr ""
+
+msgid "# Usage:"
+msgstr ""
+
+msgid "# rpmsum.pl package_name.rpm"
+msgstr ""
+
+msgid "use strict;"
+msgstr ""
+
+msgid "my $header = RPM2-&gt;open_package( $ARGV[0] );"
+msgstr ""
+
+msgid "print $header-&gt;tag(\"NAME\"), \": \", $header-&gt;tag(\"SUMMARY\"), \"\\n\";"
+msgstr ""
+
+msgid "Enter this script and name the file rpmsum.pl."
+msgstr ""
+
+msgid "When you run this script, you need to pass the name of a package file on the command line. For example:"
+msgstr ""
+
+msgid "$ ./rpmsum.pl jikes-1.14-1-glibc-2.2.i386.rpm"
+msgstr ""
+
+msgid "jikes: java source to bytecode compiler"
+msgstr ""
+
+msgid "Convenience methods"
+msgstr ""
+
+msgid "The RPM2 module includes convenience methods for all RPM tags. This means you can use the method name in place of tag(\"NAME\"). For example:"
+msgstr ""
+
+msgid "print $header-&gt;name(), \": \", $header-&gt;summary(), \"\\n\";"
+msgstr ""
+
+msgid "Listing the name and version"
+msgstr ""
+
+msgid "The RPM2 module provides a handy subroutine for getting the NAME, VERSION, RELEASE, and EPOCH tags, often abbreviated as NVRE. The subroutine, as_nvre, returns a single string with these values in the standard format, with the values separated by minus signs."
+msgstr ""
+
+msgid "Usually, the EPOCH tag has no value. If there is an EPOCH value, you will see it output first, and then a colon, and then the name, version, and release values. For example:"
+msgstr ""
+
+msgid "5:redhat-config-httpd-1.0.1-13"
+msgstr ""
+
+msgid "In this case, the EPOCH value is 5."
+msgstr ""
+
+msgid "You can call this subroutine on any header object, or any package object to get the full name of the package. For example:"
+msgstr ""
+
+msgid "print $header-&gt;as_nvre(), \"\\n\";"
+msgstr ""
+
+msgid "Checking whether the package is a source package"
+msgstr ""
+
+msgid "Another handy subroutine tells you if an RPM file represents a source RPM or a binary RPM. The is_source_package subroutine returns a true value if the package is a source package, and a false value otherwise."
+msgstr ""
+
+msgid "The rpmpkg.pl script, shown in Listing 18-2, shows how to use the as_nvre and is_source_package subroutines."
+msgstr ""
+
+msgid "Listing 18-2: rpmpkg.pl"
+msgstr ""
+
+msgid "# Queries RPM package file and prints"
+msgstr ""
+
+msgid "# out name and whether this is a source pkg."
+msgstr ""
+
+msgid "# rpmpkg.pl package_name"
+msgstr ""
+
+msgid "if ( $header-&gt;is_source_package() ) {"
+msgstr ""
+
+msgid "print \"Source package \", $header-&gt;as_nvre(), \"\\n\";"
+msgstr ""
+
+msgid "} else {"
+msgstr ""
+
+msgid "}"
+msgstr ""
+
+msgid "Programming with the RPM Database"
+msgstr ""
+
+msgid "In addition to providing query routines for RPM files, you can also access the RPM database with the RPM2 package."
+msgstr ""
+
+msgid "To access the RPM database, your Perl script must first open the database."
+msgstr ""
+
+msgid "Opening the database"
+msgstr ""
+
+msgid "Open the RPM database with a call to open_rpm_db on the RPM2 object. For example:"
+msgstr ""
+
+msgid "my $rpm_db = RPM2-&gt;open_rpm_db();"
+msgstr ""
+
+msgid "You can also specify the directory where the RPM database resides. This is most useful for accessing a database in a non-standard location. For example:"
+msgstr ""
+
+msgid "my $rpm_db = RPM2-&gt;open_rpm_db( \"-path\" =&gt; \"/var/lib/rpm\" );"
+msgstr ""
+
+msgid "The -path is normally used as a Perl bareword but is shown here as a string."
+msgstr ""
+
+msgid "Once you have an RPM database object, you can call one of the find subroutines to find packages in most of the same ways as supported by the rpm –q command."
+msgstr ""
+
+msgid "Finding packages"
+msgstr ""
+
+msgid "The find_by_name subroutine finds a package or packages by name. It returns a Perl list of the entries found. For example, if you installed more than one version of a package, find_by_name would return a list of all the packages at the different versions."
+msgstr ""
+
+msgid "Similar to find_by_name, find_by_name_iter returns an iterator to iterate over the packages that match the query. The iterator approach is usually more efficient."
+msgstr ""
+
+msgid "Iterating over packages"
+msgstr ""
+
+msgid "Iterators are important in the RPM2 package because they provide a more efficient interface to potentially large sets of packages, and because iterators more closely match the underlying C API. Furthermore, iterators are very easy to use. Simply call the next subroutine to move ahead to the next element, that is, the next package."
+msgstr ""
+
+msgid "my $pkg_iter = $rpm_db-&gt;find_by_name_iter( \"kernel\" );"
+msgstr ""
+
+msgid "while (my $pkg = $pkg_iter-&gt;next() ) {"
+msgstr ""
+
+msgid "# Do something ..."
+msgstr ""
+
+msgid "Listing 18-3 shows a script that acts much like the rpm –q command, without any other command-line options."
+msgstr ""
+
+msgid "Listing 18-3: rpmname.pl"
+msgstr ""
+
+msgid "# Queries RPM database for given package."
+msgstr ""
+
+msgid "# rpmname.pl package_name"
+msgstr ""
+
+msgid "my $rpm_db = RPM2-&gt;open_rpm_db( \"âˆ’path\" =&gt; \"/var/lib/rpm\" );"
+msgstr ""
+
+msgid "my $pkg_iter = $rpm_db-&gt;find_by_name_iter( $ARGV[0] );"
+msgstr ""
+
+msgid "print $pkg-&gt;tag(\"NAME\"), \"-\", $pkg-&gt;tag(\"VERSION\"), \"\\n\";"
+msgstr ""
+
+msgid "$rpm_db-&gt;close_rpm_db();"
+msgstr ""
+
+msgid "When you run this script, you need to pass the name of a package to query. For example:"
+msgstr ""
+
+msgid "$ ./rpmname.pl kernel"
+msgstr ""
+
+msgid "kernel-2.4.18"
+msgstr ""
+
+msgid "Additional query subroutines"
+msgstr ""
+
+msgid "The find_by_name_iter subroutine finds a package by its name. The RPM2 module also supports a number of other query routines, listed in Table 18-1."
+msgstr ""
+
+msgid "Table 18-1 RPM2 module query routines"
+msgstr ""
+
+msgid "Routine"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+msgid "find_all()"
+msgstr ""
+
+msgid "Returns a list with all the packages in the database"
+msgstr ""
+
+msgid "find_all_iter()"
+msgstr ""
+
+msgid "Returns an iterator over all the packages in the database"
+msgstr ""
+
+msgid "find_by_file($filename)"
+msgstr ""
+
+msgid "Finds all packages that own the given file, returning a list"
+msgstr ""
+
+msgid "find_by_file_iter($filename)"
+msgstr ""
+
+msgid "Finds all packages that own the given file, returning an iterator"
+msgstr ""
+
+msgid "find_by_name($package_name)"
+msgstr ""
+
+msgid "Finds all packages with the given name, returning a list"
+msgstr ""
+
+msgid "find_by_name_iter($package_name)"
+msgstr ""
+
+msgid "Finds all packages with the given name, returning an iterator"
+msgstr ""
+
+msgid "find_by_provides($capability)"
+msgstr ""
+
+msgid "Finds all packages that provide the given capability, returning a list"
+msgstr ""
+
+msgid "find_by_provides_iter($capability)"
+msgstr ""
+
+msgid "Finds all packages that provide the given capability, returning an iterator"
+msgstr ""
+
+msgid "find_by_requires($capability)"
+msgstr ""
+
+msgid "Finds all packages that require the given capability, returning a list"
+msgstr ""
+
+msgid "find_by_requires_iter($capability)"
+msgstr ""
+
+msgid "Finds all packages that require the given capability, returning an iterator"
+msgstr ""
+
+msgid "To verify the find routines, you can try the following script and compare the results with the rpm command. Listing 18-4 shows the script that finds what package provides a capability and also which packages require the capability."
+msgstr ""
+
+msgid "Listing 18-4: rpmprovides.pl"
+msgstr ""
+
+msgid "# Queries RPM database for given package,"
+msgstr ""
+
+msgid "# listing what it provides and what other"
+msgstr ""
+
+msgid "# packages require the capability."
+msgstr ""
+
+msgid "# rpmprovides.pl package_name"
+msgstr ""
+
+msgid "my $pkg_iter = $rpm_db-&gt;find_by_provides_iter( $ARGV[0] );"
+msgstr ""
+
+msgid "print \"Provides: \", $ARGV[0], \"\\n\";"
+msgstr ""
+
+msgid "print \"\t\", $pkg-&gt;as_nvre(), \"\\n\";"
+msgstr ""
+
+msgid "# Now, what packages require this capability."
+msgstr ""
+
+msgid "my $pkg_iter2 = $rpm_db-&gt;find_by_requires_iter( $ARGV[0] );"
+msgstr ""
+
+msgid "print \"Requires: \", $ARGV[0], \"\\n\";"
+msgstr ""
+
+msgid "while (my $pkg2 = $pkg_iter2-&gt;next() ) {"
+msgstr ""
+
+msgid "print \"\t\", $pkg2-&gt;as_nvre(), \"\\n\";"
+msgstr ""
+
+msgid "When you run this script with the name of a capability, you'll see output like the following:"
+msgstr ""
+
+msgid "$ ./rpmprovides.pl httpd"
+msgstr ""
+
+msgid "Provides: httpd"
+msgstr ""
+
+msgid "httpd-2.0.40-8"
+msgstr ""
+
+msgid "Requires: httpd"
+msgstr ""
+
+msgid "mod_perl-1.99_05-3"
+msgstr ""
+
+msgid "mod_python-3.0.0-10"
+msgstr ""
+
+msgid "1:mod_ssl-2.0.40-8"
+msgstr ""
+
+msgid "The 5: in 5:redhat-config-httpd-1.0.1-13 and 1: in 1:mod_ssl-2.0.40-8 represent the EPOCH tag value."
+msgstr ""
+
+msgid "To verify this script, run the rpm -q command to see if you get the same packages listed. For example:"
+msgstr ""
+
+msgid "$ rpm -q --whatprovides httpd"
+msgstr ""
+
+msgid "$ rpm -q --whatrequires httpd"
+msgstr ""
+
+msgid "redhat-config-httpd-1.0.1-13"
+msgstr ""
+
+msgid "mod_ssl-2.0.40-8"
+msgstr ""
+
+msgid "In both cases, you see the same packages listed. You can use this technique to verify your scripts."
+msgstr ""
+
+msgid "The find_by_provides_iter subroutine requires the name of a package, such as bash. You cannot pass a file name, such as /bin/bash, to get the name of the package that provides this capability (a file, really)."
+msgstr ""
+
+msgid "Getting information on packages"
+msgstr ""
+
+msgid "The tag, as_nvre, and is_source_package subroutines that worked on header objects read from RPM files, shown previously, also work with package entries returned from the RPM database."
+msgstr ""
+
+msgid "For example, Listing 18-5 shows a script, rpminfo.pl, that prints out descriptive information about a given package."
+msgstr ""
+
+msgid "Listing 18-5: rpminfo.pl"
+msgstr ""
+
+msgid "# Queries RPM database for given package and prints info."
+msgstr ""
+
+msgid "# rpminfo.pl package_name"
+msgstr ""
+
+msgid "printInfo( $pkg );"
+msgstr ""
+
+msgid "# Prints info on one package."
+msgstr ""
+
+msgid "sub printInfo {"
+msgstr ""
+
+msgid "my($pkg) = shift;"
+msgstr ""
+
+msgid "print $pkg-&gt;as_nvre(), \", \", $pkg-&gt;tag(\"ARCH\"), \", \","
+msgstr ""
+
+msgid "$pkg-&gt;tag(\"OS\"), \", \", $pkg-&gt;tag(\"PLATFORM\"), \"\\n\";"
+msgstr ""
+
+msgid "print $pkg-&gt;tag(\"SUMMARY\"), \"\\n\";"
+msgstr ""
+
+msgid "print \"Group: \", $pkg-&gt;tag(\"GROUP\"), \"\\n\";"
+msgstr ""
+
+msgid "print $pkg-&gt;tag(\"DESCRIPTION\"), \"\\n\";"
+msgstr ""
+
+msgid "print \"Vendor: \", $pkg-&gt;tag(\"VENDOR\"), \", \", $pkg-&gt;tag(\"URL\"), \"\\n\";"
+msgstr ""
+
+msgid "print \"Size: \", $pkg-&gt;tag(\"SIZE\"), \"\\n\";"
+msgstr ""
+
+msgid "When you run this script, you’ll see output like the following:"
+msgstr ""
+
+msgid "$ ./rpminfo.pl XFree86"
+msgstr ""
+
+msgid "XFree86-4.2.0-72, i386, linux, i386-redhat-linux-gnu"
+msgstr ""
+
+msgid "The basic fonts, programs and docs for an X workstation."
+msgstr ""
+
+msgid "Group: User Interface/X"
+msgstr ""
+
+msgid "XFree86 is an open source implementation of the X Window System. It"
+msgstr ""
+
+msgid "provides the basic low level functionality which full fledged"
+msgstr ""
+
+msgid "graphical user interfaces (GUIs) such as GNOME and KDE are designed"
+msgstr ""
+
+msgid "upon."
+msgstr ""
+
+msgid "Vendor: Red Hat, Inc., http://www.xfree86.org"
+msgstr ""
+
+msgid "Size: 30552239"
+msgstr ""
+
+msgid "Listing the Installed Date"
+msgstr ""
+
+msgid "The installed date is a number value representing the number of seconds since the start of the UNIX epoch, January 1, 1970, which predates the start of the Linux epoch by about 20 years. So, when you get the value of the INSTALLTIME tag, you’ll see a meaningless number."
+msgstr ""
+
+msgid "To make sense of this number, pass the value to the Perl localtime function. Listing 18-6 shows an example of this."
+msgstr ""
+
+msgid "Listing 18-6: rpmdate.pl"
+msgstr ""
+
+msgid "# prints out name, vendor, and date installed."
+msgstr ""
+
+msgid "# rpmdate.pl package_name"
+msgstr ""
+
+msgid "printDate( $pkg );"
+msgstr ""
+
+msgid "# Prints installation data for one package."
+msgstr ""
+
+msgid "sub printDate {"
+msgstr ""
+
+msgid "my $date = localtime( $pkg-&gt;tag(\"INSTALLTIME\") );"
+msgstr ""
+
+msgid "printf(\"%-20s %-17s %s\\n\", $pkg-&gt;as_nvre(), $pkg-&gt;tag(\"VENDOR\"), $date);"
+msgstr ""
+
+msgid "The printf function in this script can do something the rpm command cannot do. Even with the --queryformat option, you cannot group multiple items and then set the size; with Perl, you can. Simply assign the multiple values to a string, or use the handy as_nvre subroutine, which gathers up to four tags together into one string."
+msgstr ""
+
+msgid "When you pass the name of a package to this script, you’ll see the date the package was installed. For example:"
+msgstr ""
+
+msgid "$ ./rpmdate.pl kernel"
+msgstr ""
+
+msgid "kernel-2.4.18-14 Red Hat, Inc. Sat Oct 5 12:29:58 2002"
+msgstr ""
+
+msgid "Handling String Array Tags"
+msgstr ""
+
+msgid "Not only is the date stored in a format that adds complication to your script. A number of tags are string arrays, not scalar strings. This means you may see output that is all mashed together."
+msgstr ""
+
+msgid "To help deal with this, the following subroutine takes in an array of strings and returns a string that is built using a passed-in delimiter:"
+msgstr ""
+
+msgid "sub arrayToString {"
+msgstr ""
+
+msgid "my($sep) = shift;"
+msgstr ""
+
+msgid "my(@array) = @_;"
+msgstr ""
+
+msgid "my($str);"
+msgstr ""
+
+msgid "$str = $array[0];"
+msgstr ""
+
+msgid "for ( $i = 1; $i &lt; $#array; $i++ )"
+msgstr ""
+
+msgid "{"
+msgstr ""
+
+msgid "$str = $str . $sep . $array[$i];"
+msgstr ""
+
+msgid "return $str;"
+msgstr ""
+
+msgid "Show your Perl expertise and earn extra points by implementing the arrayToString subroutine as a single Perl statement that uses the join function."
+msgstr ""
+
+msgid "The following list shows the tags that are an array of strings:"
+msgstr ""
+
+msgid "*BASENAMES"
+msgstr ""
+
+msgid "*CHANGELOGNAME"
+msgstr ""
+
+msgid "*CHANGELOGTEXT"
+msgstr ""
+
+msgid "*DIRNAMES"
+msgstr ""
+
+msgid "*FILEGROUPNAME"
+msgstr ""
+
+msgid "*FILELANGS"
+msgstr ""
+
+msgid "*FILELINKTOS"
+msgstr ""
+
+msgid "*FILEMD5S"
+msgstr ""
+
+msgid "*FILEUSERNAME"
+msgstr ""
+
+msgid "*OLDFILENAMES"
+msgstr ""
+
+msgid "*PROVIDENAME"
+msgstr ""
+
+msgid "*PROVIDEVERSION"
+msgstr ""
+
+msgid "*REQUIRENAME"
+msgstr ""
+
+msgid "*REQUIREVERSION"
+msgstr ""
+
+msgid "<xref linkend=\"ch-using-rpm-db\" /> covers more on these tags."
+msgstr ""
+
+msgid "Listing the Files In A Package"
+msgstr ""
+
+msgid "The files subroutine provides a list of all the files in a package. Listing 18-7 shows how to access this list."
+msgstr ""
+
+msgid "Listing 18-7: rpmfiles.pl"
+msgstr ""
+
+msgid "# prints out the files in the package."
+msgstr ""
+
+msgid "# rpmfiles.pl package_name"
+msgstr ""
+
+msgid "printFiles( $pkg );"
+msgstr ""
+
+msgid "sub printFiles {"
+msgstr ""
+
+msgid "my $files = arrayToString(\"\\n\", $pkg-&gt;files() );"
+msgstr ""
+
+msgid "print \"Files:\\n\", $files, \"\\n\";"
+msgstr ""
+
+msgid "for ( my $i = 1; $i &lt; $#array; $i++ )"
+msgstr ""
+
+msgid "$ ./rpmfiles.pl jikes"
+msgstr ""
+
+msgid "Files:"
+msgstr ""
+
+msgid "/usr/bin/jikes"
+msgstr ""
+
+msgid "/usr/doc/jikes-1.17/license.htm"
+msgstr ""
+
+msgid "Comparing versions"
+msgstr ""
+
+msgid "The RPM2 module overrides the spaceship operator, &lt;=&gt;, to perform version comparisons between packages. The script in Listing 18-8 shows how to compare all local RPM files against the newest installed version of the same package, if the package is installed."
+msgstr ""
+
+msgid "Listing 18-8: rpmver.pl"
+msgstr ""
+
+msgid "#!/usr/bin/perl -w"
+msgstr ""
+
+msgid "# Compare versions of all *.rpm files against the"
+msgstr ""
+
+msgid "# latest packages installed (if installed)"
+msgstr ""
+
+msgid "# rpmver.pl"
+msgstr ""
+
+msgid "# This script looks for all *.rpm files."
+msgstr ""
+
+msgid "for my $filename (&lt;*.rpm&gt;) {"
+msgstr ""
+
+msgid "my $h = RPM2-&gt;open_package( $filename );"
+msgstr ""
+
+msgid "# Ensure we compare against the newest"
+msgstr ""
+
+msgid "# package of the given name."
+msgstr ""
+
+msgid "my ($installed) ="
+msgstr ""
+
+msgid "sort { $b &lt;=&gt; $a } $rpm_db-&gt;find_by_name($h-&gt;name);"
+msgstr ""
+
+msgid "if (not $installed) {"
+msgstr ""
+
+msgid "printf \"Package %s not installed.\\n\", $h-&gt;as_nvre;"
+msgstr ""
+
+msgid "my ($result) = ($h &lt;=&gt; $installed);"
+msgstr ""
+
+msgid "if ($result &lt; 0) {"
+msgstr ""
+
+msgid "printf \"Installed package %s newer than file %s\\n\","
+msgstr ""
+
+msgid "$installed-&gt;as_nvre,"
+msgstr ""
+
+msgid "$h-&gt;as_nvre;"
+msgstr ""
+
+msgid "printf \"File %s newer than installed package %s\\n\","
+msgstr ""
+
+msgid "$h-&gt;as_nvre,"
+msgstr ""
+
+msgid "$installed-&gt;as_nvre;"
+msgstr ""
+
+msgid "The sort { $a &lt;=&gt; $b } in front of the find_by_name call sorts all the packages of that name by the version number, so that the comparison is performed against the newest installed version of the package. The ($h &lt;=&gt; $installed) compares the header from the RPM file on disk against the newest installed version of the package."
+msgstr ""
+
+msgid "When you run this script, you’ll see output like the following, depending on which RPM files you have in the local directory:"
+msgstr ""
+
+msgid "$ perl rpmver.pl"
+msgstr ""
+
+msgid "Package acroread-4.0-0 not installed."
+msgstr ""
+
+msgid "Package canvas-7.0b2.0-1 not installed."
+msgstr ""
+
+msgid "Installed package jikes-1.18-1 newer than file jikes-1.14-1"
+msgstr ""
+
+msgid "Installed package SDL-1.2.4-5 newer than file SDL-0.9.9-4"
+msgstr ""
+
+msgid "Package ted-2.8-1 not installed."
+msgstr ""
+
+msgid "Closing the database"
+msgstr ""
+
+msgid "When you are done with the RPM database, call close_rpm_db, as shown following:"
+msgstr ""
+
+msgid "Note that this call is not necessary, as the RPM2 module will close the database when the object, in this case $rpm_db, goes out of scope."
+msgstr ""
+
+msgid "Where to Go from Here"
+msgstr ""
+
+msgid "One of the strengths of Perl is that there are so many add-on packages available. In addition, Perl is really strong in text processing. You can combine these strengths to provide cleaner output for RPM database queries, for example, avoiding the complex syntax for the --queryformat option to the rpm command. Perl can do more than the --queryformat option allows. For example, you can combine multiple values together into a Perl string and then format the output. The --queryformat option only allows formatting on each value individually, not groups of values."
+msgstr ""
+
+msgid "In addition, you can combine one of the Perl templating modules, such as Text::Template or HTML::Template, to create an HTML page for a given package. You could use Perl to create formatted HTML pages for all the installed packages on your system, with HTML links to cross-reference all the dependencies."
+msgstr ""
+
+msgid "Download these modules from the CPAN site, www.cpan.org."
+msgstr ""
+
+msgid "This chapter covers the RPM2 module. Right now, the RPM2 module supports only querying packages and the RPM database. Future versions will likely add the ability to install, update, and remove packages."
+msgstr ""
+
+msgid "In addition to this module, you can find an RPM module with RPM::Header and RPM::Database classes. Another module, RPM::Specfile, provides the ability to turn Perl modules, such as those stored on CPAN, into RPM packages. The RPM::Specfile module helps create an RPM spec file for a Perl module."
+msgstr ""
+
+msgid "The Perl-RPM-Perlonly bundle provides an alternative version of the RPM::Header module written entirely in Perl with no usage of the C rpm library. This makes RPM access much easier on platforms for which you don’t have the RPM system."
+msgstr ""
+
+msgid "The RPM-Tools bundle includes RPM::Update, which compares the packages installed on your system (listed by calling rpm –qa) with the packages available on another system, that may be available only with a network link. This module can also update packages that are older than the designated master system. RPM::Make, also part of the RPM-Tools bundle, helps create RPM packages from a Perl script. This module does not support all the spec file options described in <xref linkend=\"ch-specfiles\" /> , but it can help you make simple packages."
+msgstr ""
+
+msgid "You can download all these modules from the CPAN site."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "This chapter introduces the RPM2 add-on module to allow Perl scripts to access information on RPM package files and in the RPM database. To access an RPM file and query information about that file, you need to call the open_package subroutine. Once you’ve opened the file, you can call the tag, as_nvre, is_source_package, and files subroutines on the header object to query data about the package."
+msgstr ""
+
+msgid "To access the RPM database, call open_rpm_db. Once you’ve opened the database, you can call one of the find subroutines, such as find_by_name or find_by_name_iter, to search for packages. The subroutines that have names ending with _iter, such as find_by_name_iter, return an iterator object to iterate over the packages found. The other find subroutines, such as find_by_name, return a Perl list of the packages found."
+msgstr ""
+
+msgid "You can then call the tag, as_nvre, and files subroutines on the package objects to query information about the packages."
+msgstr ""
+
+msgid "When you are done with the RPM database, call close_rpm_db."
+msgstr ""
+

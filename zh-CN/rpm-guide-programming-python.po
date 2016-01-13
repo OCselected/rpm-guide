@@ -1,0 +1,1640 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Programming RPM with Python"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Using the RPM with Python"
+msgstr ""
+
+msgid "Installing the necessary modules"
+msgstr ""
+
+msgid "Programming with the RPM database"
+msgstr ""
+
+msgid "Programming with RPM files"
+msgstr ""
+
+msgid "Installing packages programmatically"
+msgstr ""
+
+msgid "Setting Up a Python Development Environment"
+msgstr ""
+
+msgid "Setting up a Python development environment is much the same as setting up a C programming environment. You need to install a set of packages for general Python development, install a package that provides the Python API to the RPM system, and choose a program for editing your Python scripts."
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "<xref linkend=\"ch-development-tools\" /> covers Linux text editors and development tools."
+msgstr ""
+
+msgid "If you want to make a graphical user interface in your Python programs, you need to install a separate Python package."
+msgstr ""
+
+msgid "Installing the base Python packages"
+msgstr ""
+
+msgid "The base Python package needed for developing applications is python. For RPM usage, you should install Python 2.2, not Python 1.5. That’s because the RPM bindings for Python are moving to support only 2.2 and higher releases."
+msgstr ""
+
+msgid "The Python package for RPM access is rpm-python. Install these as you would any other packages."
+msgstr ""
+
+msgid "<xref linkend=\"ch-using-rpm\" /> covers installing packages."
+msgstr ""
+
+msgid "Using Python for graphics"
+msgstr ""
+
+msgid "Python supports a number of different toolkits for creating graphical user interfaces. You need one of these toolkits if you want to create Python applications that sport a user interface instead of command-line tools. Among the most popular toolkits are PyGKT, PyQt, and Tkinter."
+msgstr ""
+
+msgid "*PyGTK is a binding between Python and the GTK+ toolkit used by the GNOME desktop, one of two main desktop environments for Linux. (KDE is the other main desktop environment.) The Red Hat redhat-config-packages program uses PyGTK and sports a very good-looking user interface."
+msgstr ""
+
+msgid "PyGTK provides full access to the GTK+ widgets such as menus, dialog windows, and buttons. Install the pygtk2 module for PyGTK. For more on PyGTK, see www.daa.com.au/~james/pygtk/."
+msgstr ""
+
+msgid "*PyQt connects Python scripts to the Qt C++ user interface toolkit. Qt forms the base library used by the KDE desktop environment and KDE applications. As with PyGTK, PyQt allows you to access the rich widget set provided by the library."
+msgstr ""
+
+msgid "Install the PyQt package for PyQt. For more on PyQt, see www.riverbankcomputing.co.uk/pyqt/."
+msgstr ""
+
+msgid "*Tkinter is considered a standard part of Python and is based on the Tk (pronounced teekay) toolkit from the Tcl scripting language. The main advantages of Tkinter are that it is considered part of Python, meaning users are more likely to have it, and Tkinter works on multiple platforms, including Windows."
+msgstr ""
+
+msgid "The main drawback of Tkinter is that the widget sets are not as rich as PyQt or PyGTK. For more on Tkinter, see www.python.org/topics/tkinter/."
+msgstr ""
+
+msgid "After you’ve set up your environment and installed all the necessary packages, the next step is to start working with the Python API for RPM."
+msgstr ""
+
+msgid "The Python API Hierarchy"
+msgstr ""
+
+msgid "The RPM Python API provides a high-level abstraction into RPM functionality divided into logical areas. Table 17-1 lists the main RPM types. In most cases, you need to begin with rpm and create a transaction set."
+msgstr ""
+
+msgid "Table 17-1 Python types for RPM usage"
+msgstr ""
+
+msgid "Class"
+msgstr ""
+
+msgid "Covers"
+msgstr ""
+
+msgid "rpm"
+msgstr ""
+
+msgid "RPM base module into RPM API"
+msgstr ""
+
+msgid "rpmts"
+msgstr ""
+
+msgid "Transaction sets"
+msgstr ""
+
+msgid "rpmte"
+msgstr ""
+
+msgid "Transaction elements, a package in a transaction set"
+msgstr ""
+
+msgid "rpmmi"
+msgstr ""
+
+msgid "Match iterators, used for querying the RPM database"
+msgstr ""
+
+msgid "Rpmds"
+msgstr ""
+
+msgid "Dependency set"
+msgstr ""
+
+msgid "Rpmfi"
+msgstr ""
+
+msgid "File into set"
+msgstr ""
+
+msgid "Header"
+msgstr ""
+
+msgid "A package header"
+msgstr ""
+
+msgid "In general, the RPM Python API is well-integrated into the standard Python API. For example, you use the Python os class to read in RPM package files."
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "The examples in this chapter use the RPM 4.1 Python API. The API in previous versions is significantly different from the 4.1 version."
+msgstr ""
+
+msgid "Programming with the RPM Database"
+msgstr ""
+
+msgid "Compared to the RPM C API, discussed in <xref linkend=\"ch-programming-c\" /> , the Python API is much simpler and requires many fewer programming statements to get your job done."
+msgstr ""
+
+msgid "Just about every Python RPM script needs a transaction set. Create a transaction set with rpm.TransactionSet:"
+msgstr ""
+
+msgid ""
+"\n"
+"import rpm\n"
+"ts = rpm.TransactionSet()"
+msgstr ""
+
+msgid "The transaction set will automatically open the RPM database if needed."
+msgstr ""
+
+msgid "The code examples in this chapter follow the Red Hat conventions for naming variables, such as ts for a transaction set. This is to make it easier to read the Python examples in the RPM sources, along with Red Hat installer programs written in Python."
+msgstr ""
+
+msgid "You will need a transaction set in just about every Python script that accesses RPM functionality."
+msgstr ""
+
+msgid "Accessing the RPM database"
+msgstr ""
+
+msgid "Transaction sets provide a number of methods for working with the RPM database at the database level. Use these methods if you need to interact with the database as a whole, as opposed to accessing individual packages in the database. For example, you can initialize or rebuild the RPM database with these methods. You can also use a handy trick for accessing another RPM database instead of the default system database."
+msgstr ""
+
+msgid "Setting the Database Location"
+msgstr ""
+
+msgid "A transaction set will open the RPM database assuming the default location. To specify a different RPM database location, call addMacro, as shown following:"
+msgstr ""
+
+msgid "\n"
+"rpm.addMacro(\"_dbpath\", path_to_rpm_database)"
+msgstr ""
+
+msgid "You can work with more than one RPM database by setting the _dbpath macro, creating a transaction set, and then removing the macro. After doing this, you can create another transaction set for the default RPM database, allowing your script to work with more than one database. For example:"
+msgstr ""
+
+msgid ""
+"\n"
+"# Open the rpmdb-redhat database\n"
+"rpm.addMacro(\"_dbpath\", \"/usr/lib/rpmdb/i386-redhat-linux/redhat\")\n"
+"solvets = rpm.TransactionSet()\n"
+"solvets.openDB()\n"
+"rpm.delMacro(\"_dbpath\")\n"
+"# Open default database\n"
+"ts = rpm.TransactionSet()"
+msgstr ""
+
+msgid "This example uses the rpmdb-redhat package, which holds a database of all Red Hat Linux packages. The explicit call to openDB opens the RPM database. In most Python scripts, though, you do not want to call openDB. Instead, a transaction set will open the database as needed."
+msgstr ""
+
+msgid "The call to delMacro removes the _dbpath macro, allowing the next call to TransactionSet to use the default RPM database."
+msgstr ""
+
+msgid "Do not call closeDB on a transaction set. This method does indeed close the RPM database, but it also disables the ability to automatically open the RPM database as needed."
+msgstr ""
+
+msgid "Initializing, Rebuilding, and Verifying the Database"
+msgstr ""
+
+msgid "The transaction set provides an initDB method to initialize a new RPM database. This acts like the rpm --initdb command."
+msgstr ""
+
+msgid "\n"
+"ts.initDB()"
+msgstr ""
+
+msgid "The rebuildDB method regenerates the RPM database indices, like the rpm --rebuilddb command:"
+msgstr ""
+
+msgid "\n"
+"ts.rebuildDB()"
+msgstr ""
+
+msgid "The rebuildDB method regenerates the RPM database indices, like the rpm --rebuilddb command."
+msgstr ""
+
+msgid "The verifyDB method checks that the RPM database and indices are readable by the Berkeley DB library:"
+msgstr ""
+
+msgid "\n"
+"ts.verifyDB()"
+msgstr ""
+
+msgid "Calling this method is the same as running the db_verify command on each of the database files in /var/lib/rpm."
+msgstr ""
+
+msgid "See <xref linkend=\"ch-using-rpm-db\" /> for more on initializing, rebuilding, and verifying RPM databases."
+msgstr ""
+
+msgid "Once you have a transaction set, you can start querying the RPM database."
+msgstr ""
+
+msgid "Querying the RPM database"
+msgstr ""
+
+msgid "Call dbMatch on a transaction set to create a match iterator. As with the C API, a match iterator allows your code to iterate over the packages that match a given criteria."
+msgstr ""
+
+msgid "A call to dbMatch with no parameters means to set up a match iterator to go over the entire set of installed packages. The basic format follows:"
+msgstr ""
+
+msgid ""
+"\n"
+"import rpm\n"
+"ts = rpm.TransactionSet()\n"
+"mi = ts.dbMatch()\n"
+"for h in mi:\n"
+"    # Do something with header object..."
+msgstr ""
+
+msgid "In this example, the call to dbMatch returns a match iterator. The for loop iterates over the match iterator, returning one header each time."
+msgstr ""
+
+msgid "In addition to this syntax, you can call next on the match iterator to get the next entry, a header object that represents one package. For example:"
+msgstr ""
+
+msgid ""
+"\n"
+"import rpm\n"
+"ts = rpm.TransactionSet()\n"
+"mi = ts.dbMatch()\n"
+"while mi:\n"
+"    h = mi.next()\n"
+"    # Do something with the header object\n"
+"    pass"
+msgstr ""
+
+msgid "The explicit call to next on the match iterator will likely no longer be supported in a future version of the RPM Python API, since the PEP-234 (Python Enhancement Proposal) calls for one means or the other for iterating, but not both."
+msgstr ""
+
+msgid "For example, Listing 17-1 shows a Python script to print out the name, version, and release information for all installed packages."
+msgstr ""
+
+msgid "Listing 17-1: rpmqa.py"
+msgstr ""
+
+msgid ""
+"\n"
+"#!/usr/bin/python\n"
+"# Acts like rpm -qa and lists the names of all the installed packages.\n"
+"# Usage:\n"
+"# python rpmqa.py\n"
+"\n"
+"import rpm\n"
+"\n"
+"ts = rpm.TransactionSet()\n"
+"mi = ts.dbMatch()\n"
+"for h in mi:\n"
+"    print \"%s-%s-%s\" % (h['name'], h['version'], h['release'])"
+msgstr ""
+
+msgid "When you call this script, you should see output like the following, truncated for space:"
+msgstr ""
+
+msgid ""
+"\n"
+"$ python rpmqa.py\n"
+"libbonoboui-2.0.1-2\n"
+"attr-2.0.8-3\n"
+"dhclient-3.0pl1-9\n"
+"file-3.37-8\n"
+"hdparm-5.2-1\n"
+"ksymoops-2.4.5-1\n"
+"imlib-1.9.13-9\n"
+"logwatch-2.6-8\n"
+"mtr-0.49-7\n"
+"openssh-clients-3.4p1-2\n"
+"pax-3.0-4\n"
+"python-optik-1.3-2\n"
+"dump-0.4b28-4\n"
+"sendmail-8.12.5-7\n"
+"sudo-1.6.6-1\n"
+"mkbootdisk-1.4.8-1\n"
+"telnet-0.17-23\n"
+"usbutils-0.9-7\n"
+"wvdial-1.53-7\n"
+"docbook-dtds-1.0-14\n"
+"urw-fonts-2.0-26\n"
+"db4-utils-4.0.14-14\n"
+"libogg-devel-1.0-1"
+msgstr ""
+
+msgid "If you set the execute permission on this script, you can skip the explicit call to the python command. For example:"
+msgstr ""
+
+msgid "$ ./rpmqa.py"
+msgstr ""
+
+msgid "Examining the package header"
+msgstr ""
+
+msgid "The code in Listing 17-1 introduces the package header object, an object of the hdr class. This represents a package header, and contains entries such as the name, version, pre- and post-installation scripts, and triggers."
+msgstr ""
+
+msgid "The hdr Class"
+msgstr ""
+
+msgid "You can access each entry in the header using Python's dictionary syntax. This is much more convenient than calling headerGetEntry in C programs. The basic syntax to access header entries follows:"
+msgstr ""
+
+msgid "\n"
+"value = h['tag_name']"
+msgstr ""
+
+msgid "For example, to get the package name, use the following code:"
+msgstr ""
+
+msgid "\n"
+"name = h['name']"
+msgstr ""
+
+msgid "You can also use a set of predefined RPMTAG_ constants that match the C API. These constants are defined in the rpm module. For example:"
+msgstr ""
+
+msgid "\n"
+"name = h[rpm.RPMTAG_NAME]"
+msgstr ""
+
+msgid "Using the rpm constants such as rpm.RPMTAG_NAME is faster than using the strings such as 'name'."
+msgstr ""
+
+msgid "For header entries that hold an array of strings, such as the list of files in the package, the data returned is a Python list. For example:"
+msgstr ""
+
+msgid ""
+"\n"
+"print \"Files:\"\n"
+"files = h['FILENAMES']\n"
+"for name in files:\n"
+"    print name"
+msgstr ""
+
+msgid "You can use file info sets to achieve more compact code. For example:"
+msgstr ""
+
+msgid ""
+"\n"
+"print \"Files:\"\n"
+"fi = h.fiFromHeader()\n"
+"print fi"
+msgstr ""
+
+msgid "The requires, provides, obsoletes, and conflicts information each appear as three separate but related lists for each set of information, with three lists for the requires information, three for the provides information, and so on. You can extract this information using Python dependency sets using the simple code following:"
+msgstr ""
+
+msgid ""
+"\n"
+"print h.dsFromHeader('providename')\n"
+"print h.dsFromHeader('requirename')\n"
+"print h.dsFromHeader('obsoletename')\n"
+"print h.dsFromHeader('conflictname')"
+msgstr ""
+
+msgid "The rpminfo.py script in Listing 17-3 shows how to print out this information."
+msgstr ""
+
+msgid "Printing Header Information with sprintf"
+msgstr ""
+
+msgid "In addition to using the Python dictionary syntax, you can use the sprintf method on a header to format data using a syntax exactly the same as the query format tags supported by the rpm command."
+msgstr ""
+
+msgid "<xref linkend=\"ch-using-rpm-db\" /> covers query formats."
+msgstr ""
+
+msgid "The basic syntax is as follows:"
+msgstr ""
+
+msgid "\n"
+"h.sprintf(\"%{tag_name}\")"
+msgstr ""
+
+msgid "You can also use special formatting additions to the tag name. For example:"
+msgstr ""
+
+msgid ""
+"\n"
+"print \"Header signature: \", h.sprintf(\"%{DSAHEADER:pgpsig}\")\n"
+"print \"%-20s: %s\" % ('Installed on', h.sprintf(\"%{INSTALLTID:date}\") )"
+msgstr ""
+
+msgid "You can combine this information into functions that print out header entries with specific formatting. For example:"
+msgstr ""
+
+msgid ""
+"\n"
+"def nvr(h):\n"
+"    return h.sprintf(\"%{NAME}-%{VERSION}-%{RELEASE}\")"
+msgstr ""
+
+msgid "Note that you only really need to use sprintf when you need the format modifiers, such as date on %{INSTALLTID:date}. In most other cases, Python’s string-handling functions will work better."
+msgstr ""
+
+msgid "Querying for specific packages"
+msgstr ""
+
+msgid "When you call dbMatch on a transaction set object, passing no parameters means to iterate over the entire set of installed packages in the RPM database. You can also query for specific packages using dbMatch. To do so, you need to pass the name of a tag in the header, as well as the value for that tag that you are looking for. The basic syntax follows:"
+msgstr ""
+
+msgid "\n"
+"mi = ts.dbMatch(tag_name, value)"
+msgstr ""
+
+msgid "For example, to query for all packages named sendmail, use code like the following:"
+msgstr ""
+
+msgid "\n"
+"mi = ts.dbMatch('name', 'sendmail')"
+msgstr ""
+
+msgid "The call to dbMatch returns an rpmdbMatchIterator. You can query on any of the tags in the header, but by far the most common query is by name."
+msgstr ""
+
+msgid "Some matches are fast and some are much slower. If you try to match on a tag that is indexed in the RPM database, the matches will perform much faster than for those tags that are not indexes. To determine which tags are indexed, look at the files in /var/lib/rpm. For example, Name and Requirename are files in /var/lib/rpm. These tags are indexed and will therefore match quickly."
+msgstr ""
+
+msgid "Listing 17-2 shows an example Python script which queries for a particular package name and then prints out the name, version, and release for all matching packages."
+msgstr ""
+
+msgid "Listing 17-2: rpmq.py"
+msgstr ""
+
+msgid ""
+"\n"
+"#!/usr/bin/python\n"
+"# Acts like rpm -q and lists the N-V-R for installed\n"
+"# packages that match a given name.\n"
+"# Usage:\n"
+"# python rpmq.py package_name\n"
+"import sys\n"
+"\n"
+"import rpm\n"
+"\n"
+"ts = rpm.TransactionSet()\n"
+"mi = ts.dbMatch( 'name', sys.argv[1] )\n"
+"for h in mi:\n"
+"    print \"%s-%s-%s\" % (h['name'], h['version'], h['release'])"
+msgstr ""
+
+msgid "When you call this script, you need to pass the name of a package to query, which the python interpreter will store in sys,argv[1] in the call to dbMatch. For example:"
+msgstr ""
+
+msgid ""
+"\n"
+"$ python rpmq.py sendmail\n"
+"sendmail-8.12.5-7"
+msgstr ""
+
+msgid "Printing information on packages"
+msgstr ""
+
+msgid "You can create the equivalent of the rpm –qi command with a small number of Python commands. Listing 17-3 shows an example. This script queries for a particular package name, as shown previously in Listing 17-2. Once a package is found, though, rpminfo.py prints out a lot more information, similar to the output from the rpm –qi command."
+msgstr ""
+
+msgid "Listing 17-3: rpminfo.py"
+msgstr ""
+
+msgid ""
+"\n"
+"#!/usr/bin/python\n"
+"# Lists information on installed package listed on command line.\n"
+"# Usage:\n"
+"# python rpminfo.py package_name\n"
+"import sys\n"
+"\n"
+"import rpm\n"
+"\n"
+"def printEntry(header, label, format, extra):\n"
+"    value = header.sprintf(format).strip()\n"
+"    print \"%-20s: %s %s\" % (label, value, extra)\n"
+"\n"
+"def printHeader(h):\n"
+"    if h[rpm.RPMTAG_SOURCEPACKAGE]:\n"
+"        extra = \" source package\"\n"
+"    else:\n"
+"        extra = \" binary package\"\n"
+"    printEntry(h, 'Package', \"%{NAME}-%{VERSION}-%{RELEASE}\", extra)\n"
+"    printEntry(h, 'Group', \"%{GROUP}\", '')\n"
+"    printEntry(h, 'Summary', \"%{Summary}\", '')\n"
+"    printEntry(h, 'Arch-OS-Platform', \"%{ARCH}-%{OS}-%{PLATFORM}\", '')\n"
+"    printEntry(h, 'Vendor', \"%{Vendor}\", '')\n"
+"    printEntry(h, 'URL', \"%{URL}\", '')\n"
+"    printEntry(h, 'Size', \"%{Size}\", '')\n"
+"    printEntry(h, 'Installed on', \"%{INSTALLTID:date}\", '')\n"
+"    print h['description']\n"
+"    print \"Files:\"\n"
+"    fi = h.fiFromHeader()\n"
+"    print fi\n"
+"\n"
+"    # Dependencies\n"
+"    print \"Provides:\"\n"
+"    print h.dsFromHeader('providename')\n"
+"\n"
+"    print \"Requires:\"\n"
+"    print h.dsFromHeader('requirename')\n"
+"\n"
+"    if h.dsFromHeader('obsoletename'):\n"
+"        print \"Obsoletes:\"\n"
+"        print h.dsFromHeader('obsoletename')\n"
+"\n"
+"    if h.dsFromHeader('conflictname'):\n"
+"        print \"Conflicts:\"\n"
+"        print h.dsFromHeader('conflictname')\n"
+"\n"
+"ts = rpm.TransactionSet()\n"
+"mi = ts.dbMatch( 'name', sys.argv[1] )\n"
+"for h in mi:\n"
+"    printHeader(h)"
+msgstr ""
+
+msgid "You should be able to simplify this script. The extensive use of the sprintf method is for illustration more than efficiency. You generally only need to call sprintf when you need a format modifier for a tag. In the rpminfo.py script, sprintf was also used to ensure that all entries are text, which allows for calling strip."
+msgstr ""
+
+msgid "The printEntry function takes in a header sprintf tag value in the format of \"%{NAME}\". You can also pass in more complex values with multiple header entries, such as \"%{NAME}-%{VERSION}\"."
+msgstr ""
+
+msgid "When you run this script, you need to pass the name of a package. You'll see output like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"$ python rpminfo.py jikes\n"
+"Package : jikes-1.18-1 binary package\n"
+"Group : Development/Languages\n"
+"Summary : java source to bytecode compiler\n"
+"Arch-OS-Platform : i386-Linux-(none)\n"
+"Vendor : (none)\n"
+"URL : http://ibm.com/developerworks/opensource/jikes\n"
+"Size : 2853672\n"
+"Installed on : Mon Dec 2 20:10:13 2002\n"
+"The IBM Jikes compiler translates Java source files to bytecode. It\n"
+"also supports incremental compilation and automatic makefile\n"
+"generation,and is maintained by the Jikes Project:\n"
+"http://ibm.com/developerworks/opensource/jikes/\n"
+"Files:\n"
+"/usr/bin/jikes\n"
+"/usr/doc/jikes-1.18/license.htm\n"
+"/usr/man/man1/jikes.1.gz\n"
+"Provides:\n"
+"P jikes\n"
+"P jikes = 1.18-1\n"
+"Requires:\n"
+"R ld-linux.so.2\n"
+"R libc.so.6\n"
+"R libc.so.6(GLIBC_2.0)\n"
+"R libc.so.6(GLIBC_2.1)\n"
+"R libc.so.6(GLIBC_2.1.3)\n"
+"R libm.so.6\n"
+"R libstdc++-libc6.2-2.so.3"
+msgstr ""
+
+msgid "Refining queries"
+msgstr ""
+
+msgid "The pattern method on a match iterator allows you to refine a query. This narrows an existing iterator to only show the packages you desire. The basic syntax follows:"
+msgstr ""
+
+msgid "\n"
+"mi.pattern(tag_name, mode, pattern)"
+msgstr ""
+
+msgid "The two main uses of the pattern method are to query on more than one tag, such as the version and name, or to narrow the results of a query, using the rich set of pattern modes. The mode parameter names the type of pattern used, which can be one of those listed in Table 17-2."
+msgstr ""
+
+msgid "Table 17-2 Pattern modes for the pattern method"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Meaning"
+msgstr ""
+
+msgid "rpm.RPMMIRE_DEFAULT"
+msgstr ""
+
+msgid "Same as regular expressions, but with \\., .*, and ^..$ added"
+msgstr ""
+
+msgid "rpm.RPMMIRE_GLOB"
+msgstr ""
+
+msgid "Glob-style patterns using fnmatch"
+msgstr ""
+
+msgid "rpm.RPMMIRE_REGEX"
+msgstr ""
+
+msgid "Regular expressions using regcomp"
+msgstr ""
+
+msgid "rpm.RPMMIRE_STRCMP"
+msgstr ""
+
+msgid "String comparisons using strcmp"
+msgstr ""
+
+msgid "For more on these patterns, see the online manual pages for fnmatch(3), glob(7), regcomp(3), regex(7), and strcmp(3). The pattern method calls rpmdbSetIteratorRE from the C API, covered in the “Database Iterators” section in <xref linkend=\"ch-programming-c\" /> ."
+msgstr ""
+
+msgid "To query for all packages starting with py, for example, you can use code like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"import rpm\n"
+"ts = rpm.TransactionSet()\n"
+"mi = ts.dbMatch()\n"
+"mi.pattern('name', rpm.RPMMIRE_GLOB, 'py*' )\n"
+"for h in mi:\n"
+"    # Do something with the header...\n"
+"    pass"
+msgstr ""
+
+msgid "Listing 17-4 shows an example for glob-based querying."
+msgstr ""
+
+msgid "Listing 17-4: rpmglob.py"
+msgstr ""
+
+msgid ""
+"\n"
+"#!/usr/bin/python\n"
+"# Acts like rpm -q and lists the N-V-R for installed packages\n"
+"# that match a given name using a glob-like syntax\n"
+"#\n"
+"# Usage:\n"
+"# python rpmglob.py \"package_fragment*\"\n"
+"\n"
+"import sys\n"
+"\n"
+"import rpm\n"
+"\n"
+"ts = rpm.TransactionSet()\n"
+"mi = ts.dbMatch()\n"
+"if not mi:\n"
+"    print \"No packages found.\"\n"
+"else:\n"
+"    mi.pattern('name', rpm.RPMMIRE_GLOB, sys.argv[1] )\n"
+"    for h in mi:\n"
+"        print \"%s-%s-%s\" % (h['name'], h['version'], h['release'])"
+msgstr ""
+
+msgid "When you run this script, you’ll see output like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"$ python rpmglob.py \"py*\"\n"
+"pyxf86config-0.3.1-2\n"
+"python-devel-2.2.1-17\n"
+"pygtk2-devel-1.99.12-7\n"
+"pygtk2-libglade-1.99.12-7\n"
+"pygtk2-1.99.12-7\n"
+"pyOpenSSL-0.5.0.91-1\n"
+"python-optik-1.3-2\n"
+"python-docs-2.2.1-17\n"
+"python-2.2.1-17\n"
+"python-tools-2.2.1-17"
+msgstr ""
+
+msgid "In addition to working with the RPM database, the Python API also provides access to RPM files."
+msgstr ""
+
+msgid "Reading Package Files"
+msgstr ""
+
+msgid "As you would expect, the Python API includes methods for working with RPM package files in addition to installed RPM packages. Most of these methods require a header object, which you can read from an RPM package file."
+msgstr ""
+
+msgid "Reading headers from package files"
+msgstr ""
+
+msgid "Like the C function rpmReadPackageFile, the Python API provides a convenient way to read in a header object from an RPM package file. The hdrFromFdno method reads an RPM header from an open file descriptor. The basic syntax is:"
+msgstr ""
+
+msgid "\n"
+"h = ts.hdrFromFdno(fdno)"
+msgstr ""
+
+msgid "The hdrFromFdno method uses Python’s low-level file descriptors instead of the higher-level Python file objects. In the RPM C library, an FD_t is a FILE**. This could be bound to a Python class, but that is outside the scope of this chapter."
+msgstr ""
+
+msgid "The following example shows a function that opens a file, reads in the RPM header, and then closes the file:"
+msgstr ""
+
+msgid ""
+"\n"
+"def readRpmHeader(ts, filename):\n"
+"    \"\"\" Read an rpm header. \"\"\"\n"
+"    fd = os.open(filename, os.O_RDONLY)\n"
+"    h = ts.hdrFromFdno(fd)\n"
+"    os.close(fd)\n"
+"    return h\n"
+"\n"
+"ts = rpm.TransactionSet()\n"
+"h = readRpmHeader( ts, 'n-v-r.rpm' )"
+msgstr ""
+
+msgid "The hdrFromFdno method raises a number of exceptions based on issues detected with the package files. The following example shows these exceptions:"
+msgstr ""
+
+msgid ""
+"\n"
+"def readRpmHeader(ts, filename):\n"
+"    \"\"\" Read an rpm header. \"\"\"\n"
+"    fd = os.open(filename, os.O_RDONLY)\n"
+"    h = None\n"
+"    try:\n"
+"        h = ts.hdrFromFdno(fd)\n"
+"    except rpm.error, e:\n"
+"        if str(e) == \"public key not available\":\n"
+"            print str(e)\n"
+"        if str(e) == \"public key not trusted\":\n"
+"            print str(e)\n"
+"        if str(e) == \"error reading package header\":\n"
+"            print str(e)\n"
+"        h = None\n"
+"    finally:\n"
+"        os.close(fd)\n"
+"    return h\n"
+"\n"
+"ts = rpm.TransactionSet()\n"
+"h = readRpmHeader( ts, 'n-v-r.rpm' )"
+msgstr ""
+
+msgid "You can decide in your code whether the exceptions should stop processing or not."
+msgstr ""
+
+msgid "Setting the verification flags"
+msgstr ""
+
+msgid "Starting with rpm 4.1, package files are verified automatically, which can cause problems, especially if you are working with older packages, or packages without proper digital signatures."
+msgstr ""
+
+msgid "In most cases, the automatic verification is an advantage, since you can have greater confidence in the package files. However, you can call setVSFlags on a transaction set to change the default behavior."
+msgstr ""
+
+msgid "\n"
+"ts.setVSFlags(flags)"
+msgstr ""
+
+msgid "For example, if you have problems with old packages that do not have proper signatures, you can use code like the following to ignore such checks:"
+msgstr ""
+
+msgid ""
+"\n"
+"# Set to not verify DSA signatures.\n"
+"ts.setVSFlags(rpm.RPMVSF_NODSA)"
+msgstr ""
+
+msgid "Table 17-3 lists the flags you can pass to setVSFlags on a transaction set. These flags are bitmasks. You can or them together for more than one setting. You must do a binary or. Do not use the Python or keyword. Use | instead, for a binary or operation."
+msgstr ""
+
+msgid "Table 17-3 Flags for setVSFlags"
+msgstr ""
+
+msgid "Flag"
+msgstr ""
+
+msgid "rpm.RPMVSF_NEEDPAYLOAD"
+msgstr ""
+
+msgid "Leave the file handle positions at the beginning of the payload."
+msgstr ""
+
+msgid "rpm.RPMVSF_NOHDRCHK"
+msgstr ""
+
+msgid "Don’t check the RPM database header."
+msgstr ""
+
+msgid "rpm.RPMVSF_ NODSA"
+msgstr ""
+
+msgid "Don’t check the header and payload DSA signatures."
+msgstr ""
+
+msgid "rpm.RPMVSF_ NODSAHEADER"
+msgstr ""
+
+msgid "Don’t check the header DSA signature."
+msgstr ""
+
+msgid "rpm.RPMVSF_ NOMD5"
+msgstr ""
+
+msgid "Don’t check the header and payload MD5 digests."
+msgstr ""
+
+msgid "rpm.RPMVSF_ NORSA"
+msgstr ""
+
+msgid "Don’t check the header and payload RSA signatures."
+msgstr ""
+
+msgid "rpm.RPMVSF_ NOSHA1HEADER"
+msgstr ""
+
+msgid "Don’t check the header SHA1 digest."
+msgstr ""
+
+msgid "rpm._RPMVSF_NODIGESTS"
+msgstr ""
+
+msgid "Convenience to not check digests."
+msgstr ""
+
+msgid "rpm._RPMVSF_NOSIGNATURES"
+msgstr ""
+
+msgid "Convenience to not check signatures."
+msgstr ""
+
+msgid "To turn off all checks, you can pass –1 to setVSFlags:"
+msgstr ""
+
+msgid "\n"
+"ts.setVSFlasgs(-1)"
+msgstr ""
+
+msgid "Dependency Comparisons"
+msgstr ""
+
+msgid "Dependency sets, first introduced in <xref linkend=\"ch-programming-c\" /> on C programming, allow you to compare the dependencies between two packages. One of the most common uses for this is to compare a package file against a version on disk to see if the package file holds a newer version of a package than the one installed."
+msgstr ""
+
+msgid "You can call dsOfHeader on a header object to get the default dependency set for the header. Armed with dependency sets from two headers, you can compare the sets to see which package is newer using simple code like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"file_h = ts.hdrFromFdno(fd)\n"
+"file_ds = file_h.dsOfHeader()\n"
+"inst_ds = inst_h.dsOfHeader()\n"
+"if file_ds.EVR() &gt;= inst_ds.EVR():\n"
+"    print \"Package file is same or newer, OK to upgrade.\"\n"
+"else:\n"
+"    print \"Package file is older than installed version.\""
+msgstr ""
+
+msgid "Pulling this all together, Listing 17-5 provides a Python script that compares a package file against an installed package, reporting on which is newer."
+msgstr ""
+
+msgid "Listing 17-5: vercompare.py"
+msgstr ""
+
+msgid ""
+"\n"
+"<![CDATA[\n"
+"#!/usr/bin/python\n"
+"# Reads in package header, compares to installed package.\n"
+"# Usage:\n"
+"# python vercompare.py rpm_file.rpm\n"
+"#\n"
+"import os\n"
+"import sys\n"
+"\n"
+"import rpm\n"
+"def readRpmHeader(ts, filename):\n"
+"    \"\"\" Read an rpm header. \"\"\"\n"
+"    fd = os.open(filename, os.O_RDONLY)\n"
+"    try:\n"
+"        h = ts.hdrFromFdno(fd)\n"
+"    finally:\n"
+"        os.close(fd)\n"
+"    return h\n"
+"\n"
+"ts = rpm.TransactionSet()\n"
+"h = readRpmHeader( ts, sys.argv[1] )\n"
+"pkg_ds = h.dsOfHeader()\n"
+"for inst_h in ts.dbMatch('name', h['name']):\n"
+"    inst_ds = inst_h.dsOfHeader()\n"
+"    if pkg_ds.EVR() >= inst_ds.EVR():\n"
+"        print \"Package file is same or newer, OK to upgrade.\"\n"
+"    else:\n"
+"        print \"Package file is older than installed version.\"\n"
+"]]>"
+msgstr ""
+
+msgid "Cross-Reference"
+msgstr ""
+
+msgid "The Python script in Listing 17-5 is essentially the same as the longer C program vercompare.c in Listing 16-4 in <xref linkend=\"ch-programming-c\" /> ."
+msgstr ""
+
+msgid "This script takes in a package file name on the command line, loads in the header for that package, and looks up all packages of the same name installed in the RPM database. For each match, this script compares the packages to see which is newer."
+msgstr ""
+
+msgid "You can modify this script, for example, to print out a message if a package isn't installed."
+msgstr ""
+
+msgid "Installing and Upgrading Packages"
+msgstr ""
+
+msgid "With the RPM system, you have a lot of choices. You can install or upgrade packages with the rpm command. You can install or upgrade packages with special programs you write using the C API. And you can install or upgrade packages using the Python API. If you are writing a special program to install or upgrade packages, the Python API makes this task much easier. As with the C API, most of your work needs to be part of a transaction set."
+msgstr ""
+
+msgid "To install or upgrade a package, you need to create a transaction set, build up the transaction with packages, which are stored as transaction elements within the transaction set, check for unresolved dependencies, reorder the transaction set based on the dependencies, and then run the transaction set. Running the transaction set installs or upgrades the packages. The following sections cover these steps."
+msgstr ""
+
+msgid "Building up the transaction set"
+msgstr ""
+
+msgid "Package installs and upgrades need to be performed within the context of a transaction set. To install or upgrade a set of packages, you need to call addInstall with the package headers to install or upgrade. The basic syntax follows:"
+msgstr ""
+
+msgid "\n"
+"ts.addInstall(header, key_data, mode)"
+msgstr ""
+
+msgid "When you call addInstall, you pass the header object along with arbitrary callback key data and a mode flag. The mode flag should be 'i' to install a package, 'u' to upgrade a package, or 'a' as a special code to make a package available for transaction checks but not install or upgrade the package. The 'a' flag is rarely used. In most cases, you should use 'u', just as in most cases, you should install packages with rpm –U instead of rpm –i."
+msgstr ""
+
+msgid "The key_data parameter will get passed to the transaction set run callback, covered in the “Running the Transaction” section later in this chapter."
+msgstr ""
+
+msgid "To remove packages instead of install or upgrade, call addErase instead of addInstall:"
+msgstr ""
+
+msgid "\n"
+"ts.addErase(package_name)"
+msgstr ""
+
+msgid "To set up a package to be upgraded or installed, you can use code like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"h = readRpmHeader( ts, sys.argv[1] )\n"
+"ts.addInstall(h, sys.argv[1], 'u')"
+msgstr ""
+
+msgid "This example expects a package file name on the command line (accessed with sys.argv[1]), and reads in the package header using the readRpmHeader function introduced previously."
+msgstr ""
+
+msgid "The call to addInstall adds the header object (and the associated RPM package file) for an upgrade with the 'u' mode flag. The name of the package file, from sys.argv[1], is passed as the arbitrary data for the transaction set run callback function."
+msgstr ""
+
+msgid "Transaction elements"
+msgstr ""
+
+msgid "Transaction sets are made up of transaction elements. A transaction element makes up one part of a transaction and holds one package per operation (install or remove) in each transaction set. That is, there is one transaction element per package per operation in the transaction set. You can iterate over a transaction set to get each transaction element. Once you have a transaction element, you can call methods on each element to check entries in the header as well as get dependency sets for the package."
+msgstr ""
+
+msgid "Table 17-4 lists the informational methods you can call on a transaction element. Most of the methods listed in Table 17-4 return a single value."
+msgstr ""
+
+msgid "Table 17-4 Informational methods on transaction sets"
+msgstr ""
+
+msgid "Method"
+msgstr ""
+
+msgid "Returns"
+msgstr ""
+
+msgid "A"
+msgstr ""
+
+msgid "Returns package architecture"
+msgstr ""
+
+msgid "E"
+msgstr ""
+
+msgid "Returns package epoch"
+msgstr ""
+
+msgid "O"
+msgstr ""
+
+msgid "Returns package operating system"
+msgstr ""
+
+msgid "R"
+msgstr ""
+
+msgid "Returns package release number"
+msgstr ""
+
+msgid "V"
+msgstr ""
+
+msgid "Returns package version"
+msgstr ""
+
+msgid "N"
+msgstr ""
+
+msgid "Returns package name"
+msgstr ""
+
+msgid "NEVR"
+msgstr ""
+
+msgid "Returns package name-epoch-version-release"
+msgstr ""
+
+msgid "DS"
+msgstr ""
+
+msgid "Returns the package dependency set for a given tag"
+msgstr ""
+
+msgid "FI"
+msgstr ""
+
+msgid "Returns the file info set for the package"
+msgstr ""
+
+msgid "For more complex checking, the DS method returns the package dependency set for a given tag:"
+msgstr ""
+
+msgid "\n"
+"ds = te.DS(tag_name)"
+msgstr ""
+
+msgid "Pass one of 'Providename', 'Requirename', 'Obsoletename', or 'Conflictname' for the tag name. For example:"
+msgstr ""
+
+msgid "\n"
+"ds = te.DS('Requirename')"
+msgstr ""
+
+msgid "The FI method returns the file info set for the package:"
+msgstr ""
+
+msgid "\n"
+"fi = te.FI(tag_name)"
+msgstr ""
+
+msgid "For the FI method, you must pass a tag name of 'Basenames'."
+msgstr ""
+
+msgid "As an example, Listing 17-6 shows how to iterate through a transaction set to get transaction elements."
+msgstr ""
+
+msgid "Listing 17-6: te.py"
+msgstr ""
+
+msgid ""
+"\n"
+"#!/usr/bin/python\n"
+"# Adds all package files on command line to a transaction\n"
+"# and prints out the transaction elements.\n"
+"# Usage:\n"
+"# python te.py rpm_file1.rpm rpm_file2.rpm ...\n"
+"#\n"
+"\n"
+"import os\n"
+"import sys\n"
+"\n"
+"import rpm\n"
+"\n"
+"def readRpmHeader(ts, filename):\n"
+"    \"\"\" Read an rpm header. \"\"\"\n"
+"    fd = os.open(filename, os.O_RDONLY)\n"
+"    try:\n"
+"        h = ts.hdrFromFdno(fd)\n"
+"    finally:\n"
+"        os.close(fd)\n"
+"    return h\n"
+"\n"
+"ts = rpm.TransactionSet()\n"
+"\n"
+"# Set to not verify DSA signatures.\n"
+"ts.setVSFlags(rpm._RPMVSF_NOSIGNATURES)\n"
+"\n"
+"for filename in sys.argv[1:]:\n"
+"    h = readRpmHeader(ts, filename)\n"
+"    print \"Installing %s-%s-%s\" % (h['name'], h['version'], h['release'])\n"
+"    ts.addInstall(h, filename, 'i')\n"
+"\n"
+"print \"This will install:\"\n"
+"for te in ts:\n"
+"    print \"%s-%s-%s\" % (te.N(), te.V(), te.R() )\n"
+"\n"
+"ts.check()\n"
+"ts.order()\n"
+"\n"
+"print \"This will install:\"\n"
+"for te in ts:\n"
+"    print \"%s-%s-%s\" % (te.N(), te.V(), te.R() )"
+msgstr ""
+
+msgid "The te.py script sets up a transaction and then prints out the elements, never completing the transaction. The purpose here is just to show what is in the transaction. The second set of printed output shows the results of the check and order methods, covered in the following section."
+msgstr ""
+
+msgid "Checking and reordering the transaction elements"
+msgstr ""
+
+msgid "After you have called addInstall or addErase for each of the packages you want to install, upgrade, or remove, you need to call two methods to verify the transaction set and order all the elements properly. These two methods are check and order."
+msgstr ""
+
+msgid "Checking the Dependencies"
+msgstr ""
+
+msgid "The check method checks the dependencies in a transaction set."
+msgstr ""
+
+msgid "\n"
+"unresolved_dependencies = ts.check()"
+msgstr ""
+
+msgid "It returns None if all dependencies are resolved, or a complex tuple for each unresolved dependency. In general, if the check method returns anything but None, you cannot perform the transaction."
+msgstr ""
+
+msgid "On a dependency failure, check returns a complex tuple of the dependency information in the following format:"
+msgstr ""
+
+msgid "\n"
+"((N,V,R), (reqN, reqV), needsFlags, suggestedPackage, sense)"
+msgstr ""
+
+msgid "The first element is a tuple of the name, version, and release of the package you are trying to install. The next tuple holds the required name and required version or conflicting name and version. The version will be None if the dependency is a shared library or other file."
+msgstr ""
+
+msgid "The needs flags tell you about the requirement or conflict. The value is a bitmask that can contain the following bit settings: rpm.RPMSENSE_EQUAL, rpm.RPMSENSE_GREATER, and rpm.RPMSENSE_LESS. This tells you if the dependency is for a version of a package greater than 4.1, for example."
+msgstr ""
+
+msgid "The suggested package names a package that solves the dependency. The packages considered are those for which you call addInstall with a flag of 'a'. This value will be None if there is no known package to solve this dependency."
+msgstr ""
+
+msgid "You can tell whether the dependency is a conflict or a requirement based on the sense value, one of rpm.RPMSENSE_CONFLICTS or rpm.RPMSENSE_REQUIRES."
+msgstr ""
+
+msgid "For example, the following tuple shows a required package:"
+msgstr ""
+
+msgid "\n"
+"(('eruby-devel', '0.9.8', '2'), ('eruby-libs', '0.9.8'), 8, None, 0)"
+msgstr ""
+
+msgid "The following tuple shows a required shared library:"
+msgstr ""
+
+msgid "\n"
+"(('jpilot', '0.97', '1'), ('libpisock.so.3', None), 0, None, 0)"
+msgstr ""
+
+msgid "This tuple format will likely change in future versions of RPM. This example shows the format in RPM 4.1. With each RPM release, check the online documentation on the Python API to look for changes."
+msgstr ""
+
+msgid "Transaction Check Method Callbacks"
+msgstr ""
+
+msgid "You can pass an optional callback function to the call to check. This callback gets called for each unresolved dependency in the transaction set. You can use this callback to try to automatically bring in required packages, for example."
+msgstr ""
+
+msgid "The basic syntax for the transaction check callback is:"
+msgstr ""
+
+msgid ""
+"\n"
+"def checkCallback(ts, TagN, N, EVR, Flags):\n"
+"    # Do something...\n"
+"    pass"
+msgstr ""
+
+msgid "You can use a check callback to automatically bring in packages that are required into a transaction set. You can bring in packages from the Red Hat RPM database package, which contains a database of all Red Hat packages, the rpmdb-redhat package. You can open the database from this package by using the trick described previously for opening transactions to more than one RPM database at a time. Simply set the _dbpath macro to \"/usr/lib/rpmdb/i386-redhat-linux/redhat\", or the location of your rpmdb-redhat database, and create a transaction set. Your check callback can then search this extra database and add packages from that database into the current, real RPM database."
+msgstr ""
+
+msgid "Your check callback can also attempt to find package files to resolve dependencies, from a disk directory or network archive for example. The following code shows a stub check callback that you can fill in to try to resolve dependencies. This callback sets up a format for finding unresolved packages in another RPM database, or elsewhere. You need to fill in the skeleton with the algorithm you want to actually resolve the dependencies."
+msgstr ""
+
+msgid ""
+"\n"
+"def checkCallback(ts, TagN, N, EVR, Flags):\n"
+"    if TagN == rpm.RPMTAG_REQUIRENAME:\n"
+"        prev = \"\"\n"
+"    Nh = None\n"
+"\n"
+"    if N[0] == '/':\n"
+"        dbitag = 'basenames'\n"
+"    else:\n"
+"        dbitag = 'providename'\n"
+"        \n"
+"    # What do you need to do.\n"
+"    if EVR:\n"
+"        print \"Must find package [\", N, \"-\", EVR, \"]\"\n"
+"    else:\n"
+"        print \"Must find file [\", N, \"]\"\n"
+"\n"
+"    if resolved:\n"
+"        # ts.addIntall(h, h, 'i')\n"
+"        return -1\n"
+"\n"
+"    return 1"
+msgstr ""
+
+msgid "Depending on the values passed to the callback, your code must either find a package itself or a package that provides a given file or capability to resolve the dependency. If you have another RPM database to look at, such as the rpmdb-redhat database, you can use dbMatch to find the necessary packages in that database. If, however, you are working with a directory of RPM files, you need to build up file names from the package name, version, and release."
+msgstr ""
+
+msgid "Reordering the Transaction Set"
+msgstr ""
+
+msgid "You can add packages to a transaction set in any order. The order method reorders the transaction set to ensure that packages get installed or removed in the right order. The order method orders by a topological sort using the dependencies relations between objects with dependency comparisons."
+msgstr ""
+
+msgid "You must call check prior to order."
+msgstr ""
+
+msgid "Running the transaction"
+msgstr ""
+
+msgid "After setting up the transaction set, perform the transaction by calling run. You need to provide two parameters:"
+msgstr ""
+
+msgid "\n"
+"ts.run(callback, client_data)"
+msgstr ""
+
+msgid "The callback parameter must be a Python function. The client_data is any data you want to pass to the callback. There may be more than one package in the transaction set, so this data should not be specific to a particular package."
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "You must not pass None as the client_data or you will get a Python error."
+msgstr ""
+
+msgid "Transaction run Method Callbacks"
+msgstr ""
+
+msgid "The callback you pass to the run method on a transaction set is essential. Your callback must work properly, or the transaction will fail. You must provide a callback."
+msgstr ""
+
+msgid "Your callback will get called a number of times, mostly as a means to report progress. If you are writing a graphical user interface, for example, you can use the progress callbacks to update a visual progress meter."
+msgstr ""
+
+msgid "The basic syntax for the transaction set run callback is:"
+msgstr ""
+
+msgid ""
+"\n"
+"def runCallback(reason, amount, total, key, client_data):\n"
+"    # Do your stuff...\n"
+"    pass"
+msgstr ""
+
+msgid "The key is the data you provided in the call to the addInstall method. The client_data is the data you passed to the run method."
+msgstr ""
+
+msgid "Each time your callback is called, the transaction set will provide a reason flag. Table 17-5 lists the values for the reason parameter."
+msgstr ""
+
+msgid "Table 17-5 Transaction set run callback reason values"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "Reason"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_UNKNOWN"
+msgstr ""
+
+msgid "Unknown problem"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_INST_PROGRESS"
+msgstr ""
+
+msgid "Progress for installation"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_INST_START"
+msgstr ""
+
+msgid "Start of installation"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_INST_OPEN_FILE"
+msgstr ""
+
+msgid "Callback should open package file"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_INST_CLOSE_FILE"
+msgstr ""
+
+msgid "Callback should close package file"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_TRANS_PROGRESS"
+msgstr ""
+
+msgid "Transaction progress"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_TRANS_START"
+msgstr ""
+
+msgid "Transaction start"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_TRANS_STOP"
+msgstr ""
+
+msgid "Transaction stop"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_UNINST_PROGRESS"
+msgstr ""
+
+msgid "Uninstallation progress"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_UNINST_START"
+msgstr ""
+
+msgid "Uninstallation start"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_UNINST_STOP"
+msgstr ""
+
+msgid "Uninstallation stop"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_REPACKAGE_PROGRESS"
+msgstr ""
+
+msgid "Repackaging progress"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_REPACKAGE_START"
+msgstr ""
+
+msgid "Repackaging start"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_REPACKAGE_STOP"
+msgstr ""
+
+msgid "Repackaging stop"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_UNPACK_ERROR"
+msgstr ""
+
+msgid "Error unpacking package file"
+msgstr ""
+
+msgid "rpm.RPMCALLBACK_CPIO_ERROR"
+msgstr ""
+
+msgid "cpio error getting package payload"
+msgstr ""
+
+msgid "Your callback must handle at least two cases: a reason value of rpm.RPMCALLBACK_INST_OPEN_FILE and rpm.RPMCALLBACK_INST_CLOSE_FILE."
+msgstr ""
+
+msgid "With the reason of rpm.RPMCALLBACK_INST_OPEN_FILE, you must open the RPM package file and return a file descriptor for the file. You need to keep this file descriptor in a global-scope or otherwise-accessible variable, because with the reason of rpm.RPMCALLBACK_INST_CLOSE_FILE, you must close this file."
+msgstr ""
+
+msgid "Coding A Sample Callback"
+msgstr ""
+
+msgid "The following code shows a valid sample callback for upgrading and installing packages."
+msgstr ""
+
+msgid ""
+"\n"
+"# Global file descriptor for the callback.\n"
+"rpmtsCallback_fd = None\n"
+"\n"
+"def runCallback(reason, amount, total, key, client_data):\n"
+"    global rpmtsCallback_fd\n"
+"    if reason == rpm.RPMCALLBACK_INST_OPEN_FILE:\n"
+"        print \"Opening file. \", reason, amount, total, key, client_data\n"
+"        rpmtsCallback_fd = os.open(client_data, os.O_RDONLY)\n"
+"        return rpmtsCallback_fd\n"
+"    elif reason == rpm.RPMCALLBACK_INST_START:\n"
+"        print \"Closing file. \", reason, amount, total, key, client_data\n"
+"        os.close(rpmtsCallback_fd)"
+msgstr ""
+
+msgid "This callback assumes that the call to addInstall passed client data of the package file name. This callback ignores the client_data passed to the run method, but this is a perfect slot for passing an object. You can use this, for example, to avoid having a global variable for the file descriptor."
+msgstr ""
+
+msgid "Upgrading A Package"
+msgstr ""
+
+msgid "Listing 17-7 shows a simple Python script to upgrade or install a package."
+msgstr ""
+
+msgid "Listing 17-7: rpmupgrade.py"
+msgstr ""
+
+msgid ""
+"\n"
+"#!/usr/bin/python\n"
+"# Upgrades packages passed on the command line.\n"
+"# Usage:\n"
+"# python rpmupgrade.py rpm_file1.rpm rpm_file2.rpm ...\n"
+"#\n"
+"\n"
+"import os\n"
+"import sys\n"
+"\n"
+"import rpm\n"
+"\n"
+"# Global file descriptor for the callback.\n"
+"rpmtsCallback_fd = None\n"
+"\n"
+"def runCallback(reason, amount, total, key, client_data):\n"
+"    global rpmtsCallback_fd\n"
+"    if reason == rpm.RPMCALLBACK_INST_OPEN_FILE:\n"
+"        print \"Opening file. \", reason, amount, total, key, client_data\n"
+"        rpmtsCallback_fd = os.open(key, os.O_RDONLY)\n"
+"        return rpmtsCallback_fd\n"
+"    elif reason == rpm.RPMCALLBACK_INST_START:\n"
+"        print \"Closing file. \", reason, amount, total, key, client_data\n"
+"        os.close(rpmtsCallback_fd)\n"
+"\n"
+"def checkCallback(ts, TagN, N, EVR, Flags):\n"
+"    if TagN == rpm.RPMTAG_REQUIRENAME:\n"
+"        prev = \"\"\n"
+"    Nh = None\n"
+"\n"
+"    if N[0] == '/':\n"
+"        dbitag = 'basenames'\n"
+"    else:\n"
+"        dbitag = 'providename'\n"
+"\n"
+"    # What do you need to do.\n"
+"    if EVR:\n"
+"        print \"Must find package [\", N, \"-\", EVR, \"]\"\n"
+"    else:\n"
+"        print \"Must find file [\", N, \"]\"\n"
+"\n"
+"    if resolved:\n"
+"        # ts.addIntall(h, h, 'i')\n"
+"        return -1\n"
+"\n"
+"    return 1\n"
+"\n"
+"def readRpmHeader(ts, filename):\n"
+"    \"\"\" Read an rpm header. \"\"\"\n"
+"    fd = os.open(filename, os.O_RDONLY)\n"
+"    try:\n"
+"        h = ts.hdrFromFdno(fd)\n"
+"    finally:\n"
+"        os.close(fd)\n"
+"    return h\n"
+"\n"
+"ts = rpm.TransactionSet()\n"
+"\n"
+"# Set to not verify DSA signatures.\n"
+"ts.setVSFlags(-1)\n"
+"\n"
+"for filename in sys.argv[1:]:\n"
+"    h = readRpmHeader(ts, filename)\n"
+"    print \"Upgrading %s-%s-%s\" % (h['name'], h['version'], h['release'])\n"
+"    ts.addInstall(h, filename, 'u')\n"
+"\n"
+"unresolved_dependencies = ts.check(checkCallback)\n"
+"\n"
+"if not unresolved_dependencies:\n"
+"    ts.order()\n"
+"\n"
+"    print \"This upgrade will install:\"\n"
+"    for te in ts:\n"
+"        print \"%s-%s-%s\" % (te.N(), te.V(), te.R())\n"
+"\n"
+"    print \"Running transaction (final step)...\"\n"
+"    ts.run(runCallback, 1)\n"
+"else:\n"
+"    print \"Error: Unresolved dependencies, transaction failed.\"\n"
+"    print unresolved_dependencies"
+msgstr ""
+
+msgid "This script expects the name of an RPM package file on the command line, and attempts to upgrade the package. (This will also install new packages.)"
+msgstr ""
+
+msgid "When you run the rpmupgrade.py script, you should see output like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"# rpm -q jikes\n"
+"jikes-1.17-1\n"
+"\n"
+"# python rpmupgrade.py jikes-1.18-1.i386.rpm\n"
+"Upgrading jikes-1.18-1\n"
+"This upgrade will install:\n"
+"jikes-1.18-1\n"
+"jikes-1.17-1\n"
+"Running transaction (final step)...\n"
+"Opening file. 4 0 0 jikes-1.18-1.i386.rpm 1\n"
+"Closing file. 2 0 2854204 jikes-1.18-1.i386.rpm 1\n"
+"\n"
+"# rpm -q jikes\n"
+"jikes-1.18-1"
+msgstr ""
+
+msgid "This example shows that the package was upgraded after running the rpmupgrade.py script. Note that with an upgrade, the original package, jikes-1.17-1 in this case, is also added to the transaction set. With an install, this is not the case. That’s because the original package is removed as part of the transaction."
+msgstr ""
+
+msgid "If you run this script as a non-root user, you will likely see an error like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"$ python rpmupgrade.py jikes-1.18-1.i386.rpm\n"
+"Upgrading jikes-1.18-1\n"
+"This upgrade will install:\n"
+"jikes-1.18-1\n"
+"jikes-1.17-1\n"
+"Running transaction (final step)...\n"
+"error: cannot get exclusive lock on /var/lib/rpm/Packages\n"
+"error: cannot open Packages index using db3 - Operation not permitted (1)\n"
+"error: cannot open Packages database in /var/lib/rpm"
+msgstr ""
+
+msgid "If a package has a dependency on a file such as a shared library, you will see output like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"# python rpmupgrade.py jikes-1.17-glibc2.2-1.i386.rpm jpilot-0_97-1_i386.rpm\n"
+"Upgrading jikes-1.17-1\n"
+"Upgrading jpilot-0.97-1\n"
+"Must find file [ libpisock.so.3 ]\n"
+"Error: Unresolved dependencies, transaction failed.\n"
+"(('jpilot', '0.97', '1'), ('libpisock.so.3', None), 0, None, 0)"
+msgstr ""
+
+msgid "If a package has a dependency on another package, you will see output like the following:"
+msgstr ""
+
+msgid ""
+"\n"
+"# python rpmupgrade.py eruby-devel-0.9.8-2.i386.rpm\n"
+"Upgrading eruby-devel-0.9.8-2\n"
+"Must find package [ eruby-libs - 0.9.8 ]\n"
+"Error: Unresolved dependencies, transaction failed.\n"
+"(('eruby-devel', '0.9.8', '2'), ('eruby-libs', '0.9.8'), 8, None, 0)"
+msgstr ""
+
+msgid "Where to Go from Here"
+msgstr ""
+
+msgid "The RPM bindings for Python are documented along with the C programming API. On a Red Hat Linux system, look in the file /usr/share/doc/rpm-devel-4.1/apidocs/html/group__python.html to see the start of the Python-specific documentation."
+msgstr ""
+
+msgid "Note that much of this online documentation covers the C functions that provide the Python bindings, not the Python API itself. But, if you examine the online information on objects listed as classes, such as rpmts, you can find the Python-specific documentation."
+msgstr ""
+
+msgid "Furthermore, if you look into the .c files that make up the Python bindings, you can find PyMethodDef structure tables. These tables provide useful glimpses into the Python API."
+msgstr ""
+
+msgid "To learn more about programming in Python, install the python-docs package. The python-docs package has a large set of online documentation for Python, including the official Python Tutorial. With Red Hat Linux, start at /usr/share/doc/python-docs-2.2.1/html/tut/tut.html."
+msgstr ""
+
+msgid "Other tutorials are available at http://diveintopython.org for the Dive Into Python tutorial for experienced programmers, and at http://py.vaults.ca/parnassus/apyllo.py/935043691.636055170 for the Vaults of Parnassus listing of tutorials."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "This chapter introduces the high-level RPM API for Python programming. You can use this API from Python scripts to perform RPM functionality, just as you can write C programs using the RPM C API covered in <xref linkend=\"ch-programming-c\" /> ."
+msgstr ""
+
+msgid "In general, the Python API is simpler and requires fewer code statements than the corresponding functionality in the C API."
+msgstr ""
+
+msgid "Just about all of your work with the Python API requires a transaction set, which you can get by calling rpm.TransactionSet."
+msgstr ""
+
+msgid "To query the RPM database, call dbMatch on the transaction set object. To install or upgrade packages, call addInstall, check, order, and run on the transaction set."
+msgstr ""
+
+msgid "The next chapter switches to another language for accessing the RPM system: Perl. With the rich set of APIs, you can write your RPM programs in C, Python, Perl, or any language that can call on code written in one of these languages."
+msgstr ""
+

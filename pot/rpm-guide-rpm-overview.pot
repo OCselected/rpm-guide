@@ -1,0 +1,488 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "RPM Overview"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Understanding the package file"
+msgstr ""
+
+msgid "Querying the RPM database"
+msgstr ""
+
+msgid "Running RPM commands"
+msgstr ""
+
+msgid "Working with RPM packages, files, commands, and databases can be complicated. There are thousands of files, for hundreds if not thousands of packages, installed on your system. You need some way to manage it all. The RPM system can help you do that."
+msgstr ""
+
+msgid "This chapter provides an overview of the components that make up the RPM system for package management: package files, databases, and RPM commands."
+msgstr ""
+
+msgid "Understanding the Package File"
+msgstr ""
+
+msgid "RPM provides for installing, upgrading and removing packages. Typically, each package is an application and all the necessary files associated with that application. For example, the Apache Web server comes with a number of configuration files, a large set of documentation files, and the Apache server itself. All of this fits into one RPM package."
+msgstr ""
+
+msgid "One of the main advantages of the RPM system is that each .rpm file holds a complete package. For example, the following file holds the <filename>mlocate</filename> package:"
+msgstr ""
+
+msgid "<filename>mlocate-0.22.2-2.i686.rpm</filename>"
+msgstr ""
+
+msgid "Based on the naming conventions discussed in <xref linkend=\"ch-intro-rpm\" />, this package represents <filename>mlocate</filename> package, version 0.22.2, second build of an RPM package, for i686 (Intel) architecture systems."
+msgstr ""
+
+msgid "With a single command, you can copy an .rpm file to another Linux system and install it, getting the complete contents of the package, or you can use other commands to remove or update the package."
+msgstr ""
+
+msgid "RPM file format"
+msgstr ""
+
+msgid "RPM files hold a number of tagged data items and a payload, the files to install on your system. The tagged data items describe the package and can contain optional features. For example, the NAME tag holds the package name. The optional PRE tag holds a pre-installation script, a script that the rpm command runs prior to installing the files in the package payload."
+msgstr ""
+
+msgid "Under the covers, RPM package files contain four sections. The first is a leading identification area that marks the file as an RPM package (created with a particular version of the RPM system). The remaining sections are the signature, the tagged data (called the header), and the payload. Each of these sections has important information about the package, although the payload section contains the actual content of the package."
+msgstr ""
+
+msgid "Signature"
+msgstr ""
+
+msgid "The signature appears after the lead or identifier section, which marks the file as an RPM file. Like your signature when you sign a check, the RPM signature helps verify the integrity of the package. No, the signature doesn’t check for bugs in software applications. Instead, it ensures that you have downloaded a valid RPM archive."
+msgstr ""
+
+msgid "The signature works by performing a mathematical function on the header and archive sections of the file. The mathematical function can be an encryption process, such as PGP (Pretty Good Privacy), or a message digest in MD5 format."
+msgstr ""
+
+msgid "Header"
+msgstr ""
+
+msgid "The header contains zero or more tagged blocks of data that pertain to the package. The header contains information such as copyright messages, version numbers, and package summaries."
+msgstr ""
+
+msgid "Payload"
+msgstr ""
+
+msgid "The payload section contains the actual files used in the package. These files are installed when you install the package. To save space, data in the payload section is compressed in GNU <command>gzip</command> format."
+msgstr ""
+
+msgid "Once uncompressed, the data is in <command>cpio</command> format, which is how the <command>rpm2cpio</command> command (introduced in <xref linkend=\"sect-RPM_Guide-RPM_Overview-Other_RPM_Commands\" /> later in this chapter) can do its work."
+msgstr ""
+
+msgid "Binary RPMs and Source RPMs"
+msgstr ""
+
+msgid "There are two main types of RPM packages: binary (or applications) and source. A binary RPM has been compiled for a particular architecture. For example, the Apache Web server compiled for an Intel Pentium, or i686, architecture won’t work on a Sharp Zaurus, which runs an Intel ARM processor. To run on both systems, you would need two separate packages: one for the Pentium i686 and one for the ARM."
+msgstr ""
+
+msgid "In addition to binary RPMs, you can get source code RPMs. These RPMs are packages that provide the source code for other packages."
+msgstr ""
+
+msgid "Binary RPMs"
+msgstr ""
+
+msgid "Binary RPMs hold complete applications or libraries of functions compiled for a particular architecture. Most binary RPMs contain complete applications, such as the Apache Web server or the AbiWord word processor. These application binary RPMs usually depend on a number of system libraries which are, in turn, also provided by binary RPMs."
+msgstr ""
+
+msgid "Finding More Software"
+msgstr ""
+
+msgid "<xref linkend=\"ch-management-software\" /> covers a number of locations where you can find RPM applications galore. Your Linux installation CDs or DVDs are also a great source for applications. Most Linux distributions come with more applications than you can imagine using."
+msgstr ""
+
+msgid "Although most binary RPMs are complete applications, others provide libraries. For example, the Simple DirectMedia Layer library (SDL), which provides graphics for many games, can be packaged as an RPM file. A number of programs, mostly games, use this library for enhanced multimedia such as rich graphics. RPMs that provide libraries allow multiple applications to share the same library. Typically, the libraries are packaged into separate RPMs from the applications."
+msgstr ""
+
+msgid "In addition to binary RPMs that hold applications or libraries compiled for a particular architecture, RPM supports the concept of platform-independent binary RPMs. These platform-independent RPMs, called noarch as a shorted form of “no architecture” dependencies, provide applications or libraries that are not dependent on any platform. Applications written in Perl, Python, or other scripting languages often do not depend on code compiled for a particular architecture. In addition, compiled Java applications are usually free of platform dependencies."
+msgstr ""
+
+msgid "Source RPMs"
+msgstr ""
+
+msgid "The <filename>mlocate</filename> package, mentioned previously, contains the <filename>mlocate</filename> application used to search for files on the system. The source code used to create this application is stored in an <filename>mlocate</filename> source RPM, for example:"
+msgstr ""
+
+msgid "<filename>mlocate-0.22.2-2.src.rpm</filename>"
+msgstr ""
+
+msgid "By convention, source RPMs have a file name ending in .src.rpm."
+msgstr ""
+
+msgid "Source RPMs should contain all the commands, usually in scripts, necessary to recreate the binary RPM. Having a source RPM means that you can recreate the binary RPM at any time. This is a very important goal of the RPM system."
+msgstr ""
+
+msgid "Source RPMs and Open Source Licencing"
+msgstr ""
+
+msgid "Source RPMs have nothing to do with open-source software licenses. Linux is famous for being an open-source operating system. In RPM terms, that means the source code for the Linux kernel and most Linux applications are freely available as source RPMs. But you can also make source RPMs for proprietary programs. The key issue is that you are unlikely to distribute the source RPMs for proprietary packages."
+msgstr ""
+
+msgid "Furthermore, a number of open-source applications are not available as source RPMs. That's a shame, since source RPMs would make these applications easier to install."
+msgstr ""
+
+msgid "While source RPMs hold the commands necessary to create the binary RPM, there may be differences in your Linux environment that would result in rebuilding a binary RPM that is different from the original binary RPM. For example, the compile scripts for some packages may add in optional code depending on which libraries or which versions of libraries are found on your system. <xref linkend=\"ch-packaging-guidelines\" /> covers many issues in creating RPMs, and <xref linkend=\"ch-other-linuxes\" /> and <xref linkend=\"ch-other-os\" /> cover issues related to other versions of Linux and other operating systems, respectively. If you follow the guidelines when making your own RPMs, you should result in source RPMs that reproduce binary RPMs as consistently as possible."
+msgstr ""
+
+msgid "Querying the RPM Database"
+msgstr ""
+
+msgid "The RPM database holds information about all the RPM packages installed on your system. You can use this database to query what is installed, to help determine if you have the latest versions of software, and to verify that your system is properly set up, at least from a packaging point of view."
+msgstr ""
+
+msgid "The RPM database itself is stored in the directory <filename>/var/lib/rpm/</filename>, and should contain files like the following:"
+msgstr ""
+
+msgid "<filename>Basenames</filename>"
+msgstr ""
+
+msgid "<filename>Conflictname</filename>"
+msgstr ""
+
+msgid "<filename>__db.001</filename>"
+msgstr ""
+
+msgid "<filename>__db.002</filename>"
+msgstr ""
+
+msgid "<filename>__db.003</filename>"
+msgstr ""
+
+msgid "<filename>Dirnames</filename>"
+msgstr ""
+
+msgid "<filename>Filemd5s</filename>"
+msgstr ""
+
+msgid "<filename>Group</filename>"
+msgstr ""
+
+msgid "<filename>Installtid</filename>"
+msgstr ""
+
+msgid "<filename>Name</filename>"
+msgstr ""
+
+msgid "<filename>Packages</filename>"
+msgstr ""
+
+msgid "<filename>Providename</filename>"
+msgstr ""
+
+msgid "<filename>Provideversion</filename>"
+msgstr ""
+
+msgid "<filename>Pubkeys</filename>"
+msgstr ""
+
+msgid "<filename>Requirename</filename>"
+msgstr ""
+
+msgid "<filename>Requireversion</filename>"
+msgstr ""
+
+msgid "<filename>Sha1header</filename>"
+msgstr ""
+
+msgid "<filename>Sigmd5</filename>"
+msgstr ""
+
+msgid "<filename>Triggername</filename>"
+msgstr ""
+
+msgid "The RPM Database"
+msgstr ""
+
+msgid "<xref linkend=\"ch-using-rpm-db\" /> covers the database in more detail."
+msgstr ""
+
+msgid "These files make up the RPM database. The file <filename>__db.001</filename> and similar files are lock files used by the RPM system. The other files are databases in Berkeley DB format. The most important file is <filename>Packages</filename>. The <filename>Packages</filename> file contains the header tag information for each package indexed by an index number for each package. This number slowly grows with time."
+msgstr ""
+
+msgid "The other files, such as <filename>Name</filename>, <filename>Providename</filename>, and <filename>Group</filename>, exist to speed access to particular types of information. Treat your RPM database with care. Back up the files, especially after upgrading, installing, or removing packages."
+msgstr ""
+
+msgid "Recreating The RPM Database"
+msgstr ""
+
+msgid "Only the <filename>Packages</filename> file is essential. You can recreate the rest of the files using the <command>rpm <option>--rebuilddb</option></command> command, introduced in <xref linkend=\"ch-using-rpm-db\" />."
+msgstr ""
+
+msgid "Running RPM Commands"
+msgstr ""
+
+msgid "The primary RPM command is simply <command>rpm</command>. One of the original goals of the RPM system is providing ease of use. In support of this goal, just about everything you want to do with the RPM system can be done with this one command. For most usage, the command-line parameters to the <command>rpm</command> command determine the actions it should take."
+msgstr ""
+
+msgid "Working with the <command>rpm</command> command"
+msgstr ""
+
+msgid "The <command>rpm</command> command performs the most common package-management functions, along with a host of uncommon functions as well. The table below lists the main operations you can perform with the <command>rpm</command> command and the command-line options to specify the given operations."
+msgstr ""
+
+msgid "The main <command>rpm</command> operations"
+msgstr ""
+
+msgid "Operation"
+msgstr ""
+
+msgid "Short Option"
+msgstr ""
+
+msgid "Long Option"
+msgstr ""
+
+msgid "Upgrade/install"
+msgstr ""
+
+msgid "-U"
+msgstr ""
+
+msgid "--upgrade"
+msgstr ""
+
+msgid "Install"
+msgstr ""
+
+msgid "-I"
+msgstr ""
+
+msgid "--install"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "-e"
+msgstr ""
+
+msgid "--erase"
+msgstr ""
+
+msgid "Query"
+msgstr ""
+
+msgid "-q"
+msgstr ""
+
+msgid "--query"
+msgstr ""
+
+msgid "Verify"
+msgstr ""
+
+msgid "-V"
+msgstr ""
+
+msgid "--verify"
+msgstr ""
+
+msgid "Check signature"
+msgstr ""
+
+msgid "-K"
+msgstr ""
+
+msgid "--checksig"
+msgstr ""
+
+msgid "Freshen (upgrade) already-installed package"
+msgstr ""
+
+msgid "-F"
+msgstr ""
+
+msgid "--freshen"
+msgstr ""
+
+msgid "Initialize database"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "--initdb"
+msgstr ""
+
+msgid "Rebuild database"
+msgstr ""
+
+msgid "--rebuilddb"
+msgstr ""
+
+msgid "Using this table as a guide, you can explore the options to the <command>rpm</command> command. To install or upgrade a package, use the <option>-U</option> command-line option:"
+msgstr ""
+
+msgid "\n"
+"<userinput>rpm -U <replaceable>filename.rpm</replaceable></userinput>"
+msgstr ""
+
+msgid "For example, to install the <filename>mlocate</filename> RPM used as an example in this chapter, run the following command:"
+msgstr ""
+
+msgid "\n"
+"<userinput>rpm -U <replaceable>mlocate-0.22.2-2.i686.rpm</replaceable></userinput>"
+msgstr ""
+
+msgid "To get extra feedback, you can use a command like the following, with the <option>-h</option> and <option>-v</option> options in conjunction with the <option>–U</option> option:"
+msgstr ""
+
+msgid "\n"
+"<userinput>rpm -Uhv <replaceable>mlocate-0.22.2-2.i686.rpm</replaceable></userinput>"
+msgstr ""
+
+msgid "When you run this command you will see more output than the default, which is no output unless there are errors. With the <option>–h</option> option, the <command>rpm</command> command will print a series of hash marks, #, to provide feedback that the command is still running. With the <option>–v</option> option, the <command>rpm</command> command provides more verbose messages."
+msgstr ""
+
+msgid "Installing a Package"
+msgstr ""
+
+msgid "The most common command to install a package is:"
+msgstr ""
+
+msgid "\n"
+"<userinput>rpm -Uhv <replaceable>package_file.rpm</replaceable></userinput>"
+msgstr ""
+
+msgid "This command upgrades a package with extra output. If the package has not been installed, this command installs the package. See <xref linkend=\"ch-using-rpm\" /> for more on upgrading and installing."
+msgstr ""
+
+msgid "To remove a package (called erase in RPM terminology), use the <option>–e</option> command-line option:"
+msgstr ""
+
+msgid "\n"
+"<userinput>rpm –e <replaceable>package_name</replaceable></userinput>"
+msgstr ""
+
+msgid "Using File Extensions"
+msgstr ""
+
+msgid "Notice that you install a package file using the file name that ends in .rpm, but uninstall or erase a package without the .rpm extension. This is because you install RPM files, but once installed, you work with the installed packages. The file name and the package name do not have to correspond, but typically (and sanely) they have the same base name."
+msgstr ""
+
+msgid "To list every RPM package installed on your system, use a command like the following."
+msgstr ""
+
+msgid "\n"
+"<userinput>rpm –qa</userinput>"
+msgstr ""
+
+msgid "Expect to wait while this command completes. Most Linux systems have numerous packages installed, which will result in many lines of output. To better see the output, you can pipe this command to the more command, as shown following:"
+msgstr ""
+
+msgid "\n"
+"<userinput>rpm –qa | more</userinput>"
+msgstr ""
+
+msgid "You will then see the package listing one screen at a time."
+msgstr ""
+
+msgid "<command>rpm</command> Options"
+msgstr ""
+
+msgid "<xref linkend=\"ch-command-reference\" /> lists all the options for the <command>rpm</command> command."
+msgstr ""
+
+msgid "Other RPM commands"
+msgstr ""
+
+msgid "In addition to <command>rpm</command>, the RPM system includes a few more commands, including <command>rpmbuild</command> and <command>rpm2cpio</command>."
+msgstr ""
+
+msgid "The <command>rpmbuild</command> command helps build RPM packages. Its usage is discussed in depth in Part II of this book."
+msgstr ""
+
+msgid "The <command>rpm2cpio</command> command exports an RPM package file into the format that the <command>cpio</command> command expects. The <command>cpio</command> command works with many tape-backup packages. You can also take advantage of the fact that cpio can list the individual files in a cpio archive or extract files. To list the files in an RPM package, use a command like the following:"
+msgstr ""
+
+msgid "\n"
+"<userinput>rpm2cpio <replaceable>package_file.rpm</replaceable> | cpio –t</userinput>"
+msgstr ""
+
+msgid "For example, the following command lists all the files in the <filename>mlocate</filename> package:"
+msgstr ""
+
+msgid "\n"
+"<userinput>rpm2cpio mlocate-0.22.2-2.i686.rpm | cpio –t</userinput>"
+msgstr ""
+
+msgid "To display:"
+msgstr ""
+
+msgid ""
+"\n"
+"<computeroutput>\n"
+"./etc/cron.daily/mlocate.cron\n"
+"./etc/updatedb.conf\n"
+"./usr/bin/locate\n"
+"./usr/bin/updatedb\n"
+"./usr/share/doc/mlocate-0.22.2\n"
+"./usr/share/doc/mlocate-0.22.2/AUTHORS\n"
+"./usr/share/doc/mlocate-0.22.2/COPYING\n"
+"./usr/share/doc/mlocate-0.22.2/NEWS\n"
+"./usr/share/doc/mlocate-0.22.2/README\n"
+"./usr/share/locale/bg/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/ca/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/cs/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/da/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/de/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/es/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/fr/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/hu/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/it/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/ja/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/ms/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/nl/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/pl/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/pt/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/pt_BR/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/sr/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/sr@latin/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/sv/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/locale/zh_CN/LC_MESSAGES/mlocate.mo\n"
+"./usr/share/man/man1/locate.1.gz\n"
+"./usr/share/man/man5/mlocate.db.5.gz\n"
+"./usr/share/man/man5/updatedb.conf.5.gz\n"
+"./usr/share/man/man8/updatedb.8.gz\n"
+"./var/lib/mlocate\n"
+"555 blocks\n"
+"</computeroutput>"
+msgstr ""
+
+msgid "The <command>rpm2cpio</command> command can also help if you want to extract a single file from the RPM package, using the <command>cpio <option>–ivd</option></command> command-line options, as follows:"
+msgstr ""
+
+msgid ""
+"\n"
+" <userinput>rpm2cpio mlocate-0.22.2-2.i686.rpm | cpio –ivd\n"
+"        usr/share/doc/mlocate-0.22.2/README</userinput>"
+msgstr ""
+
+msgid "This command will output local <filename>usr/share/doc/mlocate-0.22.2/README</filename> subdirectories and the <filename>README</filename> file located under <filename>usr/share/doc/mlocate-0.22.2</filename>."
+msgstr ""
+
+msgid "The <option>–i</option> option tells <command>cpio</command> to extract files. The <option>–d</option> option tells <command>cpio</command> to make any local subdirectories as needed (<filename>usr/share/doc/mlocate-0.22.2</filename>, in this example), and the <option>–v</option> option asks <command>cpio</command> to politely output verbose messages about what it does. Of course, verbose is in the eye of the beholder; with many Unix and Linux commands, verbose output is still somewhat terse."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "The RPM files, the RPM database, and the RPM commands are the primary components that make up the RPM system. This chapter introduces you to the format and types of RPM files, the importance of maintaining the database, and the basic rpm command."
+msgstr ""
+
+msgid "The next chapter covers the most frequently used RPM commands. These commands allow you to install, uninstall, and update RPM packages."
+msgstr ""
+

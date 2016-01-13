@@ -1,0 +1,45 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+
+<book status="draft">
+	<xi:include href="Book_Info.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<!--
+	<xi:include href="Preface.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include href="Chapter.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+	-->
+  <xi:include href="rpm-guide-intro-packaging.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/> 
+  <xi:include href="rpm-guide-intro-rpm.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/> 
+  <xi:include href="rpm-guide-rpm-overview.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/> 
+  <xi:include href="rpm-guide-using-rpm.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/> 
+  <xi:include href="rpm-guide-using-rpm-db.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-dependencies.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-transactions.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-management-software.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-creating-rpms.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-specfiles.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-advanced-packaging.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-rpmbuild.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-extra-packaging-tools.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-packaging-guidelines.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-scripting.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-programming-c.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-programming-python.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-programming-perl.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-other-linuxes.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-other-os.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-customizing-rpm.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-command-reference.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-specfile-syntax.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-rpm-evolution.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-package-structure.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-online-resources.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-development-tools.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="rpm-guide-licensing.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<!--
+-->
+
+	<xi:include href="Revision_History.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<index />
+</book>
+

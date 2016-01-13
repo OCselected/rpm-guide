@@ -1,0 +1,406 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Packaging Guidelines"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Avoiding common mistakes"
+msgstr ""
+
+msgid "Following good practices"
+msgstr ""
+
+msgid "RPM is a complex system that helps manage thousands of packages for a complex operating system. Furthermore, RPM is very, very flexible. This flexibility makes it important that you follow the rules to create packages the proper way. Otherwise, you’ll face a host of problems with your RPMs. Following some best practices guidelines will help you avoid future problems as you release RPM updates."
+msgstr ""
+
+msgid "This chapter covers ways to avoid common problems as well as best-practice guidelines for creating your own RPMs."
+msgstr ""
+
+msgid "Avoiding Common Problems"
+msgstr ""
+
+msgid "Developers creating RPMs seem to hit many of the same roadblocks. This section covers some of the most common problems faced by RPM users and package builders."
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "Never, never, never build RPMs logged in as the root user. See the section on Building for details."
+msgstr ""
+
+msgid "Scan the mailing lists"
+msgstr ""
+
+msgid "Many people have tried to solve a lot of serious problems that arise when using RPM, so if you are facing difficulties, chances are someone else has tackled those issues before. The RPM mailing list provides a technical forum for discussing RPM issues and problems. In many, if not most, cases, you can find answers to problems by scanning the mailing list archives."
+msgstr ""
+
+msgid "You can also sign up for the mailing list so that you can send in requests and see the responses."
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "For details on viewing the RPM mailing list archives and signing up for the list, see www.rpm.org/mailing_list/. See <ulink url=\"http://groups.yahoo.com/group/rpm-list/messages\">http://groups.yahoo.com/group/rpm-list/messages</ulink> for an archive of the list."
+msgstr ""
+
+msgid "If you are working with RPMs and pushing the envelope for other operating systems or complicated packages, this list is definitely worth a look."
+msgstr ""
+
+msgid "Before sending any messages, though, be sure to look through the message archives to see if the message has already been answered. You will save time waiting for a response if you can get an archived response right away."
+msgstr ""
+
+msgid "You should also ask any questions in a way that will generate the most helpful responses. This includes:"
+msgstr ""
+
+msgid "Do your homework first. Check to see if your question has already been answered by looking at the mailing list or newsgroup archives. In the end, this saves you the most time, as you don’t have to wait for answers."
+msgstr ""
+
+msgid "Describe the problem and the symptoms as clearly as possible. After all, this is what you want help with."
+msgstr ""
+
+msgid "Use clear subject headers. This is the first part of your message that people will read. If you are not clear, the key people who could answer your questions may never even read your message. And, if they don’t read the message, you will never get an answer."
+msgstr ""
+
+msgid "Send your message in plain text, not HTML. Do not include a separate HTML copy of your message. This just makes it harder to read, especially for people who read collected digests of mailing lists."
+msgstr ""
+
+msgid "Make it easy for people to reply to you. Include your email address in your message. You might want to include a line that states something like “Please send your reply to me at” and then provide your email address."
+msgstr ""
+
+msgid "These tips on asking questions come from the Internet document on How to Ask Questions the Smart Way by Eric Steven Raymond and Rick Moen, available at multiple sites, including www.owlriver.com/tips/smart."
+msgstr ""
+
+msgid "In addition to the RPM mailing list, there is also a Usenet newsgroup, named linux.redhat.rpm. You can read this newsgroup with any newsreading program."
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Newsgroups are sometimes called discussion groups."
+msgstr ""
+
+msgid "Use rpmbuild"
+msgstr ""
+
+msgid "In older versions of RPM, you called the rpm –ba command to build RPMs. With RPM 4.1, you must use the rpmbuild command. If you have the rpmbuild command available, even if you are running an older version of RPM, run rpmbuild instead of rpm to build your RPMs."
+msgstr ""
+
+msgid "You’d be surprised at how such a simple item is one of the most-asked questions on the RPM mailing list. That’s because the rpm –ba command, and the other –b options, no longer work in RPM 4.1. These options are supported by the rpmbuild command."
+msgstr ""
+
+msgid "Don’t try to defeat the system"
+msgstr ""
+
+msgid "If you are finding your spec files getting more and more complex, and that you are trying to disable RPM features, chances are you are trying to defeat the system. This is not a good idea."
+msgstr ""
+
+msgid "The RPM system works in a certain way. You may not always agree with the way it works, but if you try to make it work in contrary ways, in most cases you’ll end up fighting RPM to no avail."
+msgstr ""
+
+msgid "There are certain rules, and more importantly certain conventions that RPMs should follow. The previous chapters in this section on building RPMs have outlined those conventions. Follow them. When you go against these conventions, you are really trying to defeat how the RPM system works."
+msgstr ""
+
+msgid "Turn off automatic dependency generation"
+msgstr ""
+
+msgid "When you build an RPM, the rpmbuild command will automatically generate dependencies on Linux shared libraries and other system commands. You can turn this off if you need to, using a number of means."
+msgstr ""
+
+msgid "You can disable the automatic generation of dependencies by placing the following directive in your spec file:"
+msgstr ""
+
+msgid "Autoreq: 0"
+msgstr ""
+
+msgid "A better approach, though, is to override the %{__find_requires} and %{__find_provides} macros, or just one of these as needed. You can null out either of these macros by adding commands like the following to your spec file:"
+msgstr ""
+
+msgid "%define __find_requires %{nil}"
+msgstr ""
+
+msgid "This approach is better because it allows you to override only the requires checks. In addition, you can get more specific and simply change how the automatic dependency checks are performed. For example, you can also change the definitions of these macros to perform normal dependency generation except for any problematic files or packages. These two macros resolve to shell scripts that perform the automated dependency checks, as you can see with the rpm --eval command:"
+msgstr ""
+
+msgid "$ rpm --eval \"%__find_provides\""
+msgstr ""
+
+msgid "/usr/lib/rpm/find-provides"
+msgstr ""
+
+msgid "rpm --eval \"%__find_requires\""
+msgstr ""
+
+msgid "/usr/lib/rpm/find-requires"
+msgstr ""
+
+msgid "You can override these scripts to filter out any dependencies that cause problems for your packages."
+msgstr ""
+
+msgid "Don't list directories in %files"
+msgstr ""
+
+msgid "Unless you really mean it, don’t list directories in your %files section in your spec files. That is because the rpmbuild program will automatically add all files in that directory to your RPM. If this is a system directory, such as /usr/bin, your RPM has now claimed ownership for all the files, regardless of the source package."
+msgstr ""
+
+msgid "To avoid all files in the directory becoming part of the package, list the files explicitly, perhaps generating the list of files as the program builds."
+msgstr ""
+
+msgid "If you do need a directory installed as part of your package, use the %dir directive, described in <xref linkend=\"ch-specfiles\" /> ."
+msgstr ""
+
+msgid "Handling circular dependencies"
+msgstr ""
+
+msgid "If two packages each depend on the other, you don’t want each package’s spec file to list the other in a Requires section. If this occurs, the packages won’t install without one of the force options, since each package will require the other to be installed first."
+msgstr ""
+
+msgid "<xref linkend=\"ch-using-rpm\" /> covers how to install or upgrade packages while ignoring dependency checks. In general, you do not want to ignore these checks."
+msgstr ""
+
+msgid "You can work around this issue by using the PreReq directive instead of Requires. For example, if package A depends on B and package B depends on A, you can place the following in the package B spec file:"
+msgstr ""
+
+msgid "PreReq: A"
+msgstr ""
+
+msgid "In addition, you can install both packages at the same time to avoid some of the problems with circular dependencies. Simply include both packages on the rpm –Uvh command line."
+msgstr ""
+
+msgid "Following Good Practices"
+msgstr ""
+
+msgid "Working through problems is one thing. It’s best, however, to set up an environment to help avoid problems all together. The following sections cover what are considered the best practices for creating RPMs."
+msgstr ""
+
+msgid "Before you make an RPM, you should plan out what you intend to build and how it will be structured. As you build the RPM, you want to watch out for things that can go wrong, and work from a known clean environment."
+msgstr ""
+
+msgid "Preparation"
+msgstr ""
+
+msgid "Before you start to make an RPM, you need to follow a few steps to ensure you have everything ready."
+msgstr ""
+
+msgid "Create a Source RPM"
+msgstr ""
+
+msgid "Having a source RPM allows you to transfer all the sources for a package from one system to another, along with all the instructions coded in the spec file for actually building the binary package. This is very handy for keeping track of software, and it is also very important since you can regenerate the binary RPM at any time from the source RPM. In other words, make the generation of RPMs follow the RPM conventions and fit this into your normal software build process."
+msgstr ""
+
+msgid "This means that for each RPM you want to build, you really need two: a source and a binary RPM. This isn’t that hard to do, since you can easily make a source RPM into a binary RPM with the rpmbuild command."
+msgstr ""
+
+msgid "Start with Pristine Sources"
+msgstr ""
+
+msgid "In addition to planning on making a source RPM, you should also start with pristine, unmodified sources for the application you plan to package as an RPM. Starting with pristine sources means you can reproduce the entire process and recreate the RPM from scratch if necessary. (Quality control and configuration management people really appreciate this.)"
+msgstr ""
+
+msgid "The pristine sources should be exactly the sources you got when you downloaded the application, or acquired it in house. This doesn’t mean that you won’t have to modify the sources eventually. For that, you create patches. The key is just to start the process with unmodified sources."
+msgstr ""
+
+msgid "Some RPMs have nearly 100 patches that the rpmbuild command applies when building the RPM. That is a lot of patches, too many for most applications. Even so, the process is the same. Create a patch or patches for all the changes you need to make. You can easily specify patches in the spec file."
+msgstr ""
+
+msgid "<xref linkend=\"ch-specfiles\" /> covers the spec file."
+msgstr ""
+
+msgid "Keeping your patches separate from the original sources makes it easier to reproduce the RPM from scratch, and makes it easier to integrate a new version of the base software, since your code, in the form of patches, is separated from the base software code."
+msgstr ""
+
+msgid "Decide What Goes In Each Package"
+msgstr ""
+
+msgid "You don’t have to stuff all your software into one RPM. Instead, you can often simplify your RPM by dividing it into two or three separate (but likely dependent) RPMs."
+msgstr ""
+
+msgid "For example, the RPM system itself has one RPM for the basic system, rpm, one for developers of the RPM system, rpm-devel, and one for those building RPMs, rpm-build. Yet another RPM provides the Python programming API, rpm-python."
+msgstr ""
+
+msgid "<xref linkend=\"ch-rpm-programming-python\" /> covers Python programming."
+msgstr ""
+
+msgid "This last division is important. The Python RPM draws in as a dependency the Python system itself. Adding this into, say, the core RPM package would needlessly complicate the dependencies for that package."
+msgstr ""
+
+msgid "When dividing your software into RPMs, keep two main issues in mind:"
+msgstr ""
+
+msgid "*You want to divide the software into RPMs that fit the model for users of the system."
+msgstr ""
+
+msgid "*You want to divide the software into RPMs such that the separate RPMs are simpler to create and manage."
+msgstr ""
+
+msgid "The RPM system follows these guidelines, especially the first. Few users will extend the RPM system itself, which allows RPM team to shed this functionality from the core RPM and contain it in rpm-devel. Those who build RPMs fit into a different category than those who use RPMs since just about everybody needs to use RPMs to install packages, but few users actually build RPMs. Again, the separation works from a user’s perspective."
+msgstr ""
+
+msgid "You also want your package divisions to make each package easier to specify. You can break particularly tough dependencies into smaller units and simplify things. If the package division doesn’t simplify things, then it may not be a good idea."
+msgstr ""
+
+msgid "Create a Test RPM Database"
+msgstr ""
+
+msgid "You don’t always have to work with the system RPM database. In fact, while developing RPMs, you probably don’t want to change the system database."
+msgstr ""
+
+msgid "If you have a test RPM database, you can install your RPMs into this test database. To do so, use the --justdb, --dbpath, --prefix, and --badreloc options. These options allow you to install an RPM into just the database, using a different database, with a different root file location (into a test directory, for example) and handle all files that were not marked for relocation, respectively."
+msgstr ""
+
+msgid "The --test option when installing also allows you to just test the install, not actually perform it."
+msgstr ""
+
+msgid "Combined, all these options mean you can use an RPM database just set up for testing and that problems won’t impact your working Linux systems. To make this work, though, you need a test RPM database."
+msgstr ""
+
+msgid "To be rigorous, you should create the test RPM database from scratch from a known set of packages. This will allow you to exactly verify the behavior of your RPM under different system configurations. This is the best choice since you should install the packages under a known, and non-root, directory hierarchy to avoid having file problems with the working system."
+msgstr ""
+
+msgid "If you want to cheat, you can copy your real RPM database to another directory and use that. Note that in this case, the file paths in the database will point to the real file locations on disk."
+msgstr ""
+
+msgid "Regardless of how you create a test database, recreate the database each time you run a test, so that you are sure of a known starting state. Usually this is as simple as copying a master test RPM database into a directory you use for running tests."
+msgstr ""
+
+msgid "Building"
+msgstr ""
+
+msgid "Building RPMs isn’t as easy as it should be. You’ll often need to try again and again to get the rpmbuild command to create a working RPM. This section covers best practices to follow when performing the actual build of the RPM."
+msgstr ""
+
+msgid "Use Tools"
+msgstr ""
+
+msgid "Using tools can help speed up the RPM-making process, as well as give you a head start in learning how RPMs work. RPM-building tools such as the Red Hat plugin for the Eclipse Integrated Development Environment have proven really helpful."
+msgstr ""
+
+msgid "<xref linkend=\"ch-extra-packaging-tools\" /> covers RPM-building tools. <xref linkend=\"ch-development-tools\" /> covers the Eclipse Integrated Development Environment."
+msgstr ""
+
+msgid "Even though so-called real Linux hackers can make a working virtual memory system with just the cat command, don’t scoff at tools. Your time is too valuable."
+msgstr ""
+
+msgid "Another useful tool is the gendiff program that comes with the RPM release. The gendiff program makes it easier to create patches by avoiding the need to keep a separate directory of the original sources, The gendiff program also works on all changed files within a directory, making a patch for everything you modified."
+msgstr ""
+
+msgid "To work with gendiff, you need to first save a backup copy of each file you intend to edit prior to editing. Use a consistent file-name extension for the saved copies of the files, such as .orig, short for original. After you edit some files, run the gendiff command as follows:"
+msgstr ""
+
+msgid "$ gendiff directory_name .saved_extension &gt; patch_name.patch"
+msgstr ""
+
+msgid "For example, if you saved the original files to a .orig extension, you can create a patch in a directory named src (short for sources) with a command like the following:"
+msgstr ""
+
+msgid "$gendiff src .orig &gt; mypatch.patch"
+msgstr ""
+
+msgid "The patch file mypatch.patch will contain all the differences detected for all files in the given directory."
+msgstr ""
+
+msgid "Never Build RPMs as Root"
+msgstr ""
+
+msgid "Never, never, never build RPMs logged in as the root user. Always build your RPMS while logged in as a normal user. This is hard to remember since you must be logged in as root to install an RPM. And you’ll want to test each RPM you create to see if it can install cleanly."
+msgstr ""
+
+msgid "Even so, never build RPMs logged in as the root user. The RPM spec file has a number of scripts and commands. An error in any of these could cause damage to your system. This includes modifying files, removing files, or copying new contents on top of system files. The root user has permission to perform all these operations."
+msgstr ""
+
+msgid "To avoid all this, build your RPMs while logged in as a normal user. Any problematic scripts should generate errors."
+msgstr ""
+
+msgid "Create a Digital Signature"
+msgstr ""
+
+msgid "RPM 4.1 and later revisions place more importance on signing your packages. The rpm command will, by default, verify signatures on each package it reads."
+msgstr ""
+
+msgid "Therefore, you should create a digital signature for your packages, if only to meet user expectations. In addition, you should place a copy of your digital signature on your organization’s Web site and public key servers. Having multiple copies in multiple locations helps prevent malicious users from impersonating your keys."
+msgstr ""
+
+msgid "<xref linkend=\"ch-rpmbuild\" /> covers signing packages."
+msgstr ""
+
+msgid "Copy Smartly"
+msgstr ""
+
+msgid "Your Linux distribution probably includes more than one CD-ROM chock full of RPMs. Each of these RPMs has a spec file. You can examine these spec files and see how others choose to build their RPMs. Rather than starting from scratch, you can copy declarations from these spec files into your spec file."
+msgstr ""
+
+msgid "Not all these packages were made smartly. Some spec files, as you will see, are a large mess. Obviously, don’t copy these. Look for clean spec files with clear directives."
+msgstr ""
+
+msgid "Set Up the BuildRoot"
+msgstr ""
+
+msgid "A BuildRoot directive sets the location where your code will be built. The convention is for you to define a subdirectory beneath the _tmppath directory. For example:"
+msgstr ""
+
+msgid "BuildRoot: %{_tmppath}/%{name}-buildroot"
+msgstr ""
+
+msgid "Once set, rpmbuild defines the RPM_BUILD_ROOT environment variable to the value specified for the BuildRoot."
+msgstr ""
+
+msgid "With the rpmbuild command, you can use the --buildroot option to specify a directory to use to override the BuildRoot directive in the spec file."
+msgstr ""
+
+msgid "Using a BuildRoot set to a directory that normal users have write access to allows you to build the package logged in as a normal user. It also helps separate the contents of your package from those of other RPMs."
+msgstr ""
+
+msgid "Always define a BuildRoot."
+msgstr ""
+
+msgid "Add changelog entries for each new version"
+msgstr ""
+
+msgid "Each time you create a new version in RPM format, you should add an entry to the change log. This allows administrators to get a better idea about what changed from the previous version."
+msgstr ""
+
+msgid "The change log can help people decide whether or not to upgrade a package. A log entry about a security fix, for example, provides useful information to users."
+msgstr ""
+
+msgid "Define the Group For Your Package"
+msgstr ""
+
+msgid "Packages are categorized into groups. These group names, while not always the best, appear in the graphical tools such as the Red Hat package manager. If your application is a Linux shell program, then users will expect to find it in the System Environment/Shells group and not the Development/Languages or System Environment/Daemons groups. This is a rather small detail, but it helps users find your package in the huge array of Linux RPMs."
+msgstr ""
+
+msgid "The official list of RPM groups is located in /usr/share/doc/rpm-4.1/GROUPS for RPM 4.1, and similarly-named directories for other RPM versions."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "This chapter covers guidelines for avoiding problems when creating RPMs and following best practices to avoid future problems as well."
+msgstr ""
+
+msgid "When trying to avoid common problems, your best starting point is the RPM mailing list and newsgroup."
+msgstr ""
+
+msgid "For best practices, you should start at the very beginning when you are planning what to build into an RPM. Always start with pristine sources and then patch as needed. Your RPM should include the pristine sources and any necessary patches. You should always create a source RPM, so that you can reproduce your RPM anywhere."
+msgstr ""
+
+msgid "When building RPMs, copy good examples of spec files, as this will get you going far more quickly than any other technique. Use tools to help automate parts of your RPM-building process."
+msgstr ""
+
+msgid "Never build RPMs when logged in as the root user."
+msgstr ""
+
+msgid "This chapter ends the section on building RPMs. The next section covers programming to the RPM APIs."
+msgstr ""
+

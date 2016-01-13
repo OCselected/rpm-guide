@@ -1,0 +1,2341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+<!ENTITY % FDP-ENTITIES SYSTEM "fdp-entities.ent">
+%FDP-ENTITIES;
+
+]>
+<!-- $Id: -->
+
+
+<!--
+  Whitespace is significant in Python code, in particular, leading
+  indentation.
+
+  For this reason, I've moved all Python code examples so that they
+  begin at the left-most column of the DocBook XML source, regardless of
+  the current indentation level, like this:
+<programlisting language="Python">
+...python code goes here...
+</programlisting>
+
+  I'm using <programlisting>, which according to:
+    http://www.docbook.org/tdg/en/html/programlisting.html
+  is whitespace-preserving, and to be rendered with a fixed-width font.  It
+  also supports a 'language' attribute.  The precise values for that
+  attribute don't seem to be documented there, but Publican appears to use:
+    /usr/share/perl5/vendor_perl/Syntax/Highlight/Engine/Kate.pm
+  from which it appears that it expects the value "Python" for python source
+  code.  On my machine (with publican-2.8-1.fc15.noarch) this leads to
+  syntax-highlighted results in the generated HTML
+
+  I'm using 4-space indentation within Python sources, in keeping with PEP-8:
+    http://www.python.org/dev/peps/pep-0008/
+-->
+
+
+<chapter id="ch-rpm-programming-python">
+  <title>Programming RPM with Python</title>
+  <para>
+    This chapter covers:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Using the RPM with Python
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Installing the necessary modules
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Programming with the RPM database
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Programming with RPM files
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Installing packages programmatically
+      </para>
+    </listitem>
+  </itemizedlist>
+  <sect1>
+    <title>Setting Up a Python Development Environment</title>
+    <para>
+      Setting up a Python development environment is much the same as
+      setting up a C programming environment. You need to install a set
+      of packages for general Python development, install a package that
+      provides the Python API to the RPM system, and choose a program
+      for editing your Python scripts.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      <xref linkend="ch-development-tools"/>  covers Linux text editors and development tools.
+    </para>
+    <para>
+      If you want to make a graphical user interface in your Python
+      programs, you need to install a separate Python package.
+    </para>
+    <sect2>
+      <title>Installing the base Python packages</title>
+      <para>
+        The base Python package needed for developing applications is
+        python. For RPM usage, you should install Python 2.2, not Python
+        1.5. That’s because the RPM bindings for Python are moving to
+        support only 2.2 and higher releases.
+      </para>
+      <para>
+        The Python package for RPM access is rpm-python. Install these
+        as you would any other packages.
+      </para>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        <xref linkend="ch-using-rpm"/>  covers installing packages.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Using Python for graphics</title>
+      <para>
+        Python supports a number of different toolkits for creating
+        graphical user interfaces. You need one of these toolkits if you
+        want to create Python applications that sport a user interface
+        instead of command-line tools. Among the most popular toolkits
+        are PyGKT, PyQt, and Tkinter.
+      </para>
+      <para>
+        *PyGTK is a binding between Python and the GTK+ toolkit used by
+        the GNOME desktop, one of two main desktop environments for
+        Linux. (KDE is the other main desktop environment.) The Red Hat
+        redhat-config-packages program uses PyGTK and sports a very
+        good-looking user interface.
+      </para>
+      <para>
+        PyGTK provides full access to the GTK+ widgets such as menus,
+        dialog windows, and buttons. Install the pygtk2 module for
+        PyGTK. For more on PyGTK, see www.daa.com.au/~james/pygtk/.
+      </para>
+      <para>
+        *PyQt connects Python scripts to the Qt C++ user interface
+        toolkit. Qt forms the base library used by the KDE desktop
+        environment and KDE applications. As with PyGTK, PyQt allows you
+        to access the rich widget set provided by the library.
+      </para>
+      <para>
+        Install the PyQt package for PyQt. For more on PyQt, see
+        www.riverbankcomputing.co.uk/pyqt/.
+      </para>
+      <para>
+        *Tkinter is considered a standard part of Python and is based on
+        the Tk (pronounced teekay) toolkit from the Tcl scripting
+        language. The main advantages of Tkinter are that it is
+        considered part of Python, meaning users are more likely to have
+        it, and Tkinter works on multiple platforms, including Windows.
+      </para>
+      <para>
+        The main drawback of Tkinter is that the widget sets are not as
+        rich as PyQt or PyGTK. For more on Tkinter, see
+        www.python.org/topics/tkinter/.
+      </para>
+      <para>
+        After you’ve set up your environment and installed all the
+        necessary packages, the next step is to start working with the
+        Python API for RPM.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>The Python API Hierarchy</title>
+    <para>
+      The RPM Python API provides a high-level abstraction into RPM
+      functionality divided into logical areas. Table 17-1 lists the
+      main RPM types. In most cases, you need to begin with rpm and
+      create a transaction set.
+    </para>
+    <para>
+      Table 17-1 Python types for RPM usage
+    </para>
+    <informaltable frame="all">
+      <tgroup cols="2">
+        <tbody>
+          <row>
+            <entry>
+              <para>
+                Class
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Covers
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                rpm
+              </para>
+            </entry>
+            <entry>
+              <para>
+                RPM base module into RPM API
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                rpmts
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Transaction sets
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                rpmte
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Transaction elements, a package in a transaction set
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                rpmmi
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Match iterators, used for querying the RPM database
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                Rpmds
+              </para>
+            </entry>
+            <entry>
+              <para>
+                Dependency set
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                Rpmfi
+              </para>
+            </entry>
+            <entry>
+              <para>
+                File into set
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>
+                Header
+              </para>
+            </entry>
+            <entry>
+              <para>
+                A package header
+              </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+    <para>
+      In general, the RPM Python API is well-integrated into the
+      standard Python API. For example, you use the Python os class to
+      read in RPM package files.
+    </para>
+    <para>
+      Note
+    </para>
+    <para>
+      The examples in this chapter use the RPM 4.1 Python API. The API
+      in previous versions is significantly different from the 4.1
+      version.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Programming with the RPM Database</title>
+    <para>
+      Compared to the RPM C API, discussed in <xref linkend="ch-programming-c"/> , the Python API
+      is much simpler and requires many fewer programming statements to
+      get your job done.
+    </para>
+    <para>
+      Just about every Python RPM script needs a transaction set. Create
+      a transaction set with rpm.TransactionSet:
+    </para>
+<programlisting language="Python">
+import rpm
+ts = rpm.TransactionSet()
+</programlisting>
+    <para>
+      The transaction set will automatically open the RPM database if
+      needed.
+    </para>
+    <para>
+      Note
+    </para>
+    <para>
+      The code examples in this chapter follow the Red Hat conventions
+      for naming variables, such as ts for a transaction set. This is to
+      make it easier to read the Python examples in the RPM sources,
+      along with Red Hat installer programs written in Python.
+    </para>
+    <para>
+      You will need a transaction set in just about every Python script
+      that accesses RPM functionality.
+    </para>
+    <sect2>
+      <title>Accessing the RPM database</title>
+      <para>
+        Transaction sets provide a number of methods for working with
+        the RPM database at the database level. Use these methods if you
+        need to interact with the database as a whole, as opposed to
+        accessing individual packages in the database. For example, you
+        can initialize or rebuild the RPM database with these methods.
+        You can also use a handy trick for accessing another RPM
+        database instead of the default system database.
+      </para>
+      <sect3>
+        <title>Setting the Database Location</title>
+        <para>
+          A transaction set will open the RPM database assuming the
+          default location. To specify a different RPM database
+          location, call addMacro, as shown following:
+        </para>
+<programlisting language="Python">
+rpm.addMacro("_dbpath", path_to_rpm_database)
+</programlisting>
+        <para>
+          You can work with more than one RPM database by setting the
+          _dbpath macro, creating a transaction set, and then removing
+          the macro. After doing this, you can create another
+          transaction set for the default RPM database, allowing your
+          script to work with more than one database. For example:
+        </para>
+<programlisting language="Python">
+# Open the rpmdb-redhat database
+rpm.addMacro("_dbpath", "/usr/lib/rpmdb/i386-redhat-linux/redhat")
+solvets = rpm.TransactionSet()
+solvets.openDB()
+rpm.delMacro("_dbpath")
+# Open default database
+ts = rpm.TransactionSet()
+</programlisting>
+        <para>
+          This example uses the rpmdb-redhat package, which holds a
+          database of all Red Hat Linux packages. The explicit call to
+          openDB opens the RPM database. In most Python scripts, though,
+          you do not want to call openDB. Instead, a transaction set
+          will open the database as needed.
+        </para>
+        <para>
+          The call to delMacro removes the _dbpath macro, allowing the
+          next call to TransactionSet to use the default RPM database.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          Do not call closeDB on a transaction set. This method does
+          indeed close the RPM database, but it also disables the
+          ability to automatically open the RPM database as needed.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Initializing, Rebuilding, and Verifying the Database</title>
+        <para>
+          The transaction set provides an initDB method to initialize a
+          new RPM database. This acts like the rpm --initdb command.
+        </para>
+<programlisting language="Python">
+ts.initDB()
+</programlisting>
+        <para>
+          The rebuildDB method regenerates the RPM database indices,
+          like the rpm --rebuilddb command:
+        </para>
+<programlisting language="Python">
+ts.rebuildDB()
+</programlisting>
+        <para>
+          The rebuildDB method regenerates the RPM database indices,
+          like the rpm --rebuilddb command.
+        </para>
+        <para>
+          The verifyDB method checks that the RPM database and indices
+          are readable by the Berkeley DB library:
+        </para>
+<programlisting language="Python">
+ts.verifyDB()
+</programlisting>
+        <para>
+          Calling this method is the same as running the db_verify
+          command on each of the database files in /var/lib/rpm.
+        </para>
+        <para>
+          Cross Reference
+        </para>
+        <para>
+          See <xref linkend="ch-using-rpm-db"/>  for more on initializing, rebuilding, and
+          verifying RPM databases.
+        </para>
+        <para>
+          Once you have a transaction set, you can start querying the
+          RPM database.
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Querying the RPM database</title>
+      <para>
+        Call dbMatch on a transaction set to create a match iterator. As
+        with the C API, a match iterator allows your code to iterate
+        over the packages that match a given criteria.
+      </para>
+      <para>
+        A call to dbMatch with no parameters means to set up a match
+        iterator to go over the entire set of installed packages. The
+        basic format follows:
+      </para>
+<programlisting language="Python">
+import rpm
+ts = rpm.TransactionSet()
+mi = ts.dbMatch()
+for h in mi:
+    # Do something with header object...
+</programlisting>
+      <para>
+        In this example, the call to dbMatch returns a match iterator.
+        The for loop iterates over the match iterator, returning one
+        header each time.
+      </para>
+      <para>
+        In addition to this syntax, you can call next on the match
+        iterator to get the next entry, a header object that represents
+        one package. For example:
+      </para>
+<programlisting language="Python">
+import rpm
+ts = rpm.TransactionSet()
+mi = ts.dbMatch()
+while mi:
+    h = mi.next()
+    # Do something with the header object
+    pass
+</programlisting>
+      <para>
+        The explicit call to next on the match iterator will likely no
+        longer be supported in a future version of the RPM Python API,
+        since the PEP-234 (Python Enhancement Proposal) calls for one
+        means or the other for iterating, but not both.
+      </para>
+      <para>
+        For example, Listing 17-1 shows a Python script to print out the
+        name, version, and release information for all installed
+        packages.
+      </para>
+      <para>
+        Listing 17-1: rpmqa.py
+      </para>
+<programlisting language="Python">
+#!/usr/bin/python
+# Acts like rpm -qa and lists the names of all the installed packages.
+# Usage:
+# python rpmqa.py
+
+import rpm
+
+ts = rpm.TransactionSet()
+mi = ts.dbMatch()
+for h in mi:
+    print "%s-%s-%s" % (h['name'], h['version'], h['release'])
+</programlisting>
+      <para>
+        When you call this script, you should see output like the
+        following, truncated for space:
+      </para>
+<screen>
+$ python rpmqa.py
+libbonoboui-2.0.1-2
+attr-2.0.8-3
+dhclient-3.0pl1-9
+file-3.37-8
+hdparm-5.2-1
+ksymoops-2.4.5-1
+imlib-1.9.13-9
+logwatch-2.6-8
+mtr-0.49-7
+openssh-clients-3.4p1-2
+pax-3.0-4
+python-optik-1.3-2
+dump-0.4b28-4
+sendmail-8.12.5-7
+sudo-1.6.6-1
+mkbootdisk-1.4.8-1
+telnet-0.17-23
+usbutils-0.9-7
+wvdial-1.53-7
+docbook-dtds-1.0-14
+urw-fonts-2.0-26
+db4-utils-4.0.14-14
+libogg-devel-1.0-1
+</screen>
+      <para>
+        Note
+      </para>
+      <para>
+        If you set the execute permission on this script, you can skip
+        the explicit call to the python command. For example:
+      </para>
+      <para>
+        $ ./rpmqa.py
+      </para>
+      <para/>
+    </sect2>
+    <sect2>
+      <title>Examining the package header</title>
+      <para>
+        The code in Listing 17-1 introduces the package header object,
+        an object of the hdr class. This represents a package header,
+        and contains entries such as the name, version, pre- and
+        post-installation scripts, and triggers.
+      </para>
+      <sect3>
+        <title>The hdr Class</title>
+        <para>
+          You can access each entry in the header using Python's
+          dictionary syntax. This is much more convenient than calling
+          headerGetEntry in C programs. The basic syntax to access
+          header entries follows:
+        </para>
+<programlisting language="Python">
+value = h['tag_name']
+</programlisting>
+        <para>
+          For example, to get the package name, use the following code:
+        </para>
+<programlisting language="Python">
+name = h['name']
+</programlisting>
+        <para>
+          You can also use a set of predefined RPMTAG_ constants that
+          match the C API. These constants are defined in the rpm
+          module. For example:
+        </para>
+<programlisting language="Python">
+name = h[rpm.RPMTAG_NAME]
+</programlisting>
+        <para>
+          Note
+        </para>
+        <para>
+          Using the rpm constants such as rpm.RPMTAG_NAME is faster than
+          using the strings such as 'name'.
+        </para>
+        <para>
+          For header entries that hold an array of strings, such as the
+          list of files in the package, the data returned is a Python
+          list. For example:
+        </para>
+<programlisting language="Python">
+print "Files:"
+files = h['FILENAMES']
+for name in files:
+    print name
+</programlisting>
+        <para>
+          You can use file info sets to achieve more compact code. For
+          example:
+        </para>
+<programlisting language="Python">
+print "Files:"
+fi = h.fiFromHeader()
+print fi
+</programlisting>
+        <para>
+          The requires, provides, obsoletes, and conflicts information
+          each appear as three separate but related lists for each set
+          of information, with three lists for the requires information,
+          three for the provides information, and so on. You can extract
+          this information using Python dependency sets using the simple
+          code following:
+        </para>
+<programlisting language="Python">
+print h.dsFromHeader('providename')
+print h.dsFromHeader('requirename')
+print h.dsFromHeader('obsoletename')
+print h.dsFromHeader('conflictname')
+</programlisting>
+        <para>
+          Cross Reference
+        </para>
+        <para>
+          The rpminfo.py script in Listing 17-3 shows how to print out
+          this information.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Printing Header Information with sprintf</title>
+        <para>
+          In addition to using the Python dictionary syntax, you can use
+          the sprintf method on a header to format data using a syntax
+          exactly the same as the query format tags supported by the rpm
+          command.
+        </para>
+        <para>
+          Cross Reference
+        </para>
+        <para>
+          <xref linkend="ch-using-rpm-db"/>  covers query formats.
+        </para>
+        <para>
+          The basic syntax is as follows:
+        </para>
+<programlisting language="Python">
+h.sprintf("%{tag_name}")
+</programlisting>
+        <para>
+          You can also use special formatting additions to the tag name.
+          For example:
+        </para>
+<programlisting language="Python">
+print "Header signature: ", h.sprintf("%{DSAHEADER:pgpsig}")
+print "%-20s: %s" % ('Installed on', h.sprintf("%{INSTALLTID:date}") )
+</programlisting>
+        <para>
+          You can combine this information into functions that print out
+          header entries with specific formatting. For example:
+        </para>
+<programlisting language="Python">
+def nvr(h):
+    return h.sprintf("%{NAME}-%{VERSION}-%{RELEASE}")
+</programlisting>
+        <para>
+          Note that you only really need to use sprintf when you need
+          the format modifiers, such as date on %{INSTALLTID:date}. In
+          most other cases, Python’s string-handling functions will
+          work better.
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Querying for specific packages</title>
+      <para>
+        When you call dbMatch on a transaction set object, passing no
+        parameters means to iterate over the entire set of installed
+        packages in the RPM database. You can also query for specific
+        packages using dbMatch. To do so, you need to pass the name of a
+        tag in the header, as well as the value for that tag that you
+        are looking for. The basic syntax follows:
+      </para>
+<programlisting language="Python">
+mi = ts.dbMatch(tag_name, value)
+</programlisting>
+      <para>
+        For example, to query for all packages named sendmail, use code
+        like the following:
+      </para>
+<programlisting language="Python">
+mi = ts.dbMatch('name', 'sendmail')
+</programlisting>
+      <para>
+        The call to dbMatch returns an rpmdbMatchIterator. You can query
+        on any of the tags in the header, but by far the most common
+        query is by name.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        Some matches are fast and some are much slower. If you try to
+        match on a tag that is indexed in the RPM database, the matches
+        will perform much faster than for those tags that are not
+        indexes. To determine which tags are indexed, look at the files
+        in /var/lib/rpm. For example, Name and Requirename are files in
+        /var/lib/rpm. These tags are indexed and will therefore match
+        quickly.
+      </para>
+      <para>
+        Listing 17-2 shows an example Python script which queries for a
+        particular package name and then prints out the name, version,
+        and release for all matching packages.
+      </para>
+      <para>
+        Listing 17-2: rpmq.py
+      </para>
+<programlisting language="Python">
+#!/usr/bin/python
+# Acts like rpm -q and lists the N-V-R for installed
+# packages that match a given name.
+# Usage:
+# python rpmq.py package_name
+import sys
+
+import rpm
+
+ts = rpm.TransactionSet()
+mi = ts.dbMatch( 'name', sys.argv[1] )
+for h in mi:
+    print "%s-%s-%s" % (h['name'], h['version'], h['release'])
+</programlisting>
+      <para>
+        When you call this script, you need to pass the name of a
+        package to query, which the python interpreter will store in
+        sys,argv[1] in the call to dbMatch. For example:
+      </para>
+<screen>
+$ python rpmq.py sendmail
+sendmail-8.12.5-7
+</screen>
+    </sect2>
+    <sect2>
+      <title>Printing information on packages</title>
+      <para>
+        You can create the equivalent of the rpm –qi command with a
+        small number of Python commands. Listing 17-3 shows an example.
+        This script queries for a particular package name, as shown
+        previously in Listing 17-2. Once a package is found, though,
+        rpminfo.py prints out a lot more information, similar to the
+        output from the rpm –qi command.
+      </para>
+      <para>
+        Listing 17-3: rpminfo.py
+      </para>
+<programlisting language="Python">
+#!/usr/bin/python
+# Lists information on installed package listed on command line.
+# Usage:
+# python rpminfo.py package_name
+import sys
+
+import rpm
+
+def printEntry(header, label, format, extra):
+    value = header.sprintf(format).strip()
+    print "%-20s: %s %s" % (label, value, extra)
+
+def printHeader(h):
+    if h[rpm.RPMTAG_SOURCEPACKAGE]:
+        extra = " source package"
+    else:
+        extra = " binary package"
+    printEntry(h, 'Package', "%{NAME}-%{VERSION}-%{RELEASE}", extra)
+    printEntry(h, 'Group', "%{GROUP}", '')
+    printEntry(h, 'Summary', "%{Summary}", '')
+    printEntry(h, 'Arch-OS-Platform', "%{ARCH}-%{OS}-%{PLATFORM}", '')
+    printEntry(h, 'Vendor', "%{Vendor}", '')
+    printEntry(h, 'URL', "%{URL}", '')
+    printEntry(h, 'Size', "%{Size}", '')
+    printEntry(h, 'Installed on', "%{INSTALLTID:date}", '')
+    print h['description']
+    print "Files:"
+    fi = h.fiFromHeader()
+    print fi
+
+    # Dependencies
+    print "Provides:"
+    print h.dsFromHeader('providename')
+
+    print "Requires:"
+    print h.dsFromHeader('requirename')
+
+    if h.dsFromHeader('obsoletename'):
+        print "Obsoletes:"
+        print h.dsFromHeader('obsoletename')
+
+    if h.dsFromHeader('conflictname'):
+        print "Conflicts:"
+        print h.dsFromHeader('conflictname')
+
+ts = rpm.TransactionSet()
+mi = ts.dbMatch( 'name', sys.argv[1] )
+for h in mi:
+    printHeader(h)
+</programlisting>
+      <para>
+        Note
+      </para>
+      <para>
+        You should be able to simplify this script. The extensive use of
+        the sprintf method is for illustration more than efficiency. You
+        generally only need to call sprintf when you need a format
+        modifier for a tag. In the rpminfo.py script, sprintf was also
+        used to ensure that all entries are text, which allows for
+        calling strip.
+      </para>
+      <para>
+        The printEntry function takes in a header sprintf tag value in
+        the format of "%{NAME}". You can also pass in more complex
+        values with multiple header entries, such as
+        "%{NAME}-%{VERSION}".
+      </para>
+      <para>
+        When you run this script, you need to pass the name of a
+        package. You'll see output like the following:
+      </para>
+<screen>
+$ python rpminfo.py jikes
+Package : jikes-1.18-1 binary package
+Group : Development/Languages
+Summary : java source to bytecode compiler
+Arch-OS-Platform : i386-Linux-(none)
+Vendor : (none)
+URL : http://ibm.com/developerworks/opensource/jikes
+Size : 2853672
+Installed on : Mon Dec 2 20:10:13 2002
+The IBM Jikes compiler translates Java source files to bytecode. It
+also supports incremental compilation and automatic makefile
+generation,and is maintained by the Jikes Project:
+http://ibm.com/developerworks/opensource/jikes/
+Files:
+/usr/bin/jikes
+/usr/doc/jikes-1.18/license.htm
+/usr/man/man1/jikes.1.gz
+Provides:
+P jikes
+P jikes = 1.18-1
+Requires:
+R ld-linux.so.2
+R libc.so.6
+R libc.so.6(GLIBC_2.0)
+R libc.so.6(GLIBC_2.1)
+R libc.so.6(GLIBC_2.1.3)
+R libm.so.6
+R libstdc++-libc6.2-2.so.3
+</screen>
+    </sect2>
+    <sect2>
+      <title>Refining queries</title>
+      <para>
+        The pattern method on a match iterator allows you to refine a
+        query. This narrows an existing iterator to only show the
+        packages you desire. The basic syntax follows:
+      </para>
+<programlisting language="Python">
+mi.pattern(tag_name, mode, pattern)
+</programlisting>
+      <para>
+        The two main uses of the pattern method are to query on more
+        than one tag, such as the version and name, or to narrow the
+        results of a query, using the rich set of pattern modes. The
+        mode parameter names the type of pattern used, which can be one
+        of those listed in Table 17-2.
+      </para>
+      <para>
+        Table 17-2 Pattern modes for the pattern method
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Type
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Meaning
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm.RPMMIRE_DEFAULT
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Same as regular expressions, but with \., .*, and ^..$
+                  added
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm.RPMMIRE_GLOB
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Glob-style patterns using fnmatch
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm.RPMMIRE_REGEX
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Regular expressions using regcomp
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm.RPMMIRE_STRCMP
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  String comparisons using strcmp
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        Cross Reference
+      </para>
+      <para>
+        For more on these patterns, see the online manual pages for
+        fnmatch(3), glob(7), regcomp(3), regex(7), and strcmp(3). The
+        pattern method calls rpmdbSetIteratorRE from the C API, covered
+        in the “Database Iterators” section in <xref linkend="ch-programming-c"/> .
+      </para>
+      <para>
+        To query for all packages starting with py, for example, you can
+        use code like the following:
+      </para>
+<programlisting language="Python">
+import rpm
+ts = rpm.TransactionSet()
+mi = ts.dbMatch()
+mi.pattern('name', rpm.RPMMIRE_GLOB, 'py*' )
+for h in mi:
+    # Do something with the header...
+    pass
+</programlisting>
+      <para>
+        Listing 17-4 shows an example for glob-based querying.
+      </para>
+      <para>
+        Listing 17-4: rpmglob.py
+      </para>
+<programlisting language="Python">
+#!/usr/bin/python
+# Acts like rpm -q and lists the N-V-R for installed packages
+# that match a given name using a glob-like syntax
+#
+# Usage:
+# python rpmglob.py "package_fragment*"
+
+import sys
+
+import rpm
+
+ts = rpm.TransactionSet()
+mi = ts.dbMatch()
+if not mi:
+    print "No packages found."
+else:
+    mi.pattern('name', rpm.RPMMIRE_GLOB, sys.argv[1] )
+    for h in mi:
+        print "%s-%s-%s" % (h['name'], h['version'], h['release'])
+</programlisting>
+      <para>
+        When you run this script, you’ll see output like the
+        following:
+      </para>
+<screen>
+$ python rpmglob.py "py*"
+pyxf86config-0.3.1-2
+python-devel-2.2.1-17
+pygtk2-devel-1.99.12-7
+pygtk2-libglade-1.99.12-7
+pygtk2-1.99.12-7
+pyOpenSSL-0.5.0.91-1
+python-optik-1.3-2
+python-docs-2.2.1-17
+python-2.2.1-17
+python-tools-2.2.1-17
+</screen>
+      <para>
+        In addition to working with the RPM database, the Python API
+        also provides access to RPM files.
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Reading Package Files</title>
+    <para>
+      As you would expect, the Python API includes methods for working
+      with RPM package files in addition to installed RPM packages. Most
+      of these methods require a header object, which you can read from
+      an RPM package file.
+    </para>
+    <sect2>
+      <title>Reading headers from package files</title>
+      <para>
+        Like the C function rpmReadPackageFile, the Python API provides
+        a convenient way to read in a header object from an RPM package
+        file. The hdrFromFdno method reads an RPM header from an open
+        file descriptor. The basic syntax is:
+      </para>
+<programlisting language="Python">
+h = ts.hdrFromFdno(fdno)
+</programlisting>
+      <para>
+        Note
+      </para>
+      <para>
+        The hdrFromFdno method uses Python’s low-level file
+        descriptors instead of the higher-level Python file objects. In
+        the RPM C library, an FD_t is a FILE**. This could be bound to a
+        Python class, but that is outside the scope of this chapter.
+      </para>
+      <para>
+        The following example shows a function that opens a file, reads
+        in the RPM header, and then closes the file:
+      </para>
+<programlisting language="Python">
+def readRpmHeader(ts, filename):
+    """ Read an rpm header. """
+    fd = os.open(filename, os.O_RDONLY)
+    h = ts.hdrFromFdno(fd)
+    os.close(fd)
+    return h
+
+ts = rpm.TransactionSet()
+h = readRpmHeader( ts, 'n-v-r.rpm' )
+</programlisting>
+      <para>
+        The hdrFromFdno method raises a number of exceptions based on
+        issues detected with the package files. The following example
+        shows these exceptions:
+      </para>
+<programlisting language="Python">
+def readRpmHeader(ts, filename):
+    """ Read an rpm header. """
+    fd = os.open(filename, os.O_RDONLY)
+    h = None
+    try:
+        h = ts.hdrFromFdno(fd)
+    except rpm.error, e:
+        if str(e) == "public key not available":
+            print str(e)
+        if str(e) == "public key not trusted":
+            print str(e)
+        if str(e) == "error reading package header":
+            print str(e)
+        h = None
+    finally:
+        os.close(fd)
+    return h
+
+ts = rpm.TransactionSet()
+h = readRpmHeader( ts, 'n-v-r.rpm' )
+</programlisting>
+      <para>
+        You can decide in your code whether the exceptions should stop
+        processing or not.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Setting the verification flags</title>
+      <para>
+        Starting with rpm 4.1, package files are verified automatically,
+        which can cause problems, especially if you are working with
+        older packages, or packages without proper digital signatures.
+      </para>
+      <para>
+        In most cases, the automatic verification is an advantage, since
+        you can have greater confidence in the package files. However,
+        you can call setVSFlags on a transaction set to change the
+        default behavior.
+      </para>
+<programlisting language="Python">
+ts.setVSFlags(flags)
+</programlisting>
+      <para>
+        For example, if you have problems with old packages that do not
+        have proper signatures, you can use code like the following to
+        ignore such checks:
+      </para>
+<programlisting language="Python">
+# Set to not verify DSA signatures.
+ts.setVSFlags(rpm.RPMVSF_NODSA)
+</programlisting>
+      <para>
+        Table 17-3 lists the flags you can pass to setVSFlags on a
+        transaction set. These flags are bitmasks. You can or them
+        together for more than one setting. You must do a binary or. Do
+        not use the Python or keyword. Use | instead, for a binary or
+        operation.
+      </para>
+      <para>
+        Table 17-3 Flags for setVSFlags
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Flag
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Meaning
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm.RPMVSF_NEEDPAYLOAD
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Leave the file handle positions at the beginning of
+                  the payload.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm.RPMVSF_NOHDRCHK
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Don’t check the RPM database header.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm.RPMVSF_ NODSA
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Don’t check the header and payload DSA signatures.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm.RPMVSF_ NODSAHEADER
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Don’t check the header DSA signature.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm.RPMVSF_ NOMD5
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Don’t check the header and payload MD5 digests.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm.RPMVSF_ NORSA
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Don’t check the header and payload RSA signatures.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm.RPMVSF_ NOSHA1HEADER
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Don’t check the header SHA1 digest.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm._RPMVSF_NODIGESTS
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Convenience to not check digests.
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  rpm._RPMVSF_NOSIGNATURES
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Convenience to not check signatures.
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        To turn off all checks, you can pass –1 to setVSFlags:
+      </para>
+<programlisting language="Python">
+ts.setVSFlasgs(-1)
+</programlisting>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Dependency Comparisons</title>
+    <para>
+      Dependency sets, first introduced in <xref linkend="ch-programming-c"/>  on C programming,
+      allow you to compare the dependencies between two packages. One of
+      the most common uses for this is to compare a package file against
+      a version on disk to see if the package file holds a newer version
+      of a package than the one installed.
+    </para>
+    <para>
+      You can call dsOfHeader on a header object to get the default
+      dependency set for the header. Armed with dependency sets from two
+      headers, you can compare the sets to see which package is newer
+      using simple code like the following:
+    </para>
+<programlisting language="Python">
+file_h = ts.hdrFromFdno(fd)
+file_ds = file_h.dsOfHeader()
+inst_ds = inst_h.dsOfHeader()
+if file_ds.EVR() &gt;= inst_ds.EVR():
+    print "Package file is same or newer, OK to upgrade."
+else:
+    print "Package file is older than installed version."
+</programlisting>
+    <para>
+      Pulling this all together, Listing 17-5 provides a Python script
+      that compares a package file against an installed package,
+      reporting on which is newer.
+    </para>
+    <para>
+      Listing 17-5: vercompare.py
+    </para>
+<programlisting language="Python">
+<![CDATA[
+#!/usr/bin/python
+# Reads in package header, compares to installed package.
+# Usage:
+# python vercompare.py rpm_file.rpm
+#
+import os
+import sys
+
+import rpm
+def readRpmHeader(ts, filename):
+    """ Read an rpm header. """
+    fd = os.open(filename, os.O_RDONLY)
+    try:
+        h = ts.hdrFromFdno(fd)
+    finally:
+        os.close(fd)
+    return h
+
+ts = rpm.TransactionSet()
+h = readRpmHeader( ts, sys.argv[1] )
+pkg_ds = h.dsOfHeader()
+for inst_h in ts.dbMatch('name', h['name']):
+    inst_ds = inst_h.dsOfHeader()
+    if pkg_ds.EVR() >= inst_ds.EVR():
+        print "Package file is same or newer, OK to upgrade."
+    else:
+        print "Package file is older than installed version."
+]]>
+</programlisting>
+    <para>
+      Cross-Reference
+    </para>
+    <para>
+      The Python script in Listing 17-5 is essentially the same as the
+      longer C program vercompare.c in Listing 16-4 in <xref linkend="ch-programming-c"/> .
+    </para>
+    <para>
+      This script takes in a package file name on the command line,
+      loads in the header for that package, and looks up all packages of
+      the same name installed in the RPM database. For each match, this
+      script compares the packages to see which is newer.
+    </para>
+    <para>
+      You can modify this script, for example, to print out a message if
+      a package isn't installed.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Installing and Upgrading Packages</title>
+    <para>
+      With the RPM system, you have a lot of choices. You can install or
+      upgrade packages with the rpm command. You can install or upgrade
+      packages with special programs you write using the C API. And you
+      can install or upgrade packages using the Python API. If you are
+      writing a special program to install or upgrade packages, the
+      Python API makes this task much easier. As with the C API, most of
+      your work needs to be part of a transaction set.
+    </para>
+    <para>
+      To install or upgrade a package, you need to create a transaction
+      set, build up the transaction with packages, which are stored as
+      transaction elements within the transaction set, check for
+      unresolved dependencies, reorder the transaction set based on the
+      dependencies, and then run the transaction set. Running the
+      transaction set installs or upgrades the packages. The following
+      sections cover these steps.
+    </para>
+    <sect2>
+      <title>Building up the transaction set</title>
+      <para>
+        Package installs and upgrades need to be performed within the
+        context of a transaction set. To install or upgrade a set of
+        packages, you need to call addInstall with the package headers
+        to install or upgrade. The basic syntax follows:
+      </para>
+<programlisting language="Python">
+ts.addInstall(header, key_data, mode)
+</programlisting>
+      <para>
+        When you call addInstall, you pass the header object along with
+        arbitrary callback key data and a mode flag. The mode flag
+        should be 'i' to install a package, 'u' to upgrade a package, or
+        'a' as a special code to make a package available for
+        transaction checks but not install or upgrade the package. The
+        'a' flag is rarely used. In most cases, you should use 'u', just
+        as in most cases, you should install packages with rpm –U
+        instead of rpm –i.
+      </para>
+      <para>
+        The key_data parameter will get passed to the transaction set
+        run callback, covered in the “Running the Transaction”
+        section later in this chapter.
+      </para>
+      <para>
+        Note
+      </para>
+      <para>
+        To remove packages instead of install or upgrade, call addErase
+        instead of addInstall:
+      </para>
+<programlisting language="Python">
+ts.addErase(package_name)
+</programlisting>
+      <para>
+        To set up a package to be upgraded or installed, you can use
+        code like the following:
+      </para>
+<programlisting language="Python">
+h = readRpmHeader( ts, sys.argv[1] )
+ts.addInstall(h, sys.argv[1], 'u')
+</programlisting>
+      <para>
+        This example expects a package file name on the command line
+        (accessed with sys.argv[1]), and reads in the package header
+        using the readRpmHeader function introduced previously.
+      </para>
+      <para>
+        The call to addInstall adds the header object (and the
+        associated RPM package file) for an upgrade with the 'u' mode
+        flag. The name of the package file, from sys.argv[1], is passed
+        as the arbitrary data for the transaction set run callback
+        function.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Transaction elements</title>
+      <para>
+        Transaction sets are made up of transaction elements. A
+        transaction element makes up one part of a transaction and holds
+        one package per operation (install or remove) in each
+        transaction set. That is, there is one transaction element per
+        package per operation in the transaction set. You can iterate
+        over a transaction set to get each transaction element. Once you
+        have a transaction element, you can call methods on each element
+        to check entries in the header as well as get dependency sets
+        for the package.
+      </para>
+      <para>
+        Table 17-4 lists the informational methods you can call on a
+        transaction element. Most of the methods listed in Table 17-4
+        return a single value.
+      </para>
+      <para>
+        Table 17-4 Informational methods on transaction sets
+      </para>
+      <informaltable frame="all">
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>
+                <para>
+                  Method
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  A
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns package architecture
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  E
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns package epoch
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  O
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns package operating system
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  R
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns package release number
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  V
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns package version
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  N
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns package name
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  NEVR
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns package name-epoch-version-release
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  DS
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns the package dependency set for a given tag
+                </para>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <para>
+                  FI
+                </para>
+              </entry>
+              <entry>
+                <para>
+                  Returns the file info set for the package
+                </para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+      <para>
+        For more complex checking, the DS method returns the package
+        dependency set for a given tag:
+      </para>
+<programlisting language="Python">
+ds = te.DS(tag_name)
+</programlisting>
+      <para>
+        Pass one of 'Providename', 'Requirename', 'Obsoletename', or
+        'Conflictname' for the tag name. For example:
+      </para>
+<programlisting language="Python">
+ds = te.DS('Requirename')
+</programlisting>
+      <para>
+        The FI method returns the file info set for the package:
+      </para>
+<programlisting language="Python">
+fi = te.FI(tag_name)
+</programlisting>
+      <para>
+        For the FI method, you must pass a tag name of 'Basenames'.
+      </para>
+      <para>
+        As an example, Listing 17-6 shows how to iterate through a
+        transaction set to get transaction elements.
+      </para>
+      <para>
+        Listing 17-6: te.py
+      </para>
+<programlisting language="Python">
+#!/usr/bin/python
+# Adds all package files on command line to a transaction
+# and prints out the transaction elements.
+# Usage:
+# python te.py rpm_file1.rpm rpm_file2.rpm ...
+#
+
+import os
+import sys
+
+import rpm
+
+def readRpmHeader(ts, filename):
+    """ Read an rpm header. """
+    fd = os.open(filename, os.O_RDONLY)
+    try:
+        h = ts.hdrFromFdno(fd)
+    finally:
+        os.close(fd)
+    return h
+
+ts = rpm.TransactionSet()
+
+# Set to not verify DSA signatures.
+ts.setVSFlags(rpm._RPMVSF_NOSIGNATURES)
+
+for filename in sys.argv[1:]:
+    h = readRpmHeader(ts, filename)
+    print "Installing %s-%s-%s" % (h['name'], h['version'], h['release'])
+    ts.addInstall(h, filename, 'i')
+
+print "This will install:"
+for te in ts:
+    print "%s-%s-%s" % (te.N(), te.V(), te.R() )
+
+ts.check()
+ts.order()
+
+print "This will install:"
+for te in ts:
+    print "%s-%s-%s" % (te.N(), te.V(), te.R() )
+</programlisting>
+      <para>
+        The te.py script sets up a transaction and then prints out the
+        elements, never completing the transaction. The purpose here is
+        just to show what is in the transaction. The second set of
+        printed output shows the results of the check and order methods,
+        covered in the following section.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Checking and reordering the transaction elements</title>
+      <para>
+        After you have called addInstall or addErase for each of the
+        packages you want to install, upgrade, or remove, you need to
+        call two methods to verify the transaction set and order all the
+        elements properly. These two methods are check and order.
+      </para>
+      <sect3>
+        <title>Checking the Dependencies</title>
+        <para>
+          The check method checks the dependencies in a transaction set.
+        </para>
+<programlisting language="Python">
+unresolved_dependencies = ts.check()
+</programlisting>
+        <para>
+          It returns None if all dependencies are resolved, or a complex
+          tuple for each unresolved dependency. In general, if the check
+          method returns anything but None, you cannot perform the
+          transaction.
+        </para>
+        <para>
+          On a dependency failure, check returns a complex tuple of the
+          dependency information in the following format:
+        </para>
+<programlisting language="Python">
+((N,V,R), (reqN, reqV), needsFlags, suggestedPackage, sense)
+</programlisting>
+        <para>
+          The first element is a tuple of the name, version, and release
+          of the package you are trying to install. The next tuple holds
+          the required name and required version or conflicting name and
+          version. The version will be None if the dependency is a
+          shared library or other file.
+        </para>
+        <para>
+          The needs flags tell you about the requirement or conflict.
+          The value is a bitmask that can contain the following bit
+          settings: rpm.RPMSENSE_EQUAL, rpm.RPMSENSE_GREATER, and
+          rpm.RPMSENSE_LESS. This tells you if the dependency is for a
+          version of a package greater than 4.1, for example.
+        </para>
+        <para>
+          The suggested package names a package that solves the
+          dependency. The packages considered are those for which you
+          call addInstall with a flag of 'a'. This value will be None if
+          there is no known package to solve this dependency.
+        </para>
+        <para>
+          You can tell whether the dependency is a conflict or a
+          requirement based on the sense value, one of
+          rpm.RPMSENSE_CONFLICTS or rpm.RPMSENSE_REQUIRES.
+        </para>
+        <para>
+          For example, the following tuple shows a required package:
+        </para>
+<programlisting language="Python">
+(('eruby-devel', '0.9.8', '2'), ('eruby-libs', '0.9.8'), 8, None, 0)
+</programlisting>
+        <para>
+          The following tuple shows a required shared library:
+        </para>
+<programlisting language="Python">
+(('jpilot', '0.97', '1'), ('libpisock.so.3', None), 0, None, 0)
+</programlisting>
+        <para>
+          Note
+        </para>
+        <para>
+          This tuple format will likely change in future versions of
+          RPM. This example shows the format in RPM 4.1. With each RPM
+          release, check the online documentation on the Python API to
+          look for changes.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Transaction Check Method Callbacks</title>
+        <para>
+          You can pass an optional callback function to the call to
+          check. This callback gets called for each unresolved
+          dependency in the transaction set. You can use this callback
+          to try to automatically bring in required packages, for
+          example.
+        </para>
+        <para>
+          The basic syntax for the transaction check callback is:
+        </para>
+<programlisting language="Python">
+def checkCallback(ts, TagN, N, EVR, Flags):
+    # Do something...
+    pass
+</programlisting>
+        <para>
+          You can use a check callback to automatically bring in
+          packages that are required into a transaction set. You can
+          bring in packages from the Red Hat RPM database package, which
+          contains a database of all Red Hat packages, the rpmdb-redhat
+          package. You can open the database from this package by using
+          the trick described previously for opening transactions to
+          more than one RPM database at a time. Simply set the _dbpath
+          macro to "/usr/lib/rpmdb/i386-redhat-linux/redhat", or the
+          location of your rpmdb-redhat database, and create a
+          transaction set. Your check callback can then search this
+          extra database and add packages from that database into the
+          current, real RPM database.
+        </para>
+        <para>
+          Your check callback can also attempt to find package files to
+          resolve dependencies, from a disk directory or network archive
+          for example. The following code shows a stub check callback
+          that you can fill in to try to resolve dependencies. This
+          callback sets up a format for finding unresolved packages in
+          another RPM database, or elsewhere. You need to fill in the
+          skeleton with the algorithm you want to actually resolve the
+          dependencies.
+        </para>
+
+<programlisting language="Python">
+def checkCallback(ts, TagN, N, EVR, Flags):
+    if TagN == rpm.RPMTAG_REQUIRENAME:
+        prev = ""
+    Nh = None
+
+    if N[0] == '/':
+        dbitag = 'basenames'
+    else:
+        dbitag = 'providename'
+        
+    # What do you need to do.
+    if EVR:
+        print "Must find package [", N, "-", EVR, "]"
+    else:
+        print "Must find file [", N, "]"
+
+    if resolved:
+        # ts.addIntall(h, h, 'i')
+        return -1
+
+    return 1
+</programlisting>
+        <para>
+          Depending on the values passed to the callback, your code must
+          either find a package itself or a package that provides a
+          given file or capability to resolve the dependency. If you
+          have another RPM database to look at, such as the rpmdb-redhat
+          database, you can use dbMatch to find the necessary packages
+          in that database. If, however, you are working with a
+          directory of RPM files, you need to build up file names from
+          the package name, version, and release.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Reordering the Transaction Set</title>
+        <para>
+          You can add packages to a transaction set in any order. The
+          order method reorders the transaction set to ensure that
+          packages get installed or removed in the right order. The
+          order method orders by a topological sort using the
+          dependencies relations between objects with dependency
+          comparisons.
+        </para>
+        <para>
+          Note
+        </para>
+        <para>
+          You must call check prior to order.
+        </para>
+      </sect3>
+    </sect2>
+    <sect2>
+      <title>Running the transaction</title>
+      <para>
+        After setting up the transaction set, perform the transaction by
+        calling run. You need to provide two parameters:
+      </para>
+<programlisting language="Python">
+ts.run(callback, client_data)
+</programlisting>
+      <para>
+        The callback parameter must be a Python function. The
+        client_data is any data you want to pass to the callback. There
+        may be more than one package in the transaction set, so this
+        data should not be specific to a particular package.
+      </para>
+      <para>
+        Warning
+      </para>
+      <para>
+        You must not pass None as the client_data or you will get a
+        Python error.
+      </para>
+      <sect3>
+        <title>Transaction run Method Callbacks</title>
+        <para>
+          The callback you pass to the run method on a transaction set
+          is essential. Your callback must work properly, or the
+          transaction will fail. You must provide a callback.
+        </para>
+        <para>
+          Your callback will get called a number of times, mostly as a
+          means to report progress. If you are writing a graphical user
+          interface, for example, you can use the progress callbacks to
+          update a visual progress meter.
+        </para>
+        <para>
+          The basic syntax for the transaction set run callback is:
+        </para>
+<programlisting language="Python">
+def runCallback(reason, amount, total, key, client_data):
+    # Do your stuff...
+    pass
+</programlisting>
+        <para>
+          The key is the data you provided in the call to the addInstall
+          method. The client_data is the data you passed to the run
+          method.
+        </para>
+        <para>
+          Each time your callback is called, the transaction set will
+          provide a reason flag. Table 17-5 lists the values for the
+          reason parameter.
+        </para>
+        <para>
+          Table 17-5 Transaction set run callback reason values
+        </para>
+        <informaltable frame="all">
+          <tgroup cols="2">
+            <tbody>
+              <row>
+                <entry>
+                  <para>
+                    Value
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Reason
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_UNKNOWN
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Unknown problem
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_INST_PROGRESS
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Progress for installation
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_INST_START
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Start of installation
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_INST_OPEN_FILE
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Callback should open package file
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_INST_CLOSE_FILE
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Callback should close package file
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_TRANS_PROGRESS
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Transaction progress
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_TRANS_START
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Transaction start
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_TRANS_STOP
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Transaction stop
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_UNINST_PROGRESS
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Uninstallation progress
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_UNINST_START
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Uninstallation start
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_UNINST_STOP
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Uninstallation stop
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_REPACKAGE_PROGRESS
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Repackaging progress
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_REPACKAGE_START
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Repackaging start
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_REPACKAGE_STOP
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Repackaging stop
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_UNPACK_ERROR
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    Error unpacking package file
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>
+                    rpm.RPMCALLBACK_CPIO_ERROR
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    cpio error getting package payload
+                  </para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable>
+        <para>
+          Your callback must handle at least two cases: a reason value
+          of rpm.RPMCALLBACK_INST_OPEN_FILE and
+          rpm.RPMCALLBACK_INST_CLOSE_FILE.
+        </para>
+        <para>
+          With the reason of rpm.RPMCALLBACK_INST_OPEN_FILE, you must
+          open the RPM package file and return a file descriptor for the
+          file. You need to keep this file descriptor in a global-scope
+          or otherwise-accessible variable, because with the reason of
+          rpm.RPMCALLBACK_INST_CLOSE_FILE, you must close this file.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Coding A Sample Callback</title>
+        <para>
+          The following code shows a valid sample callback for upgrading
+          and installing packages.
+        </para>
+<programlisting language="Python">
+# Global file descriptor for the callback.
+rpmtsCallback_fd = None
+
+def runCallback(reason, amount, total, key, client_data):
+    global rpmtsCallback_fd
+    if reason == rpm.RPMCALLBACK_INST_OPEN_FILE:
+        print "Opening file. ", reason, amount, total, key, client_data
+        rpmtsCallback_fd = os.open(client_data, os.O_RDONLY)
+        return rpmtsCallback_fd
+    elif reason == rpm.RPMCALLBACK_INST_START:
+        print "Closing file. ", reason, amount, total, key, client_data
+        os.close(rpmtsCallback_fd)
+</programlisting>
+        <para>
+          This callback assumes that the call to addInstall passed
+          client data of the package file name. This callback ignores
+          the client_data passed to the run method, but this is a
+          perfect slot for passing an object. You can use this, for
+          example, to avoid having a global variable for the file
+          descriptor.
+        </para>
+      </sect3>
+      <sect3>
+        <title>Upgrading A Package</title>
+        <para>
+          Listing 17-7 shows a simple Python script to upgrade or
+          install a package.
+        </para>
+        <para>
+          Listing 17-7: rpmupgrade.py
+        </para>
+<programlisting language="Python">
+#!/usr/bin/python
+# Upgrades packages passed on the command line.
+# Usage:
+# python rpmupgrade.py rpm_file1.rpm rpm_file2.rpm ...
+#
+
+import os
+import sys
+
+import rpm
+
+# Global file descriptor for the callback.
+rpmtsCallback_fd = None
+
+def runCallback(reason, amount, total, key, client_data):
+    global rpmtsCallback_fd
+    if reason == rpm.RPMCALLBACK_INST_OPEN_FILE:
+        print "Opening file. ", reason, amount, total, key, client_data
+        rpmtsCallback_fd = os.open(key, os.O_RDONLY)
+        return rpmtsCallback_fd
+    elif reason == rpm.RPMCALLBACK_INST_START:
+        print "Closing file. ", reason, amount, total, key, client_data
+        os.close(rpmtsCallback_fd)
+
+def checkCallback(ts, TagN, N, EVR, Flags):
+    if TagN == rpm.RPMTAG_REQUIRENAME:
+        prev = ""
+    Nh = None
+
+    if N[0] == '/':
+        dbitag = 'basenames'
+    else:
+        dbitag = 'providename'
+
+    # What do you need to do.
+    if EVR:
+        print "Must find package [", N, "-", EVR, "]"
+    else:
+        print "Must find file [", N, "]"
+
+    if resolved:
+        # ts.addIntall(h, h, 'i')
+        return -1
+
+    return 1
+
+def readRpmHeader(ts, filename):
+    """ Read an rpm header. """
+    fd = os.open(filename, os.O_RDONLY)
+    try:
+        h = ts.hdrFromFdno(fd)
+    finally:
+        os.close(fd)
+    return h
+
+ts = rpm.TransactionSet()
+
+# Set to not verify DSA signatures.
+ts.setVSFlags(-1)
+
+for filename in sys.argv[1:]:
+    h = readRpmHeader(ts, filename)
+    print "Upgrading %s-%s-%s" % (h['name'], h['version'], h['release'])
+    ts.addInstall(h, filename, 'u')
+
+unresolved_dependencies = ts.check(checkCallback)
+
+if not unresolved_dependencies:
+    ts.order()
+
+    print "This upgrade will install:"
+    for te in ts:
+        print "%s-%s-%s" % (te.N(), te.V(), te.R())
+
+    print "Running transaction (final step)..."
+    ts.run(runCallback, 1)
+else:
+    print "Error: Unresolved dependencies, transaction failed."
+    print unresolved_dependencies
+</programlisting>
+        <para>
+          This script expects the name of an RPM package file on the
+          command line, and attempts to upgrade the package. (This will
+          also install new packages.)
+        </para>
+        <para>
+          When you run the rpmupgrade.py script, you should see output
+          like the following:
+        </para>
+<screen>
+# rpm -q jikes
+jikes-1.17-1
+
+# python rpmupgrade.py jikes-1.18-1.i386.rpm
+Upgrading jikes-1.18-1
+This upgrade will install:
+jikes-1.18-1
+jikes-1.17-1
+Running transaction (final step)...
+Opening file. 4 0 0 jikes-1.18-1.i386.rpm 1
+Closing file. 2 0 2854204 jikes-1.18-1.i386.rpm 1
+
+# rpm -q jikes
+jikes-1.18-1
+</screen>
+        <para>
+          This example shows that the package was upgraded after running
+          the rpmupgrade.py script. Note that with an upgrade, the
+          original package, jikes-1.17-1 in this case, is also added to
+          the transaction set. With an install, this is not the case.
+          That’s because the original package is removed as part of
+          the transaction.
+        </para>
+        <para>
+          If you run this script as a non-root user, you will likely see
+          an error like the following:
+        </para>
+<screen>
+$ python rpmupgrade.py jikes-1.18-1.i386.rpm
+Upgrading jikes-1.18-1
+This upgrade will install:
+jikes-1.18-1
+jikes-1.17-1
+Running transaction (final step)...
+error: cannot get exclusive lock on /var/lib/rpm/Packages
+error: cannot open Packages index using db3 - Operation not permitted (1)
+error: cannot open Packages database in /var/lib/rpm
+</screen>
+        <para>
+          If a package has a dependency on a file such as a shared
+          library, you will see output like the following:
+        </para>
+<screen>
+# python rpmupgrade.py jikes-1.17-glibc2.2-1.i386.rpm jpilot-0_97-1_i386.rpm
+Upgrading jikes-1.17-1
+Upgrading jpilot-0.97-1
+Must find file [ libpisock.so.3 ]
+Error: Unresolved dependencies, transaction failed.
+(('jpilot', '0.97', '1'), ('libpisock.so.3', None), 0, None, 0)
+</screen>
+        <para>
+          If a package has a dependency on another package, you will see
+          output like the following:
+        </para>
+<screen>
+# python rpmupgrade.py eruby-devel-0.9.8-2.i386.rpm
+Upgrading eruby-devel-0.9.8-2
+Must find package [ eruby-libs - 0.9.8 ]
+Error: Unresolved dependencies, transaction failed.
+(('eruby-devel', '0.9.8', '2'), ('eruby-libs', '0.9.8'), 8, None, 0)
+</screen>
+      </sect3>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Where to Go from Here</title>
+    <para>
+      The RPM bindings for Python are documented along with the C
+      programming API. On a Red Hat Linux system, look in the file
+      /usr/share/doc/rpm-devel-4.1/apidocs/html/group__python.html to
+      see the start of the Python-specific documentation.
+    </para>
+    <para>
+      Note that much of this online documentation covers the C functions
+      that provide the Python bindings, not the Python API itself. But,
+      if you examine the online information on objects listed as
+      classes, such as rpmts, you can find the Python-specific
+      documentation.
+    </para>
+    <para>
+      Furthermore, if you look into the .c files that make up the Python
+      bindings, you can find PyMethodDef structure tables. These tables
+      provide useful glimpses into the Python API.
+    </para>
+    <para>
+      To learn more about programming in Python, install the python-docs
+      package. The python-docs package has a large set of online
+      documentation for Python, including the official Python Tutorial.
+      With Red Hat Linux, start at
+      /usr/share/doc/python-docs-2.2.1/html/tut/tut.html.
+    </para>
+    <para>
+      Cross Reference
+    </para>
+    <para>
+      Other tutorials are available at http://diveintopython.org for the
+      Dive Into Python tutorial for experienced programmers, and at
+      http://py.vaults.ca/parnassus/apyllo.py/935043691.636055170 for
+      the Vaults of Parnassus listing of tutorials.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Summary</title>
+    <para>
+      This chapter introduces the high-level RPM API for Python
+      programming. You can use this API from Python scripts to perform
+      RPM functionality, just as you can write C programs using the RPM
+      C API covered in <xref linkend="ch-programming-c"/> .
+    </para>
+    <para>
+      In general, the Python API is simpler and requires fewer code
+      statements than the corresponding functionality in the C API.
+    </para>
+    <para>
+      Just about all of your work with the Python API requires a
+      transaction set, which you can get by calling rpm.TransactionSet.
+    </para>
+    <para>
+      To query the RPM database, call dbMatch on the transaction set
+      object. To install or upgrade packages, call addInstall, check,
+      order, and run on the transaction set.
+    </para>
+    <para>
+      The next chapter switches to another language for accessing the
+      RPM system: Perl. With the rich set of APIs, you can write your
+      RPM programs in C, Python, Perl, or any language that can call on
+      code written in one of these languages.
+    </para>
+  </sect1>
+</chapter>
+
+<!--
+Local variables:
+mode: xml
+sgml-parent-document:("rpm-guide.xml" "book" "chapter")
+fill-column: 72
+End:
+-->

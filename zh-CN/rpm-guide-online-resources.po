@@ -1,0 +1,280 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "RPM Resources"
+msgstr ""
+
+msgid "This appendix covers:"
+msgstr ""
+
+msgid "Finding RPM sites on the Internet"
+msgstr ""
+
+msgid "Accessing RPM newsgroups and mailing lists"
+msgstr ""
+
+msgid "This appendix covers the material available on the Internet for working with RPM."
+msgstr ""
+
+msgid "Finding RPM Sites"
+msgstr ""
+
+msgid "There is a wealth of RPM material online, although some of it is hard to find. The following sections list a number of RPM-related sites, divided by category. Note that as with any Internet sites, the sites listed my change or disappear."
+msgstr ""
+
+msgid "The main rpm.org site"
+msgstr ""
+
+msgid "The main RPM site is www.rpm.org. This site provides the official distributions of the RPM software, as well as a lot of documentation online."
+msgstr ""
+
+msgid "Table F-1 lists a number of useful links on this site."
+msgstr ""
+
+msgid "Table F-1 Links on the rpm.org site"
+msgstr ""
+
+msgid "Link"
+msgstr ""
+
+msgid "Holds"
+msgstr ""
+
+msgid "ftp://ftp.rpm.org/pub/rpm/dist/"
+msgstr ""
+
+msgid "RPM software downloads"
+msgstr ""
+
+msgid "ftp://ftp.rpm.org/pub/"
+msgstr ""
+
+msgid "rpm.org download site"
+msgstr ""
+
+msgid "www.rpm.org/cvs_help/"
+msgstr ""
+
+msgid "Instructions for accessing the RPM CVS repository"
+msgstr ""
+
+msgid "www.rpm.org/hintskinks/"
+msgstr ""
+
+msgid "Tips for working with RPM"
+msgstr ""
+
+msgid "www.rpm.org/hintskinks/bootstrap/"
+msgstr ""
+
+msgid "Good tips on bootstrapping RPM to new platforms"
+msgstr ""
+
+msgid "www.rpm.org/howto/"
+msgstr ""
+
+msgid "How-to documents for working with RPM"
+msgstr ""
+
+msgid "www.rpm.org/max-rpm/"
+msgstr ""
+
+msgid "Maximum RPM by Edward C. Bailey"
+msgstr ""
+
+msgid "www.rpm.org/RPM-HOWTO/"
+msgstr ""
+
+msgid "Good introductory tutorial"
+msgstr ""
+
+msgid "www.rpm.org/rpmapi-4.1/"
+msgstr ""
+
+msgid "API documentation"
+msgstr ""
+
+msgid "The main RPM FTP site, at ftp://ftp.rpm.org/pub/, includes the RPM distributions, as well as the Berkeley DB version 3 library, and the text of the book Maximum RPM. Download RPM software from ftp://ftp.rpm.org/pub/rpm/dist/."
+msgstr ""
+
+msgid "RPM locator sites"
+msgstr ""
+
+msgid "A number of sites help you find RPMs for various applications. On the main sites, you can find specially built RPMs for a variety of Linux distributions. You can then download the RPMs made especially for your systems."
+msgstr ""
+
+msgid "The main RPM-finding site is rpmfind.net, which offers a search engine as well as software you can run on your site."
+msgstr ""
+
+msgid "The RPM PBone Search, at http://rpm.pbone.net/, is also very useful."
+msgstr ""
+
+msgid "The www.rpm.org/packagers/ site lists a number of places that package RPMs and provide them for downloading."
+msgstr ""
+
+msgid "Many Java libraries and packages are available in RPM format from www.jpackage.org/."
+msgstr ""
+
+msgid "Table F-2 lists a number of other RPM download sites."
+msgstr ""
+
+msgid "Table F-2 RPM download sites"
+msgstr ""
+
+msgid "Site"
+msgstr ""
+
+msgid "rpmfind.net"
+msgstr ""
+
+msgid "Links to a huge number of RPMs, many specific to various Linux distributions"
+msgstr ""
+
+msgid "http://rpm.pbone.net/"
+msgstr ""
+
+msgid "RPM PBone search, useful for finding RPMs"
+msgstr ""
+
+msgid "www.rpm.org/packagers/"
+msgstr ""
+
+msgid "Lists a number of sites that provide RPMs for download"
+msgstr ""
+
+msgid "www.javapackage.org"
+msgstr ""
+
+msgid "Many Java packages in RPM format"
+msgstr ""
+
+msgid "http://plf.zarb.org/"
+msgstr ""
+
+msgid "The Penguin Liberation Front has RPMs that for legal reasons cannot be included in the Mandrake Linux distribution."
+msgstr ""
+
+msgid "www.math.unl.edu/~rdieter/Projects"
+msgstr ""
+
+msgid "Rex Dieter’s RPM site"
+msgstr ""
+
+msgid "www.rpmhelp.net"
+msgstr ""
+
+msgid "Mandrake Linux RPMs"
+msgstr ""
+
+msgid "www.aucs.org/rpmcenter/"
+msgstr ""
+
+msgid "Edwin Chan's Red Hat RPMs"
+msgstr ""
+
+msgid "www.owlriver.com/projects/links/"
+msgstr ""
+
+msgid "Owl River Company RPMs"
+msgstr ""
+
+msgid "RPM tools sites"
+msgstr ""
+
+msgid "A large number of tools exist to help you work with RPMs. The following sites list some of the main tools:"
+msgstr ""
+
+msgid "*For the vim text editor, you can download a spec.vim syntax file from <ulink url=\"http://www.vim.org/scripts/script.php?script_id=98\" />"
+msgstr ""
+
+msgid "*For emacs, you can download an Emacs mode for spec files from http://tihlde.org/~stigb/rpm-spec-mode.el."
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "<xref linkend=\"ch-development-tools\" /> lists links for a number of text editors."
+msgstr ""
+
+msgid "*The rpmlint tool mentioned in <xref linkend=\"ch-extra-packaging-tools\" /> is available at http://people.mandrakesoft.com/~flepied/projects/rpmlint/."
+msgstr ""
+
+msgid "Table F-3 lists a number of RPM-related tools and the sites you can find more information on the tools."
+msgstr ""
+
+msgid "Table F-3 RPM-related tools"
+msgstr ""
+
+msgid "Tool"
+msgstr ""
+
+msgid "apt4rpm"
+msgstr ""
+
+msgid "<ulink url=\"http://apt4rpm.sourceforge.net/\" />"
+msgstr ""
+
+msgid "kpackage"
+msgstr ""
+
+msgid "<ulink url=\"http://www.kde.org\" />"
+msgstr ""
+
+msgid "rpm2html"
+msgstr ""
+
+msgid "<ulink url=\"http://rpmfind.net/linux/rpm2html/\" />"
+msgstr ""
+
+msgid "rpmfind"
+msgstr ""
+
+msgid "<ulink url=\"http://rpmfind.net\" />"
+msgstr ""
+
+msgid "Programming sites"
+msgstr ""
+
+msgid "Only a few sites exist to help developers with programming for RPM. I maintain some quick links to RPM sites at www.pconline.com/~erc/rpm.htm. Most of these links are focused for programming with RPM."
+msgstr ""
+
+msgid "The best sites for programming RPM are the online API documentation at www.rpm.org/rpmapi-4.1/ for the RPM 4.1 release, and the ftp.rpm.org/pub/rpm/dist/ site for downloading the RPM sources. There is a lot of documentation bundled with the source code."
+msgstr ""
+
+msgid "<xref linkend=\"ch-development-tools\" /> lists links for a number of Integrated Development Environments, or IDEs, aimed at programmers."
+msgstr ""
+
+msgid "Sites related to RPM"
+msgstr ""
+
+msgid "If you try to make cross-platform RPMs, especially RPMs that should work for multiple versions of Linux, it is very important to follow the Linux standards for things like file placement and package formats."
+msgstr ""
+
+msgid "The Filesystem Hierarchy Standard, or FHS, covers Linux directory layout at www.pathname.com/fhs/."
+msgstr ""
+
+msgid "The Linux Standards Base is working on standardizing on the RPM package file format. See www.linuxbase.org for details."
+msgstr ""
+
+msgid "Accessing RPM Mailing Lists and Newsgroups"
+msgstr ""
+
+msgid "The RPM mailing list provides the best source of technical RPM information. You can post questions and get quick, useful responses. If you are working with RPM, you should subscribe to this mailing list. For details on viewing the RPM mailing list archives and signing up for the list, see www.rpm.org/mailing_list/."
+msgstr ""
+
+msgid "To help avoid unwanted commercial e-mail (in other words, spam), you need to register with a user name and password to subscribe to the mailing list or view the archives."
+msgstr ""
+
+msgid "A Usenet newsgroup, named linux.redhat.rpm, also provides a forum for asking RPM-related questions. You can read this newsgroup with any newsreading program."
+msgstr ""
+

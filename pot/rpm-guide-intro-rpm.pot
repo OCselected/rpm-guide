@@ -1,0 +1,400 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Introduction to RPM"
+msgstr ""
+
+msgid "This chapter covers:"
+msgstr ""
+
+msgid "Examining the history of package management"
+msgstr ""
+
+msgid "Introducing RPM features"
+msgstr ""
+
+msgid "Getting acquainted with RPM terminology"
+msgstr ""
+
+msgid "Several package managers are available for Linux to track and manipulate the applications installed on the system. The most widely used of these Linux package managers is the RPM Package Manager (formerly the Red Hat Package Manager), or RPM for short, the subject of this book"
+msgstr ""
+
+msgid "Although RPM was initially developed for Red Hat Linux, a combination of technical features and good timing has resulted in RPM’s becoming the de facto standard for packaging software on most Linux distributions. The fact that Red Hat released the source code to the RPM software under an open-source license also helped its adoption."
+msgstr ""
+
+msgid "More recently, the RPM package file format has been adopted as the official standard for Linux as part of the Linux Standards Base, or LSB. Described at <ulink url=\"http://www.linuxbase.org/\" />, the Linux Standards Base is an attempt to set a baseline that all Linux distributions should follow. The LSB has helped system administrators by providing some commonality across distributions, as in the location of certain files. The history of Linux package managers is largely intertwined with the history of Linux distributions."
+msgstr ""
+
+msgid "Strictly speaking, Linux refers to a single piece of software, the Unix-like kernel that Linus Torvalds and cohorts have scattered all over the Internet and have been developing since 1991. This Linux kernel is a marvelous piece of software, currently comprising over 3.7 million lines of freely-licensed source code and accompanying documentation. Together, these factors provide a fast, full-featured, stable operating system kernel for use on more than 30 different processor architectures, ranging from embedded systems such as watches and PDAs, to desktop and server systems, all the way up to mainframes and supercomputing clusters."
+msgstr ""
+
+msgid "The Need for Linux Package Management Systems"
+msgstr ""
+
+msgid "Although Linux is an excellent core component of an operating system suitable for a wide variety of real-world applications, this Linux kernel by itself is not sufficient for accomplishing most tasks. The technical definition of exactly what constitutes an operating system is a matter of debate."
+msgstr ""
+
+msgid "Despite this controversy, it is clear that most users of Linux require both the Linux kernel and a large suite of accompanying software (a shared C library; traditional Unix utilities such as <command>grep</command>, <command>awk</command>, and <command>sed</command>; an editor, such as <command>vi</command>; a shell, such as the Bourne-Again <command>bash</command> shell; and so forth) to complete the various tasks for which they typically employ Linux."
+msgstr ""
+
+msgid "Users expect Linux to include server software such as the Apache Web server, desktop software such as the Libre Office productivity suite, and a host of other packages. In fact, most Linux users don’t make the distinction between the kernel (technically the only part that is Linux) and all the extra packages (technically “everything else”) that comes with a Linux distribution. Most users simply refer to the whole thing as “Linux.”"
+msgstr ""
+
+msgid "Some Linux distributions include thousands of packages on six or more CD-ROMs. This situation alone cries out for effective package-management software. And this doesn’t include the extra packages that don’t come with Linux distributions but which organizations need to create an effective working environment."
+msgstr ""
+
+msgid "Furthermore, the Linux kernel and these various software applications are sometimes made available by their developers only in source code formats, and they can be installed manually only after compiling them from source code."
+msgstr ""
+
+msgid "Most people do not have the technical skills necessary to cross-compile an entire operating system. Even if they do, they usually do not want to devote the time and effort required to bootstrap and compile an operating system just to be able to run Linux."
+msgstr ""
+
+msgid "Fortunately, the early Linux programmers quickly realized the impracticality of source-code only releases early in Linux's development and created what they called distributions—collections of precompiled binaries of the Linux kernel and other necessary software that users often wanted. Rather than installing Minix, compiling the Linux kernel and other required software applications under Minix, and installing those compiled binaries of the Linux kernel and essential Linux applications, users could just install these distributions, immediately having a functional Linux environment in which to work."
+msgstr ""
+
+msgid "Early distributions, such as MCC and SLS, initially represented little more than archived snapshots of their developer's hard drive. They offered the user performing the installation little or no control over what applications were put on the system. Whatever the distribution developer had on his hard drive was what the distribution installer got on her hard drive. Even this was much better than rolling your own distribution by hand. SLS, for example, stood for Soft Landing System, and was designed to make the experience of installing Linux easier, hence providing a “soft landing.” MCC Interim Linux, from the Manchester Computing Centre, was the first distribution to sport a combined boot/root disk, another attempt to make life easier for those adopting Linux."
+msgstr ""
+
+msgid "Distribution developers quickly realized, however, that more flexibility was needed and began looking for ways to provide choices both during and after installation. The Slackware distribution, for example, divided applications into several functional categories. All users installed the base distribution; users could then selectively install only the additional supplemental categories they needed. If networking support was desired, for example, the networking bundle could be installed. Similarly, if a graphical user interface was desired, the X bundle could be installed, making the X Window System available. This concept offered rudimentary control over what was installed but only at a very coarse level. Installing the X bundle put several applications (multiple X terminal emulators, several different window managers, and so forth) on the system, and all users who installed the bundle got all of those applications whether they wanted them all or not."
+msgstr ""
+
+msgid "The next logical step in distribution evolution was the development of more advanced tools to control what was installed. Several distributions independently developed the notion of application-level installation management. The developers of these distributions realized that Slackware and similar distributions were heading in the right direction, but simply had not made software management granular enough. Slackware allowed installation and uninstallation (after a fashion) of bundles of related applications, but what was really needed was installation and uninstallation on an application-by-application basis."
+msgstr ""
+
+msgid "In late 1993, Rik Faith, Doug Hoffman, and Kevin Martin began releasing the first public betas of the BOGUS Linux distribution. BOGUS was notable for the package management system (<command>pms</command>) software that was used with it for installation and uninstallation of all software on an application-by-application basis. Shortly thereafter, in the summer of 1994, the first public betas of Red Hat Commercial Linux were released. Red Hat initially used Red Hat Software Program Packages (RPP) as the basis of its Linux distribution. Like <command>pms</command>, RPP was a system-management tool that allowed for easy installation and uninstallation of applications. In late 1993, Ian Murdock founded the Debian Gnu/Linux distribution. He began seriously developing its <command>dpkg</command> application-management software by the summer of 1994. Like <command>pms</command> and RPP, <command>dpkg</command> made it possible to manage each application on the system."
+msgstr ""
+
+msgid "RPM Design Goals"
+msgstr ""
+
+msgid "All of these early system-management tools took a similar approach. They provided the capability to install an entire application with a single command, to track the files it put on the system, and to remove those files by using another single command. As the preponderance of multiple early tools suggests, this approach to system management was popular. All of these early tools, however, had numerous technical or practical deficiencies. Some tools were designed only for Linux on 32-bit Intel-compatible hardware, even though Linux by this point was already running on other CPUs in addition to the IA32 family. As Linux was spreading to multiple architectures, a package-management system that could produce packages for multiple architectures was needed. Other tools had technical flaws in how they prepared packages, making it difficult to verify that packages had been prepared correctly or to see exactly how the software was prepared."
+msgstr ""
+
+msgid "Because of these concerns, after their initial releases of RPP-based distributions, Red Hat looked closely at both their own RPP software and other software such as BOGUS's <command>pms</command> software. Developers at Red Hat, particularly Marc Ewing and Erik Troan, set out to develop what they initially called the Red Hat Package Manager (RPM). Based on experiences with earlier Linux packaging software and knowledge about packaging tools used on other platforms, Red Hat had several design goals in mind when they developed RPM. These design points include the following features:"
+msgstr ""
+
+msgid "Ease of use"
+msgstr ""
+
+msgid "Package-oriented focus"
+msgstr ""
+
+msgid "Upgradability of packages"
+msgstr ""
+
+msgid "Tracking of package interdependencies"
+msgstr ""
+
+msgid "Query capabilities"
+msgstr ""
+
+msgid "Verification"
+msgstr ""
+
+msgid "Support for multiple architectures"
+msgstr ""
+
+msgid "Use of pristine sources"
+msgstr ""
+
+msgid "The following sections demonstrate how Red Hat incorporated each of these design goals into RPM."
+msgstr ""
+
+msgid "Perhaps the primary design goal for RPM is that it must be easy to use. Manual software installation has been the primary method of putting software onto Unix boxes for over 30 years now and has worked very well for those three decades. To offer a compelling reason to use the new software, RPM must be significantly easier to use than other Linux package-management tools. For that reason, most tasks that can be handled using RPM were designed to be carried out via a single command. For example, software installation using RPM requires a single command (<userinput>rpm -U <replaceable>software_package</replaceable></userinput>), while manual software installation using older manual methods typically requires at least six steps to complete the same task:"
+msgstr ""
+
+msgid "<command>tar zxf <replaceable>software_package</replaceable></command>"
+msgstr ""
+
+msgid "<command>cd <replaceable>software_package</replaceable></command>"
+msgstr ""
+
+msgid "<command>./configure</command>"
+msgstr ""
+
+msgid "<command>make</command>"
+msgstr ""
+
+msgid "<command>su</command>"
+msgstr ""
+
+msgid "<command>make install</command>"
+msgstr ""
+
+msgid "Similarly, removal of applications installed using RPM requires a single command (<userinput>rpm -e <replaceable>software_package</replaceable></userinput>); manual removal of an installed application requires that each file associated with that application be manually deleted."
+msgstr ""
+
+msgid "Like its predecessors, RPM is intended to operate on a package level. Rather than operating on a single-file basis (as when you manually install software using Unix command-line tools like mv and cp) or on an entire system basis (as with many PC operating systems, which provide the ability to upgrade entire releases but not to upgrade individual components), RPM provides software that can manage hundreds or thousands of packages."
+msgstr ""
+
+msgid "Each package is a discrete bundle of related files and associated documentation and configuration information; typically, each package is a separate application. By focusing on the package as the managed unit, RPM makes installation and deletion of applications extremely straightforward."
+msgstr ""
+
+msgid "Package upgradability"
+msgstr ""
+
+msgid "In addition to its package-oriented focus, RPM is designed to support upgrading packages. Once an application has been installed from an RPM package, a newer version of the same application can be installed using RPM. Doing so upgrades the existing application, removing its old files and replacing them with new files. In addition, RPM takes care to preserve any customizations that have been made to that application. The Apache Web server application, for example, is commonly installed on Linux machines that need the ability to serve Web pages."
+msgstr ""
+
+msgid "Apache's configuration information, which specifies things such as which files on the system should be made available as Web pages and who should be able to access those Web pages, is stored in a text file, typically <filename>/etc/httpd/conf/httpd.conf</filename>. Suppose Apache has been installed using RPM and that you have then customized <filename>httpd.conf</filename> to specify its configuration. If you upgrade Apache using RPM, as part of the upgrade procedure, the RPM application will take precautions to preserve the customizations you have made to the Apache configuration. In contrast, manual upgrades of applications often overwrite any existing configuration files, losing all site customizations the system administrator has made."
+msgstr ""
+
+msgid "Package interdependencies"
+msgstr ""
+
+msgid "Software that manages the applications installed on the system on an application level (such as RPM) does have one potential drawback in comparison with system-wide software management systems (such as PC operating systems like Microsoft Windows or OS/2, which allow the entire system to be upgraded but do not generally allow individual components to be upgraded, added, or removed). Software applications often have interdependencies; some applications work only when other applications are installed."
+msgstr ""
+
+msgid "The Postfix and Sendmail mail transfer agent (MTA) applications that are commonly used on Linux boxes to serve e-mail, for example, can both be configured to require users to authenticate themselves (by submitting a correct user name and password) successfully before they can use the e-mail server. This feature is often used to prevent unauthorized access to the e-mail server, preventing unscrupulous advertisers from using the server as a tool to send unsolicited commercial e-mail (or UCE, popularly known as spam). For this optional feature of Postfix and Sendmail to work, however, additional software must be installed. Both applications use another application, Cyrus SASL, which provides the Simple Authentication and Security Layer (SASL) software that Postfix or Sendmail can use to check user names and passwords. In other words, Postfix and Sendmail depend on Cyrus SASL."
+msgstr ""
+
+msgid "For system-wide software management systems, logical interdependencies between system components such as these are easy to track. All required components are included as part of the system, and upgrading the system upgrades all these components, ensuring that all can still interoperate. On Microsoft Windows 2000, IIS (the application used on Windows to serve Web pages) requires several other applications such as <command>EventLog</command> (the Windows application that records system events, much like the Linux <command>syslogd</command> and <command>klogd</command> software) to be present. Since Windows is managed on a system level, not a package level, this dependency is guaranteed to be satisfied. On Linux systems using RPM, however, the situation is different. On Linux, for example, the Postfix application requires the <command>syslogd</command> application, which records system events. However, RPM provides the flexibility to install some applications but not install others or to uninstall others later. When you install Postfix, you have no guarantee that <command>syslogd</command> is already installed. If <command>syslogd</command> is not installed, Postfix will not work correctly."
+msgstr ""
+
+msgid "To avoid problems, Red Hat developers realized that RPMs must also track dependency information about what software they require for correct functionality, and that the RPM install and uninstall applications must use this dependency information. Because of dependencies, installing Postfix using RPM on a system without <command>syslogd</command> installed generates a warning that <command>syslogd</command> must also be installed. Similarly, attempting to uninstall <command>syslogd</command> from a system that already has Postfix installed generates a warning that installed applications require the software that is being deleted. These warnings can be overridden if necessary, but by default RPM enforces these dependencies (refusing, for example, to let you uninstall <command>syslogd</command> without also uninstalling applications that require it, such as Postfix), preventing you from accidentally breaking applications by inadvertently uninstalling other software that they require to operate."
+msgstr ""
+
+msgid "As part of its implementation, the RPM software maintains a database on the system of all packages that have been installed, and documenting which files those packages have installed on the system. RPM is designed to be queried easily, making it possible for you to search this database to determine what applications have been installed on the system and to see which packages have supplied each file on the system. This feature makes RPM-based systems extremely easy to use, since a single RPM command can be used to view all installed applications on the system."
+msgstr ""
+
+msgid "Package verification"
+msgstr ""
+
+msgid "RPM also maintains a variety of information about each installed file in this system database, such as what permissions each file should have and what size each file should be. Red Hat developers designed this database to be useful for software verification. Over time, installed software will fail to work for reasons as mundane as the system administrator setting incorrect permissions on files or as exotic as nuclear decay of one of the computer's atoms releasing an alpha particle that can affect the computer's memory, corrupting that bit of memory and causing errors. Although RPM cannot prevent all errors that cause installed software to fail (obviously, there's not a single thing any software can do to prevent nuclear decay), it can be used to eliminate common errors. When an application fails, you can use the RPM database to make sure that all files associated with that application still have correct Unix file permissions and that no files associated with that application have become altered or corrupted."
+msgstr ""
+
+msgid "Multiple architectures"
+msgstr ""
+
+msgid "Most of the RPM design goals mentioned so far are intended primarily to ease the life of system administrators and others who regularly install, remove, and upgrade applications or who need to see what is installed or verify that installed applications have been installed correctly. Some of the design goals for RPM are intended primarily not for those sorts of users of RPM but for users who must prepare software to be installed using RPM."
+msgstr ""
+
+msgid "One of the major limitations of early Linux package management utilities was that they could produce packages suitable only for installation on one type of computer: those that used 32-bit Intel-compatible CPUs. By 1994, Linux was beginning to support other CPUs in addition to the originally supported Intel CPUs. (Initially, Digital's Alpha processor and Motorola's 68000 series of processors were among the first additional CPUs that Linux supported. These days, Linux supports dozens of CPU architectures.) This posed a problem for distribution developers such as Red Hat and Debian, and for application vendors who desired to package their software for use on Linux. Because the available packaging methods could not produce packages for multiple architectures, packagers making software for multiple CPUs had to do extra work to prepare their packages."
+msgstr ""
+
+msgid "Furthermore, once the packagers had prepared packages, no method was available to indicate the architecture the packages targeted, making it difficult for end users to know on which machine types they could install the packages."
+msgstr ""
+
+msgid "Red Hat decided to overcome these limitations by incorporating architecture support into RPM, adding features so that the basic setup a packager performs to create a package could be leveraged to produce packages that would run on various CPUs, and so that end users could look at a package and immediately identify for which types of systems it was intended."
+msgstr ""
+
+msgid "Pristine sources"
+msgstr ""
+
+msgid "The BOGUS distribution's <command>pms</command> packaging system introduced the use of pristine source code to prepare packages. With Red Hat's early RPP package system and other similar early efforts, software packagers would compile software manually, then run commands to produce a package of that compiled software. Any changes made to the application's original source code were not recorded and would have to be recreated by the next person to package that software. Furthermore, end users wanting to know what changes had been made to the software they were running had no method of accessing that information."
+msgstr ""
+
+msgid "With RPM, Red Hat developed a package system that produced two types of packages: binary and source. Binary packages are compiled software that can be installed and used. Source packages contain the source code for that software, along with a file documenting how that source code must be compiled to produce that binary package. This feature is probably the single most significant difference between modern Linux packaging software (such as RPM) and the packaging software used on other systems (such as the pkg format that commercial Unix systems use). Source packaging makes the job of software packager easier, since packagers can use old source packages as a reference when preparing new versions of those packages. Source packages are also convenient for the end user, because they make it easily possible to change options with which that software was compiled and to produce a new binary package that supports the features the user needs."
+msgstr ""
+
+msgid "RPM Terminology"
+msgstr ""
+
+msgid "When working with RPM, understanding the package concept is key. RPM packages are provided as compressed archive files that contain one or more files, as well as instructions specifying installation information about those files, including the ownerships and permissions that should be applied to each file during installation. The instructions can also contain scripts to be run after installation or before uninstallation. These package files are extremely convenient; they provide a single file that can be easily transferred between machines for installation rather than having to transfer each file to be installed."
+msgstr ""
+
+msgid "To help in installation and management, all package files are labeled with highly identifiable names. Package files have four-part names, which typically look something like:"
+msgstr ""
+
+msgid "<filename>kernel-smp-2.6.32.9-3.i686.rpm</filename>"
+msgstr ""
+
+msgid "<filename>kernel-smp-2.6.32.9-3.x86_64.rpm</filename>"
+msgstr ""
+
+msgid "<filename>kernel-smp-2.6.32.9-3.ppc.rpm</filename>"
+msgstr ""
+
+msgid "<filename>rootfiles-7.2-1.noarch.rpm</filename>"
+msgstr ""
+
+msgid "Here, the four parts of each name are separated from each other by dashes or periods. The structure of the package file name is"
+msgstr ""
+
+msgid "<filename>name-version-release.architecture.rpm</filename>"
+msgstr ""
+
+msgid "The name identifies what software is contained within the archive file. Typically, this is a name of an application or package that the archive installs on the system. For example, <filename>kernel-smp</filename> can be installed to provide a very important application, the SMP (symmetric multiprocessing, meaning it supports systems with more than one CPU in them) version of the Linux kernel, on the system. Sometimes, rather than an application, the software is a collection of other files needed on the system. The <filename>rootfiles</filename> package, for example, is not an application but is a collection of basic environmental configuration files for the <systemitem class=\"username\">root</systemitem> user's account (such as <filename>/root/.bashrc</filename>, the <systemitem class=\"username\">root</systemitem> user's Bash configuration file) that provides a usable, preconfigured working environment for the <systemitem class=\"username\">root</systemitem> user."
+msgstr ""
+
+msgid "The second field in every package file's name is the version field. This field identifies the version number of the software that is contained in the package file. For example, <filename>kernel-smp-2.6.32.9</filename> indicates the RPM holds the 2.6.32.9 release of the SMP version of the Linux kernel, and <filename>rootfiles-7.2</filename> is the 7.2 release of the <filename>rootfiles</filename> configuration files."
+msgstr ""
+
+msgid "Every package file name also has a third component: the release field. This field identifies which release of that version of the software the package file contains. Package files contain both software and instructions about how to install that software. As packages of a particular version of software are being prepared, mistakes are sometimes made in these instruction files, or bugs are sometimes fixed within a software version; more recent package files of that software version need to be prepared that correct the problem. The –1 in the <filename>rootfiles-7.2-1</filename> package shows this is the first release of the 7.2 version of the <filename>rootfiles</filename> software. The packager of <filename>rootfiles</filename> version 7.2 got everything right on the first try and had no need to prepare more than one release. The –3 in the <filename>kernel-smp-2.6.32.9-3</filename> package, on the other hand, is the third release of the 2.6.32.9 version of the SMP-capable Linux kernel. This release incorporates new patches to fix bugs present in older releases of the 2.6.32.9 version of the Linux SMP kernel. The software packager increased the release number so that end users could distinguish the more recent, bug-fixed package file from the older, less bug-free package file."
+msgstr ""
+
+msgid "The final field in package file names is the architecture, which identifies the system types for which the package file is appropriate. For example, the <filename>kernel-smp-2.6.32.9-3.x86_64</filename> package is intended for use on machines with a 64-bit CPU, and <filename>kernel-smp-2.6.32-9-3.i686</filename> is intended for use on machines with an i686 (Pentium-class) CPU or better. An architecture name of noarch indicates this is a special architecture such that the files in the package work on any architecture. Typically, this is because the files are all interpreted scripts, not binary executables, or are documentation."
+msgstr ""
+
+msgid "RPM supports various architectures. Table 2-1 presents the architectures available for different platforms as of RPM version 4.7."
+msgstr ""
+
+msgid "Table 2-1 Supported Architectures"
+msgstr ""
+
+msgid "Platform"
+msgstr ""
+
+msgid "Architectures"
+msgstr ""
+
+msgid "Intel-compatible 32-bit"
+msgstr ""
+
+msgid "i386, i486, i586, i686, athlon, geode, pentium3, pentium4"
+msgstr ""
+
+msgid "Intel-compatible 64-bit"
+msgstr ""
+
+msgid "x86_64, amd64"
+msgstr ""
+
+msgid "Intel Itanium"
+msgstr ""
+
+msgid "ia64"
+msgstr ""
+
+msgid "HPAlpha (formerly Digital, Compaq)"
+msgstr ""
+
+msgid "alpha, alphaev5, alphaev56, alphapca56, alphaev6, alphaev67"
+msgstr ""
+
+msgid "Sparc/Ultra Sparc (Sun)"
+msgstr ""
+
+msgid "sparc, sparcv8, sparcv9, sparc64, sparc64v, sun4, sun4c, sun4d, sun4m, sun4u,"
+msgstr ""
+
+msgid "ARM"
+msgstr ""
+
+msgid "armv3l, armv4b, armv4l, armv5tel, armv5tejl, armv6l,armv7l"
+msgstr ""
+
+msgid "MIPS"
+msgstr ""
+
+msgid "mips, mipsel"
+msgstr ""
+
+msgid "Power PC"
+msgstr ""
+
+msgid "ppc, ppciseries, ppcpseries, ppc64, ppc8260, ppc8560, ppc32dy4"
+msgstr ""
+
+msgid "Motorola 68000 series"
+msgstr ""
+
+msgid "m68k, m68kmint, atarist, atariste, ataritt, falcon, atariclone, milan, hades"
+msgstr ""
+
+msgid "SGI MIPS"
+msgstr ""
+
+msgid "Sgi"
+msgstr ""
+
+msgid "IBM RS6000"
+msgstr ""
+
+msgid "rs6000"
+msgstr ""
+
+msgid "IBM S/390"
+msgstr ""
+
+msgid "i370, s390x, s390"
+msgstr ""
+
+msgid "Platform independent"
+msgstr ""
+
+msgid "noarch"
+msgstr ""
+
+msgid "Architecture Compatibility"
+msgstr ""
+
+msgid "When choosing an appropriate architecture for your machine, be aware that more recent architectures typically run software that targets older architectures within the same family; the reverse, however, is not true. For example, within the 32-bit Intel-compatible architectures, a 686-class (Pentium II / III / IV) machine runs files within i386, i486, i586, and i686 RPM package files, but a 386-class (80386) machine runs files within i386 RPM package files only. Similarly, for the Alpha architecture, more recent Alpha EV68 CPUs can run programs from RPM package files with alphaev67, alphaev6, alphaev56, alphaev5, and alpha architectures, but an older Alpha EV56 machine can run programs from RPM package files with alpha, alphaev5, or alphaev56 architectures only."
+msgstr ""
+
+msgid "Notice that the four fields in RPM package file names are separated from each other by punctuation, either a dash (-) or a period (.). Periods and dashes, however, are also allowed within fields. 7.2 is a valid version number, just as <filename>kernel-source</filename> is a valid software name. Finally, keep in mind that all RPM package files use an .rpm file-name extension to denote that they are RPMs."
+msgstr ""
+
+msgid "Once installed, package names are slightly different from package file names. Package files, which can be downloaded from the Internet, copied off of CDs, and otherwise easily transferred between machines, always have names that looks like name-version-release.architecture.rpm. Installed packages, however, have names that look like <filename>name-version-release</filename>. Once installed, packages are referred to without the architecture field and the .rpm extension. Furthermore, installed packages consist of lots of files, not a single RPM file. For example, the package file <filename>kernel-smp-2.6.32.9-3.i686.rpm</filename> after installation is referred to as <filename>kernel-smp-2.6.32.9-3</filename>. To simplify usage even further, installed packages can be referred to by their name field only, so this file would become simply <filename>kernel-smp</filename>."
+msgstr ""
+
+msgid "Software Names May Differ from Package Names"
+msgstr ""
+
+msgid "Once installed, the name of the package does not have to be the same as the name portion of the original package file. By convention though, the package name matches the name, version, and release part of the file name."
+msgstr ""
+
+msgid "Usage of the name field by itself to name packages assumes that multiple versions or releases of that particular software are not installed. However, it is in some cases necessary to install different versions or releases of the same package. My desktop at home is a 64-bit AMD system. On it, I have the following Linux kernels installed:"
+msgstr ""
+
+msgid "kernel-2.6.32.9-70.fc12"
+msgstr ""
+
+msgid "kernel-2.6.32.10-90.fc12"
+msgstr ""
+
+msgid "kernel-2.6.32.11-99.fc12"
+msgstr ""
+
+msgid "This example uses the <command>rpm <option>–q</option></command> command to query for all installed versions of the given package, <filename>kernel</filename>."
+msgstr ""
+
+msgid "The RPM Database"
+msgstr ""
+
+msgid "<xref linkend=\"ch-using-rpm-db\" /> covers querying the RPM database in depth."
+msgstr ""
+
+msgid "I have three different versions installed on this system. Since I have multiple packages installed of the <filename>kernel</filename> software, I have to use the full package name (such as <filename>kernel-2.6.32.11-99</filename>) whenever I want to work with my installed <filename>kernel</filename> packages."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "The RPM system wasn’t created to solve some theoretical problem. Instead, it is the result of years of hard-won practical experience in trying to manage systems with a large number of applications. RPM builds upon older systems that were created to solve some of the problems faced by system administrators. RPM goes further, though, and tries to provide a complete package-management solution. This includes the ability to deal with wrinkles that Linux faces but that many other operating systems do not need to address."
+msgstr ""
+
+msgid "For example, most other operating systems don’t support more than one or two processor architectures. Sun’s Solaris, for example, supports only the SPARC and Intel architectures. Linux supports these and more. Most other operating systems also don’t include nearly so many applications. From the Libre Office suite to the Apache Web server, Linux distributions are packed with applications. As a final point, most other operating systems provide mainly closed-source applications. Linux, on the other hand, includes thousands of open-source applications."
+msgstr ""
+
+msgid "From the perspective of the organizations making Linux distributions, these wrinkles make Linux harder to manage. Luckily for end users, the solution to these problems helps make the RPM system better able to manage user systems:"
+msgstr ""
+
+msgid "Supports Multiple Architectures &mdash; The RPM system tags each package with the processor architecture."
+msgstr ""
+
+msgid "Permits Multiple Software Versions in Parallel &mdash; RPM allows for multiple versions of the same package to be installed on the same system."
+msgstr ""
+
+msgid "One File Per Program &mdash; RPM packs all of the files in a package into one file, called an RPM file, for easy transfer to other systems."
+msgstr ""
+
+msgid "Requires Only One Command Per Action &mdash; Most RPM operations such as installing or removing packages require only a single command to run."
+msgstr ""
+
+msgid "Uses Pristine Sourcecode &mdash; The RPM system supports building RPM packages from a pristine set of sources. This means you can reproduce the commands required to build an application, improving quality."
+msgstr ""
+
+msgid "This chapter introduced the RPM system and the history behind it. The next chapter delves into the RPM basics, including files, database, and commands."
+msgstr ""
+

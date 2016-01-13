@@ -1,0 +1,667 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0\n"
+"POT-Creation-Date: 2016-01-13 23:19+0800\n"
+"PO-Revision-Date: 2016-01-13 23:19+0800\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: None\n"
+"Language: en-US \n"
+"MIME-Version: 1.0\n"
+"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Publican v4.3.2\n"
+
+msgid "Spec File Syntax"
+msgstr ""
+
+msgid "This appendix covers:"
+msgstr ""
+
+msgid "The package information tags"
+msgstr ""
+
+msgid "Build sections"
+msgstr ""
+
+msgid "The RPM spec file is divided into two main parts: the package information tags, such as the name of the package, and the build sections, such as the commands to compile the software."
+msgstr ""
+
+msgid "The following sections summarize the spec file syntax."
+msgstr ""
+
+msgid "Package Information Tags"
+msgstr ""
+
+msgid "The package information tags contain most of the header tags that you can query with the rpm command. First and foremost, this includes a name."
+msgstr ""
+
+msgid "The name-epoch-version-release tags, which form the NEVR used to identify packages, should all appear in your spec file, although you can skip the Epoch tag."
+msgstr ""
+
+msgid "Name: name"
+msgstr ""
+
+msgid "# Epoch: 1"
+msgstr ""
+
+msgid "Version: version_number"
+msgstr ""
+
+msgid "Release: package_release_number"
+msgstr ""
+
+msgid "The optional Epoch tag provides an ordering for the version numbers (replacing the deprecated Serial tag). Use this tag if RPM cannot figure out the ordering of which release comes after another."
+msgstr ""
+
+msgid "Epoch: 42"
+msgstr ""
+
+msgid "A number of tags allow you to define who made the package and under what conditions has the package been released:"
+msgstr ""
+
+msgid "Vendor: name_of_vendor"
+msgstr ""
+
+msgid "URL: URL_to_package_home"
+msgstr ""
+
+msgid "Copyright: package_copyright_message"
+msgstr ""
+
+msgid "Distribution: Linux_or_product_distribution"
+msgstr ""
+
+msgid "Packager: John Q. Smith &lt;john.smith@somecompany.yow&gt;"
+msgstr ""
+
+msgid "Group: group_for_categorizing_package"
+msgstr ""
+
+msgid "Use the Group tag to help users categorize your package."
+msgstr ""
+
+msgid "The Icon tag allows you to provide a desktop icon for the package:"
+msgstr ""
+
+msgid "Icon: filename.xpm"
+msgstr ""
+
+msgid "A one-line summary is essential to tell users what your package is for:"
+msgstr ""
+
+msgid "Summary: one_line_description_of_package"
+msgstr ""
+
+msgid "You should also include a longer description section, marked by %description:"
+msgstr ""
+
+msgid "%description"
+msgstr ""
+
+msgid "Tcsh is an enhanced but completely compatible version of csh, the C"
+msgstr ""
+
+msgid "shell. Tcsh is a command language interpreter which can be used both"
+msgstr ""
+
+msgid "as an interactive login shell and as a shell script command processor."
+msgstr ""
+
+msgid "Tcsh includes a command line editor, programmable word completion,"
+msgstr ""
+
+msgid "spelling correction, a history mechanism, job control and a C language"
+msgstr ""
+
+msgid "like syntax."
+msgstr ""
+
+msgid "In the description section, blank lines indicate paragraphs. Lines that start with a space are not formatted."
+msgstr ""
+
+msgid "Comments"
+msgstr ""
+
+msgid "To help document your work, you can include comments (to yourself and others reading the spec file). Any line starting with a hash character, #, holds a comment. RPM will ignore comments."
+msgstr ""
+
+msgid "# This is a comment."
+msgstr ""
+
+msgid "In spec files, comments are used mostly to help explain your syntax choices to yourself should you view the spec file later."
+msgstr ""
+
+msgid "Note"
+msgstr ""
+
+msgid "Avoid percent signs, %, in comments, which may get interpreted as RPM macros. See <xref linkend=\"ch-specfiles\" /> for details."
+msgstr ""
+
+msgid "Build settings"
+msgstr ""
+
+msgid "The BuildArchitectures tag names the architectures that a binary RPM will run on. See <xref linkend=\"ch-customizing-rpm\" /> for a description of the architecture settings. A special value of noarch indicates a package that is not dependent on a particular architecture, such as a Perl or Python script."
+msgstr ""
+
+msgid "The BuildPreReq tag lists any prerequisites for building. For example:"
+msgstr ""
+
+msgid "BuildPreReq: ncurses-devel"
+msgstr ""
+
+msgid "The Buildroot tag names the temporary directory in which to build the package. For example:"
+msgstr ""
+
+msgid "Buildroot: %{_tmppath}/%{name}-root"
+msgstr ""
+
+msgid "Dependency tags"
+msgstr ""
+
+msgid "Dependency tags define all the dependencies for the package, as described in <xref linkend=\"ch-dependencies\" /> ."
+msgstr ""
+
+msgid "For each dependency, you can specify a capability name alone. For example:"
+msgstr ""
+
+msgid "Provides: capability_name"
+msgstr ""
+
+msgid "You can also provide a particular version number or indicate that your package has a dependency on a version larger or smaller than a given number. For example:"
+msgstr ""
+
+msgid "Requires: capability_name &gt;= version_number"
+msgstr ""
+
+msgid "Requires: capability_name &lt;= version_number"
+msgstr ""
+
+msgid "Requires: capability_name &gt; version_number"
+msgstr ""
+
+msgid "Requires: capability_name &lt; version_number"
+msgstr ""
+
+msgid "Requires: capability_name == version_number"
+msgstr ""
+
+msgid "Requires: capability_name = version_number"
+msgstr ""
+
+msgid "The == and = act the same for dependencies. Both check for a version equal to the given number. You can provide multiple items, separated by commas. For example:"
+msgstr ""
+
+msgid "Requires: python &gt;= 1.3, perl"
+msgstr ""
+
+msgid "For add-on modules for interpreters, especially Perl, you can use the following syntax to define capabilities:"
+msgstr ""
+
+msgid "Provides: perl(MIME-Base64)"
+msgstr ""
+
+msgid "This example provides the MIME-Base64 add-on Perl module."
+msgstr ""
+
+msgid "You can also use or to specify more than one possibility. For example:"
+msgstr ""
+
+msgid "perl(IO-Wrap) == 4.5 or perl(IO-Wrap)-4.5"
+msgstr ""
+
+msgid "The Provides, Requires, Obsoletes, and Conflicts dependency tags all work the same for capability names and version numbers."
+msgstr ""
+
+msgid "You can also specify BuildRequires tags for capabilities necessary to build the package, not to install it. A BuildConflicts tag names capabilities that conflict for building, such as a particular version of the gcc C compiler."
+msgstr ""
+
+msgid "Source files"
+msgstr ""
+
+msgid "The source and patch tags identify the source files used to build the binary package. The patch tags identify any patches used to modify the sources."
+msgstr ""
+
+msgid "If you have more than one of a particular kind of tag, append a number. For example:"
+msgstr ""
+
+msgid "Source0: ftp://ftp.uk.linux.org/pub/linux/telnet-%{telnet_version}.tar.gz"
+msgstr ""
+
+msgid "Source2: telnet-client.tar.gz"
+msgstr ""
+
+msgid "Source3: telnet-xinetd"
+msgstr ""
+
+msgid "Source4: telnet.wmconfig"
+msgstr ""
+
+msgid "Patch1: telnet-client-cvs.patch"
+msgstr ""
+
+msgid "Patch5: telnetd-0.17.diff"
+msgstr ""
+
+msgid "Patch6: telnet-0.17-env.patch"
+msgstr ""
+
+msgid "Patch7: telnet-0.17-issue.patch"
+msgstr ""
+
+msgid "Patch8: telnet-0.17-sa-01-49.patch"
+msgstr ""
+
+msgid "Patch9: telnet-0.17-env-5x.patch"
+msgstr ""
+
+msgid "Patch10: telnet-0.17-pek.patch"
+msgstr ""
+
+msgid "Macros"
+msgstr ""
+
+msgid "You can define macros in your spec files to help control how the package gets built. The following section describes these macros."
+msgstr ""
+
+msgid "Variable definition macros"
+msgstr ""
+
+msgid "The %define macro allows you to define new macros from within your spec file. A common usage is to define top-level directories with %define macros at the top of a spec file and then reference these directories throughout the file. For example:"
+msgstr ""
+
+msgid "%define_bindir/bin"
+msgstr ""
+
+msgid "This allows you to change the setting in one place, which is very handy for directory paths used throughout your spec files."
+msgstr ""
+
+msgid "Cross Reference"
+msgstr ""
+
+msgid "See the section on Defining Macros in Spec Files in <xref linkend=\"ch-specfile-syntax\" /> for more on this subject."
+msgstr ""
+
+msgid "You can use this syntax for other things that may commonly change, such as version numbers. For example:"
+msgstr ""
+
+msgid "%define major 2"
+msgstr ""
+
+msgid "%define minor 2"
+msgstr ""
+
+msgid "%define patchlevel 7"
+msgstr ""
+
+msgid "Version: %{major}.%{minor}.%{patchlevel}"
+msgstr ""
+
+msgid "Table B-1 lists more special macros used within spec files."
+msgstr ""
+
+msgid "Table B-1 Special spec file macros"
+msgstr ""
+
+msgid "Macro"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+msgid "%dump"
+msgstr ""
+
+msgid "Prints out macro values"
+msgstr ""
+
+msgid "%{echo:message}"
+msgstr ""
+
+msgid "Prints message to stderr"
+msgstr ""
+
+msgid "%{error:message}"
+msgstr ""
+
+msgid "Prints message to stderr and returns BADSPEC"
+msgstr ""
+
+msgid "%{expand:expression}"
+msgstr ""
+
+msgid "Like eval, expands expression"
+msgstr ""
+
+msgid "%{F:file_exp}"
+msgstr ""
+
+msgid "Expands file_exp to a file name"
+msgstr ""
+
+msgid "%global name value"
+msgstr ""
+
+msgid "Defines a global macro"
+msgstr ""
+
+msgid "%{P:patch_exp}"
+msgstr ""
+
+msgid "Expands patch_exp to a patch file name"
+msgstr ""
+
+msgid "%{S:source_exp}"
+msgstr ""
+
+msgid "Expands source_exp to a source file name"
+msgstr ""
+
+msgid "%trace"
+msgstr ""
+
+msgid "Toggles the printing of debugging information"
+msgstr ""
+
+msgid "%{uncompress:filename}"
+msgstr ""
+
+msgid "Tests if file filename is compressed. If so, uncompresses and includes in the given context. If not compressed, calls cat to include file in given context."
+msgstr ""
+
+msgid "%undefine macro"
+msgstr ""
+
+msgid "Undefines the given macro"
+msgstr ""
+
+msgid "%{warn:message}"
+msgstr ""
+
+msgid "Conditional macros"
+msgstr ""
+
+msgid "You can use a special syntax to test for the existence of macros. For example:"
+msgstr ""
+
+msgid "%{?macro_to_test: expression}"
+msgstr ""
+
+msgid "This syntax tells RPM to expand the expression if macro_to_test exists, otherwise ignore. A leading exclamation point, !, tests for the non-existence of a macro:"
+msgstr ""
+
+msgid "%{!?macro_to_test: expression}"
+msgstr ""
+
+msgid "In this example, if the macro_to_test macro does not exist, then expand the expression."
+msgstr ""
+
+msgid "The %if macro performs an if test much like scripting languages. For example:"
+msgstr ""
+
+msgid "%if %{old_5x}"
+msgstr ""
+
+msgid "%define b5x 1"
+msgstr ""
+
+msgid "%undefine b6x"
+msgstr ""
+
+msgid "%endif"
+msgstr ""
+
+msgid "A %else allows you to specify what to do if the test is not successful. For example:"
+msgstr ""
+
+msgid "%else"
+msgstr ""
+
+msgid "%define b6x 1"
+msgstr ""
+
+msgid "%undefine b5x"
+msgstr ""
+
+msgid "Again, use an exclamation point to negate the test. For example:"
+msgstr ""
+
+msgid "%if ! %{old_5x}"
+msgstr ""
+
+msgid "You can use a &amp;&amp; for an and test. For example:"
+msgstr ""
+
+msgid "%if %{old_5x} &amp;&amp; %{old_6x}"
+msgstr ""
+
+msgid "%{error: You cannot build for .5x and .6x at the same time}"
+msgstr ""
+
+msgid "%quit"
+msgstr ""
+
+msgid "Built-in macros"
+msgstr ""
+
+msgid "The following macros are built into RPM and can help allow you to place your files in the right locations:"
+msgstr ""
+
+msgid "%_prefix /usr"
+msgstr ""
+
+msgid "%_exec_prefix %{_prefix}"
+msgstr ""
+
+msgid "%_bindir %{_exec_prefix}/bin"
+msgstr ""
+
+msgid "%_sbindir %{_exec_prefix}/sbin"
+msgstr ""
+
+msgid "%_libexecdir %{_exec_prefix}/libexec"
+msgstr ""
+
+msgid "%_datadir %{_prefix}/share"
+msgstr ""
+
+msgid "%_sysconfdir %{_prefix}/etc"
+msgstr ""
+
+msgid "%_sharedstatedir %{_prefix}/com"
+msgstr ""
+
+msgid "%_localstatedir %{_prefix}/var"
+msgstr ""
+
+msgid "%_libdir %{_exec_prefix}/lib"
+msgstr ""
+
+msgid "%_includedir %{_prefix}/include"
+msgstr ""
+
+msgid "%_oldincludedir /usr/include"
+msgstr ""
+
+msgid "%_infodir %{_prefix}/info"
+msgstr ""
+
+msgid "%_mandir %{_prefix}/man"
+msgstr ""
+
+msgid "Build Sections"
+msgstr ""
+
+msgid "After providing information about the package, you need to define the build stages, as described in <xref linkend=\"ch-specfiles\" /> and <xref linkend=\"ch-rpmbuild\" />."
+msgstr ""
+
+msgid "Build preparation"
+msgstr ""
+
+msgid "The build preparation section sets the stage for the build. Usually this section has a %setup command. For example:"
+msgstr ""
+
+msgid "%prep"
+msgstr ""
+
+msgid "%setup -q"
+msgstr ""
+
+msgid "Build"
+msgstr ""
+
+msgid "The build section describes how to build the library or application. In most cases, the majority of the instructions are in the Makefile created by the prep section, leaving a build section something like the following:"
+msgstr ""
+
+msgid "%build"
+msgstr ""
+
+msgid "%configure"
+msgstr ""
+
+msgid "make"
+msgstr ""
+
+msgid "Installation"
+msgstr ""
+
+msgid "After building, the installation section holds the commands to install the library or application. For example:"
+msgstr ""
+
+msgid "%install"
+msgstr ""
+
+msgid "rm -rf %{buildroot}"
+msgstr ""
+
+msgid "%makeinstall"
+msgstr ""
+
+msgid "Clean up"
+msgstr ""
+
+msgid "The clean up section usually calls the make clean command to clean up the built files. For example:"
+msgstr ""
+
+msgid "%clean"
+msgstr ""
+
+msgid "Install and uninstall scripts"
+msgstr ""
+
+msgid "RPM packages can run scripts prior to installation with %pre, and after installation with %post. You can also run scripts prior to an uninstall with %preun and after an uninstall with %postun. For example:"
+msgstr ""
+
+msgid "%post"
+msgstr ""
+
+msgid "/sbin/chkconfig --add ypbind"
+msgstr ""
+
+msgid "%preun"
+msgstr ""
+
+msgid "if [ \"$1\" = 0 ] ; then"
+msgstr ""
+
+msgid "/sbin/service ypbind stop &gt; /dev/null 2&gt;&amp;1"
+msgstr ""
+
+msgid "/sbin/chkconfig --del ypbind"
+msgstr ""
+
+msgid "fi"
+msgstr ""
+
+msgid "exit 0"
+msgstr ""
+
+msgid "%postun"
+msgstr ""
+
+msgid "if [ \"$1\" -ge 1 ]; then"
+msgstr ""
+
+msgid "/sbin/service ypbind condrestart &gt; /dev/null 2&gt;&amp;1"
+msgstr ""
+
+msgid "File Tags"
+msgstr ""
+
+msgid "The %files tag lists the files your package should install. For example:"
+msgstr ""
+
+msgid "%files"
+msgstr ""
+
+msgid "%defattr(-,root,root)"
+msgstr ""
+
+msgid "/usr/X11R6/bin/xtoolwait"
+msgstr ""
+
+msgid "/usr/X11R6/man/man1/xtoolwait.*"
+msgstr ""
+
+msgid "You should mark configuration and documentation files with %config and %doc, respectively. For example:"
+msgstr ""
+
+msgid "/sbin/ypbind"
+msgstr ""
+
+msgid "%{_mandir}/*/*"
+msgstr ""
+
+msgid "%config /etc/rc.d/init.d/*"
+msgstr ""
+
+msgid "%config /etc/yp.conf"
+msgstr ""
+
+msgid "%dir /var/yp"
+msgstr ""
+
+msgid "%dir /var/yp/binding"
+msgstr ""
+
+msgid "%doc README NEWS"
+msgstr ""
+
+msgid "Making relocatable packages"
+msgstr ""
+
+msgid "You can make a relocatable package by setting up one or more Prefix tags. For example:"
+msgstr ""
+
+msgid "Prefix: /usr"
+msgstr ""
+
+msgid "Prefix: /etc"
+msgstr ""
+
+msgid "Each file in the %files section must then start with one of the prefixes you provided. With this, installers can easily relocate the package with a command like the following:"
+msgstr ""
+
+msgid "# rpm --relocate /etc=/usr/etc file_name.rpm"
+msgstr ""
+
+msgid "The Change Log"
+msgstr ""
+
+msgid "The change log usually appears at the end of a spec file. It holds messages for each significant change. For example:"
+msgstr ""
+
+msgid "%changelog"
+msgstr ""
+
+msgid "* Fri Jun 21 2002 Bob Marley &lt;marley@redhat.com&gt;"
+msgstr ""
+
+msgid "- automated rebuild"
+msgstr ""
+
+msgid "* Tue May 08 2001 Peter Tosh &lt;tosh@redhat.com&gt; 1.3-1"
+msgstr ""
+
+msgid "- updated to 1.3"
+msgstr ""
+
