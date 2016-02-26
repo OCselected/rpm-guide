@@ -2,53 +2,54 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0\n"
 "POT-Creation-Date: 2016-01-13 23:19+0800\n"
-"PO-Revision-Date: 2016-01-13 23:19+0800\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: None\n"
-"Language: en-US \n"
+"PO-Revision-Date: 2016-02-26 23:25+0800\n"
+"Last-Translator: 适兕 <lijiangsheng1@gmail.com>\n"
+"Language-Team: ocselected <lijiansheng@ocselected.org>\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
-"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Publican v4.3.2\n"
+"X-Generator: Poedit 1.8.6\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "Introducing Package Management"
-msgstr ""
+msgstr "包管理介绍"
 
 msgid "This chapter covers:"
-msgstr ""
+msgstr "本章覆盖内容："
 
 msgid "Issues in software management"
-msgstr ""
+msgstr "软件管理中的问题"
 
 msgid "Examining Linux management tools"
-msgstr ""
+msgstr "检验Linux管理工具"
 
 msgid "Introducing the package concept"
-msgstr ""
+msgstr "介绍软件包的概念"
 
 msgid "In 1991, a young Finnish graduate student started a new personal hobby. He had acquired an Intel 386 computer and had spent a few weeks exploring it and playing early PC computer games. Eventually, however, he grew bored with the limitations of the MS-DOS environment that had come with his toy and decided that he wanted an operating system for it that he could use more productively. After exploring Minix, a feature-limited teaching operating system, he decided he needed a full-featured OS."
-msgstr ""
+msgstr "让我们将时间拨回到1991年，一名还没有毕业的在校大学生开始了他的个人爱好之旅。他买了一台Intel 386的计算机，并花了几周的时间捣鼓它，还玩了玩早期的电脑游戏。渐渐的他就开始厌恶起运行在这台计算机上的操作系统－MS-DOS了，太多的限制让他无法尽兴，于是想找一个能够更加高效的操作系统。于是，他开始尝试Minix，但Minix是一个用于教学的缺乏许多特性的操作系统，然而，这名学生意识到自己需要一个完完整整的操作系统。"
 
 msgid "At that time, no full-featured PC operating systems were freely available, so he decided to write his own operating system. Today, that small hobby OS that Linus Torvalds started almost as a whim has become Linux, a significant new variant of Unix that runs millions of the world's network servers and, increasingly, desktop computers and embedded processors."
-msgstr ""
+msgstr "但那是1991年，没有一个完全免费的功能齐全的操作系统在市面上存在，所以他决定写一个他自己的操作系统。今天，这个当年学生的个人爱好的操作系统－Linux，一个久经检验的Unix变种，运行在世界上成千上万台网络服务器上，以及桌面电脑和嵌入式设备，而那名学生的名字叫做－Linux Torvald。"
 
 msgid "Linux has grown up, successfully making the transition from a one-man personal project to a functional, full-featured operating system used by many of the world's major corporations and deployed on millions of corporate and personal systems. Along the way, Linux has had to address many of the same issues any new operating system must face. One of these concerns is how software for Linux, and how the Linux operating system itself, should be installed. How can administrators safely remove software packages without affecting other installed packages? And how can you safely upgrade packages? Answering these questions is what this book is all about."
-msgstr ""
+msgstr "Linux在逐渐的壮大，已经从一个纯粹是个人爱好的项目转变为完整功能的操作系统，而且被用于这个世界上大多数的商业公司，基于其之上开发了成千上万的商业和个人系统。但无论怎么样，Linux也面临像很多操作系统同样面对的问题，其中之一就是如何管理Linux下的软件，以及Linux操作系统本身该如何安装？管理员如何才能够安全的删除一个软件包而不会影响到其它已经安装好的软件包？以及如何安全的更新软件包？这也就是本书要回答的问题。"
 
 msgid "Installing, Removing, and Upgrading Applications"
-msgstr ""
+msgstr "安装、删除、以及更新应用程序"
 
 msgid "Applications for most operating systems consist of multiple files that must be copied to specific locations on the computer's file system before each application can be run. This is true for common PC operating systems such as MS-DOS or Microsoft Windows, as well as for Unix and Linux."
-msgstr ""
+msgstr "绝大多数操作系统的应用程序，在运行之前，必须将其所包含的多个文件复制到计算机文件系统中特定的位置。这适用于常见的PC操作系统，如MS－DOS、微软的Windows，以及Unix和Linux。"
 
 msgid "In the case of a Unix-like operating system such as Linux, other issues must also be considered. Unix and Linux are multiple-user systems, so they must track ownership of files. Furthermore, Unix and Linux use a system of file permissions. Administrators can grant some users access to files and can control how users may access those files, for example, allowing some users the permission to read only certain files. Administrators can deny other users access to the same files. So, installation of an application on Linux requires consideration of all these details. After files are copied into their appropriate locations, they must be granted correct permissions and correct ownerships."
-msgstr ""
+msgstr "其中的例子正如Linux这样的类Unix操作系统，其它问题也必须被覆盖到。Unix和Linux均是多用户系统，所以它们必须追踪属主是自己的那些文件。更进一步讲，Unix和Linux还用到了文件的权限。管理员用户可以讲文件的一些权限赋予给用户，而且还能够做到控制用户如何访问这些文件，举例来说，允许某些用户对特定文件只能是只读方式访问。管理员还可以禁止其它用户访问某个文件。所以，在Linux下安装应用需要考虑所有的这些细节。在文件复制到其相应的位置之后，它们必须被赋予正确的权限和属主。"
 
 msgid "Similarly, administrators occasionally need to remove installed software from the computer. Maybe the program is no longer needed; maybe it does not work correctly for the needed task, or maybe the space it is using is needed for more important programs. In addition, installed software sometimes needs to be upgraded. Perhaps a new version of the software has come out and the currently installed version needs to be replaced with the presumably improved version. In most respects, software upgrades are the same as the removal of one application (the old version), followed by installation of another application (the new version). Upgrades do, however, have additional issues. Many applications must be configured before they can be used. Ideally, the upgrade for an installed application takes the current configuration into account, preserving old configuration information and applying it to the recently installed version."
-msgstr ""
+msgstr "类似的情况还有管理员偶尔会需要去从电脑上删除已经安装的软件。原因或许是不在需要这些程序了、也可能是并不能满足自己的需求、又或者是需要为更为重要的程序腾出一些空间等等。还有，已经安装的软件大多数时候是需要升级更新的，一款软件有了新的版本释出，当前所安装的版本需要被改进的版本所替代。在多数情况下，软件的更新等同于删除一个应用（旧版本），然后紧接着安装另外一个新的应用（新版本）。但是更新还要额外做一些事情，很多应用在使用之前都需要做配置，理想的情况下，升级已安装的应用会讲当前的配置导入账户，做到保留旧的配置信息且可应用到最近安装到版本。"
 
 msgid "All these considerations make installation of a new application onto Unix or Linux a labor-intensive process. To further complicate matters, Unix applications have primarily been distributed as source code. To install a new application, such as the Apache Web server, you download the source code for that application—in this case, from the Apache Project's Web page (<ulink url=\"http://httpd.apache.org\" />). Typically, the source code is provided in some sort of archive (such as the Zip archival and compression format often used in the Windows world or the tar archive format typically used in the Unix world) that you must then unpack. After unpacking this source code, you have to configure it to support the options and systems you want, compiling it to produce an executable program that can run on your particular operating system (CPU combination)."
-msgstr ""
+msgstr "为Unix或Linux安装一个新的应用考虑到所有这些那是一个非常繁琐的过程。让问题更加复杂的还有，Unix的应用还以源代码的形势分发的。要安装一个新的应用，比如以Apache Web 服务器为例，用户首先要下载应用的源代码－－比如从Apache的官网(<ulink url=\"http://httpd.apache.org\" />)。通常情况下，源代码是以某种归档文件的形式来提供的（诸如Zip归档和压缩格式通常是Windows所使用的，而Unix则通畅为tar归档格式），用户须将此解压开。在解压之后，进入源代码目录，开始配置所支持的属性以及用户希望的属性，然后编译它，最后生成可执行的程序，且可以运行在用户所在的操作系统下（CPU 组合）。"
 
 msgid "After compiling the source code, you still have to install the application by putting all of its components (executable programs, documentation, configuration files, and so forth) into the correct locations on your hard drive and setting correct permissions on all those files. You might also need to perform other steps to prepare the system for the software. In the case of Apache, for example, some space needs to be set aside for storage of Web-access logs, and a special user account needs to be created so that the Apache Web server can operate more securely. Finally, you are ready to try running the application you have spent so much time installing."
 msgstr ""
@@ -57,19 +58,19 @@ msgid "To help with all these tasks, precompiled software is becoming increasing
 msgstr ""
 
 msgid "When you run your newly installed application, you might be thrilled, perhaps discovering that it is something you want to use regularly. On the other hand, you might discover that you have no use for the software you have just installed, deciding that you want to uninstall it."
-msgstr ""
+msgstr "当用户运行自己新安装好的应用时，也许会感到兴奋，也许发现了一些不同寻常的东西。但事情总是有其不好的一面，用户也可能会发现自己所安装的应用一无是处，那么就会决定卸载它。"
 
 msgid "Uninstallation occurs by reversing the installation steps. Remember any special steps you have performed (such as adding a user account), and undo those. Then remember all the files you have installed and where you have installed them. Manually delete them. As you can see, this can become a pretty tedious exercise."
-msgstr ""
+msgstr "卸载应用是安装过程的逆向动作。要记住你执行的所有特定的步骤（诸如添加一个用户账户），因为在卸载过程中要撤销这些。然后要记得你所安装的所有文件以及它们的位置，因为这需要你手动的去删除它们。呵呵，正如你说看到的，这绝对是一个单调、无聊、乏味的过程。"
 
 msgid "If you like the application you have installed, you will likely find yourself wanting to upgrade it eventually. The Apache Web server, for example, like any network service, must be upgraded whenever security problems are found and fixed. If you find that you need to upgrade Apache, you need to back up your Apache configuration files and then uninstall Apache. The next step is to install a new version of Apache, applying your Apache-configuration customizations to your new installation of Apache."
-msgstr ""
+msgstr "如果你对自己所安装的应用特别钟爱，那么你就得对它悉心照顾，也就是意味着要频繁的更新它。举例来说，你安装的应用时Apache Web服务，和多数网络服务一样，必须随时的更新那些已经发现并修复的安全漏洞。这时你更新Apache时，需要做的是，先备份你的Apache配置文件，然后卸载Apache。接下来的步骤就是安装新版本的Apache，然后为你新安装的版本应用原来所定制的配置信息。"
 
 msgid "All of this is a big pain. There has to be a better way. And there is."
-msgstr ""
+msgstr "所有的这些都是大的痛点。没有最好，只有更好的解决办法。"
 
 msgid "Overcoming the Installation Obstacles"
-msgstr ""
+msgstr "克服安装障碍"
 
 msgid "None of the tasks you must perform to install, upgrade, or uninstall applications are especially difficult. However, these steps quickly become daunting when you consider all the files that must be managed. A full Fedora installation provides around 3,000 executable commands and over 160,000 total files (some other Linux distributions are even larger!). Obviously, managing all these files by hand, although theoretically possible, is not technically feasible. On a smaller scale, even management of single applications is not practical. The Postfix e-mail server application, for example, consists of around 275 files scattered in a dozen or so different directories. Imagine trying to remember and manually remove all of those files (and only those files) to uninstall Postfix from your system!"
 msgstr ""
@@ -78,7 +79,7 @@ msgid "All the steps needed to manage software on Unix or Linux systems are hard
 msgstr ""
 
 msgid "Application-level utilities"
-msgstr ""
+msgstr "应用程序级别的工具"
 
 msgid "Some operating systems, such as MS-DOS, have supplied absolutely no built-in tools for software management. Installation of applications on such systems occurs in one of two ways: software is installed manually, using file-copy utilities to put all the application files in the appropriate places on the system, or software is installed using a custom-written installation application (as is usually the case for MS-DOS applications)."
 msgstr ""
@@ -87,13 +88,13 @@ msgid "Once installed, software can be uninstalled in one of two ways: you can m
 msgstr ""
 
 msgid "Current Windows Versions"
-msgstr ""
+msgstr "当前的Windows版本"
 
 msgid "Current versions of Windows, such as Windows XP, have a central database of installed applications."
-msgstr ""
+msgstr "当前版本的Windows，如 Windows XP，拥有一个已安装应用程序的中心数据库。"
 
 msgid "Built-in system utilities"
-msgstr ""
+msgstr "系统内置工具"
 
 msgid "Other operating systems have come with built-in utilities that a system administrator can use to manage the system’s software. These utilities can be run to install the software on the system; typically, they take some of the work out of manually installing software, dealing with issues such as figuring out which files need to be put where on the system. Once installed, these utilities typically track the files that have been installed. This knowledge can usually be used to uninstall those applications automatically. Since the software knows which files are associated with the application, it can be told to uninstall the application, and it can find and delete all the files that belong to that application."
 msgstr ""
@@ -105,7 +106,7 @@ msgid "The ports system is composed of extensions to the normal Unix software-co
 msgstr ""
 
 msgid "Other system-management utilities focus less attention on compiling an application for installation and more attention on the files that must be installed on the system after the application has been compiled."
-msgstr ""
+msgstr "其它的系统管理套件则较少聚焦于针对一个应用去编译它，而是更多的去关注应用被编译完成之后的必须安装的文件。"
 
 msgid "For example, the standard System V Unix package-management software supplied with most commercial Unix systems (Sun's Solaris, for example) devotes no attention to management of software compilation at all. Instead, it tracks the individual files associated with each application in a system database."
 msgstr ""
@@ -117,13 +118,13 @@ msgid "Such a system offers several advantages over manual software installation
 msgstr ""
 
 msgid "Linux Software Management Tools: Packages"
-msgstr ""
+msgstr "Linux软件管理工具：包"
 
 msgid "Initially, Linux had neither type of software-management tool. In the early days of Linux, you installed Linux by cross-compiling it under a different operating system (Minix), then manually installing the compiled Linux programs into the appropriate locations to produce a working system. As Linux has matured, however, it has acquired software-management tools that have made software installation, removal, and upgrade significantly easier than in the early days. The exact software-management tool used on modern Linux systems varies from distribution to distribution, but both approaches to system management can be found in the tools used by various distributions."
 msgstr ""
 
 msgid "The Gentoo Linux (<ulink url=\"http://www.gentoo.org/\" />) distribution, for example, uses a software-management system called Portage, which is very similar to the FreeBSD ports system. Like ports, Portage provides great control over software compilation and installation, providing a collection of scripts that automate much of the basic work of downloading and compiling software."
-msgstr ""
+msgstr "举例来说，如Gentoo Linux(<ulink url=\"http://www.gentoo.org/\" />) 发行版，使用的软件管理系统称作Portage，此系统和FreeBSD的Ports系统非常的相似。类似ports，Portage能够提供对软件编译和安装强大的控制能力，以及一组高度自动化的脚本来下载和编译软件。"
 
 msgid "At the other end of the spectrum, the now-defunct deepLinux distribution used a software-management system called <command>deep-package</command>. <command>deep-package</command> was intended to be a complete reimplementation of the Solaris <command>pkgadd</command> utility and its helpers. Like the Solaris <command>pkgadd</command> software, <command>deep-package</command> paid no attention to half of the question of how to manage software, focusing entirely on software installation and tracking issues while entirely ignoring the initial compilation of the software."
 msgstr ""
@@ -144,50 +145,49 @@ msgid "A wide variety of software-management tools are available for Linux to he
 msgstr ""
 
 msgid "Change of Name"
-msgstr ""
+msgstr "名称的变化"
 
 msgid "RPM was originally called Red Hat Package Manager. After adoption by other Linux distributions, the name has changed to simply the RPM Package Manager. The RPM initials remain the same."
-msgstr ""
+msgstr "RPM最初是叫做Red Hat 包管理器。在其它一些Linux发行版也采用RPM之后，名称就变为简单的RPM包管理器。一种递归式的命名方式。"
 
 msgid "As the original name implies, RPM was developed by Red Hat, Inc., the major Linux distributor in the United States. Even though the original name seems to point to a Red Hat-only solution, many Linux distributions use the RPM software. The RPM software provides a foundation needed by Linux system administrators throughout the world. You can even use RPM on other operating systems, both Linux and non-Linux, as covered in <xref linkend=\"ch-other-linuxes\" /> and <xref linkend=\"ch-other-os\" />, respectively."
-msgstr ""
+msgstr "正如原来名称所展示的，RPM是由红帽公司所开发的，红帽当然是目前美国主要的Linux版本了。尽管原来的名称所指是仅红帽而言的，但是很多的Linux发行版也使用了RPM软件本身。RPM软件为Linux系统管理员提供了所需要的基础需求。用户甚至也可以在其它的操作系统中使用RPM，无论是Linux还是非Linux，请移步<xref linkend=\"ch-other-linuxes\" /> 和 <xref linkend=\"ch-other-os\" />。"
 
 msgid "The RPM system provides all of the features needed to manage applications, including a database of installed packages with their version numbers, the ability to install, remove, and update packages, and the ability to recompile an application from a source code RPM package."
-msgstr ""
+msgstr "RPM系统提供了管理应用程序所有需要的特性，包括所安装软件包及其版本号的数据库、可以安装、删除和更新软件包、拥有从源代码的RPM软件包重新编译的能力。"
 
 msgid "The remaining chapters in Part I go into depth on what you can do with RPM packages and the commands you need to work with the RPM system:"
-msgstr ""
+msgstr "第一部分的接下来的几章会逐渐的深入到RPM软件可以做什么，以及用户工作在RPM系统之下需要的命令行："
 
 msgid "<xref linkend=\"ch-intro-rpm\" /> provides an overview of the RPM system, exploring what it was designed for and where it has weaknesses."
-msgstr ""
+msgstr "<xref linkend=\"ch-intro-rpm\" /> 提供了RPM系统的概览，过了一遍它是为何而设计以及有何弱点。"
 
 msgid "<xref linkend=\"ch-rpm-overview\" /> discusses the technical details of how the RPM system works, where the database of packages gets stored, and what commands should be available for working with RPM packages."
-msgstr ""
+msgstr "<xref linkend=\"ch-rpm-overview\" /> 则讨论了RPM系统是如何工作的技术细节，包的信息往数据库哪里存储，以及让RPM包能够正常工作的命令是什么。"
 
 msgid "<xref linkend=\"ch-using-rpm\" /> continues the discussion by covering the three major tasks you need to perform with RPM packages: installing software, removing software, and upgrading software you have already installed."
-msgstr ""
+msgstr "<xref linkend=\"ch-using-rpm\" /> 继续讨论执行RPM包的三个主要任务：安装软件、删除软件、以及更新已经安装的软件到新的版本。"
 
 msgid "<xref linkend=\"ch-using-rpm-db\" /> covers the RPM database, how it works, where it resides, and how you can use it to better manage your system."
-msgstr ""
+msgstr "<xref linkend=\"ch-using-rpm-db\" /> 讲述了RPM 数据库，其是如何工作的，位于何处，以及你如何才能够使用它来更好的管理你的系统。"
 
 msgid "<xref linkend=\"ch-dependencies\" /> delves into package dependencies, a very important concept. Most major applications depend on a number of other packages. Sometimes these dependencies get very complex, with one package depending on particular versions of other packages. With thousands of packages on your system, this can lead to a big mess. This chapter helps you to sort through the issues."
-msgstr ""
+msgstr "<xref linkend=\"ch-dependencies\" /> 讲述了一个非常重要的概念，那就是软件包的依赖。大多数的主流应用都会依赖一些其它的软件包。有的时候这些依赖会非常的复杂，比如一个包依赖一个系列的其它的包。当系统拥有上万个软件包的时候，这会导致非常错综复杂的局面。这章将会帮助读者解决此问题。"
 
 msgid "<xref linkend=\"ch-transactions\" /> covers the important issue of transactions, so that you can ensure your system gets updated in an orderly manner and so that you can roll back changes if something does not work out."
-msgstr ""
+msgstr "<xref linkend=\"ch-transactions\" /> 涵盖了关于transactions这一重要主题，了解了这一概念后，用户可以确保自己的系统更新是有顺序的而且如果更新出现问题还可以回滚。"
 
 msgid "<xref linkend=\"ch-management-software\" /> introduces a host of tools that can help you find RPM packages as well as manage the packages on your system. This includes graphical interfaces on top of the RPM system and special Internet search sites devoted just to RPM packages."
-msgstr ""
+msgstr "<xref linkend=\"ch-management-software\" /> 介绍了RPM的一些本地工具，可以帮助用户查找RPM软件包以及管理它们。包括了构建在RPM系统之上的图形界面以及特定的网上搜索指南。"
 
 msgid "Later chapters cover creating RPM packages, programming with RPM, and extending the functionality provided by the base RPM system."
-msgstr ""
+msgstr "最后一章则涵盖了创建RPM包、基于RPM编程、以及基于RPM系统所提供的去扩展它的功能。"
 
 msgid "Summary"
-msgstr ""
+msgstr "总结"
 
 msgid "Modern operating systems have large complex sets of applications, resulting in thousands of files to keep track of for upgrades, installation, and removal of packages. All this complexity has lead Linux vendors to develop a variety of package-management tools."
-msgstr ""
+msgstr "现在操作系统均拥有大量复杂的应用程序集，这就导致需要追踪成千上万个文件，从而进行更新、安装和删除软件包。所有的这些复杂性导致Linux各个发行商开发了各种各样的包管理工具。"
 
 msgid "This chapter briefly introduced the RPM Package Manager, or RPM for short. The next chapter provides an overview of the RPM system, showing how all the parts fit together."
-msgstr ""
-
+msgstr "本章简要的介绍了RPM包管理器，简短的说就是RPM。下一章将介绍RPM系统概览，展示各个部分是如何一起工作的。"

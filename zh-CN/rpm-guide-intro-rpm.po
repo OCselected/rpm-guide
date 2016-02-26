@@ -2,29 +2,29 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0\n"
 "POT-Creation-Date: 2016-01-13 23:19+0800\n"
-"PO-Revision-Date: 2016-01-13 23:19+0800\n"
-"Last-Translator: Automatically generated\n"
+"PO-Revision-Date: 2016-01-14 14:04+0800\n"
+"Last-Translator: 适兕 <lijiangsheng1@gmail.com>\n"
 "Language-Team: None\n"
-"Language: en-US \n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
-"Content-Type: application/x-publican; charset=UTF-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Publican v4.3.2\n"
+"X-Generator: Poedit 1.8.6\n"
 
 msgid "Introduction to RPM"
-msgstr ""
+msgstr "RPM介绍"
 
 msgid "This chapter covers:"
-msgstr ""
+msgstr "本章涵盖内容："
 
 msgid "Examining the history of package management"
-msgstr ""
+msgstr "回顾包管理的历史"
 
 msgid "Introducing RPM features"
-msgstr ""
+msgstr "介绍RPM的特性"
 
 msgid "Getting acquainted with RPM terminology"
-msgstr ""
+msgstr "熟悉RPM的术语"
 
 msgid "Several package managers are available for Linux to track and manipulate the applications installed on the system. The most widely used of these Linux package managers is the RPM Package Manager (formerly the Red Hat Package Manager), or RPM for short, the subject of this book"
 msgstr ""
@@ -75,7 +75,7 @@ msgid "In late 1993, Rik Faith, Doug Hoffman, and Kevin Martin began releasing t
 msgstr ""
 
 msgid "RPM Design Goals"
-msgstr ""
+msgstr "RPM设计的目标"
 
 msgid "All of these early system-management tools took a similar approach. They provided the capability to install an entire application with a single command, to track the files it put on the system, and to remove those files by using another single command. As the preponderance of multiple early tools suggests, this approach to system management was popular. All of these early tools, however, had numerous technical or practical deficiencies. Some tools were designed only for Linux on 32-bit Intel-compatible hardware, even though Linux by this point was already running on other CPUs in addition to the IA32 family. As Linux was spreading to multiple architectures, a package-management system that could produce packages for multiple architectures was needed. Other tools had technical flaws in how they prepared packages, making it difficult to verify that packages had been prepared correctly or to see exactly how the software was prepared."
 msgstr ""
@@ -84,25 +84,25 @@ msgid "Because of these concerns, after their initial releases of RPP-based dist
 msgstr ""
 
 msgid "Ease of use"
-msgstr ""
+msgstr "容易使用"
 
 msgid "Package-oriented focus"
-msgstr ""
+msgstr "仅针对包"
 
 msgid "Upgradability of packages"
-msgstr ""
+msgstr "可升级的包"
 
 msgid "Tracking of package interdependencies"
-msgstr ""
+msgstr "跟踪包的依赖"
 
 msgid "Query capabilities"
-msgstr ""
+msgstr "检索的能力"
 
 msgid "Verification"
-msgstr ""
+msgstr "验证"
 
 msgid "Support for multiple architectures"
-msgstr ""
+msgstr "支持多种架构"
 
 msgid "Use of pristine sources"
 msgstr ""
@@ -114,22 +114,22 @@ msgid "Perhaps the primary design goal for RPM is that it must be easy to use. M
 msgstr ""
 
 msgid "<command>tar zxf <replaceable>software_package</replaceable></command>"
-msgstr ""
+msgstr "<command>tar dxf <replaceable>software_package</replaceable></command>"
 
 msgid "<command>cd <replaceable>software_package</replaceable></command>"
-msgstr ""
+msgstr "<command>cd <replaceable>software_package</replaceable></command>"
 
 msgid "<command>./configure</command>"
-msgstr ""
+msgstr "<command>./configure</command>"
 
 msgid "<command>make</command>"
-msgstr ""
+msgstr "<command>make</command>"
 
 msgid "<command>su</command>"
-msgstr ""
+msgstr "<command>su</command>"
 
 msgid "<command>make install</command>"
-msgstr ""
+msgstr "<command>make install</command>"
 
 msgid "Similarly, removal of applications installed using RPM requires a single command (<userinput>rpm -e <replaceable>software_package</replaceable></userinput>); manual removal of an installed application requires that each file associated with that application be manually deleted."
 msgstr ""
@@ -240,91 +240,91 @@ msgid "RPM supports various architectures. Table 2-1 presents the architectures 
 msgstr ""
 
 msgid "Table 2-1 Supported Architectures"
-msgstr ""
+msgstr "表 2-1 所支持的架构"
 
 msgid "Platform"
-msgstr ""
+msgstr "平台"
 
 msgid "Architectures"
-msgstr ""
+msgstr "架构"
 
 msgid "Intel-compatible 32-bit"
-msgstr ""
+msgstr "Intel-compatible 32-bit"
 
 msgid "i386, i486, i586, i686, athlon, geode, pentium3, pentium4"
-msgstr ""
+msgstr "i386, i486, i586, i686, athlon, geode, pentium3, pentium4"
 
 msgid "Intel-compatible 64-bit"
-msgstr ""
+msgstr "Intel-compatible 64-bit"
 
 msgid "x86_64, amd64"
-msgstr ""
+msgstr "x86_64, amd64"
 
 msgid "Intel Itanium"
-msgstr ""
+msgstr "Intel Itanium"
 
 msgid "ia64"
-msgstr ""
+msgstr "ia64"
 
 msgid "HPAlpha (formerly Digital, Compaq)"
-msgstr ""
+msgstr "HPAlpha (formerly Digital, Compaq)"
 
 msgid "alpha, alphaev5, alphaev56, alphapca56, alphaev6, alphaev67"
-msgstr ""
+msgstr "alpha, alphaev5, alphaev56, alphapca56, alphaev6, alphaev67"
 
 msgid "Sparc/Ultra Sparc (Sun)"
-msgstr ""
+msgstr "Sparc/Ultra Sparc (Sun)"
 
 msgid "sparc, sparcv8, sparcv9, sparc64, sparc64v, sun4, sun4c, sun4d, sun4m, sun4u,"
-msgstr ""
+msgstr "spare, sparcv8, sparcv9, sparc64, sparc64v, sun4, sun4c, sun4d, sun4m, sun4u,"
 
 msgid "ARM"
-msgstr ""
+msgstr "ARM"
 
 msgid "armv3l, armv4b, armv4l, armv5tel, armv5tejl, armv6l,armv7l"
-msgstr ""
+msgstr "armv3l, armv4b, armv4l, armv5tel, armv5tejl, armv6l,armv7l"
 
 msgid "MIPS"
-msgstr ""
+msgstr "MIPS"
 
 msgid "mips, mipsel"
-msgstr ""
+msgstr "mips, mipsel"
 
 msgid "Power PC"
-msgstr ""
+msgstr "Power PC"
 
 msgid "ppc, ppciseries, ppcpseries, ppc64, ppc8260, ppc8560, ppc32dy4"
-msgstr ""
+msgstr "ppc, ppciseries, ppcpseries, ppc64, ppc8260, ppc8560, ppc32dy4"
 
 msgid "Motorola 68000 series"
-msgstr ""
+msgstr "Motorola 68000 series"
 
 msgid "m68k, m68kmint, atarist, atariste, ataritt, falcon, atariclone, milan, hades"
-msgstr ""
+msgstr "m68k, m68kmint, atavist, atavist, ataritt, falcon, atariclone, milan, hades"
 
 msgid "SGI MIPS"
-msgstr ""
+msgstr "SGI MIPS"
 
 msgid "Sgi"
-msgstr ""
+msgstr "Sgi"
 
 msgid "IBM RS6000"
-msgstr ""
+msgstr "IBM RS6000"
 
 msgid "rs6000"
-msgstr ""
+msgstr "rs6000"
 
 msgid "IBM S/390"
-msgstr ""
+msgstr "IBM S/390"
 
 msgid "i370, s390x, s390"
-msgstr ""
+msgstr "i370, s390x, s390"
 
 msgid "Platform independent"
-msgstr ""
+msgstr "平台独立"
 
 msgid "noarch"
-msgstr ""
+msgstr "noarch"
 
 msgid "Architecture Compatibility"
 msgstr ""
@@ -348,28 +348,28 @@ msgid "Usage of the name field by itself to name packages assumes that multiple 
 msgstr ""
 
 msgid "kernel-2.6.32.9-70.fc12"
-msgstr ""
+msgstr "kernel-2.6.32.9-70.fc12"
 
 msgid "kernel-2.6.32.10-90.fc12"
-msgstr ""
+msgstr "kernel-2.6.32.10-90.fc12"
 
 msgid "kernel-2.6.32.11-99.fc12"
-msgstr ""
+msgstr "kernel-2.6.32.11-99.fc12"
 
 msgid "This example uses the <command>rpm <option>–q</option></command> command to query for all installed versions of the given package, <filename>kernel</filename>."
 msgstr ""
 
 msgid "The RPM Database"
-msgstr ""
+msgstr "RPM 数据库"
 
 msgid "<xref linkend=\"ch-using-rpm-db\" /> covers querying the RPM database in depth."
-msgstr ""
+msgstr "<xref linkend=“ch-using-rpm-db” /> 涵盖了较深入的查询RPM数据库的内容。"
 
 msgid "I have three different versions installed on this system. Since I have multiple packages installed of the <filename>kernel</filename> software, I have to use the full package name (such as <filename>kernel-2.6.32.11-99</filename>) whenever I want to work with my installed <filename>kernel</filename> packages."
 msgstr ""
 
 msgid "Summary"
-msgstr ""
+msgstr "总结"
 
 msgid "The RPM system wasn’t created to solve some theoretical problem. Instead, it is the result of years of hard-won practical experience in trying to manage systems with a large number of applications. RPM builds upon older systems that were created to solve some of the problems faced by system administrators. RPM goes further, though, and tries to provide a complete package-management solution. This includes the ability to deal with wrinkles that Linux faces but that many other operating systems do not need to address."
 msgstr ""
@@ -397,4 +397,3 @@ msgstr ""
 
 msgid "This chapter introduced the RPM system and the history behind it. The next chapter delves into the RPM basics, including files, database, and commands."
 msgstr ""
-
