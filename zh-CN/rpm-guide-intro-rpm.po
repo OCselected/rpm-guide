@@ -397,3 +397,4 @@ msgstr ""
 
 msgid "This chapter introduced the RPM system and the history behind it. The next chapter delves into the RPM basics, including files, database, and commands."
 msgstr ""
+

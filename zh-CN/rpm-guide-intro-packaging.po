@@ -191,3 +191,4 @@ msgstr "现在操作系统均拥有大量复杂的应用程序集，这就导致
 
 msgid "This chapter briefly introduced the RPM Package Manager, or RPM for short. The next chapter provides an overview of the RPM system, showing how all the parts fit together."
 msgstr "本章简要的介绍了RPM包管理器，简短的说就是RPM。下一章将介绍RPM系统概览，展示各个部分是如何一起工作的。"
+
