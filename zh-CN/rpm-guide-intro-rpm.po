@@ -363,7 +363,7 @@ msgid "The RPM Database"
 msgstr "RPM 数据库"
 
 msgid "<xref linkend=\"ch-using-rpm-db\" /> covers querying the RPM database in depth."
-msgstr "<xref linkend=“ch-using-rpm-db” /> 涵盖了较深入的查询RPM数据库的内容。"
+msgstr "<xref linkend=\"ch-using-rpm-db\" /> 涵盖了较深入的查询RPM数据库的内容。"
 
 msgid "I have three different versions installed on this system. Since I have multiple packages installed of the <filename>kernel</filename> software, I have to use the full package name (such as <filename>kernel-2.6.32.11-99</filename>) whenever I want to work with my installed <filename>kernel</filename> packages."
 msgstr ""
